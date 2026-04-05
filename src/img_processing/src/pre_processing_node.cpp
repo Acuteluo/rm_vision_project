@@ -14,18 +14,6 @@ public:
         // 声明 QoS 参数
         this->declare_parameter("use_sensor_data_qos", false);
         bool use_sensor_data_qos = this->get_parameter("use_sensor_data_qos").as_bool();
-        // rclcpp::QoS qos = rclcpp::QoS(10); // 先给个默认值
-        // if (use_sensor_data_qos) 
-        // {
-        //     qos = rclcpp::SensorDataQoS();
-        // } 
-        // else 
-        // {
-        //     qos = rclcpp::SystemDefaultsQoS();
-        // }       
-        // 在构造函数中
-        // rclcpp::QoS qos = rclcpp::SensorDataQoS();  // 直接使用传感器 QoS
-
 
         // 订阅原图
         sub_ = this->create_subscription<sensor_msgs::msg::Image>("image_raw", use_sensor_data_qos, std::bind(&ProcessNode::process_callback, this, std::placeholders::_1));
@@ -37,18 +25,23 @@ private:
     {
         cv::Mat img = cv_bridge::toCvCopy(msg, "bgr8")->image; // 需要 SharedPtr 作为参数
         
-        prepare.preProcessing(img);
-        this->strip = prepare.findAndJudgeLightStrip(); // 找灯带
-		this->armorplate = prepare.pairStrip(); // 灯条配对 输出结果
-        img_show = prepare.getImgShow(); // 获取画图的图（已经标上了灯条信息）
+        // 预处理
+        prepare.preProcessing(img); // 图像预处理
+        this->strip = prepare.findAndJudgeLightStrip(); // 找灯带 返回灯带集合
+		this->armorplate = prepare.pairStrip(); // 灯条配对 返回装甲板集合
 
-        for(int i = 0; i < armorplate.size(); i++)
+        this->img_show = prepare.getImgShow(); // 获取画图的图（已经标上了灯条信息）
+
+        // 对于每一个装甲板，画出装甲板，解算 pnp
+        for(int i = 0; i < this->armorplate.size(); i++)
         {
-            armorplate[i].drawArmorPlate(this->img_show); // 画装甲板
+            this->armorplate[i].drawArmorPlate(this->img_show); // 画装甲板
+            this->armorplate[i].perspectiveNPoint(); // 解算 pnp
+            this->armorplate[i].printPNPInfo(this->img_show, i); // 打印 pnp 信息
         }
         
 
-        cv::imshow("img", img);
+        //cv::imshow("img", img);
         cv::imshow("img_show", this->img_show);
 
 

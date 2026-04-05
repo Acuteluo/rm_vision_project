@@ -33,11 +33,11 @@ std::vector<ArmorPlate> Prepare::pairStrip()
 	double MAX_ANGLE = 20.00; // 两个灯条最大差角 -> [两个灯条是否平行]
 
     // 两个灯条构成的装甲板 宽高比例是否合理 - > [灯条间距离是否合理] 容许的最大比例系数 2.5
-    double ARMORPLATE_RATIO_THRESHOLD = 2.5;
-	double MAX_HERO_ARMORPLATE_RATIO = (135.00 / 55.00) * ARMORPLATE_RATIO_THRESHOLD; // 英雄
-    double MAX_NORMAL_ARMORPLATE_RATIO = (1.00 / 1.00) * ARMORPLATE_RATIO_THRESHOLD; // 步兵
+    double ARMORPLATE_RATIO_THRESHOLD = 1.5;
+	//double MAX_HERO_ARMORPLATE_RATIO = (135.00 / 55.00) * ARMORPLATE_RATIO_THRESHOLD; // 英雄
+    double MAX_NORMAL_ARMORPLATE_RATIO = (135.00 / 55.00) * ARMORPLATE_RATIO_THRESHOLD; // 步兵
 
-	double MIN_TWO_STRIP_RATIO = 0.2 / 1; // 两个灯条 短:长 的比值不能太小 -> [灯条间的选取是否合理]
+	double MIN_TWO_STRIP_RATIO = 0.3 / 1; // 两个灯条 短:长 的比值不能太小 -> [灯条间的选取是否合理]
 
     double MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE = 30.00; // 连接线和灯条的角度差不能太大 -> [避免选到共线的灯条]
 
@@ -104,21 +104,21 @@ std::vector<ArmorPlate> Prepare::pairStrip()
                 distance_short_moderation = false;
             }
 
-			if(armorplate_ratio > MAX_HERO_ARMORPLATE_RATIO && armorplate_ratio > MAX_HERO_ARMORPLATE_RATIO)
+			if(armorplate_ratio > MAX_NORMAL_ARMORPLATE_RATIO)
 			{
                 // 距离太远，构成的装甲板的比值不合理
-                RCLCPP_ERROR(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f > %.2f", i, j, armorplate_ratio, MAX_HERO_ARMORPLATE_RATIO);
+                RCLCPP_ERROR(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f > %.2f", i, j, armorplate_ratio, MAX_NORMAL_ARMORPLATE_RATIO);
 				distance_long_moderation = false;
 			}
 			else 
 			{
                 // 比值合理
-                RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 旋转矩形的宽高比     合理, = %.2f < %.2f", i, j, armorplate_ratio, MAX_HERO_ARMORPLATE_RATIO);
-                double score1 = (MAX_HERO_ARMORPLATE_RATIO - armorplate_ratio) / (MAX_HERO_ARMORPLATE_RATIO - MAX_HERO_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD) * 25.00; // 和英雄最优的差距（倍数），0.8倍和1.2倍得分一致
+                RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 旋转矩形的宽高比     合理, = %.2f < %.2f", i, j, armorplate_ratio, MAX_NORMAL_ARMORPLATE_RATIO);
+                //double score1 = (MAX_HERO_ARMORPLATE_RATIO - armorplate_ratio) / (MAX_HERO_ARMORPLATE_RATIO - MAX_HERO_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD) * 25.00; // 和英雄最优的差距（倍数），0.8倍和1.2倍得分一致
                 double score2 = (MAX_NORMAL_ARMORPLATE_RATIO - armorplate_ratio) / (MAX_NORMAL_ARMORPLATE_RATIO - MAX_NORMAL_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD) * 25.00; // 和步兵最优的差距（倍数），0.8倍和1.2倍得分一致
                 
-				temp_moderation += std::max(score1, score2); // 看更接近英雄还是步兵的最优值，得分更高的那个
-                RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 旋转矩形的宽高比得分, score1 = %.2f, score2 = %.2f", i, j, score1, score2);
+				temp_moderation += score2; // 看更接近英雄还是步兵的最优值，得分更高的那个
+                RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 旋转矩形的宽高比得分, score2 = %.2f", i, j, score2);
 			}
             
 
@@ -223,13 +223,17 @@ std::vector<ArmorPlate> Prepare::pairStrip()
 
 
 	// 4. 放入装甲板集合中
+    std::vector<bool> is_used = {false}; // 记录灯条是否已经被配对过了，避免重复配对
+
 	for (int i = 0; i < strip.size(); i++)
 	{
-
 		//如果双向奔赴，那就是他俩了。当然不能同时奔赴 -1
-		if (moderation_number[i] != -1 && moderation_number[moderation_number[i]] == i) // 最佳灯条是存在的灯条
+		if (!is_used[i] && moderation_number[i] != -1 && moderation_number[moderation_number[i]] == i) // 最佳灯条是存在的灯条
 		{
 			armorplate.push_back(ArmorPlate(strip[i], strip[moderation_number[i]])); // 传入两个灯条，构造成装甲板
+            
+            is_used[i] = true; // 记录灯条 i 已经被配对过了
+            is_used[moderation_number[i]] = true; // 记录灯条 moderation_number[i] 已经被配对过了
 		}
 	}
 
@@ -413,19 +417,34 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
             // ------- 4.3 区分灯条与判断颜色（还需完善）-------
             std::string color;
             double times = std::max((double)red_edge_average / (double)blue_edge_average, (double)blue_edge_average / (double)red_edge_average); // 红蓝值相差倍数，至少要 4 以上才比较合理
-            if(saturation_average > 175.00 && saturation_edge_average > 175.00 && green_edge_average < 150.00) // 总体饱和度高，边缘饱和度也高，绿值低，说明是灯条
+            
+            // 边缘饱和度高，一定是灯条
+            if(saturation_edge_average > 200.00)
+            {
+                if(red_edge_average > blue_edge_average) // 红值偏高，一般都会相差 100 以上的
+                {
+                    color = "red"; // red
+                }
+                
+                else 
+                {
+                    color = "blue"; // blue
+                }
+            }
+
+            else if(saturation_average > 50.00 && saturation_edge_average > 50.00 && green_edge_average < 150.00) // 总体饱和度高，边缘饱和度也高，绿值低，说明是灯条
             {
                 if(std::fabs(red_edge_average - blue_edge_average) < 100.00) // 红蓝值相差不大，说明是白炽灯
                 {
                     color = "white";
                 }
 
-                else if(times < 5.00) // 红蓝值相差倍数不大，说明是白炽灯
+                else if(times < 4.00) // 红蓝值相差倍数不大，说明是白炽灯
                 {
                     color = "white";
                 }
 
-                else if(std::min(red_edge_average, blue_edge_average) > 50.00) // 红蓝值的最低值不低，说明是白炽灯
+                else if(std::min(red_edge_average, blue_edge_average) > 75.00) // 红蓝值的最低值不低，说明是白炽灯
                 {
                     color = "white";
                 }
@@ -538,113 +557,119 @@ cv::Mat Prepare::getImgShow()
 */
 void Prepare::preProcessing(cv::Mat& img)
 { 
-    // int THERESHOLD_VALUE = 220; // 二值化阈值
+    int THERESHOLD_VALUE = 220; // 二值化阈值
 
 
-    // std::vector<cv::Mat> channels_bgr;
-    // std::vector<cv::Mat> channels_hsv;
-    // cv::Mat B, G, R; // bgr三通道值
-    // cv::Mat red_differ, blue_differ, mask; // 红色和蓝色灯条 BGR最高最低相差值掩码（需要吗？）
-    // cv::Mat img_red, img_blue;
-    // cv::Mat high_red, high_blue;
-    // cv::Mat img_hsv; // hsv
+    std::vector<cv::Mat> channels_bgr;
+    std::vector<cv::Mat> channels_hsv;
+    cv::Mat B, G, R; // bgr三通道值
+    cv::Mat red_differ, blue_differ, mask; // 红色和蓝色灯条 BGR最高最低相差值掩码（需要吗？）
+    cv::Mat img_red, img_blue;
+    cv::Mat high_red, high_blue;
+    cv::Mat img_hsv; // hsv
 
-    // this->img_show = img.clone(); // 复制得到绘图图像，对 img_show 的操作直接在 findcontours 等等函数里
+    this->img_show = img.clone(); // 复制得到绘图图像，对 img_show 的操作直接在 findcontours 等等函数里
 
-    // // // 1. 亮度调整 同时调整对比度和亮度，但目前不是必须
-    // // cv::Mat bright;
-    // // img.convertTo(bright, -1, 1.2, 30);
+    // // 1. 亮度调整 同时调整对比度和亮度，但目前不是必须
+    // cv::Mat bright;
+    // img.convertTo(bright, -1, 1.2, 30);
 
-    // // 2. 得到 hsv，尝试区分灯条和白炽灯
-    // cv::cvtColor(img, img_hsv, cv::COLOR_BGR2HSV);
+    // 2. 得到 hsv，尝试区分灯条和白炽灯
+    cv::cvtColor(img, img_hsv, cv::COLOR_BGR2HSV);
 
-    // // 3. 分离bgr三通道的值
-    // split(img, channels_bgr);
+    // 3. 分离bgr三通道的值
+    split(img, channels_bgr);
 
-    // B = channels_bgr[0];
-    // G = channels_bgr[1];
-    // R = channels_bgr[2];
+    B = channels_bgr[0];
+    G = channels_bgr[1];
+    R = channels_bgr[2];
 
-    // // 4. 高阈值二值化   红图: 红色灯条 + 白炽灯灯条  蓝图: 蓝色灯条 + 白炽灯灯条
-    // cv::threshold(R, high_red, THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
-    // cv::threshold(B, high_blue, THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
+    // 4. 高阈值二值化   红图: 红色灯条 + 白炽灯灯条  蓝图: 蓝色灯条 + 白炽灯灯条
+    cv::threshold(R, high_red, THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
+    cv::threshold(B, high_blue, THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
 
-    // // // 5. 垂直方向模糊 重新变为二值化
-    // /*
-    //     但实际效果需要验证
+    // // 5. 垂直方向模糊 重新变为二值化
+    /*
+        但实际效果需要验证
 
-    //     建议你用实际图像测试一下，观察二值化后的灯条掩码是否有以下情况：
+        建议你用实际图像测试一下，观察二值化后的灯条掩码是否有以下情况：
 
-    //     断裂：如果灯条中心仍有空洞，导致掩码分成上下两段，则需要垂直模糊来连接。
-    //     小缺口：边缘有小缺口，但整体连通，可以不处理。
-    //     横向散光：如果仍有轻微横向扩散，垂直模糊也能帮助抑制（因为它只在垂直方向平滑）。
-    // */
-    // // cv::blur(high_red, high_red, cv::Size(1, 3));
-    // // cv::blur(high_blue, high_blue, cv::Size(1, 3));
-    // // cv::threshold(high_red, high_red, 1, 255, cv::THRESH_BINARY);
-    // // cv::threshold(high_blue, high_blue, 1, 255, cv::THRESH_BINARY);  
+        断裂：如果灯条中心仍有空洞，导致掩码分成上下两段，则需要垂直模糊来连接。
+        小缺口：边缘有小缺口，但整体连通，可以不处理。
+        横向散光：如果仍有轻微横向扩散，垂直模糊也能帮助抑制（因为它只在垂直方向平滑）。
+    */
+    // cv::blur(high_red, high_red, cv::Size(1, 3));
+    // cv::blur(high_blue, high_blue, cv::Size(1, 3));
+    // cv::threshold(high_red, high_red, 1, 255, cv::THRESH_BINARY);
+    // cv::threshold(high_blue, high_blue, 1, 255, cv::THRESH_BINARY);  
     
 
-    // this->CHOSEN_COLOR = "red"; // 选择检测的颜色 red / blue
+    this->CHOSEN_COLOR = "red"; // 选择检测的颜色 red / blue
 
-    // if(this->CHOSEN_COLOR == "red") this->mask = high_red; // 最终掩码图
-    // else this->mask = high_blue; 
+    if(this->CHOSEN_COLOR == "red") this->mask = high_red; // 最终掩码图
+    else this->mask = high_blue; 
+
+    this->img = img; // 原图
+    this->img_hsv = img_hsv; // hsv图
+
+
+    cv::imshow("high_blue", high_blue);
+    cv::imshow("high_red", high_red);
+
+
+    // const int IMAGE_BRIGHT = 30;       // 全局亮度增益（过暗就加大）
+    // const int THRESHOLD_VALUE = 220;   // 二值化阈值（噪点多就加大）
+    // //const int KERNEL_SIZE = 2;       // 核大小
+
+    // cv::Mat dst_BR;
+    // cv::Mat dst_blue; // 最终的蓝色灯条掩码
+    // cv::Mat dst_red; // 最终的红色灯条掩码
+
+    // std::vector<cv::Mat> channels;
+
+    // // 全局亮度调整
+    // {
+    //     cv::Mat BrightnessLut(1, 256, CV_8UC1); 
+    //     for (int i = 0; i < 256; i++) {
+    //         BrightnessLut.at<uchar>(i) = cv::saturate_cast<uchar>(i + IMAGE_BRIGHT);
+    //     }
+    //     cv::LUT(img, BrightnessLut, dst_BR);
+    // }
+
+    // this->img_show = dst_BR.clone(); // 复制得到绘图图像，对 img_show 的操作直接在 findcontours 等等函数里
+    // cv::Mat img_hsv; // hsv
+    // cv::cvtColor(dst_BR, img_hsv, cv::COLOR_BGR2HSV);
+
+    // // 颜色通道差分
+    // cv::split(dst_BR, channels);
+
+    // // 二值化
+    // cv::threshold(channels[0], dst_blue, THRESHOLD_VALUE, 255, cv::THRESH_BINARY);
+    // cv::threshold(channels[2], dst_red, THRESHOLD_VALUE, 255, cv::THRESH_BINARY);
+
+    // // 垂直方向模糊
+    // cv::blur(dst_blue, dst_blue, cv::Size(1, 3)); // 只模糊垂直方向，保留灯条形状
+    // cv::blur(dst_red, dst_red, cv::Size(1, 3)); // 只模糊垂直方向，保留灯条形状
+
+
+    // // 形态学膨胀
+    // // cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(KERNEL_SIZE, KERNEL_SIZE));
+    // // cv::dilate(dst, dst, kernel, cv::Point(-1, -1), 1);
+    // //cv::erode(dst, dst, kernel, cv::Point(-1, -1), 1);
+    // //cv::morphologyEx(mask, mask, cv::MORPH_OPEN, kernel);
+
+    // //调试显示（
+    // cv::imshow("最终掩码 blue", dst_blue);
+    // //cv::imshow("最终掩码 red", dst_red);
+        
+
+    // this->CHOSEN_COLOR = "blue"; // 选择检测的颜色 red / blue
+
+    // if(this->CHOSEN_COLOR == "red") this->mask = dst_red; // 最终掩码图
+    // else this->mask = dst_blue; 
 
     // this->img = img; // 原图
     // this->img_hsv = img_hsv; // hsv图
-
-
-    // cv::imshow("high_blue", high_blue);
-    // cv::imshow("high_red", high_red);
-
-
-        const int IMAGE_BRIGHT = 30;       // 全局亮度增益（过暗就加大）
-        const int THRESHOLD_VALUE = 220;   // 二值化阈值（噪点多就加大）
-        //const int KERNEL_SIZE = 2;          // 核大小
-
-        cv::Mat dst_BR, dst;
-        std::vector<cv::Mat> channels;
-
-        // 全局亮度调整
-        {
-            cv::Mat BrightnessLut(1, 256, CV_8UC1); 
-            for (int i = 0; i < 256; i++) {
-                BrightnessLut.at<uchar>(i) = cv::saturate_cast<uchar>(i + IMAGE_BRIGHT);
-            }
-            cv::LUT(img, BrightnessLut, dst_BR);
-        }
-
-        this->img_show = dst_BR.clone(); // 复制得到绘图图像，对 img_show 的操作直接在 findcontours 等等函数里
-        cv::Mat img_hsv; // hsv
-        cv::cvtColor(dst_BR, img_hsv, cv::COLOR_BGR2HSV);
-
-        // 颜色通道差分
-        cv::split(dst_BR, channels);
-
-        // 二值化
-        cv::threshold(channels[0], dst, THRESHOLD_VALUE, 255, cv::THRESH_BINARY);
-
-        // 垂直方向模糊
-        cv::blur(dst, dst, cv::Size(1, 3)); // 只模糊垂直方向，保留灯条形状
-
-
-        // 形态学膨胀
-        // cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(KERNEL_SIZE, KERNEL_SIZE));
-        // cv::dilate(dst, dst, kernel, cv::Point(-1, -1), 1);
-        //cv::erode(dst, dst, kernel, cv::Point(-1, -1), 1);
-        //cv::morphologyEx(mask, mask, cv::MORPH_OPEN, kernel);
-
-        //调试显示（
-        cv::imshow("最终掩码", dst);
-         
-    
-        this->CHOSEN_COLOR = "blue"; // 选择检测的颜色 red / blue
-
-        if(this->CHOSEN_COLOR == "red") this->mask = dst; // 最终掩码图
-        else this->mask = dst; 
-
-        this->img = img; // 原图
-        this->img_hsv = img_hsv; // hsv图
     
 
 }

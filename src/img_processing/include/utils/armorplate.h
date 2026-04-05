@@ -6,11 +6,16 @@
 class ArmorPlate
 {
 public:
-	ArmorPlate(); //默认构造
+
+	ArmorPlate(); // 默认构造
 
 
-	//传入一左一右两个灯带组装成一个装甲板
+	// 传入一左一右两个灯带组装成一个装甲板
 	ArmorPlate(Strip a, Strip b); 
+
+
+    // 设置参数
+    void setParam(); 
 
 
 	/**
@@ -21,42 +26,52 @@ public:
 	void drawArmorPlate(cv::Mat& img_show);
 
 
-	// /**
-	// * @brief	用 pnp 算 [R | T]
-	// * @return   无返回值
-	// */
-	// void perspectiveNPoint();
+	/**
+	* @brief	用 pnp 算 [R | T]
+	* @return   无返回值
+	*/
+	void perspectiveNPoint();
 
 
-	// /**
-	// * @brief	输出 yaw pitch distance 信息
-	// * @param	cv::Mat& img_show 要画的图
-	// * @return   无返回值，直接画图
-	// */
-	// void printInfo(cv::Mat& img_show);
+	/**
+	* @brief	输出 yaw pitch distance 信息
+	* @param	cv::Mat& img_show 要画的图
+    * @param    int index 装甲板编号
+	* @return   无返回值，直接画图
+	*/
+	void printPNPInfo(cv::Mat& img_show, int index);
 
-	cv::Point2f center; // 中心点
-    cv::Point2f tl; // 左上
-    cv::Point2f bl; // 左下
-    cv::Point2f br; // 右下
-    cv::Point2f tr; // 右上
+
+	cv::Point2f center; // 装甲板中心点
+    cv::Point2f tl; // 装甲板左上
+    cv::Point2f bl; // 装甲板左下
+    cv::Point2f br; // 装甲板右下
+    cv::Point2f tr; // 装甲板右上
 
 
 private:
 
+    // pnp 要求：
 	std::vector<cv::Point2f> vertice_pixel; // [像素坐标系]装甲板四个角点，[顺序：左上，左下，右下，右上]
+	std::vector<cv::Point3f> vertice_world; // [世界坐标系]装甲板四个角点，[顺序：左上，左下，右下，右上]，单位mm
 
-	std::vector<cv::Point3f> vertice_world; //[世界坐标系]装甲板四个角点，单位mm
-	cv::Mat K; //内参矩阵
-	cv::Mat D; //畸变矩阵
-	cv::Mat R; //旋转矩阵
-	cv::Mat r; //旋转向量
-	cv::Mat t; //平移向量    
+	cv::Mat K; // 内参矩阵
+	cv::Mat D; // 畸变矩阵
+
+    // pnp 解算结果：
+	cv::Mat r; // 旋转向量
+	cv::Mat t; // 平移向量    
+
+    cv::Mat R; // 旋转矩阵
+
 	int image_width; //图像宽 
 	int image_height; //图像高
 
-	double yaw; //偏航角
-	double pitch; //俯仰角
-	double distance; //距离
+    double armorplate_width; // 装甲板宽度，单位mm
+    double armorplate_height; // 装甲板高度，单位mm
+
+	double t_yaw; //偏航角
+	double t_pitch; //俯仰角
+	double t_distance; //距离
 
 };
