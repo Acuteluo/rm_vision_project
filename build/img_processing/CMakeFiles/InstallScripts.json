@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/cly/project/build/img_processing/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

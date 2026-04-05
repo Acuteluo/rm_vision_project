@@ -1,0 +1,4 @@
+Log file created at: 2026/03/27 21:16:39
+Running on machine: acuteluo
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+E0327 21:16:39.070256 148129 CameraU3VBase.cpp:782] Function:PauseVideo, Code:set_acquisition_command(0), Error:-19

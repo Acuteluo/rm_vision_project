@@ -1,0 +1,9 @@
+/home/cly/project/build/bringup/CMakeFiles/uninstall.dir
+/home/cly/project/build/bringup/CMakeFiles/bringup_uninstall.dir
+/home/cly/project/build/bringup/CMakeFiles/test.dir
+/home/cly/project/build/bringup/CMakeFiles/edit_cache.dir
+/home/cly/project/build/bringup/CMakeFiles/rebuild_cache.dir
+/home/cly/project/build/bringup/CMakeFiles/list_install_components.dir
+/home/cly/project/build/bringup/CMakeFiles/install.dir
+/home/cly/project/build/bringup/CMakeFiles/install/local.dir
+/home/cly/project/build/bringup/CMakeFiles/install/strip.dir

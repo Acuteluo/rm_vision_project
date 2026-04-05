@@ -1,0 +1,4 @@
+Invoking command in '/home/cly/project/build/bringup': CMAKE_PREFIX_PATH=/home/cly/ros2_ws/install/test_pkg:/opt/ros/humble /usr/bin/cmake --build /home/cly/project/build/bringup -- -j18 -l18
+Invoked command in '/home/cly/project/build/bringup' returned '0': CMAKE_PREFIX_PATH=/home/cly/ros2_ws/install/test_pkg:/opt/ros/humble /usr/bin/cmake --build /home/cly/project/build/bringup -- -j18 -l18
+Invoking command in '/home/cly/project/build/bringup': CMAKE_PREFIX_PATH=/home/cly/ros2_ws/install/test_pkg:/opt/ros/humble /usr/bin/cmake --install /home/cly/project/build/bringup
+Invoked command in '/home/cly/project/build/bringup' returned '0': CMAKE_PREFIX_PATH=/home/cly/ros2_ws/install/test_pkg:/opt/ros/humble /usr/bin/cmake --install /home/cly/project/build/bringup

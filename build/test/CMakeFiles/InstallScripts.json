@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/cly/project/build/test/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

@@ -1,0 +1,2 @@
+Invoking command in '/home/cly/project/build/img_processing': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/cly/ros2_ws/install/test_pkg:/opt/ros/humble /usr/bin/cmake --build /home/cly/project/build/img_processing -- -j18 -l18
+Invoked command in '/home/cly/project/build/img_processing' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/cly/ros2_ws/install/test_pkg:/opt/ros/humble /usr/bin/cmake --build /home/cly/project/build/img_processing -- -j18 -l18

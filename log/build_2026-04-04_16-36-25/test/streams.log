@@ -1,0 +1,22 @@
+[0.014s] Invoking command in '/home/cly/project/build/test': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/cly/ros2_ws/install/test_pkg:/opt/ros/humble /usr/bin/cmake --build /home/cly/project/build/test -- -j18 -l18
+[0.038s] [100%] Built target test.cpp
+[1.504s] Invoked command in '/home/cly/project/build/test' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/cly/ros2_ws/install/test_pkg:/opt/ros/humble /usr/bin/cmake --build /home/cly/project/build/test -- -j18 -l18
+[1.507s] Invoking command in '/home/cly/project/build/test': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/cly/ros2_ws/install/test_pkg:/opt/ros/humble /usr/bin/cmake --install /home/cly/project/build/test
+[1.512s] -- Install configuration: ""
+[1.512s] -- Up-to-date: /home/cly/project/install/test/lib/test/test.cpp
+[1.512s] -- Up-to-date: /home/cly/project/install/test/share/ament_index/resource_index/package_run_dependencies/test
+[1.513s] -- Up-to-date: /home/cly/project/install/test/share/ament_index/resource_index/parent_prefix_path/test
+[1.513s] -- Up-to-date: /home/cly/project/install/test/share/test/environment/ament_prefix_path.sh
+[1.513s] -- Up-to-date: /home/cly/project/install/test/share/test/environment/ament_prefix_path.dsv
+[1.513s] -- Up-to-date: /home/cly/project/install/test/share/test/environment/path.sh
+[1.513s] -- Up-to-date: /home/cly/project/install/test/share/test/environment/path.dsv
+[1.513s] -- Up-to-date: /home/cly/project/install/test/share/test/local_setup.bash
+[1.513s] -- Up-to-date: /home/cly/project/install/test/share/test/local_setup.sh
+[1.513s] -- Up-to-date: /home/cly/project/install/test/share/test/local_setup.zsh
+[1.513s] -- Up-to-date: /home/cly/project/install/test/share/test/local_setup.dsv
+[1.513s] -- Installing: /home/cly/project/install/test/share/test/package.dsv
+[1.513s] -- Up-to-date: /home/cly/project/install/test/share/ament_index/resource_index/packages/test
+[1.513s] -- Up-to-date: /home/cly/project/install/test/share/test/cmake/testConfig.cmake
+[1.513s] -- Up-to-date: /home/cly/project/install/test/share/test/cmake/testConfig-version.cmake
+[1.513s] -- Up-to-date: /home/cly/project/install/test/share/test/package.xml
+[1.524s] Invoked command in '/home/cly/project/build/test' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/cly/ros2_ws/install/test_pkg:/opt/ros/humble /usr/bin/cmake --install /home/cly/project/build/test

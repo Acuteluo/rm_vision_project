@@ -1,0 +1,11 @@
+/home/cly/project/build/my_mindvision_camera/CMakeFiles/uninstall.dir
+/home/cly/project/build/my_mindvision_camera/CMakeFiles/my_mindvision_camera_uninstall.dir
+/home/cly/project/build/my_mindvision_camera/CMakeFiles/my_mindvision_camera.dir
+/home/cly/project/build/my_mindvision_camera/CMakeFiles/mv_camera_node.dir
+/home/cly/project/build/my_mindvision_camera/CMakeFiles/test.dir
+/home/cly/project/build/my_mindvision_camera/CMakeFiles/edit_cache.dir
+/home/cly/project/build/my_mindvision_camera/CMakeFiles/rebuild_cache.dir
+/home/cly/project/build/my_mindvision_camera/CMakeFiles/list_install_components.dir
+/home/cly/project/build/my_mindvision_camera/CMakeFiles/install.dir
+/home/cly/project/build/my_mindvision_camera/CMakeFiles/install/local.dir
+/home/cly/project/build/my_mindvision_camera/CMakeFiles/install/strip.dir

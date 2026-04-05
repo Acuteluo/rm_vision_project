@@ -1,0 +1,6 @@
+Log file created at: 2026/04/04 19:28:56
+Running on machine: acuteluo
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+E0404 19:28:56.704981 89453 U3VControl.cpp:225] WriteAddr:268435460, BulkOut error:-4
+E0404 19:28:56.705183 89453 CameraU3VBase.cpp:782] Function:PauseVideo, Code:set_acquisition_command(0), Error:-52
+E0404 19:28:56.705190 89453 U3VControl.cpp:225] WriteAddr:268435724, BulkOut error:-4

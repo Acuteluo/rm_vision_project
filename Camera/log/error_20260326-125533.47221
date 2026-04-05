@@ -1,0 +1,60 @@
+Log file created at: 2026/03/26 12:55:33
+Running on machine: acuteluo
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+E0326 12:55:33.249222 47221 U3VControl.cpp:225] WriteAddr:268435844, BulkOut error:-4
+E0326 12:55:33.260550 47221 U3VControl.cpp:225] WriteAddr:268435552, BulkOut error:-4
+E0326 12:55:33.260587 47221 CameraU3VBase.cpp:1646] Function:SetTriggerSel, Code:set_trigger_mode(0), Error:-52
+E0326 12:55:33.260599 47221 U3VControl.cpp:225] WriteAddr:268435556, BulkOut error:-4
+E0326 12:55:33.260602 47221 CameraU3VBase.cpp:1683] Function:SetTriggerCount, Code:set_trigger_count(iCount), Error:-52
+E0326 12:55:33.260604 47221 U3VControl.cpp:225] WriteAddr:268435620, BulkOut error:-4
+E0326 12:55:33.260607 47221 CameraU3VBase.cpp:1759] Function:SetExtTrigSignalType, Code:set_trigger_activation(iType), Error:-52
+E0326 12:55:33.260608 47221 U3VControl.cpp:225] WriteAddr:268435564, BulkOut error:-4
+E0326 12:55:33.260610 47221 CameraU3VBase.cpp:1775] Function:SetExtTrigDelayTime, Code:set_trigger_delay(uDelayTimeUs), Error:-52
+E0326 12:55:33.265923 47221 CameraU3VBase.cpp:1781] Function:SetExtTrigBufferedDelayTime, Code:m_pDev->WriteFPGA(0x1fe, uDelayTimeUs & 0xffff), Error:-31
+E0326 12:55:33.265978 47221 U3VControl.cpp:225] WriteAddr:268435560, BulkOut error:-4
+E0326 12:55:33.265985 47221 CameraU3VBase.cpp:1791] Function:SetExtTrigJitterTime, Code:set_ext_trig_jitter_time(uTimeUs), Error:-52
+E0326 12:55:33.265991 47221 U3VControl.cpp:225] WriteAddr:268435636, BulkOut error:-4
+E0326 12:55:33.265996 47221 CameraU3VBase.cpp:1767] Function:SetExtTrigShutterType, Code:set_ext_trig_shutter_type(iType), Error:-52
+E0326 12:55:33.276856 47221 U3VControl.cpp:225] WriteAddr:268435568, BulkOut error:-4
+E0326 12:55:33.276893 47221 CameraU3VBase.cpp:1726] Function:SetStrobeMode, Code:set_strobe_mode(iMode), Error:-52
+E0326 12:55:33.276952 47221 CameraU3VBase.cpp:1735] Function:SetStrobeDelayTime, Code:set_strobe_delay(uDelayTimeUs), Error:-19
+E0326 12:55:33.276955 47221 CameraU3VBase.cpp:1751] Function:SetStrobePolarity, Code:set_strobe_polarity(uPolarity), Error:-19
+E0326 12:55:33.276957 47221 CameraU3VBase.cpp:1743] Function:SetStrobePulseWidth, Code:set_strobe_width(uTimeUs), Error:-19
+E0326 12:55:33.276960 47221 CameraU3VBase.cpp:414] Function:GetExpTime, Code:get_exposure_time(exp_time), Error:-19
+E0326 12:55:33.276961 47221 CameraU3VBase.cpp:482] Function:SetAntiFlick, Code:set_anti_flick(data), Error:-19
+E0326 12:55:33.276963 47221 CameraU3VBase.cpp:482] Function:SetAntiFlick, Code:set_anti_flick(data), Error:-19
+E0326 12:55:33.276965 47221 CameraU3VBase.cpp:482] Function:SetAntiFlick, Code:set_anti_flick(data), Error:-19
+E0326 12:55:33.276966 47221 CameraU3VBase.cpp:491] Function:SetAntiFlickFreq, Code:SetAntiFlick(m_bAntiFlick), Error:-19
+E0326 12:55:33.276968 47221 CameraU3VBase.cpp:502] Function:SetAnalogGain, Code:set_analog_gain((float)iGain), Error:-19
+E0326 12:55:33.276974 47221 CameraU3VBase.cpp:2211] Function:SetWbClrTempMode, Code:set_color_temperature(uDat), Error:-19
+E0326 12:55:33.276976 47221 CameraU3VBase.cpp:2211] Function:SetWbClrTempMode, Code:set_color_temperature(uDat), Error:-19
+E0326 12:55:33.276978 47221 CameraU3VBase.cpp:2302] Function:SetUserColorCorrectMatrix, Code:set_user_color_temp_rgb_mat(pColorTemp->fColorCorrectMatrix), Error:-19
+E0326 12:55:33.276980 47221 CameraU3VBase.cpp:2211] Function:SetWbClrTempMode, Code:set_color_temperature(uDat), Error:-19
+E0326 12:55:33.276983 47221 CameraU3VBase.cpp:2297] Function:SetUserColorCorrectMatrix, Code:set_user_color_temp_rgb_gain(pColorTemp->fColorCorrectRgain, pColorTemp->fColorCorrectGgain, pColorTemp->fColorCorrectBgain), Error:-19
+E0326 12:55:33.276984 47221 CameraU3VBase.cpp:2211] Function:SetWbClrTempMode, Code:set_color_temperature(uDat), Error:-19
+E0326 12:55:33.276988 47221 CameraU3VBase.cpp:2123] Function:SetRgbGain, Code:set_rgb_gain(RGB_GAIN_VAL(fRGain, fGGain, fBGain)), Error:-19
+E0326 12:55:33.276990 47221 CameraU3VBase.cpp:2100] Function:SetSaturation, Code:set_saturation(iSaturation), Error:-19
+E0326 12:55:33.276993 47221 CameraU3VBase.cpp:2123] Function:SetRgbGain, Code:set_rgb_gain(RGB_GAIN_VAL(fRGain, fGGain, fBGain)), Error:-19
+E0326 12:55:33.277005 47221 CameraU3VBase.cpp:2100] Function:SetSaturation, Code:set_saturation(iSaturation), Error:-19
+E0326 12:55:33.277007 47221 CameraU3VBase.cpp:2071] Function:SetGamma, Code:set_gamma((m_dwCfgSoftIsp & MVISP_GAMMA) ? 100 : iGamma), Error:-19
+E0326 12:55:33.277009 47221 CameraU3VBase.cpp:2079] Function:SetContrast, Code:set_contrast((m_dwCfgSoftIsp & MVISP_CONTRAST) ? 100 : iContrast), Error:-19
+E0326 12:55:33.277010 47221 CameraU3VBase.cpp:2332] Function:SetBlackLevel, Code:set_black_level(BlackLevel), Error:-19
+E0326 12:55:33.277683 47221 CameraU3VBase.cpp:2379] Function:SetWBWindow, Code:set_wb_window_hori((regHEnd << 16) | regHStart), Error:-19
+E0326 12:55:33.277685 47221 CameraU3VBase.cpp:2392] Function:SetHFlip, Code:SetWBWindow(m_iWBWinHOff, m_iWBWinVOff, m_iWBWinWidth, m_iWBWinHeight), Error:-19
+E0326 12:55:33.277688 47221 CameraU3VBase.cpp:2379] Function:SetWBWindow, Code:set_wb_window_hori((regHEnd << 16) | regHStart), Error:-19
+E0326 12:55:33.277688 47221 CameraU3VBase.cpp:2404] Function:SetVFlip, Code:SetWBWindow(m_iWBWinHOff, m_iWBWinVOff, m_iWBWinWidth, m_iWBWinHeight), Error:-19
+E0326 12:55:33.282977 47221 CameraU3VBase.cpp:2419] Function:SetHDFlip, Code:set_flip_ctrl(uMirrSet), Error:-19
+E0326 12:55:33.288317 47221 CameraU3VBase.cpp:3162] Function:set_image_size, Code:WriteMyrm(MYRM_OFFSET(resolution_mod), &ResMod, sizeof(ResMod)), Error:-19
+E0326 12:55:33.288368 47221 CameraU3VBase.cpp:351] Function:SetImageSize, Code:set_image_size(iResMode, iHoffset, iVOffset, iSensorOutWidth, iSensorOutHeight), Error:-19
+E0326 12:55:33.288370 47221 CameraU3VBase.cpp:376] Function:SetImageResolution, Code:SetImageSize(sImageSize.iIndex == 0xff, &sImageSize), Error:-19
+E0326 12:55:33.288375 47221 CameraU3VBase.cpp:1930] Function:SetOutPutIOModeReg, Code:get_gpio_output_mode(regMode), Error:-19
+E0326 12:55:33.288376 47221 CameraU3VBase.cpp:1839] Function:SetOutPutIOMode, Code:SetOutPutIOModeReg(iOutputIOIndex, iMode), Error:-19
+E0326 12:55:33.288378 47221 CameraU3VBase.cpp:1940] Function:SetOutPutIOStateReg, Code:get_gpio_output(RegData), Error:-19
+E0326 12:55:33.288379 47221 CameraU3VBase.cpp:1930] Function:SetOutPutIOModeReg, Code:get_gpio_output_mode(regMode), Error:-19
+E0326 12:55:33.288381 47221 CameraU3VBase.cpp:1839] Function:SetOutPutIOMode, Code:SetOutPutIOModeReg(iOutputIOIndex, iMode), Error:-19
+E0326 12:55:33.288383 47221 CameraU3VBase.cpp:1940] Function:SetOutPutIOStateReg, Code:get_gpio_output(RegData), Error:-19
+E0326 12:55:33.308759 47221 CameraU3VBase.cpp:395] Function:SetExpTime, Code:set_exposure_time((float)fExpTime), Error:-19
+E0326 12:55:33.308809 47221 CameraU3VBase.cpp:395] Function:SetExpTime, Code:set_exposure_time((float)fExpTime), Error:-19
+E0326 12:55:33.308812 47221 CameraU3VBase.cpp:709] Function:UpdateParam, Code:SetExpTime(m_fExptime), Error:-19
+E0326 12:55:33.308815 47221 CameraU3VBase.cpp:607] Function:Init, Code:UpdateParam(-1), Error:-19
+E0326 12:55:33.377238 47221 MVCAMAPI.cpp:382] CameraInit Failed, err:-19,Version:2.1.0.49,FriendlyName:MV-SUA134GC#0,SN:041130220345

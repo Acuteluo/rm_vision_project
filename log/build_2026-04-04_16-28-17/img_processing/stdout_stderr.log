@@ -1,0 +1,223 @@
+[ 20%] [32mBuilding CXX object CMakeFiles/pre_processing_node.dir/src/pre_processing_node.cpp.o[0m
+[ 40%] [32mBuilding CXX object CMakeFiles/pre_processing_node.dir/src/prepare_algorithm.cpp.o[0m
+[ 60%] [32mBuilding CXX object CMakeFiles/pre_processing_node.dir/src/utils/strip.cpp.o[0m
+[ 80%] [32mBuilding CXX object CMakeFiles/pre_processing_node.dir/src/utils/armorplate.cpp.o[0m
+In file included from [01m[K/home/cly/project/src/img_processing/src/pre_processing_node.cpp:5[m[K:
+[01m[K/home/cly/project/src/img_processing/include/prepare_algorithm.h:28:29:[m[K [01;31m[Kerror: [m[Kextra qualification ‘[01m[KPrepare::[m[K’ on member ‘[01m[KpairStrip[m[K’ [[01;31m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-fpermissive-fpermissive]8;;[m[K]
+   28 |     std::vector<ArmorPlate> [01;31m[KPrepare[m[K::pairStrip();
+      |                             [01;31m[K^~~~~~~[m[K
+[01m[K/home/cly/project/src/img_processing/src/pre_processing_node.cpp:[m[K In constructor ‘[01m[KProcessNode::ProcessNode()[m[K’:
+[01m[K/home/cly/project/src/img_processing/src/pre_processing_node.cpp:16:14:[m[K [01;35m[Kwarning: [m[Kunused variable ‘[01m[Kuse_sensor_data_qos[m[K’ [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-variable-Wunused-variable]8;;[m[K]
+   16 |         bool [01;35m[Kuse_sensor_data_qos[m[K = this->get_parameter("use_sensor_data_qos").as_bool();
+      |              [01;35m[K^~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/cly/project/src/img_processing/src/pre_processing_node.cpp:[m[K In member function ‘[01m[Kvoid ProcessNode::process_callback(sensor_msgs::msg::Image_<std::allocator<void> >::SharedPtr)[m[K’:
+[01m[K/home/cly/project/src/img_processing/src/pre_processing_node.cpp:45:26:[m[K [01;35m[Kwarning: [m[Kcomparison of integer expressions of different signedness: ‘[01m[Kint[m[K’ and ‘[01m[Kstd::vector<ArmorPlate>::size_type[m[K’ {aka ‘[01m[Klong unsigned int[m[K’} [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wsign-compare-Wsign-compare]8;;[m[K]
+   45 |         for(int i = 0; [01;35m[Ki < armorplate.size()[m[K; i++)
+      |                        [01;35m[K~~^~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:1[m[K:
+[01m[K/home/cly/project/src/img_processing/include/prepare_algorithm.h:28:29:[m[K [01;31m[Kerror: [m[Kextra qualification ‘[01m[KPrepare::[m[K’ on member ‘[01m[KpairStrip[m[K’ [[01;31m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-fpermissive-fpermissive]8;;[m[K]
+   28 |     std::vector<ArmorPlate> [01;31m[KPrepare[m[K::pairStrip();
+      |                             [01;31m[K^~~~~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/include/utils/strip.h:2[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/include/prepare_algorithm.h:2[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:1[m[K:
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:[m[K In member function ‘[01m[Kstd::vector<ArmorPlate> Prepare::pairStrip()[m[K’:
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:70:57:[m[K [01;35m[Kwarning: [m[Kformat ‘[01m[K%d[m[K’ expects argument of type ‘[01m[Kint[m[K’, but argument 5 has type ‘[01m[Ksize_t[m[K’ {aka ‘[01m[Klong unsigned int[m[K’} [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wformat=-Wformat=]8;;[m[K]
+   70 |                 RCLCPP_INFO(rclcpp::get_logger("info"), [01;35m[K"灯条 %d 和灯条 %d 【不】平行, = %.2f"[m[K, [32m[Ki[m[K, j, angle_diff);
+      |                                                         [01;35m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K  [32m[K~[m[K
+      |                                                                                                 [32m[K|[m[K
+      |                                                                                                 [32m[Ksize_t {aka long unsigned int}[m[K
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:70:64:[m[K [01;36m[Knote: [m[Kformat string is defined here
+   70 |                 RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 [01;36m[K%d[m[K 和灯条 %d 【不】平行, = %.2f", i, j, angle_diff);
+      |                                                               [01;36m[K~^[m[K
+      |                                                                [01;36m[K|[m[K
+      |                                                                [01;36m[Kint[m[K
+      |                                                               [32m[K%ld[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/include/utils/strip.h:2[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/include/prepare_algorithm.h:2[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:1[m[K:
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:70:57:[m[K [01;35m[Kwarning: [m[Kformat ‘[01m[K%d[m[K’ expects argument of type ‘[01m[Kint[m[K’, but argument 6 has type ‘[01m[Ksize_t[m[K’ {aka ‘[01m[Klong unsigned int[m[K’} [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wformat=-Wformat=]8;;[m[K]
+   70 |                 RCLCPP_INFO(rclcpp::get_logger("info"), [01;35m[K"灯条 %d 和灯条 %d 【不】平行, = %.2f"[m[K, i, [32m[Kj[m[K, angle_diff);
+      |                                                         [01;35m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K     [32m[K~[m[K
+      |                                                                                                    [32m[K|[m[K
+      |                                                                                                    [32m[Ksize_t {aka long unsigned int}[m[K
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:70:74:[m[K [01;36m[Knote: [m[Kformat string is defined here
+   70 |                 RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 [01;36m[K%d[m[K 【不】平行, = %.2f", i, j, angle_diff);
+      |                                                                         [01;36m[K~^[m[K
+      |                                                                          [01;36m[K|[m[K
+      |                                                                          [01;36m[Kint[m[K
+      |                                                                         [32m[K%ld[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/include/utils/strip.h:2[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/include/prepare_algorithm.h:2[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:1[m[K:
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:97:57:[m[K [01;35m[Kwarning: [m[Kformat ‘[01m[K%d[m[K’ expects argument of type ‘[01m[Kint[m[K’, but argument 5 has type ‘[01m[Ksize_t[m[K’ {aka ‘[01m[Klong unsigned int[m[K’} [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wformat=-Wformat=]8;;[m[K]
+   97 |                 RCLCPP_INFO(rclcpp::get_logger("info"), [01;35m[K"灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f"[m[K, [32m[Ki[m[K, j, armorplate_ratio);
+      |                                                         [01;35m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K  [32m[K~[m[K
+      |                                                                                                                 [32m[K|[m[K
+      |                                                                                                                 [32m[Ksize_t {aka long unsigned int}[m[K
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:97:64:[m[K [01;36m[Knote: [m[Kformat string is defined here
+   97 |                 RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 [01;36m[K%d[m[K 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f", i, j, armorplate_ratio);
+      |                                                               [01;36m[K~^[m[K
+      |                                                                [01;36m[K|[m[K
+      |                                                                [01;36m[Kint[m[K
+      |                                                               [32m[K%ld[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/include/utils/strip.h:2[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/include/prepare_algorithm.h:2[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:1[m[K:
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:97:57:[m[K [01;35m[Kwarning: [m[Kformat ‘[01m[K%d[m[K’ expects argument of type ‘[01m[Kint[m[K’, but argument 6 has type ‘[01m[Ksize_t[m[K’ {aka ‘[01m[Klong unsigned int[m[K’} [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wformat=-Wformat=]8;;[m[K]
+   97 |                 RCLCPP_INFO(rclcpp::get_logger("info"), [01;35m[K"灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f"[m[K, i, [32m[Kj[m[K, armorplate_ratio);
+      |                                                         [01;35m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K     [32m[K~[m[K
+      |                                                                                                                    [32m[K|[m[K
+      |                                                                                                                    [32m[Ksize_t {aka long unsigned int}[m[K
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:97:74:[m[K [01;36m[Knote: [m[Kformat string is defined here
+   97 |                 RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 [01;36m[K%d[m[K 旋转矩形的宽高比【不】合理, = %.2f", i, j, armorplate_ratio);
+      |                                                                         [01;36m[K~^[m[K
+      |                                                                          [01;36m[K|[m[K
+      |                                                                          [01;36m[Kint[m[K
+      |                                                                         [32m[K%ld[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/include/utils/strip.h:2[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/include/prepare_algorithm.h:2[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:1[m[K:
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:118:57:[m[K [01;35m[Kwarning: [m[Kformat ‘[01m[K%d[m[K’ expects argument of type ‘[01m[Kint[m[K’, but argument 5 has type ‘[01m[Ksize_t[m[K’ {aka ‘[01m[Klong unsigned int[m[K’} [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wformat=-Wformat=]8;;[m[K]
+  118 |                 RCLCPP_INFO(rclcpp::get_logger("info"), [01;35m[K"灯条 %d 和灯条 %d 短:长 的比【不】合理, = %.2f"[m[K, [32m[Ki[m[K, j, two_strip_ratio);
+      |                                                         [01;35m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K  [32m[K~[m[K
+      |                                                                                                           [32m[K|[m[K
+      |                                                                                                           [32m[Ksize_t {aka long unsigned int}[m[K
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:118:64:[m[K [01;36m[Knote: [m[Kformat string is defined here
+  118 |                 RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 [01;36m[K%d[m[K 和灯条 %d 短:长 的比【不】合理, = %.2f", i, j, two_strip_ratio);
+      |                                                               [01;36m[K~^[m[K
+      |                                                                [01;36m[K|[m[K
+      |                                                                [01;36m[Kint[m[K
+      |                                                               [32m[K%ld[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/include/utils/strip.h:2[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/include/prepare_algorithm.h:2[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:1[m[K:
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:118:57:[m[K [01;35m[Kwarning: [m[Kformat ‘[01m[K%d[m[K’ expects argument of type ‘[01m[Kint[m[K’, but argument 6 has type ‘[01m[Ksize_t[m[K’ {aka ‘[01m[Klong unsigned int[m[K’} [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wformat=-Wformat=]8;;[m[K]
+  118 |                 RCLCPP_INFO(rclcpp::get_logger("info"), [01;35m[K"灯条 %d 和灯条 %d 短:长 的比【不】合理, = %.2f"[m[K, i, [32m[Kj[m[K, two_strip_ratio);
+      |                                                         [01;35m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K     [32m[K~[m[K
+      |                                                                                                              [32m[K|[m[K
+      |                                                                                                              [32m[Ksize_t {aka long unsigned int}[m[K
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:118:74:[m[K [01;36m[Knote: [m[Kformat string is defined here
+  118 |                 RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 [01;36m[K%d[m[K 短:长 的比【不】合理, = %.2f", i, j, two_strip_ratio);
+      |                                                                         [01;36m[K~^[m[K
+      |                                                                          [01;36m[K|[m[K
+      |                                                                          [01;36m[Kint[m[K
+      |                                                                         [32m[K%ld[m[K
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:149:35:[m[K [01;35m[Kwarning: [m[Kcomparison of integer expressions of different signedness: ‘[01m[Kint[m[K’ and ‘[01m[Kstd::vector<Strip>::size_type[m[K’ {aka ‘[01m[Klong unsigned int[m[K’} [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wsign-compare-Wsign-compare]8;;[m[K]
+  149 |                 for (int j = 0; [01;35m[Kj < strip.size()[m[K; j++)
+      |                                 [01;35m[K~~^~~~~~~~~~~~~~[m[K
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:151:31:[m[K [01;35m[Kwarning: [m[Kcomparison of integer expressions of different signedness: ‘[01m[Ksize_t[m[K’ {aka ‘[01m[Klong unsigned int[m[K’} and ‘[01m[Kint[m[K’ [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wsign-compare-Wsign-compare]8;;[m[K]
+  151 |                         if ([01;35m[Ki == j[m[K || moderation[i][j] <= 25.00) continue; // 跳过 自己 和 没有合理性的，以及合理性不高的
+      |                             [01;35m[K~~^~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/include/utils/strip.h:2[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/include/prepare_algorithm.h:2[m[K,
+                 from [01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:1[m[K:
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:165:57:[m[K [01;35m[Kwarning: [m[Kformat ‘[01m[K%d[m[K’ expects argument of type ‘[01m[Kint[m[K’, but argument 5 has type ‘[01m[Ksize_t[m[K’ {aka ‘[01m[Klong unsigned int[m[K’} [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wformat=-Wformat=]8;;[m[K]
+  165 |                 RCLCPP_INFO(rclcpp::get_logger("info"), [01;35m[K"灯条 %d 的最佳配对是 灯条 %d"[m[K, [32m[Ki[m[K, moderation_number[i]);
+      |                                                         [01;35m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K  [32m[K~[m[K
+      |                                                                                         [32m[K|[m[K
+      |                                                                                         [32m[Ksize_t {aka long unsigned int}[m[K
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:165:64:[m[K [01;36m[Knote: [m[Kformat string is defined here
+  165 |                 RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 [01;36m[K%d[m[K 的最佳配对是 灯条 %d", i, moderation_number[i]);
+      |                                                               [01;36m[K~^[m[K
+      |                                                                [01;36m[K|[m[K
+      |                                                                [01;36m[Kint[m[K
+      |                                                               [32m[K%ld[m[K
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:168:91:[m[K [01;35m[Kwarning: [m[Kcomparison of integer expressions of different signedness: ‘[01m[K__gnu_cxx::__alloc_traits<std::allocator<int>, int>::value_type[m[K’ {aka ‘[01m[Kint[m[K’} and ‘[01m[Ksize_t[m[K’ {aka ‘[01m[Klong unsigned int[m[K’} [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wsign-compare-Wsign-compare]8;;[m[K]
+  168 |                 if (moderation_number[i] != -1 && moderation_number[moderation_number[i]] == i) // 最佳灯条是存在的灯条
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:[m[K In member function ‘[01m[Kstd::vector<Strip> Prepare::findAndJudgeLightStrip()[m[K’:
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:217:27:[m[K [01;35m[Kwarning: [m[Kcomparison of integer expressions of different signedness: ‘[01m[Kint[m[K’ and ‘[01m[Kstd::vector<std::vector<cv::Point_<int> > >::size_type[m[K’ {aka ‘[01m[Klong unsigned int[m[K’} [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wsign-compare-Wsign-compare]8;;[m[K]
+  217 |         for (int i = 0; [01;35m[Ki < contours.size()[m[K; i++)
+      |                         [01;35m[K~~^~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:423:259:[m[K [01;35m[Kwarning: [m[Kleft operand of comma operator has no effect [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-value-Wunused-value]8;;[m[K]
+  423 |                         cv::putText(img_show, "[" + std::to_string((int)j + 1) + "][" + std::to_string((int)corners[j].x) + ", " + std::to_string((int)corners[j].y) + "]", cv::Point(corners[j].x, corners[j].y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(([01;35m[K255[m[K, 255, 255)), 0.65);
+      |                                                                                                                                                                                                                                                                   [01;35m[K^~~[m[K
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:423:269:[m[K [01;35m[Kwarning: [m[Kright operand of comma operator has no effect [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-value-Wunused-value]8;;[m[K]
+  423 |                         cv::putText(img_show, "[" + std::to_string((int)j + 1) + "][" + std::to_string((int)corners[j].x) + ", " + std::to_string((int)corners[j].y) + "]", cv::Point(corners[j].x, corners[j].y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar((255, 255, [01;35m[K255[m[K)), 0.65);
+      |                                                                                                                                                                                                                                                                             [01;35m[K^~~[m[K
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:[m[K In member function ‘[01m[Kvoid Prepare::preProcessing(cv::Mat&)[m[K’:
+[01m[K/home/cly/project/src/img_processing/src/prepare_algorithm.cpp:526:21:[m[K [01;35m[Kwarning: [m[Kcomparison with string literal results in unspecified behavior [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Waddress-Waddress]8;;[m[K]
+  526 |     if(CHOSEN_COLOR [01;35m[K=[m[K= "red") this->mask = high_red; // 最终掩码图
+      |                     [01;35m[K^[m[K
+gmake[2]: *** [CMakeFiles/pre_processing_node.dir/build.make:93：CMakeFiles/pre_processing_node.dir/src/prepare_algorithm.cpp.o] 错误 1
+gmake[2]: *** 正在等待未完成的任务....
+gmake[2]: *** [CMakeFiles/pre_processing_node.dir/build.make:79：CMakeFiles/pre_processing_node.dir/src/pre_processing_node.cpp.o] 错误 1
+gmake[1]: *** [CMakeFiles/Makefile2:153：CMakeFiles/pre_processing_node.dir/all] 错误 2
+gmake: *** [Makefile:146：all] 错误 2

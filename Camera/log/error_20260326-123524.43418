@@ -1,0 +1,47 @@
+Log file created at: 2026/03/26 12:35:24
+Running on machine: acuteluo
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+E0326 12:35:24.339526 43418 U3VControl.cpp:225] WriteAddr:268435820, BulkOut error:-4
+E0326 12:35:24.339675 43418 U3VControl.cpp:225] WriteAddr:268435592, BulkOut error:-4
+E0326 12:35:24.339682 43418 CameraU3VBase.cpp:3162] Function:set_image_size, Code:WriteMyrm(MYRM_OFFSET(resolution_mod), &ResMod, sizeof(ResMod)), Error:-52
+E0326 12:35:24.339686 43418 CameraU3VBase.cpp:351] Function:SetImageSize, Code:set_image_size(iResMode, iHoffset, iVOffset, iSensorOutWidth, iSensorOutHeight), Error:-52
+E0326 12:35:24.339690 43418 CameraU3VBase.cpp:376] Function:SetImageResolution, Code:SetImageSize(sImageSize.iIndex == 0xff, &sImageSize), Error:-52
+E0326 12:35:24.350585 43418 U3VControl.cpp:225] WriteAddr:268435820, BulkOut error:-4
+E0326 12:35:24.350612 43418 U3VControl.cpp:225] WriteAddr:268435592, BulkOut error:-4
+E0326 12:35:24.350618 43418 CameraU3VBase.cpp:3162] Function:set_image_size, Code:WriteMyrm(MYRM_OFFSET(resolution_mod), &ResMod, sizeof(ResMod)), Error:-52
+E0326 12:35:24.350621 43418 CameraU3VBase.cpp:351] Function:SetImageSize, Code:set_image_size(iResMode, iHoffset, iVOffset, iSensorOutWidth, iSensorOutHeight), Error:-52
+E0326 12:35:24.350625 43418 CameraU3VBase.cpp:376] Function:SetImageResolution, Code:SetImageSize(sImageSize.iIndex == 0xff, &sImageSize), Error:-52
+E0326 12:35:24.350634 43418 U3VControl.cpp:76] ReadAddr:268435644, BulkOut error:-4
+E0326 12:35:24.350637 43418 CameraU3VBase.cpp:1930] Function:SetOutPutIOModeReg, Code:get_gpio_output_mode(regMode), Error:-52
+E0326 12:35:24.350641 43418 CameraU3VBase.cpp:1839] Function:SetOutPutIOMode, Code:SetOutPutIOModeReg(iOutputIOIndex, iMode), Error:-52
+E0326 12:35:24.350647 43418 U3VControl.cpp:76] ReadAddr:268435600, BulkOut error:-4
+E0326 12:35:24.350651 43418 CameraU3VBase.cpp:1940] Function:SetOutPutIOStateReg, Code:get_gpio_output(RegData), Error:-52
+E0326 12:35:24.350656 43418 U3VControl.cpp:76] ReadAddr:268435644, BulkOut error:-4
+E0326 12:35:24.350659 43418 CameraU3VBase.cpp:1930] Function:SetOutPutIOModeReg, Code:get_gpio_output_mode(regMode), Error:-52
+E0326 12:35:24.350661 43418 CameraU3VBase.cpp:1839] Function:SetOutPutIOMode, Code:SetOutPutIOModeReg(iOutputIOIndex, iMode), Error:-52
+E0326 12:35:24.350724 43418 U3VControl.cpp:76] ReadAddr:268435600, BulkOut error:-4
+E0326 12:35:24.350733 43418 CameraU3VBase.cpp:1940] Function:SetOutPutIOStateReg, Code:get_gpio_output(RegData), Error:-52
+E0326 12:35:24.376839 43418 CameraU3VBase.cpp:395] Function:SetExpTime, Code:set_exposure_time((float)fExpTime), Error:-19
+E0326 12:35:24.376906 43418 CameraU3VBase.cpp:395] Function:SetExpTime, Code:set_exposure_time((float)fExpTime), Error:-19
+E0326 12:35:24.376912 43418 CameraU3VBase.cpp:709] Function:UpdateParam, Code:SetExpTime(m_fExptime), Error:-19
+E0326 12:35:24.376916 43418 CameraU3VBase.cpp:607] Function:Init, Code:UpdateParam(-1), Error:-19
+E0326 12:35:24.468346 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:24.568840 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:24.669353 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:24.769665 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:24.869868 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:24.970322 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:25.070820 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:25.170977 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:25.271112 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:25.371308 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:25.471467 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:25.571645 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:25.671806 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:25.772230 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:25.872440 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:25.972608 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:26.073079 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:26.173661 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:26.273840 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0326 12:35:26.374034 43443 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4

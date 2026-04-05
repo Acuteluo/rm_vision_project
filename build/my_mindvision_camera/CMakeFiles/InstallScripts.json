@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/cly/project/build/my_mindvision_camera/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

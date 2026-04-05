@@ -1,0 +1,36 @@
+Log file created at: 2026/03/29 11:39:35
+Running on machine: acuteluo
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+E0329 11:39:35.489210 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:35.589375 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:35.689534 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:35.789697 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:35.889865 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:35.990025 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:36.090207 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:36.190340 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:36.290484 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:36.390615 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:36.490770 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:36.590919 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:36.691429 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:36.791929 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:36.892462 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:36.992983 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:37.093166 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:37.193306 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:37.293452 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:37.393576 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:37.493705 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:37.593794 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:37.693933 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:37.794061 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:37.894196 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:37.994320 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:38.094450 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:38.194630 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:38.294812 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:38.395291 11869 U3VControl.cpp:76] ReadAddr:268435728, BulkOut error:-4
+E0329 11:39:39.263334 11844 U3VControl.cpp:225] WriteAddr:268435460, BulkOut error:-4
+E0329 11:39:39.263386 11844 CameraU3VBase.cpp:782] Function:PauseVideo, Code:set_acquisition_command(0), Error:-52
+E0329 11:39:39.263396 11844 U3VControl.cpp:225] WriteAddr:268435724, BulkOut error:-4

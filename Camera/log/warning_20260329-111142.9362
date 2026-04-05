@@ -1,0 +1,4 @@
+Log file created at: 2026/03/29 11:11:42
+Running on machine: acuteluo
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+W0329 11:11:42.849574  9387 MVCameraBase.cpp:100] Device:(name:MV-SUA134GC#0 sn:042162020049)Lost

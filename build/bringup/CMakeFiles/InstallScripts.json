@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/cly/project/build/bringup/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
