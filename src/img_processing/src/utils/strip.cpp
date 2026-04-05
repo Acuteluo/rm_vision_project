@@ -42,7 +42,7 @@ Strip::Strip(cv::RotatedRect rotated_rect, double angle, double width, double he
 	this->center = rotated_rect.center; // 灯条中心点
     this->color = color; // 颜色 red/blue/white
 
-
+ 
 	// 2. 获取灯条的上下端点 需要用固定大小的数组接收再转成 vector 来排序，以确定上下端点
 	cv::Point2f points[4]; 
 	rotated_rect.points(points);
