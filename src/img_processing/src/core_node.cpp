@@ -13,14 +13,19 @@ public:
         RCLCPP_INFO(this->get_logger(), "CoreNode 节点创建成功! ");
 
         // 声明 QoS 参数
+
+        // 适用于 mind_vision 的 qos
         this->declare_parameter("use_sensor_data_qos", false);
-        bool use_sensor_data_qos = this->get_parameter("use_sensor_data_qos").as_bool();
+        bool qos = this->get_parameter("use_sensor_data_qos").as_bool();
+        
+        // 适用于 galaxy 的 qos
+        // auto qos = rclcpp::SensorDataQoS(); 
 
         // 订阅原图
-        sub_ = this->create_subscription<sensor_msgs::msg::Image>("image_raw", use_sensor_data_qos, std::bind(&ProcessNode::process_callback, this, std::placeholders::_1));
+        sub_ = this->create_subscription<sensor_msgs::msg::Image>("image_raw", qos, std::bind(&ProcessNode::process_callback, this, std::placeholders::_1));
     
         // 发布
-        pub_ = this->create_publisher<serial_driver_interfaces::msg::SerialDriver>("serial_driver", 10);
+        pub_ = this->create_publisher<serial_driver_interfaces::msg::SerialDriver>("/serial_driver", 10);
     }
 
 private:
@@ -79,8 +84,7 @@ private:
         }
 
         pub_->publish(serial_driver); // 发布消息 到 serial_driver 话题
-
-        RCLCPP_INFO(this->get_logger(), " ------------> 串口消息 正在发布...");
+        RCLCPP_INFO(this->get_logger(), ">>>>>>>>>>>>>>>> corenode 发布了消息: yaw=%.2f pitch=%.2f", serial_driver.yaw, serial_driver.pitch);
 
 
 

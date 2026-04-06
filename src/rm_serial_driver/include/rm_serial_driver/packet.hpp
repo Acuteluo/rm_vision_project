@@ -29,7 +29,7 @@ struct SendPacket
   float pitch;    // 后 pitch
   // --- 有效数据止 ---
 
-  uint16_t crc;   // CRC16 校验值
+  uint16_t crc = 0X00FE;   // CRC16 校验值
 } __attribute__((packed));
 
 

@@ -67,6 +67,8 @@ private:
 	std::vector<cv::Point2f> vertice_pixel; // [像素坐标系]装甲板四个角点，[顺序：左上，左下，右下，右上]
 	std::vector<cv::Point3f> vertice_world; // [世界坐标系]装甲板四个角点，[顺序：左上，左下，右下，右上]，单位mm
 
+    std::string CAMERA_NAME; // 相机名称，决定了内参矩阵和畸变矩阵
+
 	cv::Mat K; // 内参矩阵
 	cv::Mat D; // 畸变矩阵
 
@@ -76,13 +78,14 @@ private:
 
     cv::Mat R; // 旋转矩阵
 
-	int image_width; //图像宽 
-	int image_height; //图像高
+
+
+    std::string ARMORPLATE_TYPE = "normal"; // 装甲板类型，英雄/步兵，决定了装甲板的世界坐标系点的位置
 
     double armorplate_width; // 装甲板宽度，单位mm
     double armorplate_height; // 装甲板高度，单位mm
 
-    std::string CAMERA_NAME; // 相机名称，决定了内参矩阵和畸变矩阵
+    
 
     cv::Mat img_show; // 要画的图
 

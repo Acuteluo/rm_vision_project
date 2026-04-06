@@ -300,6 +300,51 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 
 			cv::RotatedRect temp_rotatedRect = cv::minAreaRect(contours[i]); // 先获得旋转矩形
 
+            // 获取四个顶点（整数精度）
+            cv::Point2f vertices[4];
+            temp_rotatedRect.points(vertices);
+
+            // 将顶点放入 vector 以便 cornerSubPix 处理
+            std::vector<cv::Point2f> vec_vertices(vertices, vertices + 4);
+
+
+            // 检查所有顶点是否在图像范围内（防止越界）
+            bool all_in_range = true;
+            for (const auto& pt : vec_vertices) 
+            {
+                if (pt.x < 3 || pt.x >= img.cols - 3 || pt.y < 3 || pt.y >= img.rows - 3) 
+                {
+                    all_in_range = false;
+                    break;
+                }
+            }
+
+
+            // 只有当所有顶点都在范围内时才进行亚像素优化，否则跳过以避免越界访问
+            if(all_in_range)
+            {
+                // 设置亚像素细化的参数
+                cv::Size winSize(5, 5);          // 搜索窗口半宽为5，实际窗口 11x11
+                cv::Size zeroZone(-1, -1);       // 不使用死区
+                cv::TermCriteria criteria(cv::TermCriteria::EPS + cv::TermCriteria::COUNT, 30, 0.01);
+
+                // 执行亚像素细化（必须在灰度图上进行）
+                cv::cornerSubPix(this->img_gray, vec_vertices, winSize, zeroZone, criteria);
+
+                // 将细化后的顶点拷贝回 vertices
+                for (int i = 0; i < 4; ++i) 
+                {
+                    vertices[i] = vec_vertices[i];
+                }
+
+                // 【可选】用细化后的顶点重新生成一个更精确的旋转矩形（推荐）
+                cv::RotatedRect refined_rect = cv::minAreaRect(vec_vertices);
+
+                temp_rotatedRect = refined_rect; // 这样 temp_rotatedRect 就是亚像素优化后的旋转矩形了
+
+                RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 的旋转矩形经过亚像素优化了！", i);
+            }
+
 
 			double angle = temp_rotatedRect.angle; // 获取角度
 
@@ -308,6 +353,7 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 			double height = size.height; // 高
 
             corners_num = contours[i].size(); // 角点数量
+
 
 
 			// ------- 2. 角度处理 -------
@@ -431,6 +477,11 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
                 {
                     color = "blue"; // blue
                 }
+            }
+
+            else if(red_edge_average > 200.00 && blue_edge_average > 200.00) // 红蓝值都高，一定是白炽灯
+            {
+                color = "white";
             }
 
             else if(saturation_average > 50.00 && saturation_edge_average > 50.00 && green_edge_average < 150.00) // 总体饱和度高，边缘饱和度也高，绿值低，说明是灯条

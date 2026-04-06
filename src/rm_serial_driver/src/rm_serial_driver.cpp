@@ -34,25 +34,38 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options)
 {
   RCLCPP_INFO(get_logger(), "Start SerialDriver!");
 
+  RCLCPP_INFO(get_logger(), "Step 1: getParams()");
   getParams();
 
+
+  RCLCPP_INFO(get_logger(), "Step 2: getParams done, device_name=%s", device_name_.c_str());
   try {
+
+    RCLCPP_INFO(get_logger(), "Step 3: init_port...");
     serial_driver_->init_port(device_name_, *device_config_);
+
+    RCLCPP_INFO(get_logger(), "Step 4: init_port success");
     if (!serial_driver_->port()->is_open()) {
+      RCLCPP_INFO(get_logger(), "Step 5: opening port...");
       serial_driver_->port()->open();
+
+      RCLCPP_INFO(get_logger(), "Step 6: port opened");
       receive_thread_ = std::thread(&RMSerialDriver::receiveData, this);
+
+      RCLCPP_INFO(get_logger(), "Step 7: receive thread started");
     }
   } catch (const std::exception & ex) {
     RCLCPP_ERROR(
       get_logger(), "Error creating serial port: %s - %s", device_name_.c_str(), ex.what());
-    throw ex;
+    // throw ex;
   }
 
-
+  RCLCPP_INFO(get_logger(), "Step 8: creating subscription");
   //Create Subscription
   target_sub_ = this->create_subscription<serial_driver_interfaces::msg::SerialDriver>(
     "/serial_driver", 10,
     std::bind(&RMSerialDriver::sendData, this, std::placeholders::_1));
+  RCLCPP_INFO(get_logger(), "Step 9: subscription created");
 
 }
 
@@ -126,6 +139,9 @@ void RMSerialDriver::sendData(const serial_driver_interfaces::msg::SerialDriver:
     
     std::vector<uint8_t> data = toVector(packet);
     serial_driver_->port()->send(data);
+
+    RCLCPP_INFO(get_logger(), "-------------------------------> 串口发送的数据 yaw=%.2f pitch=%.2f", msg->yaw, msg->pitch);
+
   } catch (const std::exception & ex) {
     RCLCPP_ERROR(get_logger(), "Error while sending data: %s", ex.what());
     reopenPort();

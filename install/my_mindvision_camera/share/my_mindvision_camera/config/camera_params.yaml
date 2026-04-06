@@ -1,6 +1,1 @@
-/mv_camera:
-  ros__parameters:
-    camera_name: mv_camera
-
-    exposure_time: 4000 
-    analog_gain: 8
+/home/cly/project/src/my_mindvision_camera/config/camera_params.yaml

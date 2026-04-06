@@ -20,17 +20,24 @@ void ArmorPlate::setParam()
         fs["image_width"] >> image_width;
         fs["image_height"] >> image_height;
     */
-
-
-    // 设置 图像宽高
-    this->image_width = 1280;
-    this->image_height = 1024;
     
 
-    // [步兵] 装甲板的物理参数
-    this->armorplate_width = 135.00; // 装甲板宽，单位mm
-    this->armorplate_height = 55.00; // 装甲板高，单位mm
-    
+    // 根据不同的装甲板类型设置装甲板的物理参数，目前分为 步兵 和 英雄 两种
+    if(this->ARMORPLATE_TYPE == "normal")
+    {
+        // [步兵] 装甲板的物理参数
+        this->armorplate_width = 135.00; // 装甲板宽，单位mm
+        this->armorplate_height = 55.00; // 装甲板高，单位mm
+    }
+
+    else
+    {
+        // [英雄] 装甲板的物理参数
+        this->armorplate_width = 225.00; // 装甲板宽，单位mm
+        this->armorplate_height = 55.00; // 装甲板高，单位mm
+    }
+
+
 
     // 装甲板的世界坐标系 以装甲板中心为原点的右手系 -> x朝右，y朝上，z朝外
     this->vertice_world.push_back(cv::Point3f(-armorplate_width/2, +armorplate_height/2, 0.00)); // 左上（-, +）
@@ -92,7 +99,7 @@ cv::Mat ArmorPlate::getImgShow()
 
 
 
-// 有参构造，放入两个灯带 + 置信度 + 相机名称，构造装甲板
+// 有参构造，放入两个灯带 + 置信度 + 相机名称 + 装甲板类型，构造装甲板
 ArmorPlate::ArmorPlate(Strip a, Strip b, double moderation, std::string camera_name)
 {
     // ------- 1. 先设置基础参数 -------

@@ -44,19 +44,26 @@ private:
 	*/
 	static bool sortStripByX(const Strip& a, const Strip& b);
 
+
+    /////// 图像相关 /////     
+
     cv::Mat img; // 原图
     cv::Mat img_show; // 用来显示信息的图
     cv::Mat img_hsv; // hsv图
 	cv::Mat mask; // 最终初步掩码图
     cv::Mat img_gray; // 灰度图 -> 用于亚像素优化
 
-	
+
+
+	////// 灯条配对成装甲板相关 /////
+
 	std::vector<Strip> strip; // 灯条集合
 	std::vector<ArmorPlate> armorplate; // 装甲板集合
 
 
 
     // ------ 预处理关键参数（请手动设置！）------
+
     std::string CHOSEN_COLOR = "red"; // 选择检测的颜色 red / blue
     std::string CAMERA_NAME = "mind_vision"; // 选择相机名称 mind_vision / galaxy ，决定了预处理的参数
 };
