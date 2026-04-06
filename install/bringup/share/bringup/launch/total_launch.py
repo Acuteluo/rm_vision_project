@@ -7,8 +7,8 @@ from launch_ros.actions import Node
 # from launch.actions import DeclareLaunchArgument  # 声明键值对
 # from launch.substitutions import LaunchConfiguration  # 通过键解析值
 # 文件包含相关-------------------
-# from launch.actions import IncludeLaunchDescription
-# from launch.launch_description_sources import PythonLaunchDescriptionSource  # 被包含的 launch 文件路径封装成这个类的对象
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource  # 被包含的 launch 文件路径封装成这个类的对象
 # 分组相关----------------------
 # from launch_ros.actions import PushRosNamespace  # 设置命名空间
 # from launch.actions import GroupAction
@@ -19,6 +19,9 @@ from launch_ros.actions import Node
 # os.path.join 拼装路径, get_package_share_directory(包名)可以获取到share下面这个包名文件夹的路径，再拼接上 config 和 .yaml即可
 # from ament_index_python.packages import get_package_share_directory
 # import os
+
+from launch_ros.substitutions import FindPackageShare
+
 
 def generate_launch_description():
     
@@ -48,4 +51,10 @@ def generate_launch_description():
 
     pre_processing_node = Node(package="img_processing", executable="pre_processing_node", name="pre_processing_node")
 
-    return LaunchDescription([camera, pre_processing_node])
+    serial_driver_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            FindPackageShare('rm_serial_driver'), '/launch', '/serial_driver.launch.py'
+        ])
+    )
+
+    return LaunchDescription([camera, pre_processing_node, serial_driver_launch])

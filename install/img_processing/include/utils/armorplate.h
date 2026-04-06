@@ -10,8 +10,8 @@ public:
 	ArmorPlate(); // 默认构造
 
 
-	// 传入一左一右两个灯带组装成一个装甲板
-	ArmorPlate(Strip a, Strip b); 
+	// 传入 一左一右两个灯带 + 置信度 组装成一个装甲板
+	ArmorPlate(Strip a, Strip b, double moderation); 
 
 
     // 设置参数
@@ -48,6 +48,13 @@ public:
     cv::Point2f br; // 装甲板右下
     cv::Point2f tr; // 装甲板右上
 
+    double t_yaw; //偏航角
+	double t_pitch; //俯仰角
+	double t_distance; //距离
+
+
+    double moderation; // 置信度
+
 
 private:
 
@@ -69,9 +76,5 @@ private:
 
     double armorplate_width; // 装甲板宽度，单位mm
     double armorplate_height; // 装甲板高度，单位mm
-
-	double t_yaw; //偏航角
-	double t_pitch; //俯仰角
-	double t_distance; //距离
 
 };

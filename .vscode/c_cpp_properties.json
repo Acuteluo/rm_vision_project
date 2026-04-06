@@ -7,7 +7,9 @@
                 "/opt/ros/humble/include/**",
                 "/usr/include/boost/compute/interop",
                 "/usr/include/opencv4",
-                "/usr/include/eigen3"
+                "/usr/include/eigen3",
+                "${workspaceFolder}/install/serial_driver_interfaces/include/**",
+                "${workspaceFolder}/src/rm_serial_driver/include/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

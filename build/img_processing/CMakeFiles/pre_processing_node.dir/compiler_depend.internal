@@ -3,6 +3,12 @@
 
 CMakeFiles/pre_processing_node.dir/src/pre_processing_node.cpp.o
  /home/cly/project/src/img_processing/src/pre_processing_node.cpp
+ /home/cly/project/install/serial_driver_interfaces/include/serial_driver_interfaces/serial_driver_interfaces/msg/detail/serial_driver__builder.hpp
+ /home/cly/project/install/serial_driver_interfaces/include/serial_driver_interfaces/serial_driver_interfaces/msg/detail/serial_driver__struct.hpp
+ /home/cly/project/install/serial_driver_interfaces/include/serial_driver_interfaces/serial_driver_interfaces/msg/detail/serial_driver__traits.hpp
+ /home/cly/project/install/serial_driver_interfaces/include/serial_driver_interfaces/serial_driver_interfaces/msg/detail/serial_driver__type_support.hpp
+ /home/cly/project/install/serial_driver_interfaces/include/serial_driver_interfaces/serial_driver_interfaces/msg/rosidl_generator_cpp__visibility_control.hpp
+ /home/cly/project/install/serial_driver_interfaces/include/serial_driver_interfaces/serial_driver_interfaces/msg/serial_driver.hpp
  /home/cly/project/src/img_processing/include/prepare_algorithm.h
  /home/cly/project/src/img_processing/include/utils/armorplate.h
  /home/cly/project/src/img_processing/include/utils/strip.h
