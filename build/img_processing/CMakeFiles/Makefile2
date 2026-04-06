@@ -63,11 +63,11 @@ CMAKE_BINARY_DIR = /home/cly/project/build/img_processing
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/pre_processing_node.dir/all
+all: CMakeFiles/core_node.dir/all
 .PHONY : all
 
 # The main recursive "codegen" target.
-codegen: CMakeFiles/pre_processing_node.dir/codegen
+codegen: CMakeFiles/core_node.dir/codegen
 .PHONY : codegen
 
 # The main recursive "preinstall" target.
@@ -77,7 +77,7 @@ preinstall:
 # The main recursive "clean" target.
 clean: CMakeFiles/uninstall.dir/clean
 clean: CMakeFiles/img_processing_uninstall.dir/clean
-clean: CMakeFiles/pre_processing_node.dir/clean
+clean: CMakeFiles/core_node.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -145,36 +145,36 @@ CMakeFiles/img_processing_uninstall.dir/clean:
 .PHONY : CMakeFiles/img_processing_uninstall.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/pre_processing_node.dir
+# Target rules for target CMakeFiles/core_node.dir
 
 # All Build rule for target.
-CMakeFiles/pre_processing_node.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/cly/project/build/img_processing/CMakeFiles --progress-num=1,2,3,4,5 "Built target pre_processing_node"
-.PHONY : CMakeFiles/pre_processing_node.dir/all
+CMakeFiles/core_node.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/cly/project/build/img_processing/CMakeFiles --progress-num=1,2,3,4,5 "Built target core_node"
+.PHONY : CMakeFiles/core_node.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/pre_processing_node.dir/rule: cmake_check_build_system
+CMakeFiles/core_node.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/cly/project/build/img_processing/CMakeFiles 5
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/pre_processing_node.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/core_node.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/cly/project/build/img_processing/CMakeFiles 0
-.PHONY : CMakeFiles/pre_processing_node.dir/rule
+.PHONY : CMakeFiles/core_node.dir/rule
 
 # Convenience name for target.
-pre_processing_node: CMakeFiles/pre_processing_node.dir/rule
-.PHONY : pre_processing_node
+core_node: CMakeFiles/core_node.dir/rule
+.PHONY : core_node
 
 # codegen rule for target.
-CMakeFiles/pre_processing_node.dir/codegen:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/cly/project/build/img_processing/CMakeFiles --progress-num=1,2,3,4,5 "Finished codegen for target pre_processing_node"
-.PHONY : CMakeFiles/pre_processing_node.dir/codegen
+CMakeFiles/core_node.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/cly/project/build/img_processing/CMakeFiles --progress-num=1,2,3,4,5 "Finished codegen for target core_node"
+.PHONY : CMakeFiles/core_node.dir/codegen
 
 # clean rule for target.
-CMakeFiles/pre_processing_node.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/clean
-.PHONY : CMakeFiles/pre_processing_node.dir/clean
+CMakeFiles/core_node.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/clean
+.PHONY : CMakeFiles/core_node.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

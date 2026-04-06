@@ -223,14 +223,14 @@ std::vector<ArmorPlate> Prepare::pairStrip()
 
 
 	// 4. 放入装甲板集合中
-    std::vector<bool> is_used = {false}; // 记录灯条是否已经被配对过了，避免重复配对
+    std::vector<bool> is_used(strip.size(), false); // 记录灯条是否已经被配对过了，避免重复配对，有多少个灯条就有多少个 bool
 
 	for (int i = 0; i < strip.size(); i++)
 	{
 		//如果双向奔赴，那就是他俩了。当然不能同时奔赴 -1
 		if (!is_used[i] && moderation_number[i] != -1 && moderation_number[moderation_number[i]] == i) // 最佳灯条是存在的灯条
 		{
-			armorplate.push_back(ArmorPlate(strip[i], strip[moderation_number[i]])); // 传入两个灯条，构造成装甲板
+			armorplate.push_back(ArmorPlate(strip[i], strip[moderation_number[i]], moderation[i][moderation_number[i]], CAMERA_NAME)); // 传入两个灯条 + 置信度 + 相机名称，构造成装甲板
             
             is_used[i] = true; // 记录灯条 i 已经被配对过了
             is_used[moderation_number[i]] = true; // 记录灯条 moderation_number[i] 已经被配对过了
@@ -296,9 +296,10 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 
 
 
-            // ------- 1. 获取参数 -------
+            // ------- 1. 获取参数 + 亚像素优化-------
 
 			cv::RotatedRect temp_rotatedRect = cv::minAreaRect(contours[i]); // 先获得旋转矩形
+
 
 			double angle = temp_rotatedRect.angle; // 获取角度
 
@@ -556,65 +557,138 @@ cv::Mat Prepare::getImgShow()
 * @return   无返回值
 */
 void Prepare::preProcessing(cv::Mat& img)
-{ 
-    int THERESHOLD_VALUE = 220; // 二值化阈值
+{   
+
+    if(this->CAMERA_NAME == "mind_vision")
+    {
+        int THERESHOLD_VALUE = 220; // 二值化阈值
 
 
-    std::vector<cv::Mat> channels_bgr;
-    std::vector<cv::Mat> channels_hsv;
-    cv::Mat B, G, R; // bgr三通道值
-    cv::Mat red_differ, blue_differ, mask; // 红色和蓝色灯条 BGR最高最低相差值掩码（需要吗？）
-    cv::Mat img_red, img_blue;
-    cv::Mat high_red, high_blue;
-    cv::Mat img_hsv; // hsv
+        std::vector<cv::Mat> channels_bgr;
+        std::vector<cv::Mat> channels_hsv;
+        cv::Mat B, G, R; // bgr三通道值
+        cv::Mat red_differ, blue_differ, mask; // 红色和蓝色灯条 BGR最高最低相差值掩码（需要吗？）
+        cv::Mat img_red, img_blue;
+        cv::Mat high_red, high_blue;
+        cv::Mat img_hsv; // hsv
+        cv::Mat img_gray; // 灰度图
 
-    this->img_show = img.clone(); // 复制得到绘图图像，对 img_show 的操作直接在 findcontours 等等函数里
+        this->img_show = img.clone(); // 复制得到绘图图像，对 img_show 的操作直接在 findcontours 等等函数里
 
-    // // 1. 亮度调整 同时调整对比度和亮度，但目前不是必须
-    // cv::Mat bright;
-    // img.convertTo(bright, -1, 1.2, 30);
+        // // 1. 亮度调整 同时调整对比度和亮度，但目前不是必须
+        // cv::Mat bright;
+        // img.convertTo(bright, -1, 1.2, 30);
 
-    // 2. 得到 hsv，尝试区分灯条和白炽灯
-    cv::cvtColor(img, img_hsv, cv::COLOR_BGR2HSV);
+        // 2. 得到 hsv，尝试区分灯条和白炽灯。得到 img_gray，用于亚像素优化
+        cv::cvtColor(img, img_hsv, cv::COLOR_BGR2HSV);
+        cv::cvtColor(img, img_gray, cv::COLOR_BGR2GRAY);
 
-    // 3. 分离bgr三通道的值
-    split(img, channels_bgr);
+        // 3. 分离bgr三通道的值
+        split(img, channels_bgr);
 
-    B = channels_bgr[0];
-    G = channels_bgr[1];
-    R = channels_bgr[2];
+        B = channels_bgr[0];
+        G = channels_bgr[1];
+        R = channels_bgr[2];
 
-    // 4. 高阈值二值化   红图: 红色灯条 + 白炽灯灯条  蓝图: 蓝色灯条 + 白炽灯灯条
-    cv::threshold(R, high_red, THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
-    cv::threshold(B, high_blue, THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
+        // 4. 高阈值二值化   红图: 红色灯条 + 白炽灯灯条  蓝图: 蓝色灯条 + 白炽灯灯条
+        cv::threshold(R, high_red, THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
+        cv::threshold(B, high_blue, THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
 
-    // // 5. 垂直方向模糊 重新变为二值化
-    /*
-        但实际效果需要验证
+        // // 5. 垂直方向模糊 重新变为二值化
+        /*
+            但实际效果需要验证
 
-        建议你用实际图像测试一下，观察二值化后的灯条掩码是否有以下情况：
+            建议你用实际图像测试一下，观察二值化后的灯条掩码是否有以下情况：
 
-        断裂：如果灯条中心仍有空洞，导致掩码分成上下两段，则需要垂直模糊来连接。
-        小缺口：边缘有小缺口，但整体连通，可以不处理。
-        横向散光：如果仍有轻微横向扩散，垂直模糊也能帮助抑制（因为它只在垂直方向平滑）。
-    */
-    // cv::blur(high_red, high_red, cv::Size(1, 3));
-    // cv::blur(high_blue, high_blue, cv::Size(1, 3));
-    // cv::threshold(high_red, high_red, 1, 255, cv::THRESH_BINARY);
-    // cv::threshold(high_blue, high_blue, 1, 255, cv::THRESH_BINARY);  
+            断裂：如果灯条中心仍有空洞，导致掩码分成上下两段，则需要垂直模糊来连接。
+            小缺口：边缘有小缺口，但整体连通，可以不处理。
+            横向散光：如果仍有轻微横向扩散，垂直模糊也能帮助抑制（因为它只在垂直方向平滑）。
+        */
+        // cv::blur(high_red, high_red, cv::Size(1, 3));
+        // cv::blur(high_blue, high_blue, cv::Size(1, 3));
+        // cv::threshold(high_red, high_red, 1, 255, cv::THRESH_BINARY);
+        // cv::threshold(high_blue, high_blue, 1, 255, cv::THRESH_BINARY);  
+        
+
+        // 根据要求的颜色选择最终的掩码图
+        if(this->CHOSEN_COLOR == "red") this->mask = high_red; // 最终掩码图
+        else this->mask = high_blue; 
+
+
+        this->img = img; // 原图
+        this->img_hsv = img_hsv; // hsv图
+        this->img_gray = img_gray; // 灰度图
+
+
+        cv::imshow("high_blue", high_blue);
+        cv::imshow("high_red", high_red);
+    }
     
 
-    this->CHOSEN_COLOR = "red"; // 选择检测的颜色 red / blue
-
-    if(this->CHOSEN_COLOR == "red") this->mask = high_red; // 最终掩码图
-    else this->mask = high_blue; 
-
-    this->img = img; // 原图
-    this->img_hsv = img_hsv; // hsv图
+    else
+    {
+        int THERESHOLD_VALUE = 220; // 二值化阈值
 
 
-    cv::imshow("high_blue", high_blue);
-    cv::imshow("high_red", high_red);
+        std::vector<cv::Mat> channels_bgr;
+        std::vector<cv::Mat> channels_hsv;
+        cv::Mat B, G, R; // bgr三通道值
+        cv::Mat red_differ, blue_differ, mask; // 红色和蓝色灯条 BGR最高最低相差值掩码（需要吗？）
+        cv::Mat img_red, img_blue;
+        cv::Mat high_red, high_blue;
+        cv::Mat img_hsv; // hsv
+        cv::Mat img_gray; // 灰度图
+
+        this->img_show = img.clone(); // 复制得到绘图图像，对 img_show 的操作直接在 findcontours 等等函数里
+
+        // // 1. 亮度调整 同时调整对比度和亮度，但目前不是必须
+        // cv::Mat bright;
+        // img.convertTo(bright, -1, 1.2, 30);
+
+        // 2. 得到 hsv，尝试区分灯条和白炽灯。得到 img_gray，用于亚像素优化
+        cv::cvtColor(img, img_hsv, cv::COLOR_BGR2HSV);
+        cv::cvtColor(img, img_gray, cv::COLOR_BGR2GRAY);
+
+        // 3. 分离bgr三通道的值
+        split(img, channels_bgr);
+
+        B = channels_bgr[0];
+        G = channels_bgr[1];
+        R = channels_bgr[2];
+
+        // 4. 高阈值二值化   红图: 红色灯条 + 白炽灯灯条  蓝图: 蓝色灯条 + 白炽灯灯条
+        cv::threshold(R, high_red, THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
+        cv::threshold(B, high_blue, THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
+
+        // // 5. 垂直方向模糊 重新变为二值化
+        /*
+            但实际效果需要验证
+
+            建议你用实际图像测试一下，观察二值化后的灯条掩码是否有以下情况：
+
+            断裂：如果灯条中心仍有空洞，导致掩码分成上下两段，则需要垂直模糊来连接。
+            小缺口：边缘有小缺口，但整体连通，可以不处理。
+            横向散光：如果仍有轻微横向扩散，垂直模糊也能帮助抑制（因为它只在垂直方向平滑）。
+        */
+        // cv::blur(high_red, high_red, cv::Size(1, 3));
+        // cv::blur(high_blue, high_blue, cv::Size(1, 3));
+        // cv::threshold(high_red, high_red, 1, 255, cv::THRESH_BINARY);
+        // cv::threshold(high_blue, high_blue, 1, 255, cv::THRESH_BINARY);  
+        
+
+        // 根据要求的颜色选择最终的掩码图
+        if(this->CHOSEN_COLOR == "red") this->mask = high_red; // 最终掩码图
+        else this->mask = high_blue; 
+
+
+        this->img = img; // 原图
+        this->img_hsv = img_hsv; // hsv图
+        this->img_gray = img_gray; // 灰度图
+
+
+        cv::imshow("high_blue", high_blue);
+        cv::imshow("high_red", high_red);
+    }
 
 
     // const int IMAGE_BRIGHT = 30;       // 全局亮度增益（过暗就加大）

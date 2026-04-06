@@ -198,48 +198,48 @@ img_processing_uninstall/fast:
 .PHONY : img_processing_uninstall/fast
 
 #=============================================================================
-# Target rules for targets named pre_processing_node
+# Target rules for targets named core_node
 
 # Build rule for target.
-pre_processing_node: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 pre_processing_node
-.PHONY : pre_processing_node
+core_node: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 core_node
+.PHONY : core_node
 
 # fast build rule for target.
-pre_processing_node/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/build
-.PHONY : pre_processing_node/fast
+core_node/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/build
+.PHONY : core_node/fast
 
-src/pre_processing_node.o: src/pre_processing_node.cpp.o
-.PHONY : src/pre_processing_node.o
+src/core_node.o: src/core_node.cpp.o
+.PHONY : src/core_node.o
 
 # target to build an object file
-src/pre_processing_node.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/src/pre_processing_node.cpp.o
-.PHONY : src/pre_processing_node.cpp.o
+src/core_node.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/core_node.cpp.o
+.PHONY : src/core_node.cpp.o
 
-src/pre_processing_node.i: src/pre_processing_node.cpp.i
-.PHONY : src/pre_processing_node.i
+src/core_node.i: src/core_node.cpp.i
+.PHONY : src/core_node.i
 
 # target to preprocess a source file
-src/pre_processing_node.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/src/pre_processing_node.cpp.i
-.PHONY : src/pre_processing_node.cpp.i
+src/core_node.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/core_node.cpp.i
+.PHONY : src/core_node.cpp.i
 
-src/pre_processing_node.s: src/pre_processing_node.cpp.s
-.PHONY : src/pre_processing_node.s
+src/core_node.s: src/core_node.cpp.s
+.PHONY : src/core_node.s
 
 # target to generate assembly for a file
-src/pre_processing_node.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/src/pre_processing_node.cpp.s
-.PHONY : src/pre_processing_node.cpp.s
+src/core_node.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/core_node.cpp.s
+.PHONY : src/core_node.cpp.s
 
 src/prepare_algorithm.o: src/prepare_algorithm.cpp.o
 .PHONY : src/prepare_algorithm.o
 
 # target to build an object file
 src/prepare_algorithm.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/src/prepare_algorithm.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/prepare_algorithm.cpp.o
 .PHONY : src/prepare_algorithm.cpp.o
 
 src/prepare_algorithm.i: src/prepare_algorithm.cpp.i
@@ -247,7 +247,7 @@ src/prepare_algorithm.i: src/prepare_algorithm.cpp.i
 
 # target to preprocess a source file
 src/prepare_algorithm.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/src/prepare_algorithm.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/prepare_algorithm.cpp.i
 .PHONY : src/prepare_algorithm.cpp.i
 
 src/prepare_algorithm.s: src/prepare_algorithm.cpp.s
@@ -255,7 +255,7 @@ src/prepare_algorithm.s: src/prepare_algorithm.cpp.s
 
 # target to generate assembly for a file
 src/prepare_algorithm.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/src/prepare_algorithm.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/prepare_algorithm.cpp.s
 .PHONY : src/prepare_algorithm.cpp.s
 
 src/utils/armorplate.o: src/utils/armorplate.cpp.o
@@ -263,7 +263,7 @@ src/utils/armorplate.o: src/utils/armorplate.cpp.o
 
 # target to build an object file
 src/utils/armorplate.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/src/utils/armorplate.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/utils/armorplate.cpp.o
 .PHONY : src/utils/armorplate.cpp.o
 
 src/utils/armorplate.i: src/utils/armorplate.cpp.i
@@ -271,7 +271,7 @@ src/utils/armorplate.i: src/utils/armorplate.cpp.i
 
 # target to preprocess a source file
 src/utils/armorplate.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/src/utils/armorplate.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/utils/armorplate.cpp.i
 .PHONY : src/utils/armorplate.cpp.i
 
 src/utils/armorplate.s: src/utils/armorplate.cpp.s
@@ -279,7 +279,7 @@ src/utils/armorplate.s: src/utils/armorplate.cpp.s
 
 # target to generate assembly for a file
 src/utils/armorplate.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/src/utils/armorplate.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/utils/armorplate.cpp.s
 .PHONY : src/utils/armorplate.cpp.s
 
 src/utils/strip.o: src/utils/strip.cpp.o
@@ -287,7 +287,7 @@ src/utils/strip.o: src/utils/strip.cpp.o
 
 # target to build an object file
 src/utils/strip.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/src/utils/strip.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/utils/strip.cpp.o
 .PHONY : src/utils/strip.cpp.o
 
 src/utils/strip.i: src/utils/strip.cpp.i
@@ -295,7 +295,7 @@ src/utils/strip.i: src/utils/strip.cpp.i
 
 # target to preprocess a source file
 src/utils/strip.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/src/utils/strip.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/utils/strip.cpp.i
 .PHONY : src/utils/strip.cpp.i
 
 src/utils/strip.s: src/utils/strip.cpp.s
@@ -303,7 +303,7 @@ src/utils/strip.s: src/utils/strip.cpp.s
 
 # target to generate assembly for a file
 src/utils/strip.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pre_processing_node.dir/build.make CMakeFiles/pre_processing_node.dir/src/utils/strip.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/utils/strip.cpp.s
 .PHONY : src/utils/strip.cpp.s
 
 # Help Target
@@ -321,10 +321,10 @@ help:
 	@echo "... test"
 	@echo "... img_processing_uninstall"
 	@echo "... uninstall"
-	@echo "... pre_processing_node"
-	@echo "... src/pre_processing_node.o"
-	@echo "... src/pre_processing_node.i"
-	@echo "... src/pre_processing_node.s"
+	@echo "... core_node"
+	@echo "... src/core_node.o"
+	@echo "... src/core_node.i"
+	@echo "... src/core_node.s"
 	@echo "... src/prepare_algorithm.o"
 	@echo "... src/prepare_algorithm.i"
 	@echo "... src/prepare_algorithm.s"

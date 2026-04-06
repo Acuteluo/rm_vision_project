@@ -16,20 +16,22 @@ find_package(Eigen3 REQUIRED)
 
 find_package(message_filters REQUIRED)
 
+find_package(serial_driver_interfaces REQUIRED)
+
 # 本包的头文件目录
 include_directories(include)
 
 
 # 节点
-add_executable(pre_processing_node src/pre_processing_node.cpp src/prepare_algorithm.cpp src/utils/strip.cpp src/utils/armorplate.cpp)
+add_executable(core_node src/core_node.cpp src/prepare_algorithm.cpp src/utils/strip.cpp src/utils/armorplate.cpp)
 
-target_include_directories(pre_processing_node PRIVATE
+target_include_directories(core_node PRIVATE
   include
 )
 
-ament_target_dependencies(pre_processing_node rclcpp sensor_msgs cv_bridge OpenCV Eigen3 message_filters)
+ament_target_dependencies(core_node rclcpp sensor_msgs cv_bridge OpenCV Eigen3 message_filters serial_driver_interfaces)
 
-target_link_libraries(pre_processing_node
+target_link_libraries(core_node
   ${OpenCV_LIBS}
 )
 
@@ -38,10 +40,12 @@ target_link_libraries(pre_processing_node
 
 
 # 安装可执行文件
-install(TARGETS pre_processing_node DESTINATION lib/${PROJECT_NAME})
+install(TARGETS core_node DESTINATION lib/${PROJECT_NAME})
 
 # 安装本包的头文件
 install(DIRECTORY include/ DESTINATION include)
+
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

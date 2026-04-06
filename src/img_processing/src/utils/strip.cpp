@@ -53,21 +53,4 @@ Strip::Strip(cv::RotatedRect rotated_rect, double angle, double width, double he
 	this->upper = cv::Point2f((vertice[0].x + vertice[1].x) * 0.5, (vertice[0].y + vertice[1].y) * 0.5); // 上端点
 	this->lower = cv::Point2f((vertice[2].x + vertice[3].x) * 0.5, (vertice[2].y + vertice[3].y) * 0.5); // 下端点
 
-
-	// // 3. 对上端点 和 下端点 进行亚像素拟合
-	// std::vector<cv::Point2f> temp;
-	// temp.push_back(upper);
-	// temp.push_back(lower);
-	
-	// // 防止搜索窗口越界
-	// if (upper.x > 5.00 && upper.x < 1435.00 && upper.y > 5.00 && upper.y < 1075.00 && lower.x > 5.00 && lower.x < 1435.00 && lower.y > 5.00 && lower.y < 1075.00)
-	// {
-	// 	cv::Size winSize(5, 5); // 搜索窗口多大
-	// 	cv::Size zeroZone(-1, -1); // 没有死区
-	// 	cv::TermCriteria criteria(cv::TermCriteria::EPS + cv::TermCriteria::COUNT, 30, 0.001);
-	// 	cv::cornerSubPix(img_binary, temp, winSize, zeroZone, criteria);
-	// 	this->upper = temp[0];
-	// 	this->lower = temp[1];
-	// }
-
 }

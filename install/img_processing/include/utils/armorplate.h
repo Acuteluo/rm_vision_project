@@ -10,20 +10,26 @@ public:
 	ArmorPlate(); // 默认构造
 
 
-	// 传入 一左一右两个灯带 + 置信度 组装成一个装甲板
-	ArmorPlate(Strip a, Strip b, double moderation); 
+	// 传入 一左一右两个灯带 + 置信度 + 相机名称，组装成一个装甲板
+	ArmorPlate(Strip a, Strip b, double moderation, std::string camera_name); 
 
 
     // 设置参数
     void setParam(); 
 
+    // 传入 img_show
+    void setImgShow(cv::Mat& img_show);
+
+
+    // 获取 img_show
+    cv::Mat getImgShow();
+
 
 	/**
 	* @brief	画出装甲板并标点
-	* @param	cv::Mat& img_show 要画的图
 	* @return   无返回值，直接画图
 	*/
-	void drawArmorPlate(cv::Mat& img_show);
+	void drawArmorPlate();
 
 
 	/**
@@ -35,11 +41,10 @@ public:
 
 	/**
 	* @brief	输出 yaw pitch distance 信息
-	* @param	cv::Mat& img_show 要画的图
     * @param    int index 装甲板编号
 	* @return   无返回值，直接画图
 	*/
-	void printPNPInfo(cv::Mat& img_show, int index);
+	void printPNPInfo(int index);
 
 
 	cv::Point2f center; // 装甲板中心点
@@ -76,5 +81,9 @@ private:
 
     double armorplate_width; // 装甲板宽度，单位mm
     double armorplate_height; // 装甲板高度，单位mm
+
+    std::string CAMERA_NAME; // 相机名称，决定了内参矩阵和畸变矩阵
+
+    cv::Mat img_show; // 要画的图
 
 };

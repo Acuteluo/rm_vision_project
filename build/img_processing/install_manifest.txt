@@ -1,4 +1,4 @@
-/home/cly/project/install/img_processing/lib/img_processing/pre_processing_node
+/home/cly/project/install/img_processing/lib/img_processing/core_node
 /home/cly/project/install/img_processing/include/utils/strip.h
 /home/cly/project/install/img_processing/include/utils/armorplate.h
 /home/cly/project/install/img_processing/include/prepare_algorithm.h

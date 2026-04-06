@@ -27,7 +27,7 @@ void ArmorPlate::setParam()
     this->image_height = 1024;
     
 
-    // [英雄] 装甲板的物理参数
+    // [步兵] 装甲板的物理参数
     this->armorplate_width = 135.00; // 装甲板宽，单位mm
     this->armorplate_height = 55.00; // 装甲板高，单位mm
     
@@ -39,25 +39,65 @@ void ArmorPlate::setParam()
     this->vertice_world.push_back(cv::Point3f(+armorplate_width/2, +armorplate_height/2, 0.00)); // 右上（+, +）
 
 
-    // ---------- [mind_vision] ----------
+    // ---------- [相机参数设置] ----------
 
-    // 相机内参K 3 * 3 
-    this->K = (cv::Mat_<double>(3, 3) << 1359.21385,    0.     ,  635.62767,
+    if(this->CAMERA_NAME == "mind_vision")
+    {
+        // mind_vision 的参数
+
+        // 相机内参K 3 * 3 
+        this->K = (cv::Mat_<double>(3, 3) << 1359.21385,    0.     ,  635.62767,
                                             0.     , 1361.75423,  478.48483,
                                             0.     ,    0.     ,    1.     );
 
-    // 相机畸变矩阵D 5 * 1，和 Eigen 不同，opencv的矩阵是先列后行
-    // k1 k2 p1 p2 k3
-    this->D = (cv::Mat_<double>(5, 1) << -0.081521, 0.153947, -0.006919, -0.003306, 0.000000);
+        // 相机畸变矩阵D 5 * 1，和 Eigen 不同，opencv的矩阵是先列后行
+        // k1 k2 p1 p2 k3
+        this->D = (cv::Mat_<double>(5, 1) << -0.081521, 0.153947, -0.006919, -0.003306, 0.000000);
+
+    }
+
+    else
+    {
+        // galaxy 的参数
+
+        // 相机内参K 3 * 3 
+        this->K = (cv::Mat_<double>(3, 3) << 1305.07013,    0.     ,  666.71169,
+                                            0.     , 1307.67428,  495.17044,
+                                            0.     ,    0.     ,    1.     );
+
+        // 相机畸变矩阵D 5 * 1，和 Eigen 不同，opencv的矩阵是先列后行
+        // k1 k2 p1 p2 k3
+        this->D = (cv::Mat_<double>(5, 1) << -0.209067, 0.129977, -0.002895, -0.000558, 0.000000);
+       
+    }
+    
+    
 
 }
 
 
+// 传入 img_show
+void ArmorPlate::setImgShow(cv::Mat& img_show)
+{
+    this->img_show = img_show;
+}
 
-// 有参构造，放入两个灯带，构造装甲板
-ArmorPlate::ArmorPlate(Strip a, Strip b)
+
+
+// 获取 img_show
+cv::Mat ArmorPlate::getImgShow()
+{
+    return this->img_show;
+}
+
+
+
+// 有参构造，放入两个灯带 + 置信度 + 相机名称，构造装甲板
+ArmorPlate::ArmorPlate(Strip a, Strip b, double moderation, std::string camera_name)
 {
     // ------- 1. 先设置基础参数 -------
+    this->moderation = moderation; // 合理性
+    this->CAMERA_NAME = camera_name; // 相机名称
     setParam();
 
     // 然后构造装甲板
@@ -104,17 +144,16 @@ ArmorPlate::ArmorPlate(Strip a, Strip b)
 
 /**
  * @brief	画出装甲板并标点
- * @param	cv::Mat& img_show 要画的图
  * @return  无返回值，直接画图
  */
-void ArmorPlate::drawArmorPlate(cv::Mat &img_show)
+void ArmorPlate::drawArmorPlate()
 {
     for (int i = 0; i < 4; i++)
     {
-        cv::putText(img_show, "[" + std::to_string((int)i + 1) + "] [" + std::to_string((int)vertice_pixel[i].x) + ", " + std::to_string((int)vertice_pixel[i].y) + "]", cv::Point(vertice_pixel[i].x, vertice_pixel[i].y - 5), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 0.65);
-        cv::line(img_show, vertice_pixel[i], vertice_pixel[(i + 1) % 4], cv::Scalar(0, 0, 255), 2); // 画线
+        cv::putText(this->img_show, "[" + std::to_string((int)i + 1) + "] [" + std::to_string((int)vertice_pixel[i].x) + ", " + std::to_string((int)vertice_pixel[i].y) + "]", cv::Point(vertice_pixel[i].x, vertice_pixel[i].y - 5), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 0.65);
+        cv::line(this->img_show, vertice_pixel[i], vertice_pixel[(i + 1) % 4], cv::Scalar(0, 0, 255), 2); // 画线
     }
-    cv::circle(img_show, this->center, 3, cv::Scalar(0, 0, 255), cv::FILLED); // 中心点
+    cv::circle(this->img_show, this->center, 3, cv::Scalar(0, 0, 255), cv::FILLED); // 中心点
 }
 
 
@@ -174,9 +213,9 @@ void ArmorPlate::perspectiveNPoint()
 * @param    int index 装甲板编号
 * @return   无返回值，直接画图
 */
-void ArmorPlate::printPNPInfo(cv::Mat& img_show, int index)
+void ArmorPlate::printPNPInfo(int index)
 {
-	cv::putText(img_show, "A" + std::to_string((int)index) + " t_yaw = " + std::to_string((double)this->t_yaw), cv::Point(0, 500 + 150*(index-1)), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-	cv::putText(img_show, "A" + std::to_string((int)index) + " t_pitch = " + std::to_string((double)this->t_pitch), cv::Point(0, 550 + 150*(index-1)), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-	cv::putText(img_show, "A" + std::to_string((int)index) + " t_distance = " + std::to_string((double)this->t_distance) + "mm", cv::Point(0, 600 + 150*(index-1)), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+	cv::putText(this->img_show, "A" + std::to_string((int)index) + " t_yaw = " + std::to_string((double)this->t_yaw), cv::Point(0, 500 + 150*(index-1)), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+	cv::putText(this->img_show, "A" + std::to_string((int)index) + " t_pitch = " + std::to_string((double)this->t_pitch), cv::Point(0, 550 + 150*(index-1)), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+	cv::putText(this->img_show, "A" + std::to_string((int)index) + " t_distance = " + std::to_string((double)this->t_distance) + "mm", cv::Point(0, 600 + 150*(index-1)), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
 }

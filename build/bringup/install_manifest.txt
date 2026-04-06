@@ -1,4 +1,5 @@
-/home/cly/project/install/bringup/share/bringup/launch/total_launch.py
+/home/cly/project/install/bringup/share/bringup/launch/total_launch_mind_vision.py
+/home/cly/project/install/bringup/share/bringup/launch/total_launch_galaxy.py
 /home/cly/project/install/bringup/share/ament_index/resource_index/package_run_dependencies/bringup
 /home/cly/project/install/bringup/share/ament_index/resource_index/parent_prefix_path/bringup
 /home/cly/project/install/bringup/share/bringup/environment/ament_prefix_path.sh
