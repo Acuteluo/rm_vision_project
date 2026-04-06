@@ -32,40 +32,48 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options)
   owned_ctx_{new IoContext(2)},
   serial_driver_{new drivers::serial_driver::SerialDriver(*owned_ctx_)}
 {
-  RCLCPP_INFO(get_logger(), "Start SerialDriver!");
+  RCLCPP_INFO_ONCE(get_logger(), "Start SerialDriver!");
 
-  RCLCPP_INFO(get_logger(), "Step 1: getParams()");
+  RCLCPP_INFO_ONCE(get_logger(), "Step 1: getParams()");
   getParams();
 
 
-  RCLCPP_INFO(get_logger(), "Step 2: getParams done, device_name=%s", device_name_.c_str());
+  RCLCPP_INFO_ONCE(get_logger(), "Step 2: getParams done, device_name=%s", device_name_.c_str());
   try {
 
-    RCLCPP_INFO(get_logger(), "Step 3: init_port...");
+    RCLCPP_INFO_ONCE(get_logger(), "Step 3: init_port...");
     serial_driver_->init_port(device_name_, *device_config_);
 
-    RCLCPP_INFO(get_logger(), "Step 4: init_port success");
+    RCLCPP_INFO_ONCE(get_logger(), "Step 4: init_port success");
     if (!serial_driver_->port()->is_open()) {
-      RCLCPP_INFO(get_logger(), "Step 5: opening port...");
+      RCLCPP_INFO_ONCE(get_logger(), "Step 5: opening port...");
       serial_driver_->port()->open();
 
-      RCLCPP_INFO(get_logger(), "Step 6: port opened");
-      receive_thread_ = std::thread(&RMSerialDriver::receiveData, this);
+      RCLCPP_INFO_ONCE(get_logger(), "Step 6: port opened");
+      //receive_thread_ = std::thread(&RMSerialDriver::receiveData, this); // 【修改】先不启动接收线程看看
 
-      RCLCPP_INFO(get_logger(), "Step 7: receive thread started");
+      RCLCPP_INFO_ONCE(get_logger(), "Step 7: receive thread started");
     }
-  } catch (const std::exception & ex) {
-    RCLCPP_ERROR(
-      get_logger(), "Error creating serial port: %s - %s", device_name_.c_str(), ex.what());
-    // throw ex;
+  } 
+  catch (const std::exception & ex) {
+    RCLCPP_ERROR(get_logger(), "Error creating serial port: %s - %s", device_name_.c_str(), ex.what());
+
+    RCLCPP_ERROR(get_logger(), "【串口初始化异常】串口设备不存在（/dev/ttyACM0 未连接）或无法打开。。。。。。。。。。");
+    // RCLCPP_ERROR(get_logger(), "即将抛出 ex, 串口节点将退出。。。。。。。。。。。");
+    
+      // throw ex; // 如果要仅仅测试sendData函数，请注释掉 throw ex这一行，允许程序继续运行，并在sendData函数中仅仅打开test那一行
+                // 否则节点会直接退出
+     
   }
 
-  RCLCPP_INFO(get_logger(), "Step 8: creating subscription");
+  RCLCPP_INFO_ONCE(get_logger(), "Step 8: creating subscription");
   //Create Subscription
   target_sub_ = this->create_subscription<serial_driver_interfaces::msg::SerialDriver>(
     "/serial_driver", 10,
     std::bind(&RMSerialDriver::sendData, this, std::placeholders::_1));
-  RCLCPP_INFO(get_logger(), "Step 9: subscription created");
+  RCLCPP_INFO_ONCE(get_logger(), "Step 9: subscription created");
+
+  RCLCPP_INFO_ONCE(get_logger(), "串口构造函数已经初始化完成。");
 
 }
 
@@ -126,6 +134,14 @@ void RMSerialDriver::receiveData()
 
 void RMSerialDriver::sendData(const serial_driver_interfaces::msg::SerialDriver::SharedPtr msg)
 {
+    // 检查设备是否已经打开
+    if (!serial_driver_->port()->is_open()) 
+    {
+        RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 10, "串口未打开，数据未发送");
+        return;
+    }
+
+
   try {
     SendPacket packet;
     packet.header = 0xFF;
@@ -138,14 +154,21 @@ void RMSerialDriver::sendData(const serial_driver_interfaces::msg::SerialDriver:
     crc16::Append_CRC16_Check_Sum(buf, sizeof(SendPacket));
     
     std::vector<uint8_t> data = toVector(packet);
+
+    RCLCPP_INFO(get_logger(), "-------------READY--------------> 串口 sendData 准备发送数据, sizeof = %d", sizeof(SendPacket));
     serial_driver_->port()->send(data);
 
-    RCLCPP_INFO(get_logger(), "-------------------------------> 串口发送的数据 yaw=%.2f pitch=%.2f", msg->yaw, msg->pitch);
+    RCLCPP_INFO(get_logger(), "-------------SUCCESSED--------------> 串口已经发送数据 yaw=%.2f pitch=%.2f", msg->yaw, msg->pitch);
 
   } catch (const std::exception & ex) {
     RCLCPP_ERROR(get_logger(), "Error while sending data: %s", ex.what());
-    reopenPort();
+    
+    // 必须：仅在设备可用时重试，避免无设备时无限重试（会直接导致串口崩溃）
+    // if (serial_driver_->port()->is_open()) reopenPort(); //【修改】先不 reopenPort
   }
+
+
+  // RCLCPP_INFO(get_logger(), "-------------TEST--------------> 串口已经发送数据 yaw=%.2f pitch=%.2f", msg->yaw, msg->pitch);
 }
 
 

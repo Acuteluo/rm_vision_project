@@ -10,8 +10,8 @@ public:
 	ArmorPlate(); // 默认构造
 
 
-	// 传入 一左一右两个灯带 + 置信度 + 相机名称，组装成一个装甲板
-	ArmorPlate(Strip a, Strip b, double moderation, std::string camera_name); 
+	// 传入 一左一右两个灯带 + 置信度 + 相机名称 + 装甲板类型，组装成一个装甲板
+	ArmorPlate(Strip a, Strip b, double moderation, std::string camera_name, std::string armor_type);
 
 
     // 设置参数
@@ -80,7 +80,7 @@ private:
 
 
 
-    std::string ARMORPLATE_TYPE = "normal"; // 装甲板类型，英雄/步兵，决定了装甲板的世界坐标系点的位置
+    std::string ARMOR_TYPE; // 装甲板类型，英雄/步兵，决定了装甲板的世界坐标系点的位置
 
     double armorplate_width; // 装甲板宽度，单位mm
     double armorplate_height; // 装甲板高度，单位mm

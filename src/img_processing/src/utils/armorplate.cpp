@@ -23,7 +23,7 @@ void ArmorPlate::setParam()
     
 
     // 根据不同的装甲板类型设置装甲板的物理参数，目前分为 步兵 和 英雄 两种
-    if(this->ARMORPLATE_TYPE == "normal")
+    if(this->ARMOR_TYPE == "normal")
     {
         // [步兵] 装甲板的物理参数
         this->armorplate_width = 135.00; // 装甲板宽，单位mm
@@ -100,11 +100,12 @@ cv::Mat ArmorPlate::getImgShow()
 
 
 // 有参构造，放入两个灯带 + 置信度 + 相机名称 + 装甲板类型，构造装甲板
-ArmorPlate::ArmorPlate(Strip a, Strip b, double moderation, std::string camera_name)
+ArmorPlate::ArmorPlate(Strip a, Strip b, double moderation, std::string camera_name, std::string armor_type)
 {
     // ------- 1. 先设置基础参数 -------
     this->moderation = moderation; // 合理性
     this->CAMERA_NAME = camera_name; // 相机名称
+    this->ARMOR_TYPE = armor_type; // 装甲板类型
     setParam();
 
     // 然后构造装甲板
@@ -157,7 +158,7 @@ void ArmorPlate::drawArmorPlate()
 {
     for (int i = 0; i < 4; i++)
     {
-        cv::putText(this->img_show, "[" + std::to_string((int)i + 1) + "] [" + std::to_string((int)vertice_pixel[i].x) + ", " + std::to_string((int)vertice_pixel[i].y) + "]", cv::Point(vertice_pixel[i].x, vertice_pixel[i].y - 5), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 0.65);
+        cv::putText(this->img_show, "[" + std::to_string((int)i + 1) + "] [" + std::to_string((int)vertice_pixel[i].x) + ", " + std::to_string((int)vertice_pixel[i].y) + "]", cv::Point2f(vertice_pixel[i].x, vertice_pixel[i].y - 5), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 0.65);
         cv::line(this->img_show, vertice_pixel[i], vertice_pixel[(i + 1) % 4], cv::Scalar(0, 0, 255), 2); // 画线
     }
     cv::circle(this->img_show, this->center, 3, cv::Scalar(0, 0, 255), cv::FILLED); // 中心点
@@ -222,7 +223,7 @@ void ArmorPlate::perspectiveNPoint()
 */
 void ArmorPlate::printPNPInfo(int index)
 {
-	cv::putText(this->img_show, "A" + std::to_string((int)index) + " t_yaw = " + std::to_string((double)this->t_yaw), cv::Point(0, 500 + 150*(index-1)), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-	cv::putText(this->img_show, "A" + std::to_string((int)index) + " t_pitch = " + std::to_string((double)this->t_pitch), cv::Point(0, 550 + 150*(index-1)), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-	cv::putText(this->img_show, "A" + std::to_string((int)index) + " t_distance = " + std::to_string((double)this->t_distance) + "mm", cv::Point(0, 600 + 150*(index-1)), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+	cv::putText(this->img_show, "A" + std::to_string((int)index) + " t_yaw = " + std::to_string((double)this->t_yaw), cv::Point2f(0, 500 + 150*(index-1)), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+	cv::putText(this->img_show, "A" + std::to_string((int)index) + " t_pitch = " + std::to_string((double)this->t_pitch), cv::Point2f(0, 550 + 150*(index-1)), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+	cv::putText(this->img_show, "A" + std::to_string((int)index) + " t_distance = " + std::to_string((double)this->t_distance) + "mm", cv::Point2f(0, 600 + 150*(index-1)), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
 }

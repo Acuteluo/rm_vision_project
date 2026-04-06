@@ -10,16 +10,16 @@ class ProcessNode: public rclcpp::Node
 public:
     ProcessNode(): Node("core_node_cpp")
     {
-        RCLCPP_INFO(this->get_logger(), "CoreNode 节点创建成功! ");
+        RCLCPP_INFO_ONCE(this->get_logger(), "CoreNode 节点创建成功! ");
 
         // 声明 QoS 参数
 
         // 适用于 mind_vision 的 qos
-        this->declare_parameter("use_sensor_data_qos", false);
-        bool qos = this->get_parameter("use_sensor_data_qos").as_bool();
+        // this->declare_parameter("use_sensor_data_qos", false);
+        // bool qos = this->get_parameter("use_sensor_data_qos").as_bool();
         
         // 适用于 galaxy 的 qos
-        // auto qos = rclcpp::SensorDataQoS(); 
+        auto qos = rclcpp::SensorDataQoS(); 
 
         // 订阅原图
         sub_ = this->create_subscription<sensor_msgs::msg::Image>("image_raw", qos, std::bind(&ProcessNode::process_callback, this, std::placeholders::_1));
@@ -76,16 +76,20 @@ private:
         {
             serial_driver.yaw = this->armorplate[moderation_max_index].t_yaw; // 发送 置信度max 的装甲板的 yaw
             serial_driver.pitch = this->armorplate[moderation_max_index].t_pitch; // 发送 置信度max 装甲板的 pitch
+            
+            pub_->publish(serial_driver); // 发布消息 到 serial_driver 话题
+            RCLCPP_INFO(this->get_logger(), "############  corenode 发布了消息: yaw=%.2f pitch=%.2f", serial_driver.yaw, serial_driver.pitch);
+
         }
         else
         {
             serial_driver.yaw = 0.00;
             serial_driver.pitch = 0.00;
+
+            RCLCPP_ERROR(this->get_logger(), "#### 未识别到装甲板! corenode【未】发布消息", serial_driver.yaw, serial_driver.pitch);
         }
 
-        pub_->publish(serial_driver); // 发布消息 到 serial_driver 话题
-        RCLCPP_INFO(this->get_logger(), ">>>>>>>>>>>>>>>> corenode 发布了消息: yaw=%.2f pitch=%.2f", serial_driver.yaw, serial_driver.pitch);
-
+        
 
 
         ///////////////////////////////////////////////////////

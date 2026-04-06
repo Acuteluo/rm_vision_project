@@ -31,7 +31,7 @@ def generate_launch_description():
         name="galaxy_camera",
         
         parameters=[{
-        'exposure_time': 5000, # 原本5000
+        'exposure_time': 3000, # 原本5000
         'gain': 1.0,
         'use_sensor_data_qos': True   # 相机也需要相同的 QoS 设置
         }]

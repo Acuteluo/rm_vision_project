@@ -20,6 +20,9 @@ struct ReceivePacket
   uint8_t checksum = 0xFE;
 } __attribute__((packed));
 
+
+// 【修改】头尾代码 pragma作用：强制结构体对齐
+#pragma pack(push, 1)
 struct SendPacket
 {
   uint8_t header = 0xFF;
@@ -31,6 +34,7 @@ struct SendPacket
 
   uint16_t crc = 0X00FE;   // CRC16 校验值
 } __attribute__((packed));
+#pragma pack(pop)
 
 
 
