@@ -24,6 +24,22 @@
 
 #include "serial_driver_interfaces/msg/serial_driver.hpp"
 
+
+// 添加信号处理器，打印错误堆栈
+#include <signal.h>
+#include <execinfo.h>
+#include <unistd.h>
+
+void signal_handler(int sig) 
+{
+    void *array[20];
+    size_t size = backtrace(array, 20);
+    fprintf(stderr, "Error: signal %d:\n", sig);
+    backtrace_symbols_fd(array, size, STDERR_FILENO);
+    exit(1);
+}
+
+
 namespace rm_serial_driver
 {
 
@@ -33,6 +49,11 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options)
   serial_driver_{new drivers::serial_driver::SerialDriver(*owned_ctx_)}
 {
   RCLCPP_INFO_ONCE(get_logger(), "Start SerialDriver!");
+
+  RCLCPP_INFO_ONCE(get_logger(), "Step 0: 构造函数注册信号处理器");
+  signal(SIGSEGV, signal_handler);
+  signal(SIGABRT, signal_handler);
+  signal(SIGFPE, signal_handler);
 
   RCLCPP_INFO_ONCE(get_logger(), "Step 1: getParams()");
   getParams();
@@ -73,7 +94,7 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options)
     std::bind(&RMSerialDriver::sendData, this, std::placeholders::_1));
   RCLCPP_INFO_ONCE(get_logger(), "Step 9: subscription created");
 
-  RCLCPP_INFO_ONCE(get_logger(), "串口构造函数已经初始化完成。");
+  RCLCPP_INFO_ONCE(get_logger(), ">>>>>>>>>>>>>>> 串口构造函数已经初始化完成。");
 
 }
 
@@ -144,14 +165,12 @@ void RMSerialDriver::sendData(const serial_driver_interfaces::msg::SerialDriver:
 
   try {
     SendPacket packet;
-    packet.header = 0xFF;
+    packet.header = 0xFF; // 填充帧头
 
-    packet.yaw = msg->yaw;
-    packet.pitch = msg->pitch;
+    packet.yaw = msg->yaw; // 填充 yaw
+    packet.pitch = msg->pitch; // 填充 pitch
     
-    // 计算 CRC 并填充（Append_CRC16_Check_Sum 会在末尾添加两字节）
-    uint8_t *buf = reinterpret_cast<uint8_t*>(&packet);
-    crc16::Append_CRC16_Check_Sum(buf, sizeof(SendPacket));
+    packet.crc = 0xFE; //直接固定帧尾
     
     std::vector<uint8_t> data = toVector(packet);
 

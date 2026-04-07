@@ -13,10 +13,12 @@ namespace rm_serial_driver
 struct ReceivePacket
 {
   uint8_t header = 0xFF;
-  /*
-    receive data
   
-  */
+  // --- 有效数据起 ---
+  float yaw;      // 先 yaw
+  float pitch;      // 然后 pitch
+  float roll;    // 最后 roll
+  // --- 有效数据止 ---
   uint8_t checksum = 0xFE;
 } __attribute__((packed));
 
@@ -32,8 +34,8 @@ struct SendPacket
   float pitch;    // 后 pitch
   // --- 有效数据止 ---
 
-  uint16_t crc = 0X00FE;   // CRC16 校验值
-} __attribute__((packed));
+  uint8_t crc = 0XFE;   // CRC8 校验值
+};
 #pragma pack(pop)
 
 

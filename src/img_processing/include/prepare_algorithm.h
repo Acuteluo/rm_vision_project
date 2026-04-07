@@ -67,5 +67,5 @@ private:
     bool SHOW_LOGGER = false; // 是否显示日志
     std::string CHOSEN_COLOR = "red"; // 选择检测的颜色 red / blue
     std::string CAMERA_NAME = "galaxy"; // 选择相机名称 mind_vision / galaxy ，注意改对应的 qos
-    std::string ARMOR_TYPE = "normal"; // 选择装甲板类型 normal / hero ，决定了配对的参数
+    std::string ARMOR_TYPE = "hero"; // 选择装甲板类型 normal / hero ，决定了配对的参数
 };
