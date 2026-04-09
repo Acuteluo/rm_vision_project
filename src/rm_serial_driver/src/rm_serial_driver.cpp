@@ -17,6 +17,10 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <cstring>   // 用于 memcpy
+#include <algorithm> // 用于 std::copy
+#include <vector>
+#include <deque>     // 用于接收缓冲区
 
 #include "rm_serial_driver/crc.hpp"
 #include "rm_serial_driver/packet.hpp"
@@ -50,30 +54,35 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options)
 {
   RCLCPP_INFO_ONCE(get_logger(), "Start SerialDriver!");
 
-  RCLCPP_INFO_ONCE(get_logger(), "Step 0: 构造函数注册信号处理器");
+  RCLCPP_INFO_ONCE(get_logger(), "Step 0/10: 构造函数注册信号处理器");
   signal(SIGSEGV, signal_handler);
   signal(SIGABRT, signal_handler);
   signal(SIGFPE, signal_handler);
 
-  RCLCPP_INFO_ONCE(get_logger(), "Step 1: getParams()");
+  RCLCPP_INFO_ONCE(get_logger(), "Step 1/10: ready to getParams()");
+
   getParams();
+  RCLCPP_INFO_ONCE(get_logger(), "Step 2/10: getParams done, device_name=%s", device_name_.c_str());
 
+  receive_data_pub_ = this->create_publisher<serial_driver_interfaces::msg::ReceiveData>("/receive_data", 10); // 把接收到的数据发布到 /receive_data 话题上
+  RCLCPP_INFO(this->get_logger(), "Step 3/10: Created publisher for topic '/receive_data'");
 
-  RCLCPP_INFO_ONCE(get_logger(), "Step 2: getParams done, device_name=%s", device_name_.c_str());
   try {
 
-    RCLCPP_INFO_ONCE(get_logger(), "Step 3: init_port...");
+    RCLCPP_INFO_ONCE(get_logger(), "Step 4/10: ready to init_port...");
+
     serial_driver_->init_port(device_name_, *device_config_);
+    RCLCPP_INFO_ONCE(get_logger(), "Step 5/10: init_port success");
 
-    RCLCPP_INFO_ONCE(get_logger(), "Step 4: init_port success");
     if (!serial_driver_->port()->is_open()) {
-      RCLCPP_INFO_ONCE(get_logger(), "Step 5: opening port...");
+      RCLCPP_INFO_ONCE(get_logger(), "Step 6/10: ready to opening port...");
+
       serial_driver_->port()->open();
+      RCLCPP_INFO_ONCE(get_logger(), "Step 7/10: port opened");
 
-      RCLCPP_INFO_ONCE(get_logger(), "Step 6: port opened");
-      //receive_thread_ = std::thread(&RMSerialDriver::receiveData, this); // 【修改】先不启动接收线程看看
+      receive_thread_ = std::thread(&RMSerialDriver::receiveData, this); // 【修改】现在启动接收线程看看
+      RCLCPP_INFO_ONCE(get_logger(), "Step 8/10: receive thread started");
 
-      RCLCPP_INFO_ONCE(get_logger(), "Step 7: receive thread started");
     }
   } 
   catch (const std::exception & ex) {
@@ -87,12 +96,12 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options)
      
   }
 
-  RCLCPP_INFO_ONCE(get_logger(), "Step 8: creating subscription");
+  RCLCPP_INFO_ONCE(get_logger(), "Step 9/10: ready to creating subscription");
   //Create Subscription
   target_sub_ = this->create_subscription<serial_driver_interfaces::msg::SerialDriver>(
     "/serial_driver", 10,
     std::bind(&RMSerialDriver::sendData, this, std::placeholders::_1));
-  RCLCPP_INFO_ONCE(get_logger(), "Step 9: subscription created");
+  RCLCPP_INFO_ONCE(get_logger(), "Step 10/10: subscription created");
 
   RCLCPP_INFO_ONCE(get_logger(), ">>>>>>>>>>>>>>> 串口构造函数已经初始化完成。");
 
@@ -113,36 +122,72 @@ RMSerialDriver::~RMSerialDriver()
   }
 }
 
+
+// 自定义接收数据处理函数，发送数据到话题 receive_data 下
+void RMSerialDriver::processReceivedPacket(const ReceivePacket& packet) 
+{
+    // 先打印接收到的数据
+    RCLCPP_INFO(get_logger(), "++++++++++++ Received: yaw=%.2f pitch=%.2f roll=%.2f", packet.yaw, packet.pitch, packet.roll);
+
+    // 2. 创建并填充新消息
+    auto pub_msg = serial_driver_interfaces::msg::ReceiveData();
+    pub_msg.yaw = packet.yaw;        // 航向角
+    pub_msg.pitch = packet.pitch;    // 俯仰角
+    pub_msg.roll = packet.roll;      // 翻滚角
+
+    // 3. 发布新消息
+    receive_data_pub_->publish(pub_msg);
+    RCLCPP_INFO(get_logger(), "&&&&&&&&&&&& Published ReceiveData: yaw=%.2f, pitch=%.2f, roll=%d",
+                pub_msg.yaw, pub_msg.pitch, pub_msg.roll);
+}
+
+
+
 void RMSerialDriver::receiveData()
 {
   std::vector<uint8_t> header(1);
   std::vector<uint8_t> data;
   data.reserve(sizeof(ReceivePacket));
 
-  while (rclcpp::ok()) {
-    try {
+  while (rclcpp::ok()) 
+  {
+    try 
+    {
+      // 读取帧头
       serial_driver_->port()->receive(header);
 
-      if (header[0] == 0xFF) {
+      if (header[0] == 0xFF) 
+      {
+        // 读取剩余 13 字节 -> yaw picth roll 0xFE
         data.resize(sizeof(ReceivePacket) - 1);
         serial_driver_->port()->receive(data);
 
+        // 将帧头插入开头，组装成完整数据包
         data.insert(data.begin(), header[0]);
         ReceivePacket packet = fromVector(data);
+
+        // 校验帧尾
         if (packet.checksum == 0xFE) {
 
           /*
-          
             接收数据部分
           */
 
+          // 数据有效，进行处理（自定义函数）
+          processReceivedPacket(packet);
+
         } else {
-          RCLCPP_ERROR(get_logger(), "0xFE error!");
+          RCLCPP_ERROR(get_logger(), "header[13]!=0xFE, 0xFE error!");
         }
-      } else {
-        RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 20, "Invalid header: %02X", header[0]);
+      } 
+
+      else 
+      {
+        RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 20, "header[0]!=0xFF, Invalid header: %02X", header[0]);
+        continue;
       }
-    } catch (const std::exception & ex) {
+    } 
+      catch (const std::exception & ex) {
       RCLCPP_ERROR_THROTTLE(
         get_logger(), *get_clock(), 20, "Error while receiving data: %s", ex.what());
       reopenPort();
@@ -183,7 +228,7 @@ void RMSerialDriver::sendData(const serial_driver_interfaces::msg::SerialDriver:
     RCLCPP_ERROR(get_logger(), "Error while sending data: %s", ex.what());
     
     // 必须：仅在设备可用时重试，避免无设备时无限重试（会直接导致串口崩溃）
-    // if (serial_driver_->port()->is_open()) reopenPort(); //【修改】先不 reopenPort
+    if (serial_driver_->port()->is_open()) reopenPort(); //【修改】启动 reopenPort
   }
 
 

@@ -14,6 +14,10 @@ public:
 	void preProcessing(cv::Mat& img);
 	
 
+    /////// 设置 config.txt 对应的参数 ///////
+    void setParam(bool show_logger, std::string chosen_color, std::string camera_name, std::string armor_type);
+    
+
 	/**
 	* @brief	寻找 + 判断灯带的颜色
 	* @return   std::vector<Strip> 返回灯条集合
@@ -45,7 +49,7 @@ private:
 	static bool sortStripByX(const Strip& a, const Strip& b);
 
 
-    /////// 图像相关 /////     
+    /////// 图像相关 ///////
 
     cv::Mat img; // 原图
     cv::Mat img_show; // 用来显示信息的图
@@ -62,10 +66,10 @@ private:
 
 
 
-    // ------ 预处理关键参数（请手动设置！）------
+    // ------ 预处理关键参数（从 config.txt 读取）------
 
-    bool SHOW_LOGGER = false; // 是否显示日志
-    std::string CHOSEN_COLOR = "red"; // 选择检测的颜色 red / blue
-    std::string CAMERA_NAME = "galaxy"; // 选择相机名称 mind_vision / galaxy ，注意改对应的 qos
-    std::string ARMOR_TYPE = "hero"; // 选择装甲板类型 normal / hero ，决定了配对的参数
+    bool SHOW_LOGGER; // 是否显示日志
+    std::string CHOSEN_COLOR; // 选择检测的颜色 red / blue
+    std::string CAMERA_NAME; // 选择相机名称 mind_vision / galaxy ，注意改对应的 qos
+    std::string ARMOR_TYPE; // 选择装甲板类型 normal / hero ，决定了配对的参数
 };

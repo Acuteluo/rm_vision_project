@@ -19,7 +19,8 @@ struct ReceivePacket
   float pitch;      // 然后 pitch
   float roll;    // 最后 roll
   // --- 有效数据止 ---
-  uint8_t checksum = 0xFE;
+
+  uint8_t checksum = 0xFE; // CRC8 校验值，注意这里是固定
 } __attribute__((packed));
 
 
@@ -34,7 +35,7 @@ struct SendPacket
   float pitch;    // 后 pitch
   // --- 有效数据止 ---
 
-  uint8_t crc = 0XFE;   // CRC8 校验值
+  uint8_t crc = 0XFE;   // CRC8 校验值，注意这里是固定
 };
 #pragma pack(pop)
 

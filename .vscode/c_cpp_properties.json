@@ -9,7 +9,8 @@
                 "/usr/include/opencv4",
                 "/usr/include/eigen3",
                 "${workspaceFolder}/install/serial_driver_interfaces/include/**",
-                "${workspaceFolder}/src/galaxy_camera/GalaxySDK/include/**"
+                "${workspaceFolder}/src/galaxy_camera/GalaxySDK/include/**",
+                "${workspaceFolder}/src/img_processing/include/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

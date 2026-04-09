@@ -44,7 +44,7 @@ public:
     * @param    int index 装甲板编号
 	* @return   无返回值，直接画图
 	*/
-	void printPNPInfo(int index);
+	void printPNPInfo(int index = 1);
 
 
 	cv::Point2f center; // 装甲板中心点

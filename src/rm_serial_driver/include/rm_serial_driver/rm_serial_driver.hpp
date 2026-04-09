@@ -22,7 +22,10 @@
 #include <thread>
 #include <vector>
 
-#include "serial_driver_interfaces/msg/serial_driver.hpp"
+#include "serial_driver_interfaces/msg/serial_driver.hpp" // 收
+#include "serial_driver_interfaces/msg/receive_data.hpp" // 发
+
+#include "rm_serial_driver/packet.hpp" // 需要使用 ReceivePacket 和 SendPacket 结构体
 
 namespace rm_serial_driver
 {
@@ -43,6 +46,8 @@ private:
 
   void getParams();
 
+  void processReceivedPacket(const ReceivePacket& packet); // 把接收到的数据处理，并发布到 receive_data 话题上
+
 
   // Serial port
   std::unique_ptr<IoContext> owned_ctx_;
@@ -50,7 +55,9 @@ private:
   std::unique_ptr<drivers::serial_driver::SerialPortConfig> device_config_;
   std::unique_ptr<drivers::serial_driver::SerialDriver> serial_driver_;
 
-  rclcpp::Subscription<serial_driver_interfaces::msg::SerialDriver>::SharedPtr target_sub_;
+  rclcpp::Subscription<serial_driver_interfaces::msg::SerialDriver>::SharedPtr target_sub_; // 收
+
+  rclcpp::Publisher<serial_driver_interfaces::msg::ReceiveData>::SharedPtr receive_data_pub_; // 发
 
   std::thread receive_thread_;
 };

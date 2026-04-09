@@ -21,6 +21,7 @@ find_package(Eigen3 REQUIRED)
 rosidl_generate_interfaces(
   ${PROJECT_NAME}
   "msg/SerialDriver.msg"
+  "msg/ReceiveData.msg"
   DEPENDENCIES std_msgs
 )
 

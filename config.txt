@@ -1,0 +1,11 @@
+# SHOW_LOGGER = false / true
+false
+
+# CHOSEN_COLOR = red / blue
+red
+
+# CAMERA_NAME = galaxy / mind_vision
+mind_vision
+
+# ARMOR_TYPE = normal / hero
+normal

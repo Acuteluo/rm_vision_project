@@ -14,6 +14,19 @@ bool Prepare::sortStripByX(const Strip& a, const Strip& b)
 
 
 
+////////////////////////////////////  存储 config 读取的参数  //////////////////////////////////////
+
+void Prepare::setParam(bool show_logger, std::string chosen_color, std::string camera_name, std::string armor_type)
+{
+    this->SHOW_LOGGER = show_logger;
+    this->CHOSEN_COLOR = chosen_color;
+    this->CAMERA_NAME = camera_name;
+    this->ARMOR_TYPE = armor_type;
+}
+
+
+
+
 /////////////////////////////////////////////  灯条配对成装甲板函数  /////////////////////////////////////////////
 
 /**
