@@ -39,11 +39,22 @@ void ArmorPlate::setParam()
 
 
 
-    // 装甲板的世界坐标系 以装甲板中心为原点的右手系 -> x朝右，y朝上，z朝外
-    this->vertice_world.push_back(cv::Point3f(-armorplate_width/2, +armorplate_height/2, 0.00)); // 左上（-, +）
-    this->vertice_world.push_back(cv::Point3f(-armorplate_width/2, -armorplate_height/2, 0.00)); // 左下（-, -）
-    this->vertice_world.push_back(cv::Point3f(+armorplate_width/2, -armorplate_height/2, 0.00)); // 右下 (-, +)
-    this->vertice_world.push_back(cv::Point3f(+armorplate_width/2, +armorplate_height/2, 0.00)); // 右上（+, +）
+    // 【修改后】装甲板的世界坐标系 以装甲板中心为原点的右手系 注意是站在【有数字那一面】前来定义！ -> x朝前，y朝左，z朝上
+    // 那么 x = 0
+    /*
+                   z ^   ^ x
+                     |  /
+                     | /
+                     |/
+         y <---------O  <一【装甲板中心]
+
+                 右  手  系    
+    */
+    this->vertice_world.push_back(cv::Point3f(0.00, +armorplate_width/2, +armorplate_height/2)); // 左上（+, +）
+    this->vertice_world.push_back(cv::Point3f(0.00, +armorplate_width/2, -armorplate_height/2)); // 左下（+, -）
+    this->vertice_world.push_back(cv::Point3f(0.00, -armorplate_width/2, -armorplate_height/2)); // 右下 (-, -)
+    this->vertice_world.push_back(cv::Point3f(0.00, -armorplate_width/2, +armorplate_height/2)); // 右上（-, +）
+    
 
 
     // ---------- [相机参数设置] ----------
@@ -108,8 +119,8 @@ ArmorPlate::ArmorPlate(Strip a, Strip b, double moderation, std::string camera_n
     this->ARMOR_TYPE = armor_type; // 装甲板类型
     setParam();
 
-    // 然后构造装甲板
 
+    // 然后构造装甲板
     // ------- 2. 计算整个装甲板的理论中心点 用四个点来算 -------
     this->center = cv::Point2f(
         (a.upper.x + a.lower.x + b.upper.x + b.lower.x) / 4, 
@@ -136,14 +147,34 @@ ArmorPlate::ArmorPlate(Strip a, Strip b, double moderation, std::string camera_n
     }
 
 
-    // 像素坐标系 顺序是左上(-, -) 左下(-, +) 右下(+, +) 右上(+, -)
+    // 图像坐标系 顺序是（相对于中心。其实不然，这里有转换保证逆时针-90 ~ 顺时针+90度）
+    // 左上(-, -) 左下(-, +) 右下(+, +) 右上(+, -)
+    /*
+        O----------> x
+        |
+        |
+        |
+        v 
+    
+        y
+
+    */
     this->vertice_pixel.push_back(tl);
     this->vertice_pixel.push_back(bl);
     this->vertice_pixel.push_back(br);
     this->vertice_pixel.push_back(tr);
 
 
-    // 相机坐标系 以图像中心为相机光轴中心 -> x朝右 y朝下 z朝前
+    // 【修改后】相机坐标系 以图像中心为相机光轴中心 站在相机朝向后来定义-> x朝前 y朝左 z朝上（右手系）
+    /*
+                   z ^   ^ x
+                     |  /
+                     | /
+                     |/
+         y <---------O  <一【镜头中心]
+
+                 右  手  系    
+    */
 
 }
 
@@ -184,7 +215,7 @@ void ArmorPlate::perspectiveNPoint()
 	is_success = cv::solvePnPRansac(
         this->vertice_world, this->vertice_pixel, K, D, 
         this->r, this->t, 
-        false, 200, 8.0, 0.99, inliers, cv::SOLVEPNP_IPPE);
+        false, 200, 5.0, 0.99, inliers, cv::SOLVEPNP_IPPE);
 
 
     // 如果解算不成功
