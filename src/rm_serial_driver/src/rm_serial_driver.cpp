@@ -126,19 +126,21 @@ RMSerialDriver::~RMSerialDriver()
 // 自定义接收数据处理函数，发送数据到话题 receive_data 下
 void RMSerialDriver::processReceivedPacket(const ReceivePacket& packet) 
 {
-    // 先打印接收到的数据
-    RCLCPP_INFO(get_logger(), "++++++++++++ Received: yaw=%.2f pitch=%.2f roll=%.2f", packet.yaw, packet.pitch, packet.roll);
+    // 1. 先打印接收到的数据
+    RCLCPP_INFO(get_logger(), "++++++++++++ Received: roll=%.2f pitch=%.2f yaw=%.2f", packet.roll, packet.pitch, packet.yaw);
 
     // 2. 创建并填充新消息
     auto pub_msg = serial_driver_interfaces::msg::ReceiveData();
-    pub_msg.yaw = packet.yaw;        // 航向角
-    pub_msg.pitch = packet.pitch;    // 俯仰角
+    pub_msg.header.stamp = this->now(); // 帧头获取当前时刻
     pub_msg.roll = packet.roll;      // 翻滚角
+    pub_msg.pitch = packet.pitch;    // 俯仰角
+    pub_msg.yaw = packet.yaw;        // 航向角
+    
 
     // 3. 发布新消息
     receive_data_pub_->publish(pub_msg);
-    RCLCPP_INFO(get_logger(), "&&&&&&&&&&&& Published ReceiveData: yaw=%.2f, pitch=%.2f, roll=%d",
-                pub_msg.yaw, pub_msg.pitch, pub_msg.roll);
+    RCLCPP_INFO(get_logger(), "&&&&&&&&&&&& Published ReceiveData: roll=%.2f, pitch=%.2f, yaw=%d",
+                pub_msg.roll, pub_msg.pitch, pub_msg.yaw);
 }
 
 
@@ -158,7 +160,7 @@ void RMSerialDriver::receiveData()
 
       if (header[0] == 0xFF) 
       {
-        // 读取剩余 13 字节 -> yaw picth roll 0xFE
+        // 读取剩余 13 字节 -> roll picth yaw 0xFE
         data.resize(sizeof(ReceivePacket) - 1);
         serial_driver_->port()->receive(data);
 
@@ -212,6 +214,7 @@ void RMSerialDriver::sendData(const serial_driver_interfaces::msg::SerialDriver:
     SendPacket packet;
     packet.header = 0xFF; // 填充帧头
 
+    packet.roll = msg->roll; //填充 roll
     packet.yaw = msg->yaw; // 填充 yaw
     packet.pitch = msg->pitch; // 填充 pitch
     
@@ -222,7 +225,7 @@ void RMSerialDriver::sendData(const serial_driver_interfaces::msg::SerialDriver:
     RCLCPP_INFO(get_logger(), "-------------READY--------------> 串口 sendData 准备发送数据, sizeof = %d", sizeof(SendPacket));
     serial_driver_->port()->send(data);
 
-    RCLCPP_INFO(get_logger(), "-------------SUCCESSED--------------> 串口已经发送数据 yaw=%.2f pitch=%.2f", msg->yaw, msg->pitch);
+    RCLCPP_INFO(get_logger(), "-------------SUCCESSED--------------> 串口已经发送数据 roll=%.2f pitch=%.2f yaw=%.2f", msg->roll, msg->pitch, msg->yaw);
 
   } catch (const std::exception & ex) {
     RCLCPP_ERROR(get_logger(), "Error while sending data: %s", ex.what());

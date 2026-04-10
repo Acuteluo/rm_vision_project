@@ -22,6 +22,7 @@ rosidl_generate_interfaces(
   ${PROJECT_NAME}
   "msg/SerialDriver.msg"
   "msg/ReceiveData.msg"
+  "msg/SendPNPInfo.msg"
   DEPENDENCIES std_msgs
 )
 

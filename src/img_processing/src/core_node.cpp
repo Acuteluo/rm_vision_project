@@ -3,7 +3,8 @@
 */
 
 #include "prepare_algorithm.h"
-#include "serial_driver_interfaces/msg/serial_driver.hpp" // 发布方 的 话题类型 为 [serial_driver] 类
+#include "serial_driver_interfaces/msg/serial_driver.hpp" // 串口消息 发布方 的 话题类型 为 [serial_driver] 类
+#include "serial_driver_interfaces/msg/send_pnp_info.hpp" // pnp消息 发布方 的 话题类型 为 [send_pnp_info] 类
 #include <fstream>
 #include <string>
 
@@ -78,7 +79,7 @@ public:
         file.close();
 
 
-        // --------------------------- 配置 qos sub pub ---------------------------
+        // --------------------------- 配置 -> 相机相关 qos sub pub ---------------------------
 
 
         // 声明 QoS 参数
@@ -93,73 +94,50 @@ public:
         // 根据 CAMERA_NAME 选择 qos，以创建订阅原图方
         if(this->CAMERA_NAME == "mind_vision") sub_ = this->create_subscription<sensor_msgs::msg::Image>("image_raw", qos1, std::bind(&ProcessNode::process_callback, this, std::placeholders::_1));
         else sub_ = this->create_subscription<sensor_msgs::msg::Image>("image_raw", qos2, std::bind(&ProcessNode::process_callback, this, std::placeholders::_1));
-    
-        // 发布
-        pub_ = this->create_publisher<serial_driver_interfaces::msg::SerialDriver>("/serial_driver", 10);
+
+        // 发布 pnp 消息
+        pnp_pub_ = this->create_publisher<serial_driver_interfaces::msg::SendPNPInfo>("/send_pnp_info", 10);
     }
+
 
 private:
 
     void process_callback(const sensor_msgs::msg::Image::SharedPtr msg)
     {
-        cv::Mat img = cv_bridge::toCvCopy(msg, "bgr8")->image; // 需要 SharedPtr 作为参数
-        
-        // 预处理
-        
-        // 传入从配置文件读取的参数
-        prepare.setParam(this->SHOW_LOGGER, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE); 
+        // 1. 接受图像
+        this->img = cv_bridge::toCvCopy(msg, "bgr8")->image; // 需要 SharedPtr 作为参数
+        this->img_show = this->img.clone(); // 复制一份用来显示信息
+
+        // 2. 预处理
+        prepare.setParam(this->SHOW_LOGGER, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE); // 传入从配置文件读取的参数
+        prepare.setImgShow(this->img_show); // 设置 img_show
         prepare.preProcessing(img); // 图像预处理
         this->strip = prepare.findAndJudgeLightStrip(); // 找灯带 返回灯带集合
-		this->armorplate = prepare.pairStrip(); // 灯条配对 返回装甲板集合
+		this->armorplate = prepare.pairStrip(); // 灯条配对 【修改】返回置信度最大的装甲板，因为只要跟踪一个啊
 
-
-        cv::Mat img_show_prepare = prepare.getImgShow(); // 获取prepare画的图（已经标上了灯条信息）
         
+        // 3. 解算 pnp
+        this->armorplate.setImgShow(this->img_show); // 设置 img_show
+        this->armorplate.perspectiveNPoint(); // 解算 pnp
+        this->armorplate.drawArmorPlateAndPrintPNPInfo(); // 画置信度最高的装甲板，并打印 pnp 信息
 
 
-        // 对于每一个装甲板，画出装甲板，解算 pnp，记住谁的置信度最大
-        int moderation_max_index = -1; // 置信度最高的装甲板编号
-        double moderation_max = 0.00; // 最高的置信度
-        for(int i = 0; i < this->armorplate.size(); i++)
+        // 4. 发送 pnp 消息
+        if(armorplate.moderation != 0 && this->armorplate.is_success) // 只有当 置信度大于0 和 pnp结算有结果 才发布消息
         {
-            this->armorplate[i].setImgShow(img_show_prepare); // 传入 img_show_prepare
-            this->armorplate[i].drawArmorPlate(); // 画装甲板
-            this->armorplate[i].perspectiveNPoint(); // 解算 pnp
-            this->armorplate[i].printPNPInfo(i); // 传入index，打印 pnp 信息
-            img_show_prepare = this->armorplate[i].getImgShow(); // 获取装甲板画的图，传给下一个装甲板继续画，这样就能把所有装甲板的信息都画在 img_show 上了
+            auto msg = serial_driver_interfaces::msg::SendPNPInfo();
 
-            // 记录置信度最高的装甲板编号和置信度
-            if(this->armorplate[i].moderation > moderation_max)
-            {
-                moderation_max = this->armorplate[i].moderation;
-                moderation_max_index = i;
-            }
-        }
-        
-        cv::Mat img_show_armorplate = img_show_prepare; // 获取最终图像
+            msg.header.stamp = this->now();
+            msg.rvec = {this->armorplate.r.at<double>(0), this->armorplate.r.at<double>(1), this->armorplate.r.at<double>(2)};
+            msg.tvec = {this->armorplate.t.at<double>(0), this->armorplate.t.at<double>(1), this->armorplate.t.at<double>(2)};
 
-
-
-        /////////////////// 发送串口消息 ////////////////////////
-
-        auto serial_driver = serial_driver_interfaces::msg::SerialDriver();
-
-        // 只要有装甲板，就发送第一个装甲板的信息，优先级最高
-        if(this->armorplate.size() > 0)
-        {
-            serial_driver.yaw = this->armorplate[moderation_max_index].t_yaw; // 发送 置信度max 的装甲板的 yaw
-            serial_driver.pitch = this->armorplate[moderation_max_index].t_pitch; // 发送 置信度max 装甲板的 pitch
+            pnp_pub_->publish(msg); // 发布消息 到 /send_pnp_info 话题
             
-            pub_->publish(serial_driver); // 发布消息 到 serial_driver 话题
-            RCLCPP_INFO(this->get_logger(), "############  corenode 发布了消息: yaw=%.2f pitch=%.2f", serial_driver.yaw, serial_driver.pitch);
-
+            RCLCPP_ERROR(this->get_logger(), "pnp 消息已发布到 /send_pnp_info 话题 下");
         }
         else
         {
-            serial_driver.yaw = 0.00;
-            serial_driver.pitch = 0.00;
-
-            RCLCPP_ERROR(this->get_logger(), "#### 未识别到装甲板! corenode【未】发布消息", serial_driver.yaw, serial_driver.pitch);
+            RCLCPP_ERROR(this->get_logger(), "#### 未识别到装甲板! corenode【未】发布 PNP 消息");
         }
 
         
@@ -168,7 +146,7 @@ private:
         ///////////////////////////////////////////////////////
 
         //cv::imshow("img", img);
-        cv::imshow("img_show_armorplate", img_show_armorplate);
+        cv::imshow("img_show_armorplate", this->img_show);
 
 
 
@@ -176,7 +154,7 @@ private:
 
         if(key == 27)
         {
-            RCLCPP_ERROR(this->get_logger(), "ProcessNode 节点已被手动退出! ");
+            RCLCPP_ERROR(this->get_logger(), "coreNode 节点已被手动退出! ");
             rclcpp::shutdown();
             return;
         }
@@ -190,23 +168,31 @@ private:
 
             // 保存当前数值图
             std::string filename_changed = "saved_changed_image_" + std::to_string(cv::getTickCount()) + ".jpg";
-            cv::imwrite(filename_changed, prepare.getImgShow());
+            cv::imwrite(filename_changed, this->img_show);
             RCLCPP_INFO(this->get_logger(), "Image saved as %s", filename_changed.c_str());
         }
 
-        RCLCPP_INFO_ONCE(this->get_logger(), "ProcessNode 正在发布...");
+        RCLCPP_INFO_ONCE(this->get_logger(), "coreNode 正在发布...");
     }
 
 
 
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr sub_; // 订阅 mindvision_publisher 发过来的原图
-    rclcpp::Publisher<serial_driver_interfaces::msg::SerialDriver>::SharedPtr pub_; // 发布信息
+    rclcpp::Publisher<serial_driver_interfaces::msg::SendPNPInfo>::SharedPtr pnp_pub_; // 发布 pnp 信息
 
 
     Prepare prepare; // prepare 类对象，包含预处理函数、寻找灯条函数、配对函数等
     
     std::vector<Strip> strip; // 灯条类集合，接收从 prepare.findAndJudgeLightStrip() 返回的灯条集合
-    std::vector<ArmorPlate> armorplate; // 装甲板类集合，接收从 prepare.pairStrip() 返回的装甲板集合
+    ArmorPlate armorplate; // 【修改】置信度最高的那个装甲板，接收从 prepare.pairStrip() 返回的装甲板
+
+
+
+    ////////////////////// 图像相关 //////////////////////
+
+    cv::Mat img; // 原图
+    cv::Mat img_show; // 用来显示信息的图
+
 
 
     ////////////////////// 从配置文件读取的变量 //////////////////////

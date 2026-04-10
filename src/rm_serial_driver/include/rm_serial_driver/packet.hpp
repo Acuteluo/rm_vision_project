@@ -15,9 +15,9 @@ struct ReceivePacket
   uint8_t header = 0xFF;
   
   // --- 有效数据起 ---
-  float yaw;      // 先 yaw
-  float pitch;      // 然后 pitch
-  float roll;    // 最后 roll
+  float roll;    // 先 roll
+  float pitch;   // 然后 pitch
+  float yaw;     // 最后 yaw
   // --- 有效数据止 ---
 
   uint8_t checksum = 0xFE; // CRC8 校验值，注意这里是固定
@@ -31,8 +31,9 @@ struct SendPacket
   uint8_t header = 0xFF;
   
   // --- 有效数据起 ---
-  float yaw;      // 先 yaw
-  float pitch;    // 后 pitch
+  float roll;    // 先 roll
+  float pitch;   // 然后 pitch
+  float yaw;     // 最后 yaw
   // --- 有效数据止 ---
 
   uint8_t crc = 0XFE;   // CRC8 校验值，注意这里是固定

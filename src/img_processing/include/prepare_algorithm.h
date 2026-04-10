@@ -16,6 +16,9 @@ public:
 
     /////// 设置 config.txt 对应的参数 ///////
     void setParam(bool show_logger, std::string chosen_color, std::string camera_name, std::string armor_type);
+
+    /// 设置 img_show，通过引用，这样就不需要再获取图了
+    void setImgShow(cv::Mat& img_show);
     
 
 	/**
@@ -27,16 +30,10 @@ public:
 
 	/**
     * @brief	灯带配对
-    * @return   std::vector<ArmorPlate> 返回装甲板集合
+    * @return   std::vector<ArmorPlate> 【修改】返回置信度最高的装甲板，因为只需要跟踪一个！
     */
-    std::vector<ArmorPlate> pairStrip();
+    ArmorPlate pairStrip();
 	
-
-    /**
-	* @brief	返回 img_show
-	* @return   返回 img_show
-	*/
-	cv::Mat getImgShow();
 
 
 private:

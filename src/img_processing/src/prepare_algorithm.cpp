@@ -24,6 +24,13 @@ void Prepare::setParam(bool show_logger, std::string chosen_color, std::string c
     this->ARMOR_TYPE = armor_type;
 }
 
+//////////////////////////////////   设置 img_show，通过引用，这样就不需要再获取图了  //////////////////////////////////
+
+void Prepare::setImgShow(cv::Mat& img_show)
+{
+    this->img_show = img_show; // 这样仍然是在原图上画，画完 core 节点就可以直接用，最方便的一集
+}
+
 
 
 
@@ -31,9 +38,9 @@ void Prepare::setParam(bool show_logger, std::string chosen_color, std::string c
 
 /**
 * @brief	灯带配对
-* @return   std::vector<ArmorPlate> 返回装甲板集合
+* @return   std::vector<ArmorPlate> 【修改】返回置信度最高的装甲板，因为只需要跟踪一个！
 */
-std::vector<ArmorPlate> Prepare::pairStrip()
+ArmorPlate Prepare::pairStrip()
 {
 	std::vector<ArmorPlate> armorplate; // 装甲板集合
 	double moderation[101][101] = { 0.00 }; // [编号][编号]，合理性
@@ -317,24 +324,23 @@ std::vector<ArmorPlate> Prepare::pairStrip()
 		}
 	}
 
-    return armorplate; // 返回装甲板集合
 
-	// if (armorplate.size() > 0)
-	// {
-	// 	//追踪最靠近中间的
-	// 	double distance_min = 1440.00 * 1080.00;
-	// 	int flag = 0;
-	// 	for (int i = 0; i < armorplate.size(); i++)
-	// 	{
-	// 		double x_middle_diff = std::fabs(armorplate[i].center.x - 720.00);
-	// 		if (x_middle_diff < distance_min)
-	// 		{
-	// 			distance_min = x_middle_diff;
-	// 			flag = i;
-	// 		}
-	// 	}
-	// 	armorplate[flag].drawArmorPlate(this->img_show);
-	// }
+    // 5. 对于每一个装甲板，记录谁的置信度最大
+    int moderation_max_index = -1; // 置信度最高的装甲板编号
+    double moderation_max = 0.00; // 最高的置信度
+    for(int i = 0; i < this->armorplate.size(); i++)
+    {
+        // 记录置信度最高的装甲板编号和置信度
+        if(this->armorplate[i].moderation > moderation_max)
+        {
+            moderation_max = this->armorplate[i].moderation;
+            moderation_max_index = i;
+        }
+    }
+
+    if(moderation_max_index == -1) return ArmorPlate(); // 没有装甲板，返回一个默认构造的装甲板对象
+    return armorplate[moderation_max_index]; // 找到了，就返回置信度最高的装甲板
+
 
 }
 
@@ -655,15 +661,6 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 }
 
 
-/**
-* @brief	返回 img_show
-* @return   返回 img_show
-*/
-cv::Mat Prepare::getImgShow()
-{
-    return this->img_show;
-}
-
 
 
 /*
@@ -675,9 +672,6 @@ cv::Mat Prepare::getImgShow()
     目前问题：稍远距离（3m）识别不到，怀疑是曝光太低了
 
 */
-
-
-
 
 
 

@@ -11,6 +11,9 @@ find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
 find_package(Eigen3 REQUIRED)
 
@@ -25,11 +28,15 @@ include_directories(include)
 # 节点
 add_executable(core_node src/core_node.cpp src/prepare_algorithm.cpp src/utils/strip.cpp src/utils/armorplate.cpp)
 
+add_executable(tf_node src/tf_node.cpp)
+
+
 target_include_directories(core_node PRIVATE
   include
 )
 
-ament_target_dependencies(core_node rclcpp sensor_msgs cv_bridge OpenCV Eigen3 message_filters serial_driver_interfaces)
+ament_target_dependencies(core_node rclcpp sensor_msgs cv_bridge OpenCV Eigen3 message_filters serial_driver_interfaces tf2_ros tf2_geometry_msgs geometry_msgs)
+ament_target_dependencies(tf_node rclcpp sensor_msgs cv_bridge OpenCV Eigen3 message_filters serial_driver_interfaces tf2_ros tf2_geometry_msgs geometry_msgs)
 
 target_link_libraries(core_node
   ${OpenCV_LIBS}
@@ -41,6 +48,9 @@ target_link_libraries(core_node
 
 # 安装可执行文件
 install(TARGETS core_node DESTINATION lib/${PROJECT_NAME})
+
+# 安装可执行文件
+install(TARGETS tf_node DESTINATION lib/${PROJECT_NAME})
 
 # 安装本包的头文件
 install(DIRECTORY include/ DESTINATION include)

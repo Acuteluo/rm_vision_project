@@ -102,13 +102,6 @@ void ArmorPlate::setImgShow(cv::Mat& img_show)
 
 
 
-// 获取 img_show
-cv::Mat ArmorPlate::getImgShow()
-{
-    return this->img_show;
-}
-
-
 
 // 有参构造，放入两个灯带 + 置信度 + 相机名称 + 装甲板类型，构造装甲板
 ArmorPlate::ArmorPlate(Strip a, Strip b, double moderation, std::string camera_name, std::string armor_type)
@@ -182,17 +175,24 @@ ArmorPlate::ArmorPlate(Strip a, Strip b, double moderation, std::string camera_n
 
 
 /**
- * @brief	画出装甲板并标点
- * @return  无返回值，直接画图
- */
-void ArmorPlate::drawArmorPlate()
+* @brief	画出装甲板并标点，打印 pnp 信息
+* @return   无返回值，直接画图
+*/
+void ArmorPlate::drawArmorPlateAndPrintPNPInfo()
 {
+    // 画出装甲板的四个角点、中心点和边框
     for (int i = 0; i < 4; i++)
     {
         cv::putText(this->img_show, "[" + std::to_string((int)i + 1) + "] [" + std::to_string((int)vertice_pixel[i].x) + ", " + std::to_string((int)vertice_pixel[i].y) + "]", cv::Point2f(vertice_pixel[i].x, vertice_pixel[i].y - 5), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 0.65);
         cv::line(this->img_show, vertice_pixel[i], vertice_pixel[(i + 1) % 4], cv::Scalar(0, 0, 255), 2); // 画线
     }
     cv::circle(this->img_show, this->center, 3, cv::Scalar(0, 0, 255), cv::FILLED); // 中心点
+
+    // 打印 置信度 和 pnp 信息
+    cv::putText(this->img_show, "t_distance = " + std::to_string((double)this->moderation), cv::Point2f(0, 450), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+    cv::putText(this->img_show, "t_yaw = " + std::to_string((double)this->t_yaw), cv::Point2f(0, 500), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+	cv::putText(this->img_show, "t_pitch = " + std::to_string((double)this->t_pitch), cv::Point2f(0, 550), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+	cv::putText(this->img_show, "t_distance = " + std::to_string((double)this->t_distance) + "mm", cv::Point2f(0, 600), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
 }
 
 
@@ -204,7 +204,6 @@ void ArmorPlate::drawArmorPlate()
 void ArmorPlate::perspectiveNPoint()
 {
 	std::vector<int> inliers;
-	bool is_success = true;
 
 
     /*
@@ -212,14 +211,14 @@ void ArmorPlate::perspectiveNPoint()
         输出：旋转向量r 平移向量t 
         设置：是否使用外点剔除 迭代次数 内点距离阈值 内点置信度阈值 以及使用的pnp算法
     */ 
-	is_success = cv::solvePnPRansac(
+	this->is_success = cv::solvePnPRansac(
         this->vertice_world, this->vertice_pixel, K, D, 
         this->r, this->t, 
         false, 200, 5.0, 0.99, inliers, cv::SOLVEPNP_IPPE);
 
 
     // 如果解算不成功
-	if (!is_success)
+	if (!this->is_success)
 	{
 		RCLCPP_ERROR(rclcpp::get_logger("ArmorPlate"), "---------->  pnp解算失败! ");
         return;
@@ -229,32 +228,21 @@ void ArmorPlate::perspectiveNPoint()
 
     // --------------------- 如果解算成功 ---------------------
 
-    // 对于平移向量t，提取出 X Y Z
+    // 对于平移向量t，提取出 X Y Z。一定 X > 0 
     double X = this->t.at<double>(0, 0);
     double Y = this->t.at<double>(1, 0);
     double Z = this->t.at<double>(2, 0);
 
+
+    // --------------------- 下面信息是给人验证的，因为 yaw pitch 是 t 向量计算出来的偏差角 -----------------------
+
     this->t_distance = std::sqrt(X * X + Y * Y + Z * Z); // 求距离
 
-
-    // yaw 水平偏角，+表示目标在相机右侧
-    // pitch = 垂直偏角，+表示目标在相机上方（Y轴向下，取负更合适）
-    this->t_yaw = std::atan2(X, Z) * 180.0 / CV_PI;
-    this->t_pitch = -std::atan2(Y, Z) * 180.0 / CV_PI;
+    // atan2(y, x) 的符号只由 y 决定，与 x 无关。
+    // yaw + 表示目标在相机左侧。因为当△y为-时，结果为-。装甲板在右方，需要yaw为-，没问题
+    // pitch + 表示目标在相机下方。当△z为-时，结果为-。装甲板在下方，需要pitch为+，所以要取负号
+    this->t_yaw = std::atan2(Y, X) * 180.0 / CV_PI;
+    this->t_pitch = -std::atan2(Z, std::sqrt(X * X + Y * Y)) * 180.0 / CV_PI;
 
 }
 
-
-
-/**
-* @brief	输出 yaw pitch distance 信息
-* @param	cv::Mat& img_show 要画的图
-* @param    int index 装甲板编号
-* @return   无返回值，直接画图
-*/
-void ArmorPlate::printPNPInfo(int index)
-{
-	cv::putText(this->img_show, "A" + std::to_string((int)index) + " t_yaw = " + std::to_string((double)this->t_yaw), cv::Point2f(0, 500 + 150*(index-1)), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-	cv::putText(this->img_show, "A" + std::to_string((int)index) + " t_pitch = " + std::to_string((double)this->t_pitch), cv::Point2f(0, 550 + 150*(index-1)), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-	cv::putText(this->img_show, "A" + std::to_string((int)index) + " t_distance = " + std::to_string((double)this->t_distance) + "mm", cv::Point2f(0, 600 + 150*(index-1)), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-}

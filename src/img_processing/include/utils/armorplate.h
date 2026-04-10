@@ -21,15 +21,12 @@ public:
     void setImgShow(cv::Mat& img_show);
 
 
-    // 获取 img_show
-    cv::Mat getImgShow();
-
 
 	/**
-	* @brief	画出装甲板并标点
+	* @brief	画出装甲板并标点，打印 pnp 信息
 	* @return   无返回值，直接画图
 	*/
-	void drawArmorPlate();
+	void drawArmorPlateAndPrintPNPInfo();
 
 
 	/**
@@ -39,27 +36,24 @@ public:
 	void perspectiveNPoint();
 
 
-	/**
-	* @brief	输出 yaw pitch distance 信息
-    * @param    int index 装甲板编号
-	* @return   无返回值，直接画图
-	*/
-	void printPNPInfo(int index = 1);
-
-
 	cv::Point2f center; // 装甲板中心点
     cv::Point2f tl; // 装甲板左上
     cv::Point2f bl; // 装甲板左下
     cv::Point2f br; // 装甲板右下
     cv::Point2f tr; // 装甲板右上
 
-    double t_yaw; //偏航角
-	double t_pitch; //俯仰角
-	double t_distance; //距离
+
+    ///////// pnp 结算结果 /////////
+
+    bool is_success; // 是否解算成功
 
 
     double moderation; // 置信度
 
+    cv::Mat r; // 旋转向量
+	cv::Mat t; // 平移向量    
+
+    cv::Mat R; // 旋转矩阵
 
 private:
 
@@ -73,11 +67,10 @@ private:
 	cv::Mat D; // 畸变矩阵
 
     // pnp 解算结果：
-	cv::Mat r; // 旋转向量
-	cv::Mat t; // 平移向量    
-
-    cv::Mat R; // 旋转矩阵
-
+    
+    double t_yaw; //偏航角
+	double t_pitch; //俯仰角
+	double t_distance; //距离
 
 
     std::string ARMOR_TYPE; // 装甲板类型，英雄/步兵，决定了装甲板的世界坐标系点的位置
