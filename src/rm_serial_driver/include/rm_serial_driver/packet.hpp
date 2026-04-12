@@ -14,10 +14,11 @@ struct ReceivePacket
 {
   uint8_t header = 0xFF;
   
+  // 欧拉角顺序为 RPY
   // --- 有效数据起 ---
-  float roll;    // 先 roll
-  float pitch;   // 然后 pitch
-  float yaw;     // 最后 yaw
+  float euler_roll;    // 先 roll
+  float euler_pitch;   // 然后 pitch
+  float euler_yaw;     // 最后 yaw
   // --- 有效数据止 ---
 
   uint8_t checksum = 0xFE; // CRC8 校验值，注意这里是固定
@@ -30,10 +31,10 @@ struct SendPacket
 {
   uint8_t header = 0xFF;
   
+  // 绝对角
   // --- 有效数据起 ---
-  float roll;    // 先 roll
-  float pitch;   // 然后 pitch
-  float yaw;     // 最后 yaw
+  float absolute_pitch;   // 先 pitch
+  float absolute_yaw;     // 然后 yaw
   // --- 有效数据止 ---
 
   uint8_t crc = 0XFE;   // CRC8 校验值，注意这里是固定

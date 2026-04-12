@@ -5,7 +5,7 @@ false
 red
 
 # CAMERA_NAME = galaxy / mind_vision
-mind_vision
+galaxy
 
 # ARMOR_TYPE = normal / hero
 normal

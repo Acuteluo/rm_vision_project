@@ -101,11 +101,18 @@ void ArmorPlate::setImgShow(cv::Mat& img_show)
 }
 
 
+// 获取 img_show
+cv::Mat ArmorPlate::getImgShow()
+{
+    return this->img_show;
+}
+
 
 
 // 有参构造，放入两个灯带 + 置信度 + 相机名称 + 装甲板类型，构造装甲板
 ArmorPlate::ArmorPlate(Strip a, Strip b, double moderation, std::string camera_name, std::string armor_type)
 {
+
     // ------- 1. 先设置基础参数 -------
     this->moderation = moderation; // 合理性
     this->CAMERA_NAME = camera_name; // 相机名称
@@ -189,9 +196,9 @@ void ArmorPlate::drawArmorPlateAndPrintPNPInfo()
     cv::circle(this->img_show, this->center, 3, cv::Scalar(0, 0, 255), cv::FILLED); // 中心点
 
     // 打印 置信度 和 pnp 信息
-    cv::putText(this->img_show, "t_distance = " + std::to_string((double)this->moderation), cv::Point2f(0, 450), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-    cv::putText(this->img_show, "t_yaw = " + std::to_string((double)this->t_yaw), cv::Point2f(0, 500), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-	cv::putText(this->img_show, "t_pitch = " + std::to_string((double)this->t_pitch), cv::Point2f(0, 550), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+    cv::putText(this->img_show, "moderation = " + std::to_string((double)this->moderation), cv::Point2f(0, 450), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+	cv::putText(this->img_show, "t_pitch = " + std::to_string((double)this->t_pitch), cv::Point2f(0, 500), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);\
+    cv::putText(this->img_show, "t_yaw = " + std::to_string((double)this->t_yaw), cv::Point2f(0, 550), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
 	cv::putText(this->img_show, "t_distance = " + std::to_string((double)this->t_distance) + "mm", cv::Point2f(0, 600), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
 }
 
@@ -208,7 +215,7 @@ void ArmorPlate::perspectiveNPoint()
 
     /*
         输入：装甲板世界点集 装甲板像素点集 相机内参K 相机畸变D 
-        输出：旋转向量r 平移向量t 
+        输出：旋转向量r 平移向量t （在 opencv 默认坐标系下）
         设置：是否使用外点剔除 迭代次数 内点距离阈值 内点置信度阈值 以及使用的pnp算法
     */ 
 	this->is_success = cv::solvePnPRansac(
@@ -228,15 +235,75 @@ void ArmorPlate::perspectiveNPoint()
 
     // --------------------- 如果解算成功 ---------------------
 
-    // 对于平移向量t，提取出 X Y Z。一定 X > 0 
-    double X = this->t.at<double>(0, 0);
-    double Y = this->t.at<double>(1, 0);
-    double Z = this->t.at<double>(2, 0);
+    // 对于平移向量t，提取出 X Y Z。
+    // 一定注意！！这里的 [R|t] 都是 opencv默认的相机坐标系下的坐标（x朝右，y朝下，z朝前）需要全部转换才能用！！
+    /*
+                         ^ z
+                        /
+                       /
+                      /
+     【镜头中心] 一>   O---------> x
+                     |
+                     |
+                     |
+                     |
+                     v y
+
+        opencv 默 认 相 机 坐 标 系    
+    */
+
+    /// >>>>>>>>>>>>>>>>>>>>> t -> t_vec <<<<<<<<<<<<<<<<<<<<
+
+    // 先获取在 opencv 默认相机系下的坐标
+    double x = this->t.at<double>(0, 0); 
+    double y = this->t.at<double>(1, 0);
+    double z = this->t.at<double>(2, 0);
+
+    // 必须转换到右手系
+    double X = z;
+    double Y = -x;
+    double Z = -y;
+
+    // 构造右手系坐标下的 平移向量 t_vec
+    this->t_vec = Eigen::Vector3d(X, Y, Z);
 
 
-    // --------------------- 下面信息是给人验证的，因为 yaw pitch 是 t 向量计算出来的偏差角 -----------------------
+    /// >>>>>>>>>>>>>>>>>>>>> r -> R <<<<<<<<<<<<<<<<<<<<
+    
+    // 罗德里格斯变换，把 旋转向量 r -> 旋转矩阵 R_origin
+    cv::Mat R_origin;
+    cv::Rodrigues(this->r, R_origin);
+
+    // 定义坐标系转换矩阵 R_transform (opencv 默认 相机系 -> 右手系)
+    Eigen::Matrix3d R_transform;
+    R_transform << 0,  0,  1,
+                  -1,  0,  0,
+                   0, -1,  0;
+
+
+    // 将 cv::Mat 转换为 Eigen::Matrix3d
+    Eigen::Matrix3d R_origin_eigen;
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            R_origin_eigen(i, j) = R_origin.at<double>(i, j);
+        }
+            
+    }
+        
+
+    // 计算新的旋转矩阵并存储到 this->R
+    // 注意：这里是 R_transform * R_origin_eigen，左乘
+    this->R = R_transform * R_origin_eigen;
+
+
+
+    // ------ 下面信息是给人验证的，因为 yaw pitch 是 t_vec 向量计算出来的，相对于相机坐标系右手系的偏差角 ------
+
 
     this->t_distance = std::sqrt(X * X + Y * Y + Z * Z); // 求距离
+
 
     // atan2(y, x) 的符号只由 y 决定，与 x 无关。
     // yaw + 表示目标在相机左侧。因为当△y为-时，结果为-。装甲板在右方，需要yaw为-，没问题

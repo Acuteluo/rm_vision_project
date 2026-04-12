@@ -21,7 +21,7 @@ public:
         std::ifstream file("config.txt");  // 打开配置文件，注意是在工作空间下
         if (!file.is_open()) 
         {
-            RCLCPP_ERROR(this->get_logger(), "无法打开 config.txt 配置文件。。。。即将退出 core 节点\n");
+            RCLCPP_ERROR(this->get_logger(), "【 EXIT 】无法打开 config.txt 配置文件。。。。即将退出 core 节点\n");
             exit(-1);
         }
 
@@ -31,7 +31,7 @@ public:
         while (std::getline(file, each_line)) 
         {
             // 处理每一行，each_line 即为当前行的字符串
-            if (each_line.empty() || each_line[0] == '#') continue;
+            if (each_line.empty() || each_line[0] == '#' || each_line[0] == '/') continue;
             else
             {
                 ++line_count;
@@ -43,25 +43,25 @@ public:
                         this->SHOW_LOGGER = false;
                     }
                     else this->SHOW_LOGGER = true;
-                    RCLCPP_INFO(this->get_logger(), "get SHOW_LOGGER = %s", each_line.c_str());
+                    RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_LOGGER = %s", each_line.c_str());
                 }
 
                 else if(line_count == 2)
                 {
                     this->CHOSEN_COLOR = each_line;
-                    RCLCPP_INFO(this->get_logger(), "get CHOSEN_COLOR = %s", each_line.c_str());
+                    RCLCPP_INFO(this->get_logger(), "【 设置参数 】CHOSEN_COLOR = %s", each_line.c_str());
                 }
 
                 else if(line_count == 3)
                 {
                     this->CAMERA_NAME = each_line;
-                    RCLCPP_INFO(this->get_logger(), "get CAMERA_NAME = %s", each_line.c_str());
+                    RCLCPP_INFO(this->get_logger(), "【 设置参数 】CAMERA_NAME = %s", each_line.c_str());
                 }
 
                 else if(line_count == 4)
                 {
                     this->ARMOR_TYPE = each_line;
-                    RCLCPP_INFO(this->get_logger(), "get ARMOR_TYPE = %s", each_line.c_str());
+                    RCLCPP_INFO(this->get_logger(), "【 设置参数 】ARMOR_TYPE = %s", each_line.c_str());
                 }
             }
         }
@@ -73,7 +73,7 @@ public:
         }
         else
         {
-            RCLCPP_INFO(this->get_logger(), "ALL SET! 共设置了 %d 个有效参数", line_count);
+            RCLCPP_INFO(this->get_logger(), "【 设置参数完成 】ALL SET! 共设置了 %d 个有效参数", line_count);
         }
 
         file.close();
@@ -113,31 +113,51 @@ private:
         prepare.setImgShow(this->img_show); // 设置 img_show
         prepare.preProcessing(img); // 图像预处理
         this->strip = prepare.findAndJudgeLightStrip(); // 找灯带 返回灯带集合
-		this->armorplate = prepare.pairStrip(); // 灯条配对 【修改】返回置信度最大的装甲板，因为只要跟踪一个啊
+		this->armorplate = prepare.pairStrip(); // 灯条配对 【修改】返回按置信度排序后的装甲板集合
+        this->img_show = prepare.getImgShow(); // 获取预处理后带有信息的 img_show
 
         
         // 3. 解算 pnp
-        this->armorplate.setImgShow(this->img_show); // 设置 img_show
-        this->armorplate.perspectiveNPoint(); // 解算 pnp
-        this->armorplate.drawArmorPlateAndPrintPNPInfo(); // 画置信度最高的装甲板，并打印 pnp 信息
+        if(this->armorplate.size() > 0) // 存在装甲板
+        {
+            this->armorplate[0].setImgShow(this->img_show); // 设置 img_show
+            this->armorplate[0].perspectiveNPoint(); // 解算 pnp
+            this->armorplate[0].drawArmorPlateAndPrintPNPInfo(); // 画置信度最高的装甲板，并打印 pnp 信息
+            this->img_show = this->armorplate[0].getImgShow(); // 获取带有装甲板信息的 img_show
+        }
+        else
+        {
+            RCLCPP_WARN(this->get_logger(), "【 SKIP 】未识别到装甲板! corenode 未 进行 pnp 解算");
+        }
 
 
-        // 4. 发送 pnp 消息
-        if(armorplate.moderation != 0 && this->armorplate.is_success) // 只有当 置信度大于0 和 pnp结算有结果 才发布消息
+        // 4. 发送 pnp 消息，注意是转换后的右手系
+        if(this->armorplate.size() > 0 && this->armorplate[0].is_success) // 只有当 pnp结算有结果 才发布消息
         {
             auto msg = serial_driver_interfaces::msg::SendPNPInfo();
 
             msg.header.stamp = this->now();
-            msg.rvec = {this->armorplate.r.at<double>(0), this->armorplate.r.at<double>(1), this->armorplate.r.at<double>(2)};
-            msg.tvec = {this->armorplate.t.at<double>(0), this->armorplate.t.at<double>(1), this->armorplate.t.at<double>(2)};
+            msg.matrix_r = {
+                this->armorplate[0].R(0, 0), 
+                this->armorplate[0].R(0, 1), 
+                this->armorplate[0].R(0, 2), 
+                this->armorplate[0].R(1, 0), 
+                this->armorplate[0].R(1, 1), 
+                this->armorplate[0].R(1, 2), 
+                this->armorplate[0].R(2, 0), 
+                this->armorplate[0].R(2, 1), 
+                this->armorplate[0].R(2, 2), 
+            };
+
+            msg.tvec = {this->armorplate[0].t_vec(0), this->armorplate[0].t_vec(1), this->armorplate[0].t_vec(2)};
 
             pnp_pub_->publish(msg); // 发布消息 到 /send_pnp_info 话题
             
-            RCLCPP_ERROR(this->get_logger(), "pnp 消息已发布到 /send_pnp_info 话题 下");
+            RCLCPP_INFO(this->get_logger(), "【 CONFIRM 】pnp 消息已发布到 /send_pnp_info 话题 下");
         }
         else
         {
-            RCLCPP_ERROR(this->get_logger(), "#### 未识别到装甲板! corenode【未】发布 PNP 消息");
+            RCLCPP_WARN(this->get_logger(), "【 SKIP 】未识别到装甲板! corenode 未 发布 PNP 消息");
         }
 
         
@@ -154,7 +174,7 @@ private:
 
         if(key == 27)
         {
-            RCLCPP_ERROR(this->get_logger(), "coreNode 节点已被手动退出! ");
+            RCLCPP_ERROR(this->get_logger(), "【 EXIT 】coreNode 节点已被手动退出! ");
             rclcpp::shutdown();
             return;
         }
@@ -184,7 +204,7 @@ private:
     Prepare prepare; // prepare 类对象，包含预处理函数、寻找灯条函数、配对函数等
     
     std::vector<Strip> strip; // 灯条类集合，接收从 prepare.findAndJudgeLightStrip() 返回的灯条集合
-    ArmorPlate armorplate; // 【修改】置信度最高的那个装甲板，接收从 prepare.pairStrip() 返回的装甲板
+    std::vector<ArmorPlate> armorplate; // 【修改】置信度最高的那个装甲板，接收从 prepare.pairStrip() 返回的装甲板
 
 
 

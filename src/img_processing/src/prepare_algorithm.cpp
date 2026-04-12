@@ -24,11 +24,17 @@ void Prepare::setParam(bool show_logger, std::string chosen_color, std::string c
     this->ARMOR_TYPE = armor_type;
 }
 
-//////////////////////////////////   设置 img_show，通过引用，这样就不需要再获取图了  //////////////////////////////////
+//////////////////////////////////   设置 和 获取 img_show   //////////////////////////////////
 
 void Prepare::setImgShow(cv::Mat& img_show)
 {
-    this->img_show = img_show; // 这样仍然是在原图上画，画完 core 节点就可以直接用，最方便的一集
+    this->img_show = img_show; 
+}
+
+
+cv::Mat Prepare::getImgShow()
+{
+    return this->img_show;
 }
 
 
@@ -38,9 +44,9 @@ void Prepare::setImgShow(cv::Mat& img_show)
 
 /**
 * @brief	灯带配对
-* @return   std::vector<ArmorPlate> 【修改】返回置信度最高的装甲板，因为只需要跟踪一个！
+* @return   std::vector<ArmorPlate> 【修改】返回按置信度排序后的装甲板集合
 */
-ArmorPlate Prepare::pairStrip()
+std::vector<ArmorPlate> Prepare::pairStrip()
 {
 	std::vector<ArmorPlate> armorplate; // 装甲板集合
 	double moderation[101][101] = { 0.00 }; // [编号][编号]，合理性
@@ -50,12 +56,13 @@ ArmorPlate Prepare::pairStrip()
 
     // ------- 0. 合理性评判参数设置 -------
 
-	double MAX_ANGLE = 20.00; // 两个灯条最大差角 -> [两个灯条是否平行]
+	double MAX_ANGLE = 25.00; // 两个灯条最大差角 -> [两个灯条是否平行]
 
-    // 两个灯条构成的装甲板 宽高比例是否合理 - > [灯条间距离是否合理] 容许的最大比例系数 2.5
-    double ARMORPLATE_RATIO_THRESHOLD = 1.5;
-	double MAX_HERO_ARMORPLATE_RATIO = (225.00 / 55.00) * ARMORPLATE_RATIO_THRESHOLD; // 英雄
-    double MAX_NORMAL_ARMORPLATE_RATIO = (135.00 / 55.00) * ARMORPLATE_RATIO_THRESHOLD; // 步兵
+    // 两个灯条构成的装甲板 宽高比例是否合理 - > [灯条间距离是否合理] 容许的最大比例系数 1.5
+    double ARMORPLATE_RATIO_THRESHOLD_MAX = 1.75;
+    double ARMORPLATE_RATIO_THRESHOLD_MIN = 0.5;
+	double MAX_HERO_ARMORPLATE_RATIO = (225.00 / 55.00) * ARMORPLATE_RATIO_THRESHOLD_MAX; // 英雄
+    double MAX_NORMAL_ARMORPLATE_RATIO = (135.00 / 55.00) * ARMORPLATE_RATIO_THRESHOLD_MAX; // 步兵
 
 	double MIN_TWO_STRIP_RATIO = 0.3 / 1; // 两个灯条 短:长 的比值不能太小 -> [灯条间的选取是否合理]
 
@@ -89,22 +96,19 @@ ArmorPlate Prepare::pairStrip()
 			if (angle_diff > MAX_ANGLE)
 			{
 				// 不平行
-                if(this->SHOW_LOGGER)
-                    RCLCPP_ERROR(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 【不】平行, angle_diff = %.2f > %.2f", i, j, angle_diff, MAX_ANGLE);
+                RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 【不】平行, angle_diff = %.2f > %.2f", i, j, angle_diff, MAX_ANGLE);
 				
                 angle_moderation = false;
 			}
 			else
 			{   
 				// 平行
-                if(this->SHOW_LOGGER)
-                    RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d      平行, angle_diff = %.2f < %.2f", i, j, angle_diff,  MAX_ANGLE);
+                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d      平行, angle_diff = %.2f < %.2f", i, j, angle_diff,  MAX_ANGLE);
 				
                 double score0 = (MAX_ANGLE - angle_diff) / MAX_ANGLE * 25.00; // 和最优的差距，最优时差距为0，得分为25
                 temp_moderation += score0;
 
-                if(this->SHOW_LOGGER)
-                    RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 角度差得分, = %.2f", i, j, score0);
+                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 角度差得分, = %.2f", i, j, score0);
             }   
 
 
@@ -124,11 +128,10 @@ ArmorPlate Prepare::pairStrip()
             // 对于英雄装甲板
             if(this->ARMOR_TYPE == "hero")
             {
-                if(armorplate_ratio < MAX_HERO_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD / 2)
+                if(armorplate_ratio < MAX_HERO_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD_MAX * ARMORPLATE_RATIO_THRESHOLD_MIN)
                 {
                     // 距离太近，构成的装甲板的比值不合理
-                    if(this->SHOW_LOGGER)
-                        RCLCPP_ERROR(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f < %.2f", i, j, armorplate_ratio, MAX_HERO_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD / 2);
+                    RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f < %.2f", i, j, armorplate_ratio, MAX_HERO_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD_MAX * ARMORPLATE_RATIO_THRESHOLD_MIN);
                     
                     distance_short_moderation = false;
                 }
@@ -136,33 +139,29 @@ ArmorPlate Prepare::pairStrip()
                 if(armorplate_ratio > MAX_HERO_ARMORPLATE_RATIO)
                 {
                     // 距离太远，构成的装甲板的比值不合理
-                    if(this->SHOW_LOGGER)
-                        RCLCPP_ERROR(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f > %.2f", i, j, armorplate_ratio, MAX_HERO_ARMORPLATE_RATIO);
+                    RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f > %.2f", i, j, armorplate_ratio, MAX_HERO_ARMORPLATE_RATIO);
                     
                     distance_long_moderation = false;
                 }
                 else 
                 {
                     // 比值合理
-                    if(this->SHOW_LOGGER)
-                        RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 旋转矩形的宽高比     合理, = %.2f < %.2f", i, j, armorplate_ratio, MAX_NORMAL_ARMORPLATE_RATIO);
+                    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比     合理, = %.2f < %.2f", i, j, armorplate_ratio, MAX_NORMAL_ARMORPLATE_RATIO);
                     
-                    double score1 = (MAX_HERO_ARMORPLATE_RATIO - armorplate_ratio) / (MAX_HERO_ARMORPLATE_RATIO - MAX_HERO_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD) * 25.00; // 和英雄最优的差距（倍数），0.8倍和1.2倍得分一致
+                    double score1 = (MAX_HERO_ARMORPLATE_RATIO - armorplate_ratio) / (MAX_HERO_ARMORPLATE_RATIO - MAX_HERO_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD_MAX) * 25.00; // 和英雄最优的差距（倍数），0.8倍和1.2倍得分一致
                     temp_moderation += score1; 
                     
-                    if(this->SHOW_LOGGER)
-                        RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 旋转矩形的宽高比得分, score1 = %.2f", i, j, score1);
+                    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比得分, score1 = %.2f", i, j, score1);
                 }
             }
 
             // 对于步兵装甲板
             else
             {
-                if(armorplate_ratio < MAX_NORMAL_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD / 2)
+                if(armorplate_ratio < MAX_NORMAL_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD_MAX * ARMORPLATE_RATIO_THRESHOLD_MIN)
                 {
                     // 距离太近，构成的装甲板的比值不合理
-                    if(this->SHOW_LOGGER)
-                        RCLCPP_ERROR(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f < %.2f", i, j, armorplate_ratio, MAX_NORMAL_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD / 2);
+                    RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f < %.2f", i, j, armorplate_ratio, MAX_NORMAL_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD_MAX * ARMORPLATE_RATIO_THRESHOLD_MIN);
                     
                     distance_short_moderation = false;
                 }
@@ -170,49 +169,43 @@ ArmorPlate Prepare::pairStrip()
                 if(armorplate_ratio > MAX_NORMAL_ARMORPLATE_RATIO)
                 {
                     // 距离太远，构成的装甲板的比值不合理
-                    if(this->SHOW_LOGGER)
-                        RCLCPP_ERROR(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f > %.2f", i, j, armorplate_ratio, MAX_NORMAL_ARMORPLATE_RATIO);
+                    RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f > %.2f", i, j, armorplate_ratio, MAX_NORMAL_ARMORPLATE_RATIO);
                     
                     distance_long_moderation = false;
                 }
                 else 
                 {
                     // 比值合理
-                    if(this->SHOW_LOGGER)
-                        RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 旋转矩形的宽高比     合理, = %.2f < %.2f", i, j, armorplate_ratio, MAX_NORMAL_ARMORPLATE_RATIO);
+                    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比     合理, = %.2f < %.2f", i, j, armorplate_ratio, MAX_NORMAL_ARMORPLATE_RATIO);
                     
-                    double score2 = (MAX_NORMAL_ARMORPLATE_RATIO - armorplate_ratio) / (MAX_NORMAL_ARMORPLATE_RATIO - MAX_NORMAL_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD) * 25.00; // 和步兵最优的差距（倍数），0.8倍和1.2倍得分一致
+                    double score2 = (MAX_NORMAL_ARMORPLATE_RATIO - armorplate_ratio) / (MAX_NORMAL_ARMORPLATE_RATIO - MAX_NORMAL_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD_MAX) * 25.00; // 和步兵最优的差距（倍数），0.8倍和1.2倍得分一致
                     temp_moderation += score2; 
 
-                    if(this->SHOW_LOGGER)
-                        RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 旋转矩形的宽高比得分, score2 = %.2f", i, j, score2);
+                    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比得分, score2 = %.2f", i, j, score2);
                 }
             }
 
 
 
 
-			// 2.3. 两个灯条 短:长 的比值不能太大
+			// 2.3. 两个灯条 短:长 的比值不能太小
 
             double two_strip_ratio = strip_shortest / strip_longest;
             if(two_strip_ratio < MIN_TWO_STRIP_RATIO)
             {
                 // 某个灯条太短，两个灯条 短:长 的比值不合理
-                if(this->SHOW_LOGGER)
-                    RCLCPP_ERROR(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 短:长 的比【不】合理, = %.2f < %.2f", i, j, two_strip_ratio, MIN_TWO_STRIP_RATIO);
+                RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 短:长 的比【不】合理, = %.2f < %.2f", i, j, two_strip_ratio, MIN_TWO_STRIP_RATIO);
 				
                 length_moderation = false;
             }
             else
 			{
                 // 比值合理
-                if(this->SHOW_LOGGER)
-                    RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 短:长 的比     合理, = %.2f > %.2f", i, j, two_strip_ratio, MIN_TWO_STRIP_RATIO);
+                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 短:长 的比     合理, = %.2f > %.2f", i, j, two_strip_ratio, MIN_TWO_STRIP_RATIO);
 				
                 temp_moderation += two_strip_ratio * 25; // 和最优的差距，最优时 比例接近 1
                 
-                if(this->SHOW_LOGGER)
-                    RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 短:长 的比得分, = %.2f", i, j, two_strip_ratio * 25);
+                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 短:长 的比得分, = %.2f", i, j, two_strip_ratio * 25);
 			}
 			
 
@@ -242,22 +235,19 @@ ArmorPlate Prepare::pairStrip()
             if (angle_deg < MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE)
             {
                 // 连接线和灯条的角度差太小，可能共线了
-                if(this->SHOW_LOGGER)
-                    RCLCPP_ERROR(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 连接线和灯条的角度差【不】合理, = %.2f < %.2f", i, j, angle_deg, MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE);
+                RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 连接线和灯条的角度差【不】合理, = %.2f < %.2f", i, j, angle_deg, MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE);
                 
                 connecting_line_moderation = false;
             }
             else
             {
                 // 连接线和灯条的角度差合理
-                if(this->SHOW_LOGGER)
-                    RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 连接线和灯条的角度差     合理, = %.2f > %.2f", i, j, angle_deg, MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE);
+                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 连接线和灯条的角度差     合理, = %.2f > %.2f", i, j, angle_deg, MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE);
                 
                 double score3 = ((angle_deg -  MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE) / (90.00 - MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE)) * 25; 
                 temp_moderation += score3;
 
-                if(this->SHOW_LOGGER)
-                    RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 和灯条 %d 连接线和灯条的角度差得分, = %.2f", i, j, score3);
+                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 连接线和灯条的角度差得分, = %.2f", i, j, score3);
             }
 
 
@@ -266,8 +256,7 @@ ArmorPlate Prepare::pairStrip()
             int conditions_met = angle_moderation + distance_long_moderation + length_moderation;
 			if (conditions_met >= 2 && connecting_line_moderation && distance_short_moderation) // 连接线合理、距离不能太短是必须的
 			{
-                if(this->SHOW_LOGGER)
-                    RCLCPP_INFO(rclcpp::get_logger("info"), "除必要的两个条件外，条件满足数: %d / 3", conditions_met);
+                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "除必要的两个条件外，条件满足数: %d / 3", conditions_met);
 				
                 //更新 i 对 j 的最大合理性
 				moderation[i][j] = std::max(temp_moderation, moderation[i][j]);
@@ -294,17 +283,14 @@ ArmorPlate Prepare::pairStrip()
 				number = j;
 			}
 
-            if(this->SHOW_LOGGER)
-                RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 与 灯条 %d 的 moderation 是 %.2f", i, j, moderation[i][j]);
+            RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 与 灯条 %d 的 moderation 是 %.2f", i, j, moderation[i][j]);
 		}
 		moderation_number[i] = number;
 
-        if(this->SHOW_LOGGER)
-        {
-            RCLCPP_INFO(rclcpp::get_logger("info"), "\n--------------------------");  
-            RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 的 max_moderation 是 %.2f", i, max_moderation);
-            RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 的最佳配对是 灯条 %d", i, moderation_number[i]);
-        }
+
+        RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "\n--------------------------");  
+        RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 的 max_moderation 是 %.2f", i, max_moderation);
+        RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 的最佳配对是 灯条 %d", i, moderation_number[i]);
         
 	}
 
@@ -325,23 +311,26 @@ ArmorPlate Prepare::pairStrip()
 	}
 
 
-    // 5. 对于每一个装甲板，记录谁的置信度最大
-    int moderation_max_index = -1; // 置信度最高的装甲板编号
-    double moderation_max = 0.00; // 最高的置信度
+    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "\n--------------------------");  
+    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "共检测到 %d 个装甲板", armorplate.size());
+
+
+    // 5. 对于每一个装甲板，按照置信度排序
     for(int i = 0; i < this->armorplate.size(); i++)
     {
-        // 记录置信度最高的装甲板编号和置信度
-        if(this->armorplate[i].moderation > moderation_max)
+        for(int j = i; j < this->armorplate.size(); j++)
         {
-            moderation_max = this->armorplate[i].moderation;
-            moderation_max_index = i;
+            if(this->armorplate[j].moderation > this->armorplate[i].moderation)
+            {
+                // 交换装甲板 i 和装甲板 j
+                ArmorPlate temp = this->armorplate[i];
+                this->armorplate[i] = this->armorplate[j];
+                this->armorplate[j] = temp;
+            }
         }
     }
 
-    if(moderation_max_index == -1) return ArmorPlate(); // 没有装甲板，返回一个默认构造的装甲板对象
-    return armorplate[moderation_max_index]; // 找到了，就返回置信度最高的装甲板
-
-
+    return armorplate; 
 }
 
 
@@ -428,8 +417,7 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 
                 temp_rotatedRect = refined_rect; // 这样 temp_rotatedRect 就是亚像素优化后的旋转矩形了
 
-                if(this->SHOW_LOGGER)
-                    RCLCPP_INFO(rclcpp::get_logger("info"), "灯条 %d 的旋转矩形经过亚像素优化了！", i);
+                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 的旋转矩形经过亚像素优化了！", i);
             }
 
 
@@ -553,7 +541,7 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
             double times = std::max((double)red_edge_average / (double)blue_edge_average, (double)blue_edge_average / (double)red_edge_average); // 红蓝值相差倍数，至少要 4 以上才比较合理
             
             // 边缘饱和度高，一定是灯条
-            if(saturation_edge_average > 200.00)
+            if(saturation_edge_average > 100.00 || saturation_average > 175.00)
             {
                 if(red_edge_average > blue_edge_average) // 红值偏高，一般都会相差 100 以上的
                 {
@@ -566,7 +554,7 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
                 }
             }
 
-            else if(red_edge_average > 200.00 && blue_edge_average > 200.00) // 红蓝值都高，一定是白炽灯
+            else if(red_edge_average > 180.00 && blue_edge_average > 180.00) // 红蓝值都高，一定是白炽灯
             {
                 color = "white";
             }
@@ -816,6 +804,7 @@ void Prepare::preProcessing(cv::Mat& img)
         // cv::imshow("high_red", high_red);
     }
 
+    //cv::imshow("img_mask", this->mask);
 
     // const int IMAGE_BRIGHT = 30;       // 全局亮度增益（过暗就加大）
     // const int THRESHOLD_VALUE = 220;   // 二值化阈值（噪点多就加大）

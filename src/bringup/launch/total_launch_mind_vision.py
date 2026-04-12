@@ -39,7 +39,7 @@ def generate_launch_description():
         # {'gamma': 200},
         # {'flip_image': False}]
         parameters=[
-        {'exposure_time': 1000}, # 原本5000
+        {'exposure_time': 4000}, # 原本5000，1000效果好
         {'analog_gain': 5},
         {'rgb_gain.r': 100},
         {'rgb_gain.g': 100},
@@ -49,7 +49,19 @@ def generate_launch_description():
         {'flip_image': False}]
     )
 
-    core_node = Node(package="img_processing", executable="core_node", name="core_node")
+    core_node = Node(
+        package="img_processing", 
+        executable="core_node", 
+        name="core_node",
+        output='screen'
+    )
+
+    tf_node = Node(
+        package='img_processing',
+        executable='tf_node',
+        name='tf_node',
+        output='screen'
+    )
 
     serial_driver_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -57,4 +69,4 @@ def generate_launch_description():
         ])
     )
 
-    return LaunchDescription([camera, core_node, serial_driver_launch])
+    return LaunchDescription([camera, core_node, tf_node, serial_driver_launch])
