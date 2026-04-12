@@ -1,4 +1,4 @@
-#include "utils/strip.h"
+#include "strip.h"
 
 /**
 * @brief	（静态函数，谁都可以调用）把灯条的旋转矩形的点按从上到下排序

@@ -223,6 +223,30 @@ tf_node/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tf_node.dir/build.make CMakeFiles/tf_node.dir/build
 .PHONY : tf_node/fast
 
+src/armorplate.o: src/armorplate.cpp.o
+.PHONY : src/armorplate.o
+
+# target to build an object file
+src/armorplate.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/armorplate.cpp.o
+.PHONY : src/armorplate.cpp.o
+
+src/armorplate.i: src/armorplate.cpp.i
+.PHONY : src/armorplate.i
+
+# target to preprocess a source file
+src/armorplate.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/armorplate.cpp.i
+.PHONY : src/armorplate.cpp.i
+
+src/armorplate.s: src/armorplate.cpp.s
+.PHONY : src/armorplate.s
+
+# target to generate assembly for a file
+src/armorplate.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/armorplate.cpp.s
+.PHONY : src/armorplate.cpp.s
+
 src/core_node.o: src/core_node.cpp.o
 .PHONY : src/core_node.o
 
@@ -271,6 +295,30 @@ src/prepare_algorithm.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/prepare_algorithm.cpp.s
 .PHONY : src/prepare_algorithm.cpp.s
 
+src/strip.o: src/strip.cpp.o
+.PHONY : src/strip.o
+
+# target to build an object file
+src/strip.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/strip.cpp.o
+.PHONY : src/strip.cpp.o
+
+src/strip.i: src/strip.cpp.i
+.PHONY : src/strip.i
+
+# target to preprocess a source file
+src/strip.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/strip.cpp.i
+.PHONY : src/strip.cpp.i
+
+src/strip.s: src/strip.cpp.s
+.PHONY : src/strip.s
+
+# target to generate assembly for a file
+src/strip.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/strip.cpp.s
+.PHONY : src/strip.cpp.s
+
 src/tf_node.o: src/tf_node.cpp.o
 .PHONY : src/tf_node.o
 
@@ -295,54 +343,6 @@ src/tf_node.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tf_node.dir/build.make CMakeFiles/tf_node.dir/src/tf_node.cpp.s
 .PHONY : src/tf_node.cpp.s
 
-src/utils/armorplate.o: src/utils/armorplate.cpp.o
-.PHONY : src/utils/armorplate.o
-
-# target to build an object file
-src/utils/armorplate.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/utils/armorplate.cpp.o
-.PHONY : src/utils/armorplate.cpp.o
-
-src/utils/armorplate.i: src/utils/armorplate.cpp.i
-.PHONY : src/utils/armorplate.i
-
-# target to preprocess a source file
-src/utils/armorplate.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/utils/armorplate.cpp.i
-.PHONY : src/utils/armorplate.cpp.i
-
-src/utils/armorplate.s: src/utils/armorplate.cpp.s
-.PHONY : src/utils/armorplate.s
-
-# target to generate assembly for a file
-src/utils/armorplate.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/utils/armorplate.cpp.s
-.PHONY : src/utils/armorplate.cpp.s
-
-src/utils/strip.o: src/utils/strip.cpp.o
-.PHONY : src/utils/strip.o
-
-# target to build an object file
-src/utils/strip.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/utils/strip.cpp.o
-.PHONY : src/utils/strip.cpp.o
-
-src/utils/strip.i: src/utils/strip.cpp.i
-.PHONY : src/utils/strip.i
-
-# target to preprocess a source file
-src/utils/strip.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/utils/strip.cpp.i
-.PHONY : src/utils/strip.cpp.i
-
-src/utils/strip.s: src/utils/strip.cpp.s
-.PHONY : src/utils/strip.s
-
-# target to generate assembly for a file
-src/utils/strip.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/utils/strip.cpp.s
-.PHONY : src/utils/strip.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -360,21 +360,21 @@ help:
 	@echo "... uninstall"
 	@echo "... core_node"
 	@echo "... tf_node"
+	@echo "... src/armorplate.o"
+	@echo "... src/armorplate.i"
+	@echo "... src/armorplate.s"
 	@echo "... src/core_node.o"
 	@echo "... src/core_node.i"
 	@echo "... src/core_node.s"
 	@echo "... src/prepare_algorithm.o"
 	@echo "... src/prepare_algorithm.i"
 	@echo "... src/prepare_algorithm.s"
+	@echo "... src/strip.o"
+	@echo "... src/strip.i"
+	@echo "... src/strip.s"
 	@echo "... src/tf_node.o"
 	@echo "... src/tf_node.i"
 	@echo "... src/tf_node.s"
-	@echo "... src/utils/armorplate.o"
-	@echo "... src/utils/armorplate.i"
-	@echo "... src/utils/armorplate.s"
-	@echo "... src/utils/strip.o"
-	@echo "... src/utils/strip.i"
-	@echo "... src/utils/strip.s"
 .PHONY : help
 
 

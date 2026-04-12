@@ -3,10 +3,6 @@
 */
 
 #include "prepare_algorithm.h"
-#include "serial_driver_interfaces/msg/serial_driver.hpp" // 串口消息 发布方 的 话题类型 为 [serial_driver] 类
-#include "serial_driver_interfaces/msg/send_pnp_info.hpp" // pnp消息 发布方 的 话题类型 为 [send_pnp_info] 类
-#include <fstream>
-#include <string>
 
 class ProcessNode: public rclcpp::Node
 {

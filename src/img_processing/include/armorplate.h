@@ -1,5 +1,5 @@
 #pragma once
-#include "utils/strip.h"
+#include "strip.h"
 
 
 //装甲板类

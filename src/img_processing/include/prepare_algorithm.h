@@ -1,6 +1,6 @@
 #pragma once
-#include "utils/strip.h"
-#include "utils/armorplate.h"
+#include "strip.h"
+#include "armorplate.h"
 
 class Prepare
 {

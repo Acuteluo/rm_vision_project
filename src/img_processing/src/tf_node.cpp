@@ -1,9 +1,4 @@
 #include "prepare_algorithm.h"
-#include "serial_driver_interfaces/msg/serial_driver.hpp" // 串口消息 发送方 的 话题类型 为 [serial_driver] 类
-#include "serial_driver_interfaces/msg/receive_data.hpp" // 串口消息 接收方 的 话题类型 为 [receive_data] 类
-#include "serial_driver_interfaces/msg/send_pnp_info.hpp" // pnp消息 接收方 的 话题类型 为 [send_pnp_info] 类
-
-#include <tf2/time.h>
 
 class TFNode : public rclcpp::Node
 {
@@ -28,11 +23,11 @@ public:
         // publishStaticCameraTransform();
 
         // 启动定时器，每500ms发布一次 chip_frame -> camera_frame
-    camera_static_timer_ = this->create_wall_timer(
-        std::chrono::milliseconds(500),
-        std::bind(&TFNode::publishCameraTransformPeriodically, this)
-    );
-    RCLCPP_INFO(this->get_logger(), "已启动周期性发布 chip_frame -> camera_frame (周期 500ms)");
+        camera_static_timer_ = this->create_wall_timer(
+            std::chrono::milliseconds(500),
+            std::bind(&TFNode::publishCameraTransformPeriodically, this)
+        );
+        RCLCPP_INFO(this->get_logger(), "已启动周期性发布 chip_frame -> camera_frame (周期 500ms)");
 
 
         // 创建缓存对象
@@ -144,32 +139,33 @@ private:
     // }
 
     void publishCameraTransformPeriodically()
-{
-    geometry_msgs::msg::TransformStamped static_transform;
-    static_transform.header.stamp = this->now();
-    static_transform.header.frame_id = "chip_frame";
-    static_transform.child_frame_id = "camera_frame";
+    {
+        geometry_msgs::msg::TransformStamped static_transform;
+        static_transform.header.stamp = this->now();
+        static_transform.header.frame_id = "chip_frame";
+        static_transform.child_frame_id = "camera_frame";
 
-    // 平移：芯片坐标系下，相机中心位于芯片坐标系的 前55mm、下30mm
-    static_transform.transform.translation.x = 0.055;   // 米
-    static_transform.transform.translation.y = 0.00;
-    static_transform.transform.translation.z = -0.03;   // 米
+        // 平移：芯片坐标系下，相机中心位于芯片坐标系的 前55mm、下30mm
+        // 单位 m
+        static_transform.transform.translation.x = 0.055;   
+        static_transform.transform.translation.y = 0.00;
+        static_transform.transform.translation.z = -0.03;   
 
-    // 无旋转，单位四元数
-    static_transform.transform.rotation.x = 0.0;
-    static_transform.transform.rotation.y = 0.0;
-    static_transform.transform.rotation.z = 0.0;
-    static_transform.transform.rotation.w = 1.0;
+        // 无旋转，单位四元数
+        static_transform.transform.rotation.x = 0.0;
+        static_transform.transform.rotation.y = 0.0;
+        static_transform.transform.rotation.z = 0.0;
+        static_transform.transform.rotation.w = 1.0;
 
-    // 使用已有的普通广播器 chip_tf_broadcaster_（注意这个广播器在构造函数中已初始化）
-    chip_tf_broadcaster_->sendTransform(static_transform);
+        // 使用已有的普通广播器 chip_tf_broadcaster_（注意这个广播器在构造函数中已初始化）
+        chip_tf_broadcaster_->sendTransform(static_transform);
 
-    // 可选：降低打印频率，避免刷屏（比如每发布10次打印一次）
-    static int count = 0;
-    if (++count % 10 == 0) {
-        RCLCPP_DEBUG(this->get_logger(), "周期性发布 chip_frame -> camera_frame");
+        // 可选：降低打印频率，避免刷屏（比如每发布10次打印一次）
+        static int count = 0;
+        if (++count % 10 == 0) {
+            RCLCPP_DEBUG(this->get_logger(), "周期性发布 chip_frame -> camera_frame");
+        }
     }
-}
 
 
     // 【世界坐标系 -> 芯片坐标系】当前芯片位姿的坐标系 -> 动态，用 R 矩阵
@@ -263,7 +259,7 @@ private:
     double publish_rate_ms_; // 发布频率限制（毫秒）
 
 
-     // 新增：用于周期性发布 chip_frame -> camera_frame 的定时器
+    // 新增：用于周期性发布 chip_frame -> camera_frame 的定时器
     rclcpp::TimerBase::SharedPtr camera_static_timer_;
 };
 

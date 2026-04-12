@@ -26,7 +26,7 @@ include_directories(include)
 
 
 # 节点
-add_executable(core_node src/core_node.cpp src/prepare_algorithm.cpp src/utils/strip.cpp src/utils/armorplate.cpp)
+add_executable(core_node src/core_node.cpp src/prepare_algorithm.cpp src/strip.cpp src/armorplate.cpp)
 
 add_executable(tf_node src/tf_node.cpp)
 
