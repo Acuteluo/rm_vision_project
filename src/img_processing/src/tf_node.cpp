@@ -22,12 +22,12 @@ public:
         // 发布静态变换
         // publishStaticCameraTransform();
 
-        // 启动定时器，每500ms发布一次 chip_frame -> camera_frame
+        // 启动定时器，每100ms发布一次 chip_frame -> camera_frame
         camera_static_timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(500),
+            std::chrono::milliseconds(100),
             std::bind(&TFNode::publishCameraTransformPeriodically, this)
         );
-        RCLCPP_INFO(this->get_logger(), "已启动周期性发布 chip_frame -> camera_frame (周期 500ms)");
+        RCLCPP_INFO(this->get_logger(), "已启动周期性发布 chip_frame -> camera_frame (周期 100ms)");
 
 
         // 创建缓存对象
@@ -63,6 +63,7 @@ public:
         try 
         {
             transform = buffer_->lookupTransform("world_frame", "armorplate_frame", tf2::TimePointZero);
+            // transform = buffer_->lookupTransform("world_frame", "armorplate_frame", this->now());
         } 
         catch (tf2::TransformException &ex) 
         {
@@ -93,6 +94,19 @@ public:
         double t_absolute_yaw = std::atan2(Y, X) * 180.0 / CV_PI;
         double t_absolute_pitch = -std::atan2(Z, std::sqrt(X * X + Y * Y)) * 180.0 / CV_PI;   
 
+        
+        //////////////////////// 判断数据是否和上一次发送的完全相同 ////////////////////////
+
+        if(t_absolute_pitch == this->last_t_absolute_pitch && t_absolute_yaw == this->last_t_absolute_yaw)
+        {
+            ++this->absolute_same_count;
+            RCLCPP_WARN(this->get_logger(), "【 警告！ 】发送给电控的数据与上次发送的完全相同，已经相同 %d 帧。跳过发布", this->absolute_same_count);
+            // return;
+        }
+
+
+        this->absolute_same_count = 0; // 重置计数器
+
 
 
         //////////////////////// 发送串口消息 ////////////////////////
@@ -107,36 +121,39 @@ public:
         
         RCLCPP_INFO(this->get_logger(), "【 发布 】tf_node 发布了消息（绝对角）: pitch=%.2f yaw=%.2f", serial_driver.pitch, serial_driver.yaw);
 
+        // 更新上次发送的数据
+        this->last_t_absolute_pitch = t_absolute_pitch;
+        this->last_t_absolute_yaw = t_absolute_yaw;
     }
 
 private:
 
     // 【芯片坐标系 -> 相机坐标系】当前相机位姿的坐标系 -> 静态，和芯片坐标系可以视为刚体，用 t 向量
-    // void publishStaticCameraTransform()
-    // {
-    //     static tf2_ros::StaticTransformBroadcaster static_broadcaster(this);
-    //     geometry_msgs::msg::TransformStamped static_transform;
+    void publishStaticCameraTransform()
+    {
+        static tf2_ros::StaticTransformBroadcaster static_broadcaster(this);
+        geometry_msgs::msg::TransformStamped static_transform;
 
-    //     // 静态变换
-    //     static_transform.header.stamp = rclcpp::Time(0); // 只发布一次，不在意帧头
-    //     static_transform.header.frame_id = "chip_frame"; // 父坐标系 -> 芯片坐标系
-    //     static_transform.child_frame_id = "camera_frame"; // 子坐标系 -> 相机坐标系
+        // 静态变换
+        static_transform.header.stamp = rclcpp::Time(0); // 只发布一次，不在意帧头
+        static_transform.header.frame_id = "chip_frame"; // 父坐标系 -> 芯片坐标系
+        static_transform.child_frame_id = "camera_frame"; // 子坐标系 -> 相机坐标系
 
-    //     // 平移：芯片坐标系下，相机中心位于芯片坐标系的 前55mm、下30mm
-    //     static_transform.transform.translation.x = 0.055;  // 米
-    //     static_transform.transform.translation.y = 0.00;
-    //     static_transform.transform.translation.z = -0.03;    // 米
+        // 平移：芯片坐标系下，相机中心位于芯片坐标系的 前55mm、下30mm
+        static_transform.transform.translation.x = 0.055;  // 米
+        static_transform.transform.translation.y = 0.00;
+        static_transform.transform.translation.z = -0.03;    // 米
 
-    //     // 无旋转，所以用单位四元数
-    //     static_transform.transform.rotation.x = 0.0;
-    //     static_transform.transform.rotation.y = 0.0;
-    //     static_transform.transform.rotation.z = 0.0;
-    //     static_transform.transform.rotation.w = 1.0;
+        // 无旋转，所以用单位四元数
+        static_transform.transform.rotation.x = 0.0;
+        static_transform.transform.rotation.y = 0.0;
+        static_transform.transform.rotation.z = 0.0;
+        static_transform.transform.rotation.w = 1.0;
 
-    //     static_broadcaster.sendTransform(static_transform);
+        static_broadcaster.sendTransform(static_transform);
 
-    //     RCLCPP_INFO(this->get_logger(), "【 发布 】静态坐标系变换已发布: Static transform chip_frame -> camera_frame published");
-    // }
+        RCLCPP_INFO(this->get_logger(), "【 发布 】静态坐标系变换已发布: Static transform chip_frame -> camera_frame published");
+    }
 
     void publishCameraTransformPeriodically()
     {
@@ -169,42 +186,58 @@ private:
 
 
     // 【世界坐标系 -> 芯片坐标系】当前芯片位姿的坐标系 -> 动态，用 R 矩阵
-    void ChipCallback(const serial_driver_interfaces::msg::ReceiveData msg)
-    {
-        geometry_msgs::msg::TransformStamped tf;
-        tf.header.stamp = msg.header.stamp; // 帧头
-        tf.header.frame_id = "world_frame"; // 父坐标系 -> 世界坐标系
-        tf.child_frame_id = "chip_frame"; // 子坐标系 -> 芯片坐标系
+    // void ChipCallback(const serial_driver_interfaces::msg::ReceiveData msg)
+    // {
+    //     geometry_msgs::msg::TransformStamped tf;
+    //     tf.header.stamp = msg.header.stamp; // 帧头
+    //     tf.header.frame_id = "world_frame"; // 父坐标系 -> 世界坐标系
+    //     tf.child_frame_id = "chip_frame"; // 子坐标系 -> 芯片坐标系
 
-        // 先忽略 t
-        tf.transform.translation.x = 0.00;
-        tf.transform.translation.y = 0.00;
-        tf.transform.translation.z = 0.00;
+    //     // 先忽略 t
+    //     tf.transform.translation.x = 0.00;
+    //     tf.transform.translation.y = 0.00;
+    //     tf.transform.translation.z = 0.00;
         
 
-        // 欧拉角（度）->（弧度）再转四元数
+    //     // 欧拉角（度）->（弧度）再转四元数
 
-        // 先度转弧度
-        double roll_rad = msg.roll * M_PI / 180.0;
-        double pitch_rad = msg.pitch * M_PI / 180.0;
-        double yaw_rad = msg.yaw * M_PI / 180.0;
+    //     // 先度转弧度
+    //     double roll_rad = msg.roll * M_PI / 180.0;
+    //     double pitch_rad = msg.pitch * M_PI / 180.0;
+    //     double yaw_rad = msg.yaw * M_PI / 180.0;
 
-        // 然后转四元数
-        tf2::Quaternion q;
-        q.setRPY(roll_rad, pitch_rad, yaw_rad);  // 顺序：roll, pitch, yaw （XYZ） 
+    //     // 然后转四元数
+    //     tf2::Quaternion q;
+    //     q.setRPY(roll_rad, pitch_rad, yaw_rad);  // 顺序：roll, pitch, yaw （XYZ） 
 
-        tf.transform.rotation.x = q.x();
-        tf.transform.rotation.y = q.y();
-        tf.transform.rotation.z = q.z();
-        tf.transform.rotation.w = q.w();
+    //     tf.transform.rotation.x = q.x();
+    //     tf.transform.rotation.y = q.y();
+    //     tf.transform.rotation.z = q.z();
+    //     tf.transform.rotation.w = q.w();
 
-        chip_tf_broadcaster_->sendTransform(tf);
-    }
+    //     chip_tf_broadcaster_->sendTransform(tf);
+    // }
 
 
     // 【相机坐标系 -> 装甲板坐标系】当前装甲板位姿的坐标系 -> 动态
     void PNPCallback(const serial_driver_interfaces::msg::SendPNPInfo msg)
     {
+        // 看看 pnp 的 t 矩阵数据是否和上次发送的一模一样
+        if(msg.tvec[0] == this->last_pnp_t_x && msg.tvec[1] == this->last_pnp_t_y && msg.tvec[2] == this->last_pnp_t_z)
+        {
+            ++this->pnp_same_t_count;
+            RCLCPP_WARN(this->get_logger(), "【 警告！ 】pnp 收到的 t 矩阵和上次的完全相同，已经相同 %d 帧。跳过发布", this->pnp_same_t_count);
+            // return;
+        }
+
+        this->pnp_same_t_count = 0; // 重置计数器
+
+        // 更新 pnp 的 t 矩阵数据 
+        this->last_pnp_t_x = msg.tvec[0];
+        this->last_pnp_t_y = msg.tvec[1];
+        this->last_pnp_t_z = msg.tvec[2];
+
+
         geometry_msgs::msg::TransformStamped tf;
         tf.header.stamp = msg.header.stamp; // 帧头
         tf.header.frame_id = "camera_frame"; // 父坐标系 -> 相机坐标系
@@ -261,6 +294,17 @@ private:
 
     // 新增：用于周期性发布 chip_frame -> camera_frame 的定时器
     rclcpp::TimerBase::SharedPtr camera_static_timer_;
+
+    // 检测是否和上次发送的信息一致
+    double last_t_absolute_pitch = 0.0;
+    double last_t_absolute_yaw = 0.0;
+    int absolute_same_count; // 重复计数
+
+    // 检测 pnp 是否和上次发送的信息一致（t 矩阵）
+    double last_pnp_t_x = 0.0;
+    double last_pnp_t_y = 0.0;
+    double last_pnp_t_z = 0.0;
+    int pnp_same_t_count; // 重复计数
 };
 
 int main(int argc, char** argv)

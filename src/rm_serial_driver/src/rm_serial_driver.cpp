@@ -4,6 +4,7 @@
   以下仅供参考
 */
 
+
 // ROS
 #include <rclcpp/logging.hpp>
 #include <rclcpp/qos.hpp>
@@ -144,6 +145,38 @@ void RMSerialDriver::processReceivedPacket(const ReceivePacket& packet)
 }
 
 
+void RMSerialDriver::ChipCallback(const serial_driver_interfaces::msg::ReceiveData msg)
+    {
+        geometry_msgs::msg::TransformStamped tf;
+        tf.header.stamp = msg.header.stamp; // 帧头
+        tf.header.frame_id = "world_frame"; // 父坐标系 -> 世界坐标系
+        tf.child_frame_id = "chip_frame"; // 子坐标系 -> 芯片坐标系
+
+        // 先忽略 t
+        tf.transform.translation.x = 0.00;
+        tf.transform.translation.y = 0.00;
+        tf.transform.translation.z = 0.00;
+        
+
+        // 欧拉角（度）->（弧度）再转四元数
+
+        // 先度转弧度
+        double roll_rad = msg.roll * M_PI / 180.0;
+        double pitch_rad = msg.pitch * M_PI / 180.0;
+        double yaw_rad = msg.yaw * M_PI / 180.0;
+
+        // 然后转四元数
+        tf2::Quaternion q;
+        q.setRPY(roll_rad, pitch_rad, yaw_rad);  // 顺序：roll, pitch, yaw （XYZ） 
+
+        tf.transform.rotation.x = q.x();
+        tf.transform.rotation.y = q.y();
+        tf.transform.rotation.z = q.z();
+        tf.transform.rotation.w = q.w();
+
+        chip_tf_broadcaster_->sendTransform(tf);
+    }
+
 
 void RMSerialDriver::receiveData()
 {
@@ -174,9 +207,14 @@ void RMSerialDriver::receiveData()
           /*
             接收数据部分
           */
+         
 
           // 数据有效，进行处理（自定义函数）
-          processReceivedPacket(packet);
+          // processReceivedPacket(packet);
+
+
+
+
 
         } else {
           RCLCPP_ERROR(get_logger(), "header[13]!=0xFE, 0xFE error!");
@@ -230,7 +268,10 @@ void RMSerialDriver::sendData(const serial_driver_interfaces::msg::SerialDriver:
 
     auto before_send = this->now(); // send 前
 
-    serial_driver_->port()->send(data);
+    // serial_driver_->port()->send(data); // 同步发送
+
+    // 异步发送
+    serial_driver_->port()->async_send(data);
 
     auto after_send = this->now(); // send 后
 
@@ -238,8 +279,8 @@ void RMSerialDriver::sendData(const serial_driver_interfaces::msg::SerialDriver:
 
     auto diff_send_interval = (after_send - send_once_start).seconds(); // 整次 send 堵塞的时间差
     auto diff_send_duration = (after_send - before_send).seconds(); // 调用 send 过程前后的时间差
-    RCLCPP_INFO(get_logger(), "[内] send_duration = %.3f s", diff_send_duration);
-    RCLCPP_INFO(get_logger(), "[外] send_interval = %.3f s", diff_send_interval);
+    RCLCPP_INFO(get_logger(), "[内] send_duration = %.5f s", diff_send_duration);
+    RCLCPP_INFO(get_logger(), "[外] send_interval = %.5f s", diff_send_interval);
     
     send_once_start = after_send; //  整次 send 开始计时
 
@@ -249,7 +290,7 @@ void RMSerialDriver::sendData(const serial_driver_interfaces::msg::SerialDriver:
     RCLCPP_ERROR(get_logger(), "Error while sending data: %s", ex.what());
     
     // 必须：仅在设备可用时重试，避免无设备时无限重试（会直接导致串口崩溃）
-    if (serial_driver_->port()->is_open()) reopenPort(); //【修改】启动 reopenPort
+    // if (serial_driver_->port()->is_open()) reopenPort(); //【修改】启动 reopenPort
   }
 
 

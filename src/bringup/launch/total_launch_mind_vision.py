@@ -39,7 +39,7 @@ def generate_launch_description():
         # {'gamma': 200},
         # {'flip_image': False}]
         parameters=[
-        {'exposure_time': 4000}, # 原本5000，1000效果好
+        {'exposure_time': 1000}, # 原本5000，1000效果好
         {'analog_gain': 5},
         {'rgb_gain.r': 100},
         {'rgb_gain.g': 100},
