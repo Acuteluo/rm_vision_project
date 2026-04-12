@@ -222,10 +222,28 @@ void RMSerialDriver::sendData(const serial_driver_interfaces::msg::SerialDriver:
     
     std::vector<uint8_t> data = toVector(packet);
 
+
+
     RCLCPP_INFO(get_logger(), "-------------READY--------------> 串口 sendData 准备发送数据, sizeof = %d", sizeof(SendPacket));
+    
+    static rclcpp::Time send_once_start = this->now(); // 获取当前时刻
+
+    auto before_send = this->now(); // send 前
+
     serial_driver_->port()->send(data);
 
+    auto after_send = this->now(); // send 后
+
     RCLCPP_INFO(get_logger(), "-------------SUCCESSED--------------> 串口已经发送数据 absolute_pitch=%.2f absolute_yaw=%.2f", msg->pitch, msg->yaw);
+
+    auto diff_send_interval = (after_send - send_once_start).seconds(); // 整次 send 堵塞的时间差
+    auto diff_send_duration = (after_send - before_send).seconds(); // 调用 send 过程前后的时间差
+    RCLCPP_INFO(get_logger(), "[内] send_duration = %.3f s", diff_send_duration);
+    RCLCPP_INFO(get_logger(), "[外] send_interval = %.3f s", diff_send_interval);
+    
+    send_once_start = after_send; //  整次 send 开始计时
+
+
 
   } catch (const std::exception & ex) {
     RCLCPP_ERROR(get_logger(), "Error while sending data: %s", ex.what());
