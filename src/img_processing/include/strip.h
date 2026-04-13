@@ -33,6 +33,9 @@
 #include "serial_driver_interfaces/msg/receive_data.hpp" // 串口消息 接收方 的 话题类型 为 [receive_data] 类
 #include "serial_driver_interfaces/msg/send_pnp_info.hpp" // pnp消息 接收方 的 话题类型 为 [send_pnp_info] 类
 
+#include "statistics_msgs/msg/metrics_message.hpp" // 监听话题发送频率
+#include "sensor_msgs/msg/image.hpp" // 示例消息类型
+
 //灯条类
 class Strip
 {

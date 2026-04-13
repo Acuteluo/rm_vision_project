@@ -9,7 +9,13 @@ class ProcessNode: public rclcpp::Node
 public:
     ProcessNode(): Node("core_node_cpp")
     {
-        RCLCPP_INFO_ONCE(this->get_logger(), "CoreNode 节点创建成功! ");
+
+        // 启用话题统计，并设置相关参数
+        rclcpp::SubscriptionOptions sub_options;
+        
+        sub_options.topic_stats_options.state = rclcpp::TopicStatisticsState::Enable; // 启用统计
+        sub_options.topic_stats_options.publish_period = std::chrono::seconds(5); // 发布周期 5 秒
+        sub_options.topic_stats_options.publish_topic = "/image_raw"; // 指定统计话题
 
 
         // ------------------ 进行一个配置文件的读取 -----------------
@@ -88,11 +94,13 @@ public:
         auto qos2 = rclcpp::SensorDataQoS(); 
 
         // 根据 CAMERA_NAME 选择 qos，以创建订阅原图方
-        if(this->CAMERA_NAME == "mind_vision") sub_ = this->create_subscription<sensor_msgs::msg::Image>("image_raw", qos1, std::bind(&ProcessNode::process_callback, this, std::placeholders::_1));
-        else sub_ = this->create_subscription<sensor_msgs::msg::Image>("image_raw", qos2, std::bind(&ProcessNode::process_callback, this, std::placeholders::_1));
+        if(this->CAMERA_NAME == "mind_vision") sub_ = this->create_subscription<sensor_msgs::msg::Image>("image_raw", qos1, std::bind(&ProcessNode::process_callback, this, std::placeholders::_1), sub_options);
+        else sub_ = this->create_subscription<sensor_msgs::msg::Image>("image_raw", qos2, std::bind(&ProcessNode::process_callback, this, std::placeholders::_1), sub_options);
 
         // 发布 pnp 消息
         pnp_pub_ = this->create_publisher<serial_driver_interfaces::msg::SendPNPInfo>("/send_pnp_info", 10);
+
+        RCLCPP_INFO_ONCE(this->get_logger(), "CoreNode 节点创建成功! ");
     }
 
 
@@ -123,7 +131,7 @@ private:
         }
         else
         {
-            RCLCPP_WARN(this->get_logger(), "未识别到装甲板! corenode 未 进行 pnp 解算");
+            RCLCPP_WARN_THROTTLE(this->get_logger(), *get_clock(), 500, "未识别到装甲板! corenode 未 进行 pnp 解算");
         }
 
 
@@ -149,11 +157,11 @@ private:
 
             pnp_pub_->publish(msg); // 发布消息 到 /send_pnp_info 话题
             
-            RCLCPP_INFO(this->get_logger(), "pnp 消息已发布到 /send_pnp_info 话题 下");
+            RCLCPP_INFO_THROTTLE(this->get_logger(), *get_clock(), 500, "pnp 消息已发布到 /send_pnp_info 话题 下");
         }
         else
         {
-            RCLCPP_WARN(this->get_logger(), "未识别到装甲板! corenode 未 发布 PNP 消息");
+            RCLCPP_WARN_THROTTLE(this->get_logger(), *get_clock(), 500, "未识别到装甲板! corenode 未 发布 PNP 消息");
         }
 
         

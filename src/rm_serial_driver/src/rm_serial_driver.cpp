@@ -6,6 +6,7 @@
 
 
 // ROS
+#include <rclcpp/rclcpp.hpp>
 #include <rclcpp/logging.hpp>
 #include <rclcpp/qos.hpp>
 #include <rclcpp/utilities.hpp>
@@ -54,6 +55,14 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
     owned_ctx_{new IoContext(2)},
     serial_driver_{new drivers::serial_driver::SerialDriver(*owned_ctx_)}
     {
+
+        // 启用话题统计，并设置相关参数
+        rclcpp::SubscriptionOptions sub_options;
+        
+        sub_options.topic_stats_options.state = rclcpp::TopicStatisticsState::Enable; // 启用统计
+        sub_options.topic_stats_options.publish_period = std::chrono::seconds(5); // 发布周期 5 秒
+        sub_options.topic_stats_options.publish_topic = "/send_pnp_info"; // 指定统计话题
+
         RCLCPP_INFO_ONCE(get_logger(), "SerialDriver 构造函数启动!");
 
         signal(SIGSEGV, signal_handler);
@@ -93,7 +102,7 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
         }
 
         // 创建 PNP 消息订阅者
-        pnp_sub_ = this->create_subscription<serial_driver_interfaces::msg::SendPNPInfo>("/send_pnp_info", 10, std::bind(&RMSerialDriver::PNPCallback, this, std::placeholders::_1));
+        pnp_sub_ = this->create_subscription<serial_driver_interfaces::msg::SendPNPInfo>("/send_pnp_info", 10, std::bind(&RMSerialDriver::PNPCallback, this, std::placeholders::_1), sub_options);
         RCLCPP_INFO_ONCE(get_logger(), "Step 6/7: 成功创建 pnp 话题订阅者");
 
         this->tf = std::make_unique<TF>(this); // 传 this 指针给 TF 类，让它能创建 ROS2 相关对象
@@ -158,7 +167,7 @@ void RMSerialDriver::receiveData()
                     // 接收数据部分
 
                     // 打印接收到的数据
-                    RCLCPP_INFO(get_logger(), "++++++++++++ Received: euler_roll=%.2f euler_pitch=%.2f euler_yaw=%.2f", packet.euler_roll, packet.euler_pitch, packet.euler_yaw);
+                    RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "收到电控数据: euler_roll=%.2f euler_pitch=%.2f euler_yaw=%.2f", packet.euler_roll, packet.euler_pitch, packet.euler_yaw);
 
                     // 更新发布【世界坐标系】->【芯片坐标系】
                     this->tf->updateWorldToChip(packet.euler_roll, packet.euler_pitch, packet.euler_yaw);
@@ -170,20 +179,20 @@ void RMSerialDriver::receiveData()
                 } 
                 else 
                 {
-                    RCLCPP_ERROR(get_logger(), "帧尾错误！期望 0xFE, 实际 %02X", packet.checksum);
+                    RCLCPP_ERROR_THROTTLE(get_logger(), *get_clock(), 100, "帧尾错误！期望 0xFE, 实际 %02X", packet.checksum);
                 }
             } 
 
             else 
             {
-                RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 20, "帧头错误！期望 0xFF, 实际 %02X", header[0]);
+                RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 100, "帧头错误！期望 0xFF, 实际 %02X", header[0]);
                 continue;
             }
         } 
 
         catch (const std::exception & ex) 
         {
-            RCLCPP_ERROR_THROTTLE(get_logger(), *get_clock(), 20, "串口 接收数据时发生错误: %s, 尝试重启串口...", ex.what());
+            RCLCPP_ERROR_THROTTLE(get_logger(), *get_clock(), 100, "串口 接收数据时发生错误: %s, 尝试重启串口...", ex.what());
             reopenPort();
         }
     }
@@ -193,9 +202,11 @@ void RMSerialDriver::receiveData()
 // 确定两个坐标系是否都已经更新，尝试查询 TF 变换，得到最终数据，并发送串口
 void RMSerialDriver::confirmIfCanSendData()
 {
+     std::lock_guard<std::mutex> lock(state_mutex_); // 加锁，避免线程打架
+
     if(this->world_to_chip_updated_ == false || this->chip_to_armorplate_updated_ == false)
     {
-        RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 10, "等待 坐标系变换还未更新完");
+        RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 1000, "等待 坐标系变换还未更新完");
         return;
     }
 
@@ -222,7 +233,7 @@ void RMSerialDriver::confirmIfCanSendData()
     if(pitch == this->last_pitch && yaw == this->last_yaw)
     {
         ++this->data_same_count;
-        RCLCPP_WARN(this->get_logger(), "准备发送给串口的数据和上一次完全相同, 已经相同 %d 帧。跳过发送", this->data_same_count);
+        RCLCPP_WARN_THROTTLE(this->get_logger(), *get_clock(), 500, "准备发送给串口的数据和上一次完全相同, 已经相同 %d 帧。跳过发送", this->data_same_count);
         return;
     }
     this->data_same_count = 0; 
@@ -232,7 +243,7 @@ void RMSerialDriver::confirmIfCanSendData()
     this->last_yaw = yaw;
 
     // 发送数据给串口
-    RCLCPP_INFO(this->get_logger(), "OK! 准备发送数据给串口");
+    RCLCPP_INFO_THROTTLE(this->get_logger(), *get_clock(), 500, "OK! 准备发送数据给串口");
     ultimateSendData(pitch, yaw);
 
 }  
@@ -245,10 +256,9 @@ void RMSerialDriver::ultimateSendData(float pitch, float yaw)
     // 再一次检查设备是否已经打开
     if (!serial_driver_->port()->is_open()) 
     {
-        RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 10, "串口未打开，数据未发送");
+        RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 500, "串口未打开，数据未发送");
         return;
     }
-
 
     try 
     {
@@ -273,21 +283,36 @@ void RMSerialDriver::ultimateSendData(float pitch, float yaw)
 
         auto after_send = this->now(); //【计时结束】send 后
 
-        RCLCPP_INFO(get_logger(), "-------------SUCCESSED--------------> 串口已经发送数据 absolute_pitch=%.2f absolute_yaw=%.2f", pitch, yaw);
+        RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "-------------SUCCESSED--------------> 串口已经发送数据 absolute_pitch=%.2f absolute_yaw=%.2f", pitch, yaw);
 
         auto diff_send_interval = (after_send - send_once_start).seconds(); // 整次 send 堵塞的时间差
         auto diff_send_duration = (after_send - before_send).seconds(); // 调用 send 过程前后的时间差
-        RCLCPP_INFO(get_logger(), "[内_执行异步发送] send_duration = %.5f s", diff_send_duration);
-        RCLCPP_INFO(get_logger(), "[外_单次间隔] send_interval = %.5f s", diff_send_interval);
+        RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "[内_执行异步发送] send_duration = %.5f s", diff_send_duration);
+        RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "[外_单次间隔] send_interval = %.5f s", diff_send_interval);
         
         send_once_start = after_send; //【计时开始】整次 send 
+
+
+        // 添加一个计时器，用来统计实际发送的fps
+        static int send_count = 0;
+        static rclcpp::Time last_time = this->now();
+        send_count++;
+        rclcpp::Time now = this->now();
+        double elapsed = (now - last_time).seconds();
+        if (elapsed >= 1.0) 
+        {
+            double fps = send_count / elapsed;
+            RCLCPP_INFO_THROTTLE(this->get_logger(), *get_clock(), 1000, "串口实际发送帧率: %.2f Hz", fps);
+            send_count = 0;
+            last_time = now;
+        }
 
     } 
     
     // 异步发送失败
     catch (const std::exception & ex) 
     {
-        RCLCPP_ERROR(get_logger(), "串口 发送数据时发生错误: %s, 尝试重启串口...", ex.what());
+        RCLCPP_ERROR_THROTTLE(get_logger(), *get_clock(), 200, "串口 发送数据时发生错误: %s, 尝试重启串口...", ex.what());
     
         // 必须：仅在设备可用时重试，避免无设备时无限重试（会直接导致串口崩溃）
         if (serial_driver_->port()->is_open()) reopenPort(); //【修改】启动 reopenPort
@@ -305,7 +330,7 @@ void RMSerialDriver::PNPCallback(const serial_driver_interfaces::msg::SendPNPInf
     if(msg.tvec[0] == this->last_tvec[0] && msg.tvec[1] == this->last_tvec[1] && msg.tvec[2] == this->last_tvec[2])
     {
         ++this->pnp_same_t_count;
-        RCLCPP_WARN(this->get_logger(), "pnp 收到的 t 矩阵和上次的完全相同，已经相同 %d 帧。跳过此次发布", this->pnp_same_t_count);
+        RCLCPP_WARN_THROTTLE(this->get_logger(), *get_clock(), 200, "pnp 收到的 t 矩阵和上次的完全相同，已经相同 %d 帧。跳过此次发布", this->pnp_same_t_count);
         return;
     }
     this->pnp_same_t_count = 0; 

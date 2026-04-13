@@ -25,7 +25,12 @@
 
 #include "rm_serial_driver/packet.hpp" // 需要使用 ReceivePacket 和 SendPacket 结构体
 
-#include "tf.hpp"
+#include "tf.hpp" // tf 类，封装所有 TF 广播、监听、查询功能
+
+#include <mutex> // 锁
+
+#include "statistics_msgs/msg/metrics_message.hpp" // 监听话题发送频率
+#include <chrono>
 
 namespace rm_serial_driver
 {
@@ -83,7 +88,7 @@ private:
     std::unique_ptr<TF> tf;
     // std::unique_ptr<AngleFilter> angle_filter_;
 
-
+    mutable std::mutex state_mutex_;   // 加锁。保护共享状态（标志位、重复检测变量等）
 };  
 
 } // namespace rm_serial_driver

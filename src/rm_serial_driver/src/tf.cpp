@@ -62,7 +62,7 @@ void TF::startStaticTransformTimer(int differ_ms)
         std::bind(&TF::publishStaticCameraTransform, this)
     );
         
-    RCLCPP_INFO(node_->get_logger(), "已启动周期性发布 chip_frame -> camera_frame (周期 %d ms)", differ_ms);
+    RCLCPP_INFO_ONCE(node_->get_logger(), "已启动周期性发布 chip_frame -> camera_frame (周期 %d ms)", differ_ms);
 }  
 
 
@@ -149,7 +149,7 @@ bool TF::getTransform(float& pitch, float& yaw)
     } 
     catch (tf2::TransformException &ex) 
     {
-        RCLCPP_ERROR(node_->get_logger(), "TF lookup failed: %s", ex.what());
+        RCLCPP_ERROR(node_->get_logger(), "【世界坐标系 -> 装甲板坐标系】TF lookup failed: %s", ex.what());
         return false; 
     }
 
