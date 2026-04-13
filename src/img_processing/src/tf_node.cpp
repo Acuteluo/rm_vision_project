@@ -129,31 +129,31 @@ public:
 private:
 
     // 【芯片坐标系 -> 相机坐标系】当前相机位姿的坐标系 -> 静态，和芯片坐标系可以视为刚体，用 t 向量
-    void publishStaticCameraTransform()
-    {
-        static tf2_ros::StaticTransformBroadcaster static_broadcaster(this);
-        geometry_msgs::msg::TransformStamped static_transform;
+    // void publishStaticCameraTransform()
+    // {
+    //     static tf2_ros::StaticTransformBroadcaster static_broadcaster(this);
+    //     geometry_msgs::msg::TransformStamped static_transform;
 
-        // 静态变换
-        static_transform.header.stamp = rclcpp::Time(0); // 只发布一次，不在意帧头
-        static_transform.header.frame_id = "chip_frame"; // 父坐标系 -> 芯片坐标系
-        static_transform.child_frame_id = "camera_frame"; // 子坐标系 -> 相机坐标系
+    //     // 静态变换
+    //     static_transform.header.stamp = rclcpp::Time(0); // 只发布一次，不在意帧头
+    //     static_transform.header.frame_id = "chip_frame"; // 父坐标系 -> 芯片坐标系
+    //     static_transform.child_frame_id = "camera_frame"; // 子坐标系 -> 相机坐标系
 
-        // 平移：芯片坐标系下，相机中心位于芯片坐标系的 前55mm、下30mm
-        static_transform.transform.translation.x = 0.055;  // 米
-        static_transform.transform.translation.y = 0.00;
-        static_transform.transform.translation.z = -0.03;    // 米
+    //     // 平移：芯片坐标系下，相机中心位于芯片坐标系的 前55mm、下30mm
+    //     static_transform.transform.translation.x = 0.055;  // 米
+    //     static_transform.transform.translation.y = 0.00;
+    //     static_transform.transform.translation.z = -0.03;    // 米
 
-        // 无旋转，所以用单位四元数
-        static_transform.transform.rotation.x = 0.0;
-        static_transform.transform.rotation.y = 0.0;
-        static_transform.transform.rotation.z = 0.0;
-        static_transform.transform.rotation.w = 1.0;
+    //     // 无旋转，所以用单位四元数
+    //     static_transform.transform.rotation.x = 0.0;
+    //     static_transform.transform.rotation.y = 0.0;
+    //     static_transform.transform.rotation.z = 0.0;
+    //     static_transform.transform.rotation.w = 1.0;
 
-        static_broadcaster.sendTransform(static_transform);
+    //     static_broadcaster.sendTransform(static_transform);
 
-        RCLCPP_INFO(this->get_logger(), "【 发布 】静态坐标系变换已发布: Static transform chip_frame -> camera_frame published");
-    }
+    //     RCLCPP_INFO(this->get_logger(), "【 发布 】静态坐标系变换已发布: Static transform chip_frame -> camera_frame published");
+    // }
 
     void publishCameraTransformPeriodically()
     {
@@ -186,37 +186,37 @@ private:
 
 
     // 【世界坐标系 -> 芯片坐标系】当前芯片位姿的坐标系 -> 动态，用 R 矩阵
-    // void ChipCallback(const serial_driver_interfaces::msg::ReceiveData msg)
-    // {
-    //     geometry_msgs::msg::TransformStamped tf;
-    //     tf.header.stamp = msg.header.stamp; // 帧头
-    //     tf.header.frame_id = "world_frame"; // 父坐标系 -> 世界坐标系
-    //     tf.child_frame_id = "chip_frame"; // 子坐标系 -> 芯片坐标系
+    void ChipCallback(const serial_driver_interfaces::msg::ReceiveData msg)
+    {
+        geometry_msgs::msg::TransformStamped tf;
+        tf.header.stamp = msg.header.stamp; // 帧头
+        tf.header.frame_id = "world_frame"; // 父坐标系 -> 世界坐标系
+        tf.child_frame_id = "chip_frame"; // 子坐标系 -> 芯片坐标系
 
-    //     // 先忽略 t
-    //     tf.transform.translation.x = 0.00;
-    //     tf.transform.translation.y = 0.00;
-    //     tf.transform.translation.z = 0.00;
+        // 先忽略 t
+        tf.transform.translation.x = 0.00;
+        tf.transform.translation.y = 0.00;
+        tf.transform.translation.z = 0.00;
         
 
-    //     // 欧拉角（度）->（弧度）再转四元数
+        // 欧拉角（度）->（弧度）再转四元数
 
-    //     // 先度转弧度
-    //     double roll_rad = msg.roll * M_PI / 180.0;
-    //     double pitch_rad = msg.pitch * M_PI / 180.0;
-    //     double yaw_rad = msg.yaw * M_PI / 180.0;
+        // 先度转弧度
+        double roll_rad = msg.roll * M_PI / 180.0;
+        double pitch_rad = msg.pitch * M_PI / 180.0;
+        double yaw_rad = msg.yaw * M_PI / 180.0;
 
-    //     // 然后转四元数
-    //     tf2::Quaternion q;
-    //     q.setRPY(roll_rad, pitch_rad, yaw_rad);  // 顺序：roll, pitch, yaw （XYZ） 
+        // 然后转四元数
+        tf2::Quaternion q;
+        q.setRPY(roll_rad, pitch_rad, yaw_rad);  // 顺序：roll, pitch, yaw （XYZ） 
 
-    //     tf.transform.rotation.x = q.x();
-    //     tf.transform.rotation.y = q.y();
-    //     tf.transform.rotation.z = q.z();
-    //     tf.transform.rotation.w = q.w();
+        tf.transform.rotation.x = q.x();
+        tf.transform.rotation.y = q.y();
+        tf.transform.rotation.z = q.z();
+        tf.transform.rotation.w = q.w();
 
-    //     chip_tf_broadcaster_->sendTransform(tf);
-    // }
+        chip_tf_broadcaster_->sendTransform(tf);
+    }
 
 
     // 【相机坐标系 -> 装甲板坐标系】当前装甲板位姿的坐标系 -> 动态

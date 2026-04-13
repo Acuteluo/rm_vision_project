@@ -1,5 +1,6 @@
 // Copyright (c) 2022 ChenJun
 // Licensed under the Apache-2.0 License.
+#pragma once
 
 #ifndef RM_SERIAL_DRIVER__RM_SERIAL_DRIVER_HPP_
 #define RM_SERIAL_DRIVER__RM_SERIAL_DRIVER_HPP_
@@ -22,46 +23,72 @@
 #include <thread>
 #include <vector>
 
-#include "serial_driver_interfaces/msg/serial_driver.hpp" // 收
-#include "serial_driver_interfaces/msg/receive_data.hpp" // 发
+#include "src/img_processing/include/strip.h"
 
 #include "rm_serial_driver/packet.hpp" // 需要使用 ReceivePacket 和 SendPacket 结构体
+
+#include "tf.hpp"
 
 namespace rm_serial_driver
 {
 class RMSerialDriver : public rclcpp::Node
 {
 public:
-  explicit RMSerialDriver(const rclcpp::NodeOptions & options);
 
-  ~RMSerialDriver() override;
+    explicit RMSerialDriver(const rclcpp::NodeOptions &options);
+
+    ~RMSerialDriver() override;
+
 
 private:
 
-  void receiveData();
+    // 接收电控回传数据，并且调用 TF 类方法，更新【世界坐标系】->【芯片坐标系】变换的函数
+    void receiveData();
 
-  void sendData(serial_driver_interfaces::msg::SerialDriver::SharedPtr msg);
+    // 最终发送给串口的函数（已经确认过）
+    void ultimateSendData(float pitch, float yaw);
 
-  void reopenPort();
+    // 重试打开串口的函数（在接收数据时发生异常时调用）
+    void reopenPort();
 
-  void getParams();
+    // 读取 config 文件中的参数
+    void getParams();
 
-  void processReceivedPacket(const ReceivePacket& packet); // 把接收到的数据处理，并发布到 receive_data 话题上
+    // 把接收到的数据处理，并发布到 receive_data 话题上
+    void processReceivedPacket(const ReceivePacket &packet);
+
+    // 订阅 PnP 的回调信息，更新【芯片坐标系】->【装甲板坐标系】的变换
+    void PNPCallback(const serial_driver_interfaces::msg::SendPNPInfo::SharedPtr msg);
+
+    // 确定两个坐标系是否都已经更新，尝试查询 TF 变换，得到最终数据，并发送串口
+    void confirmIfCanSendData();
+
+    // Serial port
+    std::unique_ptr<IoContext> owned_ctx_;
+    std::string device_name_;
+    std::unique_ptr<drivers::serial_driver::SerialPortConfig> device_config_;
+    std::unique_ptr<drivers::serial_driver::SerialDriver> serial_driver_;
+
+    // 收数据
+    rclcpp::Subscription<serial_driver_interfaces::msg::SendPNPInfo>::SharedPtr pnp_sub_; // 订阅 PnP 话题
+    std::thread receive_thread_;
+
+    // 判断坐标系是否更新
+    bool world_to_chip_updated_ = false;      // 收到的数据，【世界坐标系】->【芯片坐标系】
+    bool chip_to_armorplate_updated_ = false; // 订阅的 PnP 数据，【芯片坐标系】->【装甲板坐标系】
+
+    // 相关类对象指针
+    std::unique_ptr<TF> tf;
+    // std::unique_ptr<AngleFilter> angle_filter_;
 
 
-  // Serial port
-  std::unique_ptr<IoContext> owned_ctx_;
-  std::string device_name_;
-  std::unique_ptr<drivers::serial_driver::SerialPortConfig> device_config_;
-  std::unique_ptr<drivers::serial_driver::SerialDriver> serial_driver_;
+    // 一些控制变量
+    float last_tvec[3] = {-9999.99, -9999.99, -9999.99}; // 上一次发送的 t 矩阵数据
 
-  rclcpp::Subscription<serial_driver_interfaces::msg::SerialDriver>::SharedPtr target_sub_; // 收
 
-  rclcpp::Publisher<serial_driver_interfaces::msg::ReceiveData>::SharedPtr receive_data_pub_; // 发
 
-  std::thread receive_thread_;
-};
+};  
 
-}  // namespace rm_serial_driver
+} // namespace rm_serial_driver
 
-#endif  // RM_SERIAL_DRIVER__RM_SERIAL_DRIVER_HPP_
+#endif // RM_SERIAL_DRIVER__RM_SERIAL_DRIVER_HPP_
