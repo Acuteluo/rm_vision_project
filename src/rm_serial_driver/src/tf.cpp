@@ -7,7 +7,7 @@ namespace rm_serial_driver
 {
 
 // 有参构造：node 节点指针创建
-TF::TF(rclcpp::Node::SharedPtr node): node_(node)
+TF::TF(rclcpp::Node* node): node_(node)
 {
     // 创建两个广播器：一个用于 chip_frame 相关（包括静态 camera 变换），一个用于 armorplate_frame
     chip_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(node_);
@@ -97,21 +97,7 @@ void TF::publishStaticCameraTransform()
 // 直接传入 serial_driver 节点拿到的 pnp 的 msg 消息的引用
 void TF::updateCameraToArmorplate(const serial_driver_interfaces::msg::SendPNPInfo& msg)
 {
-    // // 看看 pnp 的 t 矩阵数据是否和上次发送的一模一样
-    // if(msg.tvec[0] == this->last_pnp_t_x && msg.tvec[1] == this->last_pnp_t_y && msg.tvec[2] == this->last_pnp_t_z)
-    // {
-    //     ++this->pnp_same_t_count;
-    //     RCLCPP_WARN(this->get_logger(), "【 警告！ 】pnp 收到的 t 矩阵和上次的完全相同，已经相同 %d 帧。跳过发布", this->pnp_same_t_count);
-    //     // return;
-    // }
-
-    // this->pnp_same_t_count = 0; // 重置计数器
-
-    // // 更新 pnp 的 t 矩阵数据 
-    // this->last_pnp_t_x = msg.tvec[0];
-    // this->last_pnp_t_y = msg.tvec[1];
-    // this->last_pnp_t_z = msg.tvec[2];
-
+    // 已经在 serial_driver 里判断过 PNP 是否和上次收到的完全相同了
 
     geometry_msgs::msg::TransformStamped tf;
     tf.header.stamp = msg.header.stamp; // 帧头
@@ -152,7 +138,7 @@ void TF::updateCameraToArmorplate(const serial_driver_interfaces::msg::SendPNPIn
 
 
 // 查询【世界坐标系 -> 装甲板坐标系】是否可以变换，可以就变换并滤波，通过引用回传结果，返回1或者0表示是否有效
-bool TF::getTransform(float& yaw, float& pitch)
+bool TF::getTransform(float& pitch, float& yaw)
 {
 
     geometry_msgs::msg::TransformStamped transform;
@@ -164,7 +150,7 @@ bool TF::getTransform(float& yaw, float& pitch)
     catch (tf2::TransformException &ex) 
     {
         RCLCPP_ERROR(node_->get_logger(), "TF lookup failed: %s", ex.what());
-        return;
+        return false; 
     }
 
     // 获得平移向量
@@ -181,10 +167,15 @@ bool TF::getTransform(float& yaw, float& pitch)
     // 用 t 计算【绝对角】pitch & yaw
 
     // atan2(y, x) 的符号只由 y 决定，与 x 无关。
-    // yaw + 表示目标在相机左侧。因为当△y为-时，结果为-。装甲板在右方，需要yaw为-，没问题
+
     // pitch + 表示目标在相机下方。当△z为-时，结果为-。装甲板在下方，需要pitch为+，所以要取负号
-    double t_absolute_yaw = std::atan2(Y, X) * 180.0 / CV_PI;
-    double t_absolute_pitch = -std::atan2(Z, std::sqrt(X * X + Y * Y)) * 180.0 / CV_PI;   
+    // yaw + 表示目标在相机左侧。因为当△y为-时，结果为-。装甲板在右方，需要yaw为-，没问题
+    
+    pitch = -std::atan2(Z, std::sqrt(X * X + Y * Y)) * 180.0 / M_PI;   
+    yaw = std::atan2(Y, X) * 180.0 / M_PI;
+
+    return true;
+
 }
 
 

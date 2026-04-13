@@ -23,8 +23,6 @@
 #include <thread>
 #include <vector>
 
-#include "src/img_processing/include/strip.h"
-
 #include "rm_serial_driver/packet.hpp" // 需要使用 ReceivePacket 和 SendPacket 结构体
 
 #include "tf.hpp"
@@ -39,6 +37,13 @@ public:
 
     ~RMSerialDriver() override;
 
+    // 一些用来对比的东西
+    float last_tvec[3] = {-9999.99, -9999.99, -9999.99}; // 上一次发送的 t 矩阵数据
+    int pnp_same_t_count = 0; // PNP 消息收到重复 t 矩阵的计数器
+    float last_pitch = -9999.99; // 上一次发送的 pitch 数据
+    float last_yaw = -9999.99; // 上一次发送的 yaw 数据
+    int data_same_count = 0; // 最终要发送的数据 重复计数器
+    rclcpp::Time send_once_start; // 记录发送前的时刻，用于计算 整次 send_interval 的时间间隔
 
 private:
 
@@ -54,11 +59,8 @@ private:
     // 读取 config 文件中的参数
     void getParams();
 
-    // 把接收到的数据处理，并发布到 receive_data 话题上
-    void processReceivedPacket(const ReceivePacket &packet);
-
     // 订阅 PnP 的回调信息，更新【芯片坐标系】->【装甲板坐标系】的变换
-    void PNPCallback(const serial_driver_interfaces::msg::SendPNPInfo::SharedPtr msg);
+    void PNPCallback(const serial_driver_interfaces::msg::SendPNPInfo msg);
 
     // 确定两个坐标系是否都已经更新，尝试查询 TF 变换，得到最终数据，并发送串口
     void confirmIfCanSendData();
@@ -80,11 +82,6 @@ private:
     // 相关类对象指针
     std::unique_ptr<TF> tf;
     // std::unique_ptr<AngleFilter> angle_filter_;
-
-
-    // 一些控制变量
-    float last_tvec[3] = {-9999.99, -9999.99, -9999.99}; // 上一次发送的 t 矩阵数据
-
 
 
 };  

@@ -123,7 +123,7 @@ private:
         }
         else
         {
-            RCLCPP_WARN(this->get_logger(), "【 SKIP 】未识别到装甲板! corenode 未 进行 pnp 解算");
+            RCLCPP_WARN(this->get_logger(), "未识别到装甲板! corenode 未 进行 pnp 解算");
         }
 
 
@@ -149,11 +149,11 @@ private:
 
             pnp_pub_->publish(msg); // 发布消息 到 /send_pnp_info 话题
             
-            RCLCPP_INFO(this->get_logger(), "【 CONFIRM 】pnp 消息已发布到 /send_pnp_info 话题 下");
+            RCLCPP_INFO(this->get_logger(), "pnp 消息已发布到 /send_pnp_info 话题 下");
         }
         else
         {
-            RCLCPP_WARN(this->get_logger(), "【 SKIP 】未识别到装甲板! corenode 未 发布 PNP 消息");
+            RCLCPP_WARN(this->get_logger(), "未识别到装甲板! corenode 未 发布 PNP 消息");
         }
 
         

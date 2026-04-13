@@ -56,17 +56,10 @@ def generate_launch_description():
         output='screen'
     )
 
-    tf_node = Node(
-        package='img_processing',
-        executable='tf_node',
-        name='tf_node',
-        output='screen'
-    )
-
     serial_driver_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             FindPackageShare('rm_serial_driver'), '/launch', '/serial_driver.launch.py'
         ])
     )
 
-    return LaunchDescription([camera, core_node, tf_node, serial_driver_launch])
+    return LaunchDescription([camera, core_node, serial_driver_launch])

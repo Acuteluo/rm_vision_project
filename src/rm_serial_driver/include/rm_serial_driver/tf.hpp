@@ -1,9 +1,7 @@
 # pragma once
 
-#include "src/img_processing/include/strip.h"
-
-#ifndef RM_SERIAL_DRIVER__TF_MANAGER_HPP_
-#define RM_SERIAL_DRIVER__TF_MANAGER_HPP_
+#ifndef RM_SERIAL_DRIVER__TF_HPP_
+#define RM_SERIAL_DRIVER__TF_HPP_
 
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
@@ -11,20 +9,26 @@
 #include <tf2_ros/transform_listener.h>
 #include <tf2_ros/buffer.h>
 #include <geometry_msgs/msg/transform_stamped.hpp>
+#include "serial_driver_interfaces/msg/serial_driver.hpp"
+#include "serial_driver_interfaces/msg/send_pnp_info.hpp"
+#include<Eigen/Dense>
+#include<Eigen/QR>
+#include<Eigen/Core>
+#include<Eigen/LU>
 
 // 同一个命名空间
 namespace rm_serial_driver
 {
 
 /**
- * @brief TF 管理类，封装所有 TF 广播、监听、查询功能。
+ * @brief TF 类，封装所有 TF 广播、监听、查询功能。
  *        需要传入 Node 指针以创建 ROS2 相关的对象（Broadcaster, Buffer 等）。
  */
 class TF
 {
 public:
     // 构造函数拿到 Node 指针以创建 ROS2 相关的对象
-    explicit TF(rclcpp::Node::SharedPtr node); 
+    explicit TF(rclcpp::Node* node); 
 
 
     // ---------- 更新动态 TF ----------
@@ -40,9 +44,11 @@ public:
     // ---------- 查询 TF ----------
     /**
      * @brief 先查询是否可以变换，假如可以，则转换+滤波，通过引用让其得到最终结果
+     * @param pitch
+     * @param yaw
      * @return 1 可变换，0 变换失败（TF 树不完整）
      */
-    bool getTransform(float& yaw, float& pitch);
+    bool getTransform(float& pitch, float& yaw);
 
     // ---------- 静态变换 ----------
     /**
@@ -63,7 +69,7 @@ private:
 
     void publishStaticCameraTransform();  // 实际发布静态变换的回调
 
-    rclcpp::Node::SharedPtr node_;  // 拿到 ros2 的节点指针
+    rclcpp::Node* node_;  // 拿到 ros2 的节点指针
 
     // TF 广播器、缓存、监听器
     std::unique_ptr<tf2_ros::TransformBroadcaster> chip_broadcaster_;     // 发布 chip_frame 相关 TF

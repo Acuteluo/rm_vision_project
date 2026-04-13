@@ -59,25 +59,25 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
         signal(SIGSEGV, signal_handler);
         signal(SIGABRT, signal_handler);
         signal(SIGFPE, signal_handler);
-        RCLCPP_INFO_ONCE(get_logger(), "Step 1/10: 函数注册信号处理器 创建完成");
+        RCLCPP_INFO_ONCE(get_logger(), "Step 1/7: 函数注册信号处理器 创建完成");
 
         getParams();
-        RCLCPP_INFO_ONCE(get_logger(), "Step 2/10: 已经从 config 文件读取参数, device_name=%s", device_name_.c_str());
+        RCLCPP_INFO_ONCE(get_logger(), "Step 2/7: 已经从 config 文件读取参数, device_name=%s", device_name_.c_str());
 
         // 串口初始化核心
         try 
         {
             serial_driver_->init_port(device_name_, *device_config_);
-            RCLCPP_INFO_ONCE(get_logger(), "Step 3/10: 初始化串口 成功");
+            RCLCPP_INFO_ONCE(get_logger(), "Step 3/7: 初始化串口 成功");
 
             // 如果串口没打开，尝试打开
             if (!serial_driver_->port()->is_open()) 
             {
                 serial_driver_->port()->open();
-                RCLCPP_INFO_ONCE(get_logger(), "Step 4/10: 未打开串口，现在串口已经打开成功");
+                RCLCPP_INFO_ONCE(get_logger(), "Step 4/7: 未打开串口，现在串口已经打开成功");
 
                 receive_thread_ = std::thread(&RMSerialDriver::receiveData, this); 
-                RCLCPP_INFO_ONCE(get_logger(), "Step 5/10: 启动接收线程 成功");
+                RCLCPP_INFO_ONCE(get_logger(), "Step 5/7: 启动接收线程 成功");
             }
         } 
         catch (const std::exception & ex) 
@@ -94,7 +94,17 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
 
         // 创建 PNP 消息订阅者
         pnp_sub_ = this->create_subscription<serial_driver_interfaces::msg::SendPNPInfo>("/send_pnp_info", 10, std::bind(&RMSerialDriver::PNPCallback, this, std::placeholders::_1));
-        RCLCPP_INFO_ONCE(get_logger(), "Step 6/10: 成功创建 pnp 话题订阅者");
+        RCLCPP_INFO_ONCE(get_logger(), "Step 6/7: 成功创建 pnp 话题订阅者");
+
+        this->tf = std::make_unique<TF>(this); // 传 this 指针给 TF 类，让它能创建 ROS2 相关对象
+        //angle_filter_ = std::make_unique<AngleFilter>();
+
+        // 启动 tf 里的静态变换定时器，每 100ms 发布一次【芯片坐标系】->【相机坐标系】的静态变换
+        this->tf->startStaticTransformTimer(100);
+
+        RCLCPP_INFO_ONCE(get_logger(), "Step 7/7: 成功启动 tf 里的静态变换定时器");
+
+        this->send_once_start = this->now(); // 记录初始时间
 
         RCLCPP_INFO_ONCE(get_logger(), ">>>>>>>>>>>>>>> 串口构造函数已经初始化完成。");
 
@@ -117,23 +127,7 @@ RMSerialDriver::~RMSerialDriver()
 }
 
 
-// 自定义接收数据处理函数，发送数据到话题 receive_data 下
-void RMSerialDriver::processReceivedPacket(const ReceivePacket& packet) 
-{
-    // 1. 先打印接收到的数据
-    RCLCPP_INFO(get_logger(), "++++++++++++ Received: euler_roll=%.2f euler_pitch=%.2f euler_yaw=%.2f", packet.euler_roll, packet.euler_pitch, packet.euler_yaw);
-
-    // 2. 创建并填充新消息
-    auto pub_msg = serial_driver_interfaces::msg::ReceiveData();
-    pub_msg.header.stamp = this->now(); // 帧头获取当前时刻
-    pub_msg.roll = packet.euler_roll;      // 翻滚角
-    pub_msg.pitch = packet.euler_pitch;    // 俯仰角
-    pub_msg.yaw = packet.euler_yaw;        // 航向角
-    
-}
-
-
-// 接收数据线程函数，持续监听串口数据，解析数据包
+// 接收数据 线程函数，持续监听串口数据，解析数据包
 void RMSerialDriver::receiveData()
 {
     std::vector<uint8_t> header(1);
@@ -169,9 +163,10 @@ void RMSerialDriver::receiveData()
                     // 更新发布【世界坐标系】->【芯片坐标系】
                     this->tf->updateWorldToChip(packet.euler_roll, packet.euler_pitch, packet.euler_yaw);
 
-                    // 已经更新
-                    this->world_to_chip_updated_ = true; 
-            
+                    this->world_to_chip_updated_ = true;
+
+                    // 尝试查询 TF，得到最终数据，并发送串口
+                    confirmIfCanSendData();
                 } 
                 else 
                 {
@@ -198,6 +193,47 @@ void RMSerialDriver::receiveData()
 // 确定两个坐标系是否都已经更新，尝试查询 TF 变换，得到最终数据，并发送串口
 void RMSerialDriver::confirmIfCanSendData()
 {
+    if(this->world_to_chip_updated_ == false || this->chip_to_armorplate_updated_ == false)
+    {
+        RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 10, "等待 坐标系变换还未更新完");
+        return;
+    }
+
+    // 可以尝试查询 TF 变换，得到最终数据，并发送串口
+
+    // 通过引用回传最终的 pitch 和 yaw
+    float pitch = -9999.99;
+    float yaw = -9999.99; 
+    bool flag = this->tf->getTransform(pitch, yaw);
+
+    // 查询失败
+    if(flag == false || pitch == -9999.99 || yaw == -9999.99)
+    {
+        RCLCPP_WARN(this->get_logger(), "查询失败 【世界坐标系】->【装甲板坐标系】，未发送给串口数据");
+        return;
+    }
+
+    // 重置状态（需要吗？）
+    this->world_to_chip_updated_ = false; 
+    this->chip_to_armorplate_updated_ = false;
+
+
+    // 与上一次发送的数据进行对比，假如完全相同，则跳过发送
+    if(pitch == this->last_pitch && yaw == this->last_yaw)
+    {
+        ++this->data_same_count;
+        RCLCPP_WARN(this->get_logger(), "准备发送给串口的数据和上一次完全相同, 已经相同 %d 帧。跳过发送", this->data_same_count);
+        return;
+    }
+    this->data_same_count = 0; 
+
+    // 更新上一次发送的最终数据
+    this->last_pitch = pitch;
+    this->last_yaw = yaw;
+
+    // 发送数据给串口
+    RCLCPP_INFO(this->get_logger(), "OK! 准备发送数据给串口");
+    ultimateSendData(pitch, yaw);
 
 }  
 
@@ -226,12 +262,7 @@ void RMSerialDriver::ultimateSendData(float pitch, float yaw)
         packet.crc = 0xFE; //直接固定帧尾
         
         std::vector<uint8_t> data = toVector(packet);
-
-
-
-        RCLCPP_INFO(get_logger(), "-------------READY--------------> 串口 sendData 准备发送数据, sizeof = %d", sizeof(SendPacket));
         
-        static rclcpp::Time send_once_start = this->now(); // 获取当前时刻
 
         auto before_send = this->now(); //【计时开始】send 前
 
@@ -270,24 +301,28 @@ void RMSerialDriver::ultimateSendData(float pitch, float yaw)
 // pnp 回调函数
 void RMSerialDriver::PNPCallback(const serial_driver_interfaces::msg::SendPNPInfo msg)
 {
-    // 检查 pnp 的 t 矩阵数据是否和上次发送的一模一样
-    if(msg.tvec[0] == last_tvec[0] && msg.tvec[1] == this->last_pnp_t_y && msg.tvec[2] == this->last_pnp_t_z)
+    // 检查 pnp 的 t 矩阵数据是否和上次收到的一模一样
+    if(msg.tvec[0] == this->last_tvec[0] && msg.tvec[1] == this->last_tvec[1] && msg.tvec[2] == this->last_tvec[2])
     {
         ++this->pnp_same_t_count;
-        RCLCPP_WARN(this->get_logger(), "【 警告！ 】pnp 收到的 t 矩阵和上次的完全相同，已经相同 %d 帧。跳过发布", this->pnp_same_t_count);
-        // return;
+        RCLCPP_WARN(this->get_logger(), "pnp 收到的 t 矩阵和上次的完全相同，已经相同 %d 帧。跳过此次发布", this->pnp_same_t_count);
+        return;
     }
-
-    this->pnp_same_t_count = 0; // 重置计数器
+    this->pnp_same_t_count = 0; 
 
     // 更新 上一次的 pnp 的 t 矩阵数据 
-    this->last_pnp_t_x = msg.tvec[0];
-    this->last_pnp_t_y = msg.tvec[1];
-    this->last_pnp_t_z = msg.tvec[2];
+    this->last_tvec[0] = msg.tvec[0];
+    this->last_tvec[1] = msg.tvec[1];
+    this->last_tvec[2] = msg.tvec[2];
 
 
-    // 更新【芯片坐标系】->【装甲板坐标系】的变换
+    // 更新【相机坐标系】->【装甲板坐标系】的变换
+    this->tf->updateCameraToArmorplate(msg);
 
+    this->chip_to_armorplate_updated_ = true; 
+
+    // 尝试查询 TF，得到最终数据，并发送串口
+    confirmIfCanSendData();
 
 }
 
@@ -295,102 +330,145 @@ void RMSerialDriver::PNPCallback(const serial_driver_interfaces::msg::SendPNPInf
 
 void RMSerialDriver::getParams()
 {
-  using FlowControl = drivers::serial_driver::FlowControl;
-  using Parity = drivers::serial_driver::Parity;
-  using StopBits = drivers::serial_driver::StopBits;
+    using FlowControl = drivers::serial_driver::FlowControl;
+    using Parity = drivers::serial_driver::Parity;
+    using StopBits = drivers::serial_driver::StopBits;
 
-  uint32_t baud_rate{};
-  auto fc = FlowControl::NONE;
-  auto pt = Parity::NONE;
-  auto sb = StopBits::ONE;
+    uint32_t baud_rate{};
+    auto fc = FlowControl::NONE;
+    auto pt = Parity::NONE;
+    auto sb = StopBits::ONE;
 
-  try {
-    device_name_ = declare_parameter<std::string>("device_name", "");
-  } catch (rclcpp::ParameterTypeException & ex) {
-    RCLCPP_ERROR(get_logger(), "The device name provided was invalid");
-    throw ex;
-  }
-
-  try {
-    baud_rate = declare_parameter<int>("baud_rate", 0);
-  } catch (rclcpp::ParameterTypeException & ex) {
-    RCLCPP_ERROR(get_logger(), "The baud_rate provided was invalid");
-    throw ex;
-  }
-
-  try {
-    const auto fc_string = declare_parameter<std::string>("flow_control", "");
-    RCLCPP_INFO(get_logger(), "flow_control string = '%s'", fc_string.c_str());
-
-    if (fc_string == "none") {
-      fc = FlowControl::NONE;
-    } else if (fc_string == "hardware") {
-      fc = FlowControl::HARDWARE;
-    } else if (fc_string == "software") {
-      fc = FlowControl::SOFTWARE;
-    } else {
-      throw std::invalid_argument{
-        "The flow_control parameter must be one of: none, software, or hardware."};
+    try 
+    {
+        device_name_ = declare_parameter<std::string>("device_name", "");
+    } 
+    catch (rclcpp::ParameterTypeException & ex) 
+    {
+        RCLCPP_ERROR(get_logger(), "The device name provided was invalid");
+        throw ex;
     }
-  } catch (rclcpp::ParameterTypeException & ex) {
-    RCLCPP_ERROR(get_logger(), "The flow_control provided was invalid");
-    throw ex;
-  }
 
-  try {
-    const auto pt_string = declare_parameter<std::string>("parity", "");
-
-    if (pt_string == "none") {
-      pt = Parity::NONE;
-    } else if (pt_string == "odd") {
-      pt = Parity::ODD;
-    } else if (pt_string == "even") {
-      pt = Parity::EVEN;
-    } else {
-      throw std::invalid_argument{"The parity parameter must be one of: none, odd, or even."};
+    try 
+    {
+        baud_rate = declare_parameter<int>("baud_rate", 0);
+    } 
+    catch (rclcpp::ParameterTypeException & ex) 
+    {
+        RCLCPP_ERROR(get_logger(), "The baud_rate provided was invalid");
+        throw ex;
     }
-  } catch (rclcpp::ParameterTypeException & ex) {
-    RCLCPP_ERROR(get_logger(), "The parity provided was invalid");
-    throw ex;
-  }
 
-  try {
-    const auto sb_string = declare_parameter<std::string>("stop_bits", "");
+    try 
+    {
+        const auto fc_string = declare_parameter<std::string>("flow_control", "");
+        RCLCPP_INFO(get_logger(), "flow_control string = '%s'", fc_string.c_str());
 
-    if (sb_string == "1" || sb_string == "1.0") {
-      sb = StopBits::ONE;
-    } else if (sb_string == "1.5") {
-      sb = StopBits::ONE_POINT_FIVE;
-    } else if (sb_string == "2" || sb_string == "2.0") {
-      sb = StopBits::TWO;
-    } else {
-      throw std::invalid_argument{"The stop_bits parameter must be one of: 1, 1.5, or 2."};
+        if (fc_string == "none") 
+        {
+            fc = FlowControl::NONE;
+        } 
+        else if (fc_string == "hardware") 
+        {
+            fc = FlowControl::HARDWARE;
+        } 
+        else if (fc_string == "software") 
+        {
+            fc = FlowControl::SOFTWARE;
+        } 
+        else 
+        {
+            throw std::invalid_argument
+            {
+                "The flow_control parameter must be one of: none, software, or hardware."
+            };
+        }
+    } 
+    catch (rclcpp::ParameterTypeException & ex) 
+    {
+        RCLCPP_ERROR(get_logger(), "The flow_control provided was invalid");
+        throw ex;
     }
-  } catch (rclcpp::ParameterTypeException & ex) {
-    RCLCPP_ERROR(get_logger(), "The stop_bits provided was invalid");
-    throw ex;
-  }
 
-  device_config_ =
+    try 
+    {
+        const auto pt_string = declare_parameter<std::string>("parity", "");
+
+        if (pt_string == "none") 
+        {
+            pt = Parity::NONE;
+        } 
+        else if (pt_string == "odd") 
+        {
+            pt = Parity::ODD;
+        } 
+        else if (pt_string == "even") 
+        {
+            pt = Parity::EVEN;
+        } 
+        else 
+        {
+            throw std::invalid_argument{"The parity parameter must be one of: none, odd, or even."};
+        }
+    } 
+    catch (rclcpp::ParameterTypeException & ex) 
+    {
+        RCLCPP_ERROR(get_logger(), "The parity provided was invalid");
+        throw ex;
+    }
+
+    try 
+    {
+        const auto sb_string = declare_parameter<std::string>("stop_bits", "");
+
+        if (sb_string == "1" || sb_string == "1.0") 
+        {
+            sb = StopBits::ONE;
+        } 
+        else if (sb_string == "1.5") 
+        {
+            sb = StopBits::ONE_POINT_FIVE;
+        } 
+        else if (sb_string == "2" || sb_string == "2.0") 
+        {
+            sb = StopBits::TWO;
+        } 
+        else 
+        {
+            throw std::invalid_argument{"The stop_bits parameter must be one of: 1, 1.5, or 2."};
+        }
+    } 
+    catch (rclcpp::ParameterTypeException & ex) 
+    {
+        RCLCPP_ERROR(get_logger(), "The stop_bits provided was invalid");
+        throw ex;
+    }
+
+    device_config_ =
     std::make_unique<drivers::serial_driver::SerialPortConfig>(baud_rate, fc, pt, sb);
 }
 
 void RMSerialDriver::reopenPort()
 {
-  RCLCPP_WARN(get_logger(), "Attempting to reopen port");
-  try {
-    if (serial_driver_->port()->is_open()) {
-      serial_driver_->port()->close();
+    RCLCPP_WARN(get_logger(), "Attempting to reopen port");
+    try 
+    {
+        if (serial_driver_->port()->is_open()) 
+        {
+            serial_driver_->port()->close();
+        }
+        serial_driver_->port()->open();
+        RCLCPP_INFO(get_logger(), "Successfully reopened port");
+    } 
+    catch (const std::exception & ex) 
+    {
+        RCLCPP_ERROR(get_logger(), "Error while reopening port: %s", ex.what());
+        if (rclcpp::ok()) 
+        {
+            rclcpp::sleep_for(std::chrono::seconds(1));
+            reopenPort();
+        }
     }
-    serial_driver_->port()->open();
-    RCLCPP_INFO(get_logger(), "Successfully reopened port");
-  } catch (const std::exception & ex) {
-    RCLCPP_ERROR(get_logger(), "Error while reopening port: %s", ex.what());
-    if (rclcpp::ok()) {
-      rclcpp::sleep_for(std::chrono::seconds(1));
-      reopenPort();
-    }
-  }
 }
 
 
