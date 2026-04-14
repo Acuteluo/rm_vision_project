@@ -541,7 +541,7 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
             double times = std::max((double)red_edge_average / (double)blue_edge_average, (double)blue_edge_average / (double)red_edge_average); // 红蓝值相差倍数，至少要 4 以上才比较合理
             
             // 边缘饱和度高，一定是灯条
-            if(saturation_edge_average > 100.00 || saturation_average > 175.00)
+            if(saturation_edge_average > 175.00 || saturation_average > 175.00)
             {
                 if(red_edge_average > blue_edge_average) // 红值偏高，一般都会相差 100 以上的
                 {

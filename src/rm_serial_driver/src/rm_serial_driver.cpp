@@ -56,12 +56,12 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
     serial_driver_{new drivers::serial_driver::SerialDriver(*owned_ctx_)}
     {
 
-        // 启用话题统计，并设置相关参数
-        rclcpp::SubscriptionOptions sub_options;
+        // // 启用话题统计，并设置相关参数
+        // rclcpp::SubscriptionOptions sub_options;
         
-        sub_options.topic_stats_options.state = rclcpp::TopicStatisticsState::Enable; // 启用统计
-        sub_options.topic_stats_options.publish_period = std::chrono::seconds(5); // 发布周期 5 秒
-        sub_options.topic_stats_options.publish_topic = "/send_pnp_info"; // 指定统计话题
+        // sub_options.topic_stats_options.state = rclcpp::TopicStatisticsState::Enable; // 启用统计
+        // sub_options.topic_stats_options.publish_period = std::chrono::seconds(5); // 发布周期 5 秒
+        // sub_options.topic_stats_options.publish_topic = "/send_pnp_info"; // 指定统计话题
 
         RCLCPP_INFO_ONCE(get_logger(), "SerialDriver 构造函数启动!");
 
@@ -72,6 +72,14 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
 
         getParams();
         RCLCPP_INFO_ONCE(get_logger(), "Step 2/7: 已经从 config 文件读取参数, device_name=%s", device_name_.c_str());
+
+        this->tf = std::make_unique<TF>(this); // 传 this 指针给 TF 类，让它能创建 ROS2 相关对象
+        //angle_filter_ = std::make_unique<AngleFilter>();
+
+        // 启动 tf 里的静态变换定时器，每 100ms 发布一次【芯片坐标系】->【相机坐标系】的静态变换
+        this->tf->startStaticTransformTimer(100);
+
+        RCLCPP_INFO_ONCE(get_logger(), "Step 7/7: 成功启动 tf 里的静态变换定时器");
 
         // 串口初始化核心
         try 
@@ -102,16 +110,8 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
         }
 
         // 创建 PNP 消息订阅者
-        pnp_sub_ = this->create_subscription<serial_driver_interfaces::msg::SendPNPInfo>("/send_pnp_info", 10, std::bind(&RMSerialDriver::PNPCallback, this, std::placeholders::_1), sub_options);
+        pnp_sub_ = this->create_subscription<serial_driver_interfaces::msg::SendPNPInfo>("/send_pnp_info", 10, std::bind(&RMSerialDriver::PNPCallback, this, std::placeholders::_1));
         RCLCPP_INFO_ONCE(get_logger(), "Step 6/7: 成功创建 pnp 话题订阅者");
-
-        this->tf = std::make_unique<TF>(this); // 传 this 指针给 TF 类，让它能创建 ROS2 相关对象
-        //angle_filter_ = std::make_unique<AngleFilter>();
-
-        // 启动 tf 里的静态变换定时器，每 100ms 发布一次【芯片坐标系】->【相机坐标系】的静态变换
-        this->tf->startStaticTransformTimer(100);
-
-        RCLCPP_INFO_ONCE(get_logger(), "Step 7/7: 成功启动 tf 里的静态变换定时器");
 
         this->send_once_start = this->now(); // 记录初始时间
 
@@ -165,9 +165,16 @@ void RMSerialDriver::receiveData()
                 if (packet.checksum == 0xFE) 
                 {
                     // 接收数据部分
+                    ++this->receive_data_count;
+                    if(this->receive_data_count >= 200)
+                    {
+                        RCLCPP_INFO(this->get_logger(), "已经成功接收 %d 帧电控数据了！", this->receive_data_count);
+                        this->receive_data_count = 0; // 重置计数器
+                    }
+
 
                     // 打印接收到的数据
-                    RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "收到电控数据: euler_roll=%.2f euler_pitch=%.2f euler_yaw=%.2f", packet.euler_roll, packet.euler_pitch, packet.euler_yaw);
+                    RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 1000, "收到电控数据: euler_roll=%.2f euler_pitch=%.2f euler_yaw=%.2f", packet.euler_roll, packet.euler_pitch, packet.euler_yaw);
 
                     // 更新发布【世界坐标系】->【芯片坐标系】
                     this->tf->updateWorldToChip(packet.euler_roll, packet.euler_pitch, packet.euler_yaw);
@@ -175,7 +182,7 @@ void RMSerialDriver::receiveData()
                     this->world_to_chip_updated_ = true;
 
                     // 尝试查询 TF，得到最终数据，并发送串口
-                    confirmIfCanSendData();
+                    // confirmIfCanSendData();
                 } 
                 else 
                 {
@@ -202,11 +209,11 @@ void RMSerialDriver::receiveData()
 // 确定两个坐标系是否都已经更新，尝试查询 TF 变换，得到最终数据，并发送串口
 void RMSerialDriver::confirmIfCanSendData()
 {
-     std::lock_guard<std::mutex> lock(state_mutex_); // 加锁，避免线程打架
+    std::lock_guard<std::mutex> lock(state_mutex_); // 加锁，避免线程打架
 
     if(this->world_to_chip_updated_ == false || this->chip_to_armorplate_updated_ == false)
     {
-        RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 1000, "等待 坐标系变换还未更新完");
+        RCLCPP_WARN(get_logger(), "等待 坐标系变换还未更新完 退出尝试函数");
         return;
     }
 
@@ -225,16 +232,20 @@ void RMSerialDriver::confirmIfCanSendData()
     }
 
     // 重置状态（需要吗？）
-    this->world_to_chip_updated_ = false; 
-    this->chip_to_armorplate_updated_ = false;
+    // this->world_to_chip_updated_ = false; 
+    // this->chip_to_armorplate_updated_ = false;
 
 
     // 与上一次发送的数据进行对比，假如完全相同，则跳过发送
     if(pitch == this->last_pitch && yaw == this->last_yaw)
     {
         ++this->data_same_count;
-        RCLCPP_WARN_THROTTLE(this->get_logger(), *get_clock(), 500, "准备发送给串口的数据和上一次完全相同, 已经相同 %d 帧。跳过发送", this->data_same_count);
-        return;
+        // RCLCPP_WARN_THROTTLE(this->get_logger(), *get_clock(), 1000, "准备发送给串口的数据和上一次完全相同, 已经相同 %d 帧。跳过发送", this->data_same_count);
+        // return;
+    }
+    else if(this->data_same_count > 0)
+    {
+        RCLCPP_WARN(this->get_logger(), "之前准备发送给串口的数据和上一次完全相同，累计相同 %d 帧。该帧不同", this->data_same_count);
     }
     this->data_same_count = 0; 
 
@@ -243,7 +254,7 @@ void RMSerialDriver::confirmIfCanSendData()
     this->last_yaw = yaw;
 
     // 发送数据给串口
-    RCLCPP_INFO_THROTTLE(this->get_logger(), *get_clock(), 500, "OK! 准备发送数据给串口");
+    // RCLCPP_INFO_THROTTLE(this->get_logger(), *get_clock(), 1000, "OK! 准备发送数据给串口");
     ultimateSendData(pitch, yaw);
 
 }  
@@ -299,10 +310,10 @@ void RMSerialDriver::ultimateSendData(float pitch, float yaw)
         send_count++;
         rclcpp::Time now = this->now();
         double elapsed = (now - last_time).seconds();
-        if (elapsed >= 1.0) 
+        if (elapsed >= 1.000) 
         {
             double fps = send_count / elapsed;
-            RCLCPP_INFO_THROTTLE(this->get_logger(), *get_clock(), 1000, "串口实际发送帧率: %.2f Hz", fps);
+            RCLCPP_INFO(this->get_logger(), "串口实际发送帧率（包括重复数据）:--------------------->【 %.2f Hz】", fps);
             send_count = 0;
             last_time = now;
         }
@@ -326,13 +337,21 @@ void RMSerialDriver::ultimateSendData(float pitch, float yaw)
 // pnp 回调函数
 void RMSerialDriver::PNPCallback(const serial_driver_interfaces::msg::SendPNPInfo msg)
 {
+    // ... 步骤4 接收到pnp数据完成时间戳
+    rclcpp::Time t4 = this->now();
+    
+
     // 检查 pnp 的 t 矩阵数据是否和上次收到的一模一样
     if(msg.tvec[0] == this->last_tvec[0] && msg.tvec[1] == this->last_tvec[1] && msg.tvec[2] == this->last_tvec[2])
     {
         ++this->pnp_same_t_count;
-        RCLCPP_WARN_THROTTLE(this->get_logger(), *get_clock(), 200, "pnp 收到的 t 矩阵和上次的完全相同，已经相同 %d 帧。跳过此次发布", this->pnp_same_t_count);
-        return;
+        // RCLCPP_WARN_THROTTLE(this->get_logger(), *get_clock(), 200, "pnp 收到的 t 矩阵和上次的完全相同，已经相同 %d 帧。跳过此次发布", this->pnp_same_t_count);
     }
+    else if(this->pnp_same_t_count > 0)
+    {
+        RCLCPP_WARN(this->get_logger(), "之前 pnp 收到的 t 矩阵和前几次的完全相同，累计相同 %d 帧。该帧不同", this->pnp_same_t_count);
+    }
+    
     this->pnp_same_t_count = 0; 
 
     // 更新 上一次的 pnp 的 t 矩阵数据 
@@ -344,10 +363,25 @@ void RMSerialDriver::PNPCallback(const serial_driver_interfaces::msg::SendPNPInf
     // 更新【相机坐标系】->【装甲板坐标系】的变换
     this->tf->updateCameraToArmorplate(msg);
 
-    this->chip_to_armorplate_updated_ = true; 
+    this->chip_to_armorplate_updated_ = true;
+    
+     
+    // ... 步骤5 更新【相机坐标系】->【装甲板坐标系】的变换 完成时间戳
+    rclcpp::Time t5 = this->now();
 
     // 尝试查询 TF，得到最终数据，并发送串口
     confirmIfCanSendData();
+
+    // ... 步骤6 尝试得到变换（+可能的滤波和发送）完成时间戳
+    rclcpp::Time t6 = this->now();
+
+
+    // 计算每个步骤的耗时，并打印
+    double duration4 = (t4 - msg.header.stamp).seconds() * 1000.0; // 转换为毫秒
+    double duration5 = (t5 - t4).seconds() * 1000.0; // 转换为毫秒
+    double duration6 = (t6 - t5).seconds() * 1000.0; // 转换为毫秒
+    double total_duration = (t6 - msg.header.stamp).seconds() * 1000.0; // 转换为毫秒
+    RCLCPP_INFO(this->get_logger(), "串口处理耗时: 话题通信传输pnp数据 = %.4f ms, 更新变换 = %.4f ms, 尝试得到最终变换 = %.4f ms, 总耗时 = %.4f ms", duration4, duration5, duration6, total_duration);
 
 }
 

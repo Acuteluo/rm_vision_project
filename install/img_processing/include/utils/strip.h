@@ -1,1 +1,0 @@
-/home/cly/project/src/img_processing/include/utils/strip.h

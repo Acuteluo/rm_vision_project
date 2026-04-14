@@ -1,4 +1,4 @@
-#include "tf.hpp"
+#include "rm_serial_driver/tf.hpp"
 
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
@@ -158,6 +158,8 @@ bool TF::getTransform(float& pitch, float& yaw)
     X = transform.transform.translation.x;
     Y = transform.transform.translation.y;
     Z = transform.transform.translation.z;
+
+    RCLCPP_INFO(node_->get_logger(), "查询到【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.3f m, Y=%.3f m, Z=%.3f m", X, Y, Z);
 
 
     // to do

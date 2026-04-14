@@ -45,10 +45,12 @@ public:
     // 一些用来对比的东西
     float last_tvec[3] = {-9999.99, -9999.99, -9999.99}; // 上一次发送的 t 矩阵数据
     int pnp_same_t_count = 0; // PNP 消息收到重复 t 矩阵的计数器
-    float last_pitch = -9999.99; // 上一次发送的 pitch 数据
-    float last_yaw = -9999.99; // 上一次发送的 yaw 数据
+    double last_pitch = -9999.99; // 上一次发送的 pitch 数据
+    double last_yaw = -9999.99; // 上一次发送的 yaw 数据
     int data_same_count = 0; // 最终要发送的数据 重复计数器
     rclcpp::Time send_once_start; // 记录发送前的时刻，用于计算 整次 send_interval 的时间间隔
+
+    int receive_data_count = 0; // 接收数据计数器
 
 private:
 

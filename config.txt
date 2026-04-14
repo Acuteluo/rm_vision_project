@@ -1,11 +1,21 @@
-# SHOW_LOGGER = false / true
+# ------------- CORE 节点相关 -------------
+
+# SHOW_LOGGER_TIME = false / true
+false
+
+# SHOW_IMG_SHOW = false / true
+false
+
+# ------------- PREPARE 类相关 -------------
+
+# SHOW_LOGGER_PREPARE = false / true
 false
 
 # CHOSEN_COLOR = red / blue
 red
 
 # CAMERA_NAME = galaxy / mind_vision
-mind_vision
+galaxy
 
 # ARMOR_TYPE = normal / hero
 normal
