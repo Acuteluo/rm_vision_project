@@ -6,6 +6,7 @@
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <tf2_ros/transform_broadcaster.h>
+#include "tf2_ros/static_transform_broadcaster.h" // 静态变换广播器
 #include <tf2_ros/transform_listener.h>
 #include <tf2_ros/buffer.h>
 #include <geometry_msgs/msg/transform_stamped.hpp>
@@ -15,6 +16,9 @@
 #include<Eigen/QR>
 #include<Eigen/Core>
 #include<Eigen/LU>
+
+#include <fstream>
+#include <string>
 
 // 同一个命名空间
 namespace rm_serial_driver
@@ -50,12 +54,6 @@ public:
      */
     bool getTransform(float& pitch, float& yaw);
 
-    // ---------- 静态变换 ----------
-    /**
-     * @brief 启动周期性发布 chip_frame -> camera_frame 的静态变换
-     * @param period_ms 发布周期（毫秒）
-     */
-    void startStaticTransformTimer(int period_ms);
 
 
     /**
@@ -67,7 +65,12 @@ public:
 
 private:
 
+    // ---------- 静态变换 ----------
+    /**
+     * @brief 启动静态变换发布，发布 chip_frame -> camera_frame 的变换
+     */
     void publishStaticCameraTransform();  // 实际发布静态变换的回调
+
 
     rclcpp::Node* node_;  // 拿到 ros2 的节点指针
 
@@ -76,7 +79,11 @@ private:
     std::unique_ptr<tf2_ros::TransformBroadcaster> armorplate_broadcaster_;    // 发布 armorplate_frame TF
     std::shared_ptr<tf2_ros::Buffer> tf_buffer_;                 // TF 缓存
     std::shared_ptr<tf2_ros::TransformListener> tf_listener_;    // TF 监听器
-    rclcpp::TimerBase::SharedPtr static_timer_;   // 静态变换定时器
+
+    std::unique_ptr<tf2_ros::StaticTransformBroadcaster> static_broadcaster_; // 发布静态变换的广播器
+
+    bool SHOW_LOGGER_ERROR; // 从日志文件读取，是否展示tf查询错误
+    bool SHOW_RESULT; // 从日志文件读取，是否展示最终查询结果
 };
 
 }  // namespace rm_serial_driver

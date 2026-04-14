@@ -73,13 +73,9 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
         getParams();
         RCLCPP_INFO_ONCE(get_logger(), "Step 2/7: 已经从 config 文件读取参数, device_name=%s", device_name_.c_str());
 
-        this->tf = std::make_unique<TF>(this); // 传 this 指针给 TF 类，让它能创建 ROS2 相关对象
-        //angle_filter_ = std::make_unique<AngleFilter>();
+        this->tf = std::make_unique<TF>(this); // 传 this 指针给 TF 类来构造，让它能创建 ROS2 相关对象，同时发布静态变换
+        //angle_filter_ = std::make_unique<AngleFilter>(); 
 
-        // 启动 tf 里的静态变换定时器，每 100ms 发布一次【芯片坐标系】->【相机坐标系】的静态变换
-        this->tf->startStaticTransformTimer(100);
-
-        RCLCPP_INFO_ONCE(get_logger(), "Step 7/7: 成功启动 tf 里的静态变换定时器");
 
         // 串口初始化核心
         try 
@@ -115,6 +111,74 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
 
         this->send_once_start = this->now(); // 记录初始时间
 
+        this->last_print = this->now(); // 初始化 last_print，用于统计电控发来消息的频率
+
+
+        // ------------------ 进行一个配置文件的读取 -----------------
+
+        std::ifstream file("config.txt");  // 打开配置文件，注意是在工作空间下
+        if (!file.is_open()) 
+        {
+            RCLCPP_ERROR(this->get_logger(), "【 EXIT 】无法打开 config.txt 配置文件。。。。即将退出 tf\n");
+            exit(-1);
+        }
+
+        std::string each_line;
+        int line_count = 0; // 记录行数
+
+        while (std::getline(file, each_line)) 
+        {
+            // 处理每一行，each_line 即为当前行的字符串
+            if (each_line.empty() || each_line[0] == '#' || each_line[0] == '/') continue;
+            else
+            {
+                ++line_count;
+                RCLCPP_INFO(this->get_logger(), "已读取配置文件第 %d 个有效行: %s", line_count, each_line.c_str());
+                if(line_count == 9)
+                {
+                    if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
+                    {
+                        this->SHOW_LOGGER_PNP = false;
+                    }
+                    else this->SHOW_LOGGER_PNP = true;
+                    RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_LOGGER_PNP = %s", each_line.c_str());
+                }
+
+                else if(line_count == 10)
+                {
+                    if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
+                    {
+                        this->SHOW_LOGGER_RECEIVE = false;
+                    }
+                    else this->SHOW_LOGGER_RECEIVE = true;
+                    RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_LOGGER_RECEIVE = %s", each_line.c_str());
+                }
+
+                else if(line_count == 11)
+                {
+                    if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
+                    {
+                        this->SHOW_LOGGER_TRY_AND_SEND = false;
+                    }
+                    else this->SHOW_LOGGER_TRY_AND_SEND = true;
+                    RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_LOGGER_TRY_AND_SEND = %s", each_line.c_str());
+                }
+
+            }
+        }
+
+        if(line_count < 11)
+        {
+            RCLCPP_ERROR(this->get_logger(), "配置文件的有效行数不足 11 行, 检查配置文件。即将退出 core 节点\n");
+            exit(-1);
+        }
+        else
+        {
+            RCLCPP_INFO(this->get_logger(), "Step 7/7: 串口 ALL SET! 共设置了 %d 个有效参数", line_count);
+        }
+
+        file.close();
+
         RCLCPP_INFO_ONCE(get_logger(), ">>>>>>>>>>>>>>> 串口构造函数已经初始化完成。");
 
     }
@@ -143,8 +207,13 @@ void RMSerialDriver::receiveData()
     std::vector<uint8_t> data;
     data.reserve(sizeof(ReceivePacket));
 
+    rclcpp::Time t1, t2;
+
+    // 通过 while 实现持续监听串口数据，直到节点关闭
     while (rclcpp::ok()) 
     {
+        // ... 步骤1 记录初始时刻
+        rclcpp::Time start = this->now();
         try 
         {
             // 读取帧头
@@ -165,21 +234,42 @@ void RMSerialDriver::receiveData()
                 if (packet.checksum == 0xFE) 
                 {
                     // 接收数据部分
-                    ++this->receive_data_count;
-                    if(this->receive_data_count >= 200)
+
+                    // ... 步骤2 确认数据可用的时间戳
+                    t1 = this->now();
+
+                    // 手动统计帧率
+                    // 在构造函数中已经初始化了 last_print，所以这里不需要再赋值
+                    static int pub_count = 0;
+                    pub_count++;
+                    auto now = this->now();
+                    if ((now - this->last_print).seconds() >= 1.0) 
                     {
-                        RCLCPP_INFO(this->get_logger(), "已经成功接收 %d 帧电控数据了！", this->receive_data_count);
-                        this->receive_data_count = 0; // 重置计数器
+                        double fps = pub_count / (now - this->last_print).seconds();
+                        RCLCPP_INFO(this->get_logger(), "电控消息 发布频率: %.2f Hz", fps);
+                        pub_count = 0;
+                        this->last_print = now;
                     }
 
 
                     // 打印接收到的数据
-                    RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 1000, "收到电控数据: euler_roll=%.2f euler_pitch=%.2f euler_yaw=%.2f", packet.euler_roll, packet.euler_pitch, packet.euler_yaw);
+                    RCLCPP_INFO_EXPRESSION(get_logger(), this->SHOW_LOGGER_RECEIVE, "收到电控数据: euler_roll=%.7f euler_pitch=%.7f euler_yaw=%.7f", packet.euler_roll, packet.euler_pitch, packet.euler_yaw);
 
                     // 更新发布【世界坐标系】->【芯片坐标系】
                     this->tf->updateWorldToChip(packet.euler_roll, packet.euler_pitch, packet.euler_yaw);
 
                     this->world_to_chip_updated_ = true;
+
+                    // ... 步骤3 更新发布【世界坐标系】->【芯片坐标系】完成时间戳
+                    t2 = this->now();
+                    
+                    if(this->SHOW_LOGGER_RECEIVE)
+                    {
+                        double duration1 = (t1 - start).seconds() * 1000.0; // 转换为毫秒
+                        double duration2 = (t2 - t1).seconds() * 1000.0; // 转换为毫秒
+                        double total_duration = (t2 - start).seconds() * 1000.0; // 转换为毫秒
+                        RCLCPP_INFO(this->get_logger(), "处理电控数据耗时: 确认数据有效 = %.4f ms, 发布坐标变换 = %.4f ms, 总耗时 = %.4f ms", duration1, duration2, total_duration);
+                    }
 
                     // 尝试查询 TF，得到最终数据，并发送串口
                     // confirmIfCanSendData();
@@ -203,6 +293,8 @@ void RMSerialDriver::receiveData()
             reopenPort();
         }
     }
+    
+
 }
 
 
@@ -211,25 +303,24 @@ void RMSerialDriver::confirmIfCanSendData()
 {
     std::lock_guard<std::mutex> lock(state_mutex_); // 加锁，避免线程打架
 
-    if(this->world_to_chip_updated_ == false || this->chip_to_armorplate_updated_ == false)
-    {
-        RCLCPP_WARN(get_logger(), "等待 坐标系变换还未更新完 退出尝试函数");
-        return;
-    }
+    // if(this->world_to_chip_updated_ == false || this->chip_to_armorplate_updated_ == false)
+    // {
+    //     RCLCPP_WARN(get_logger(), "等待 坐标系变换还未更新完 退出尝试函数");
+    //     return;
+    // }
 
     // 可以尝试查询 TF 变换，得到最终数据，并发送串口
+
+    // ... 步骤6 记录开始获取数据的时间戳
+    rclcpp::Time start = this->now();
 
     // 通过引用回传最终的 pitch 和 yaw
     float pitch = -9999.99;
     float yaw = -9999.99; 
     bool flag = this->tf->getTransform(pitch, yaw);
 
-    // 查询失败
-    if(flag == false || pitch == -9999.99 || yaw == -9999.99)
-    {
-        RCLCPP_WARN(this->get_logger(), "查询失败 【世界坐标系】->【装甲板坐标系】，未发送给串口数据");
-        return;
-    }
+    // ... 步骤7 记录获取到数据的时间戳
+    rclcpp::Time t7 = this->now();
 
     // 重置状态（需要吗？）
     // this->world_to_chip_updated_ = false; 
@@ -243,11 +334,12 @@ void RMSerialDriver::confirmIfCanSendData()
         // RCLCPP_WARN_THROTTLE(this->get_logger(), *get_clock(), 1000, "准备发送给串口的数据和上一次完全相同, 已经相同 %d 帧。跳过发送", this->data_same_count);
         // return;
     }
-    else if(this->data_same_count > 0)
+    else
     {
         RCLCPP_WARN(this->get_logger(), "之前准备发送给串口的数据和上一次完全相同，累计相同 %d 帧。该帧不同", this->data_same_count);
+        this->data_same_count = 0; 
     }
-    this->data_same_count = 0; 
+    
 
     // 更新上一次发送的最终数据
     this->last_pitch = pitch;
@@ -256,6 +348,17 @@ void RMSerialDriver::confirmIfCanSendData()
     // 发送数据给串口
     // RCLCPP_INFO_THROTTLE(this->get_logger(), *get_clock(), 1000, "OK! 准备发送数据给串口");
     ultimateSendData(pitch, yaw);
+
+    // ... 步骤8 记录发完数据的时间戳
+    rclcpp::Time t8 = this->now();
+
+    if(this->SHOW_LOGGER_TRY_AND_SEND)
+    {
+        double duration7 = (t7 - start).seconds() * 1000.0; // 转换为毫秒
+        double duration8 = (t8 - t7).seconds() * 1000.0; // 转换为毫秒
+        double total_duration = (t8 - start).seconds() * 1000.0; // 转换为毫秒
+        RCLCPP_INFO(this->get_logger(), "尝试得到变换和发布耗时: 得到变换 = %.4f ms, 发送给串口 = %.4f ms, 总耗时 = %.4f ms", duration7, duration8, total_duration);
+    }
 
 }  
 
@@ -292,17 +395,21 @@ void RMSerialDriver::ultimateSendData(float pitch, float yaw)
         // 异步发送
         serial_driver_->port()->async_send(data);
 
-        auto after_send = this->now(); //【计时结束】send 后
+        // 看日志决定输出
+        if(this->SHOW_LOGGER_TRY_AND_SEND)
+        {
+            auto after_send = this->now(); //【计时结束】send 后
 
-        RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "-------------SUCCESSED--------------> 串口已经发送数据 absolute_pitch=%.2f absolute_yaw=%.2f", pitch, yaw);
+            RCLCPP_INFO(get_logger(), "-------------SUCCESSED--------------> 串口已经发送数据 absolute_pitch=%.2f absolute_yaw=%.2f", pitch, yaw);
 
-        auto diff_send_interval = (after_send - send_once_start).seconds(); // 整次 send 堵塞的时间差
-        auto diff_send_duration = (after_send - before_send).seconds(); // 调用 send 过程前后的时间差
-        RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "[内_执行异步发送] send_duration = %.5f s", diff_send_duration);
-        RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 500, "[外_单次间隔] send_interval = %.5f s", diff_send_interval);
-        
-        send_once_start = after_send; //【计时开始】整次 send 
-
+            auto diff_send_interval = (after_send - send_once_start).seconds(); // 整次 send 堵塞的时间差
+            auto diff_send_duration = (after_send - before_send).seconds(); // 调用 send 过程前后的时间差
+            RCLCPP_INFO(get_logger(), "[内_执行异步发送] send_duration = %.5f s", diff_send_duration);
+            RCLCPP_INFO(get_logger(), "[外_单次间隔] send_interval = %.5f s", diff_send_interval);
+            
+            send_once_start = after_send; //【计时开始】整次 send
+        }
+         
 
         // 添加一个计时器，用来统计实际发送的fps
         static int send_count = 0;
@@ -365,24 +472,21 @@ void RMSerialDriver::PNPCallback(const serial_driver_interfaces::msg::SendPNPInf
 
     this->chip_to_armorplate_updated_ = true;
     
-     
+    
     // ... 步骤5 更新【相机坐标系】->【装甲板坐标系】的变换 完成时间戳
     rclcpp::Time t5 = this->now();
 
+    if(this->SHOW_LOGGER_PNP)
+    {
+        // 计算每个步骤的耗时，并打印
+        double duration4 = (t4 - msg.header.stamp).seconds() * 1000.0; // 转换为毫秒
+        double duration5 = (t5 - t4).seconds() * 1000.0; // 转换为毫秒
+        double total_duration = (t5 - msg.header.stamp).seconds() * 1000.0; // 转换为毫秒
+        RCLCPP_INFO(this->get_logger(), "pnp处理耗时: 话题通信传输pnp数据 = %.4f ms, 更新变换 = %.4f ms, 总耗时 = %.4f ms。现在尝试查询并发布", duration4, duration5, total_duration);
+    }
+
     // 尝试查询 TF，得到最终数据，并发送串口
     confirmIfCanSendData();
-
-    // ... 步骤6 尝试得到变换（+可能的滤波和发送）完成时间戳
-    rclcpp::Time t6 = this->now();
-
-
-    // 计算每个步骤的耗时，并打印
-    double duration4 = (t4 - msg.header.stamp).seconds() * 1000.0; // 转换为毫秒
-    double duration5 = (t5 - t4).seconds() * 1000.0; // 转换为毫秒
-    double duration6 = (t6 - t5).seconds() * 1000.0; // 转换为毫秒
-    double total_duration = (t6 - msg.header.stamp).seconds() * 1000.0; // 转换为毫秒
-    RCLCPP_INFO(this->get_logger(), "串口处理耗时: 话题通信传输pnp数据 = %.4f ms, 更新变换 = %.4f ms, 尝试得到最终变换 = %.4f ms, 总耗时 = %.4f ms", duration4, duration5, duration6, total_duration);
-
 }
 
 

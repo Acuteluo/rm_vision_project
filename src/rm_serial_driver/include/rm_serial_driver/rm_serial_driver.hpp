@@ -52,6 +52,8 @@ public:
 
     int receive_data_count = 0; // 接收数据计数器
 
+    rclcpp::Time last_print; // 统计电控发来消息的频率
+
 private:
 
     // 接收电控回传数据，并且调用 TF 类方法，更新【世界坐标系】->【芯片坐标系】变换的函数
@@ -89,6 +91,11 @@ private:
     // 相关类对象指针
     std::unique_ptr<TF> tf;
     // std::unique_ptr<AngleFilter> angle_filter_;
+
+    // 日志相关
+    bool SHOW_LOGGER_PNP; // pnp 相关日志
+    bool SHOW_LOGGER_RECEIVE; // 收到电控数据相关日志
+    bool SHOW_LOGGER_TRY_AND_SEND; // 尝试发送数据相关日志
 
     mutable std::mutex state_mutex_;   // 加锁。保护共享状态（标志位、重复检测变量等）
 };  

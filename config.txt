@@ -1,21 +1,40 @@
 # ------------- CORE 节点相关 -------------
 
-# SHOW_LOGGER_TIME = false / true
+# 1 SHOW_LOGGER_TIME = false / true
 false
 
-# SHOW_IMG_SHOW = false / true
+# 2 SHOW_IMG_SHOW = false / true
 false
 
 # ------------- PREPARE 类相关 -------------
 
-# SHOW_LOGGER_PREPARE = false / true
+# 3 SHOW_LOGGER_PREPARE = false / true
 false
 
-# CHOSEN_COLOR = red / blue
-red
+# 4 CHOSEN_COLOR = red / blue
+blue
 
-# CAMERA_NAME = galaxy / mind_vision
+# 5 CAMERA_NAME = galaxy / mind_vision
 galaxy
 
-# ARMOR_TYPE = normal / hero
+# 6 ARMOR_TYPE = normal / hero
 normal
+
+# ------------- TF 类相关 -------------
+
+# 7 SHOW_LOGGER_ERROR = false / true
+true
+
+# 8 SHOW_RESULT = false / true
+true
+
+# ------------- 串口 类相关 -------------
+
+# 9 SHOW_LOGGER_PNP = false / true
+false
+
+# 10 SHOW_LOGGER_RECEIVE = false / true
+false
+
+# 11 SHOW_LOGGER_TRY_AND_SEND = false / true
+false

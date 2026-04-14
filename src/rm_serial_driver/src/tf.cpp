@@ -16,6 +16,65 @@ TF::TF(rclcpp::Node* node): node_(node)
     // 创建 TF 缓存和监听器（用来查询【世界坐标系 -> 装甲板坐标系】是否可以变换）
     tf_buffer_ = std::make_shared<tf2_ros::Buffer>(node_->get_clock());
     tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+
+    // 创建静态变换器并且发布一次【芯片坐标系】->【相机坐标系】的静态变换
+    static_broadcaster_ = std::make_unique<tf2_ros::StaticTransformBroadcaster>(node_);
+    publishStaticCameraTransform();
+
+    // ------------------ 进行一个配置文件的读取 -----------------
+
+        std::ifstream file("config.txt");  // 打开配置文件，注意是在工作空间下
+        if (!file.is_open()) 
+        {
+            RCLCPP_ERROR(this->node_->get_logger(), "【 EXIT 】无法打开 config.txt 配置文件。。。。即将退出 tf\n");
+            exit(-1);
+        }
+
+        std::string each_line;
+        int line_count = 0; // 记录行数
+
+        while (std::getline(file, each_line)) 
+        {
+            // 处理每一行，each_line 即为当前行的字符串
+            if (each_line.empty() || each_line[0] == '#' || each_line[0] == '/') continue;
+            else
+            {
+                ++line_count;
+                RCLCPP_INFO(this->node_->get_logger(), "已读取配置文件第 %d 个有效行: %s", line_count, each_line.c_str());
+                if(line_count == 7)
+                {
+                    if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
+                    {
+                        this->SHOW_LOGGER_ERROR = false;
+                    }
+                    else this->SHOW_LOGGER_ERROR = true;
+                    RCLCPP_INFO(this->node_->get_logger(), "【 设置参数 】SHOW_LOGGER_ERROR = %s", each_line.c_str());
+                }
+
+                else if(line_count == 8)
+                {
+                    if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
+                    {
+                        this->SHOW_RESULT = false;
+                    }
+                    else this->SHOW_RESULT = true;
+                    RCLCPP_INFO(this->node_->get_logger(), "【 设置参数 】SHOW_RESULT = %s", each_line.c_str());
+                }
+
+            }
+        }
+
+        if(line_count < 8)
+        {
+            RCLCPP_ERROR(this->node_->get_logger(), "配置文件的有效行数不足7行, 检查配置文件。即将退出 core 节点\n");
+            exit(-1);
+        }
+        else
+        {
+            RCLCPP_INFO(this->node_->get_logger(), "【 设置参数完成 】TF ALL SET! 共设置了 %d 个有效参数", line_count);
+        }
+
+        file.close();
 }
 
 
@@ -54,25 +113,13 @@ void TF::updateWorldToChip(double roll, double pitch, double yaw)
 }
 
 
-// 设置并初始化 静态变换定时器
-void TF::startStaticTransformTimer(int differ_ms)
-{
-    static_timer_ = node_->create_wall_timer(
-        std::chrono::milliseconds(differ_ms),
-        std::bind(&TF::publishStaticCameraTransform, this)
-    );
-        
-    RCLCPP_INFO_ONCE(node_->get_logger(), "已启动周期性发布 chip_frame -> camera_frame (周期 %d ms)", differ_ms);
-}  
 
 
-
-
-// 02【芯片坐标系 -> 相机坐标系】【芯片坐标系 -> 相机坐标系】当前相机位姿的坐标系 -> 静态，和芯片坐标系可以视为刚体，用 t 向量
+// 02【芯片坐标系】->【相机坐标系】当前相机位姿的坐标系 -> 静态，和芯片坐标系可以视为刚体，用 t 向量
 void TF::publishStaticCameraTransform()
 {
     geometry_msgs::msg::TransformStamped tf;
-    tf.header.stamp = node_->now(); // 帧头 -> 直接获取当前时刻
+    tf.header.stamp = rclcpp::Time(0); // 帧头 -> 设置成 0
     tf.header.frame_id = "chip_frame"; // 父坐标系 -> 芯片坐标系
     tf.child_frame_id = "camera_frame"; // 子坐标系 -> 相机坐标系
 
@@ -87,8 +134,10 @@ void TF::publishStaticCameraTransform()
     tf.transform.rotation.z = 0.0;
     tf.transform.rotation.w = 1.0;
 
-    // 用已有的广播器直接广播静态变换
-    chip_broadcaster_->sendTransform(tf);
+    // 用静态广播器 广播
+    static_broadcaster_->sendTransform(tf);
+
+    RCLCPP_INFO_ONCE(this->node_->get_logger(), "已发布静态变换【芯片坐标系 -> 相机坐标系】，平移: x=%.3f m, y=%.3f m, z=%.3f m", tf.transform.translation.x, tf.transform.translation.y, tf.transform.translation.z);
 }
 
 
@@ -145,11 +194,12 @@ bool TF::getTransform(float& pitch, float& yaw)
     try 
     {
         transform = tf_buffer_->lookupTransform("world_frame", "armorplate_frame", tf2::TimePointZero);
-        // transform = buffer_->lookupTransform("world_frame", "armorplate_frame", this->now());
+        // transform = tf_buffer_->lookupTransform("world_frame", "armorplate_frame", this->node_->now());
+        // transform = tf_buffer_->lookupTransform("world_frame", "armorplate_frame", this->node_->now(), tf2::durationFromSec(0.05));
     } 
     catch (tf2::TransformException &ex) 
     {
-        RCLCPP_ERROR(node_->get_logger(), "【世界坐标系 -> 装甲板坐标系】TF lookup failed: %s", ex.what());
+        RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【世界坐标系 -> 装甲板坐标系】TF lookup failed: %s", ex.what());
         return false; 
     }
 
@@ -159,7 +209,7 @@ bool TF::getTransform(float& pitch, float& yaw)
     Y = transform.transform.translation.y;
     Z = transform.transform.translation.z;
 
-    RCLCPP_INFO(node_->get_logger(), "查询到【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.3f m, Y=%.3f m, Z=%.3f m", X, Y, Z);
+    RCLCPP_INFO_EXPRESSION(node_->get_logger(), this->SHOW_RESULT, "查询到【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.7f m, Y=%.7f m, Z=%.7f m", X, Y, Z);
 
 
     // to do

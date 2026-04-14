@@ -207,7 +207,7 @@ private:
          
         
         // 5. 计算每个步骤的耗时，并打印
-        if(this->SHOW_LOGGER_TIME)
+        if(this->SHOW_LOGGER_TIME && this->armorplate.size() > 0 && this->armorplate[0].is_success)
         {
             double duration1 = (t1 - start).seconds() * 1000.0; // 转换为毫秒
             double duration2 = (t2 - t1).seconds() * 1000.0; // 转换为毫秒
