@@ -20,6 +20,9 @@
 #include <fstream>
 #include <string>
 
+#include <rm_serial_driver/kf_position.hpp>
+#include <rm_serial_driver/kf_data.hpp>
+
 // 同一个命名空间
 namespace rm_serial_driver
 {
@@ -47,12 +50,15 @@ public:
 
     // ---------- 查询 TF ----------
     /**
-     * @brief 先查询是否可以变换，假如可以，则转换+滤波，通过引用让其得到最终结果
+     * @brief 查询【世界坐标系】-> 【装甲板坐标系】和【世界坐标系】->【相机坐标系】是否可以变换
+              可以就变换就先滤波，通过引用回传滤波后的最终结果（加上电控的欧拉角），返回1或者0表示是否有效
      * @param pitch
      * @param yaw
+     * @param euler_pitch
+     * @param euler_yaw
      * @return 1 可变换，0 变换失败（TF 树不完整）
      */
-    bool getTransform(float& pitch, float& yaw);
+    bool getTransform(float& pitch, float& yaw, float euler_pitch, float euler_yaw);
 
 
 
@@ -73,6 +79,16 @@ private:
 
 
     rclcpp::Node* node_;  // 拿到 ros2 的节点指针
+
+    // KF 类对象指针
+    std::unique_ptr<KalmanFilter> kf_position_;
+    std::unique_ptr<KF> kf_data_;
+
+    // 上一次查询的的时间戳
+    double last_lookup_time_ = -1;
+
+    // 计数器，这样可以让滤波器用前几帧数据来初始化
+    int count = 0;
 
     // TF 广播器、缓存、监听器
     std::unique_ptr<tf2_ros::TransformBroadcaster> chip_broadcaster_;     // 发布 chip_frame 相关 TF

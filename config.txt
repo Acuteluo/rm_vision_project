@@ -4,7 +4,7 @@
 false
 
 # 2 SHOW_IMG_SHOW = false / true
-false
+true
 
 # ------------- PREPARE 类相关 -------------
 
@@ -12,7 +12,7 @@ false
 false
 
 # 4 CHOSEN_COLOR = red / blue
-blue
+red
 
 # 5 CAMERA_NAME = galaxy / mind_vision
 galaxy
@@ -23,7 +23,7 @@ normal
 # ------------- TF 类相关 -------------
 
 # 7 SHOW_LOGGER_ERROR = false / true
-true
+false
 
 # 8 SHOW_RESULT = false / true
 true

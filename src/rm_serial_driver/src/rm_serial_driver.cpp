@@ -74,7 +74,6 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
         RCLCPP_INFO_ONCE(get_logger(), "Step 2/7: 已经从 config 文件读取参数, device_name=%s", device_name_.c_str());
 
         this->tf = std::make_unique<TF>(this); // 传 this 指针给 TF 类来构造，让它能创建 ROS2 相关对象，同时发布静态变换
-        //angle_filter_ = std::make_unique<AngleFilter>(); 
 
 
         // 串口初始化核心
@@ -258,6 +257,7 @@ void RMSerialDriver::receiveData()
                     // 更新发布【世界坐标系】->【芯片坐标系】
                     this->tf->updateWorldToChip(packet.euler_roll, packet.euler_pitch, packet.euler_yaw);
 
+                    // 已经收到过了，可以查询
                     this->world_to_chip_updated_ = true;
 
                     // ... 步骤3 更新发布【世界坐标系】->【芯片坐标系】完成时间戳
@@ -272,7 +272,7 @@ void RMSerialDriver::receiveData()
                     }
 
                     // 尝试查询 TF，得到最终数据，并发送串口
-                    // confirmIfCanSendData();
+                    confirmIfCanSendData(packet.euler_pitch, packet.euler_yaw);
                 } 
                 else 
                 {
@@ -299,32 +299,38 @@ void RMSerialDriver::receiveData()
 
 
 // 确定两个坐标系是否都已经更新，尝试查询 TF 变换，得到最终数据，并发送串口
-void RMSerialDriver::confirmIfCanSendData()
+
+void RMSerialDriver::confirmIfCanSendData(float euler_pitch, float euler_yaw)
 {
     std::lock_guard<std::mutex> lock(state_mutex_); // 加锁，避免线程打架
 
-    // if(this->world_to_chip_updated_ == false || this->chip_to_armorplate_updated_ == false)
-    // {
-    //     RCLCPP_WARN(get_logger(), "等待 坐标系变换还未更新完 退出尝试函数");
-    //     return;
-    // }
+
+    // 只有数据都至少收到一次，才能查询到变换啊
+    if(this->world_to_chip_updated_ == false || this->chip_to_armorplate_updated_ == false)
+    {
+        RCLCPP_WARN(get_logger(), "等待 两个坐标系变换 至少还有一个未更新完 退出尝试函数");
+        return;
+    }
+
 
     // 可以尝试查询 TF 变换，得到最终数据，并发送串口
 
     // ... 步骤6 记录开始获取数据的时间戳
     rclcpp::Time start = this->now();
 
-    // 通过引用回传最终的 pitch 和 yaw
+    // 通过引用回传最终的 pitch 和 yaw，加上判断确保值有效
     float pitch = -9999.99;
     float yaw = -9999.99; 
-    bool flag = this->tf->getTransform(pitch, yaw);
+    bool flag = this->tf->getTransform(pitch, yaw, euler_pitch, euler_yaw); // 传入电控的欧拉角，用来加到最终结果里一起发送给串口
+
+    if(!flag || pitch == -9999.99 || yaw == -9999.99)
+    {
+        RCLCPP_ERROR(get_logger(), "获取最终数据失败或无效，无法发送串口");
+        return;
+    }
 
     // ... 步骤7 记录获取到数据的时间戳
     rclcpp::Time t7 = this->now();
-
-    // 重置状态（需要吗？）
-    // this->world_to_chip_updated_ = false; 
-    // this->chip_to_armorplate_updated_ = false;
 
 
     // 与上一次发送的数据进行对比，假如完全相同，则跳过发送
@@ -336,14 +342,25 @@ void RMSerialDriver::confirmIfCanSendData()
     }
     else
     {
-        RCLCPP_WARN(this->get_logger(), "之前准备发送给串口的数据和上一次完全相同，累计相同 %d 帧。该帧不同", this->data_same_count);
+        if(this->data_same_count >= 1) RCLCPP_WARN(this->get_logger(), "之前准备发送给串口的数据和上一次完全相同，累计相同 %d 帧。该帧不同", this->data_same_count);
         this->data_same_count = 0; 
     }
-    
 
+
+    // // 与上一次发送的数据进行对比，假如相差特别大，则认为是异常数据，也跳过发送
+    // double ANGLE_THRESHOLD = 5.00; // 角度阈值，单位为度
+
+    // if(id != 1 && (std::fabs(pitch - this->last_pitch) > ANGLE_THRESHOLD || std::fabs(yaw - this->last_yaw) > ANGLE_THRESHOLD))
+    // {
+    //     RCLCPP_WARN(this->get_logger(), "【偏差数据】id != 1 的准备发送给串口的数据 与上一次偏差超过了 %.2f度，已舍弃", ANGLE_THRESHOLD);
+    //     return;
+    // }
+
+    
     // 更新上一次发送的最终数据
     this->last_pitch = pitch;
     this->last_yaw = yaw;
+    
 
     // 发送数据给串口
     // RCLCPP_INFO_THROTTLE(this->get_logger(), *get_clock(), 1000, "OK! 准备发送数据给串口");
@@ -364,7 +381,7 @@ void RMSerialDriver::confirmIfCanSendData()
 
 
 
-// 最终发送给串口的函数（已经确认过）
+// 最终发送给串口的函数（已经确认过的数据）
 void RMSerialDriver::ultimateSendData(float pitch, float yaw)
 {
     // 再一次检查设备是否已经打开
@@ -383,7 +400,7 @@ void RMSerialDriver::ultimateSendData(float pitch, float yaw)
         packet.absolute_pitch = pitch; // 用滤波后的 pitch -> 填充 pitch
         packet.absolute_yaw = yaw; // 用滤波后的 yaw -> 填充 yaw
         
-        packet.crc = 0xFE; //直接固定帧尾
+        packet.crc = 0xFE; // 直接固定帧尾
         
         std::vector<uint8_t> data = toVector(packet);
         
@@ -456,10 +473,10 @@ void RMSerialDriver::PNPCallback(const serial_driver_interfaces::msg::SendPNPInf
     }
     else if(this->pnp_same_t_count > 0)
     {
-        RCLCPP_WARN(this->get_logger(), "之前 pnp 收到的 t 矩阵和前几次的完全相同，累计相同 %d 帧。该帧不同", this->pnp_same_t_count);
+        if(this->data_same_count >= 1) RCLCPP_WARN(this->get_logger(), "之前 pnp 收到的 t 矩阵和前几次的完全相同，累计相同 %d 帧。该帧不同", this->pnp_same_t_count);
+        this->pnp_same_t_count = 0; 
     }
     
-    this->pnp_same_t_count = 0; 
 
     // 更新 上一次的 pnp 的 t 矩阵数据 
     this->last_tvec[0] = msg.tvec[0];
@@ -470,6 +487,7 @@ void RMSerialDriver::PNPCallback(const serial_driver_interfaces::msg::SendPNPInf
     // 更新【相机坐标系】->【装甲板坐标系】的变换
     this->tf->updateCameraToArmorplate(msg);
 
+    // 已经收到过了，可以查询
     this->chip_to_armorplate_updated_ = true;
     
     
@@ -485,8 +503,6 @@ void RMSerialDriver::PNPCallback(const serial_driver_interfaces::msg::SendPNPInf
         RCLCPP_INFO(this->get_logger(), "pnp处理耗时: 话题通信传输pnp数据 = %.4f ms, 更新变换 = %.4f ms, 总耗时 = %.4f ms。现在尝试查询并发布", duration4, duration5, total_duration);
     }
 
-    // 尝试查询 TF，得到最终数据，并发送串口
-    confirmIfCanSendData();
 }
 
 

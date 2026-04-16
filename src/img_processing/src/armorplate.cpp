@@ -221,7 +221,7 @@ void ArmorPlate::perspectiveNPoint()
 	this->is_success = cv::solvePnPRansac(
         this->vertice_world, this->vertice_pixel, K, D, 
         this->r, this->t, 
-        false, 200, 5.0, 0.99, inliers, cv::SOLVEPNP_IPPE);
+        false, 300, 4.0, 0.99, inliers, cv::SOLVEPNP_IPPE);
 
 
     // 如果解算不成功

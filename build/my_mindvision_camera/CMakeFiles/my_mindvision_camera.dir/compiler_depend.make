@@ -640,7 +640,6 @@ CMakeFiles/my_mindvision_camera.dir/src/mv_camera_node.cpp.o: /home/cly/project/
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/sigaction.h \
   /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
@@ -657,14 +656,8 @@ CMakeFiles/my_mindvision_camera.dir/src/mv_camera_node.cpp.o: /home/cly/project/
   /usr/include/x86_64-linux-gnu/bits/ss_flags.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
-  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
-  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -706,12 +699,10 @@ CMakeFiles/my_mindvision_camera.dir/src/mv_camera_node.cpp.o: /home/cly/project/
   /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
   /usr/include/x86_64-linux-gnu/bits/typesizes.h \
   /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/11/bits/atomic_word.h \
@@ -771,8 +762,6 @@ CMakeFiles/my_mindvision_camera.dir/src/mv_camera_node.cpp.o: /home/cly/project/
 /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h:
 
 /usr/include/x86_64-linux-gnu/bits/wordsize.h:
-
-/usr/include/x86_64-linux-gnu/bits/wchar2.h:
 
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
@@ -840,13 +829,7 @@ CMakeFiles/my_mindvision_camera.dir/src/mv_camera_node.cpp.o: /home/cly/project/
 
 /usr/include/x86_64-linux-gnu/bits/struct_mutex.h:
 
-/usr/include/x86_64-linux-gnu/bits/strings_fortified.h:
-
-/usr/include/x86_64-linux-gnu/bits/string_fortified.h:
-
 /usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdio2.h:
 
 /usr/include/x86_64-linux-gnu/bits/ss_flags.h:
 
@@ -855,8 +838,6 @@ CMakeFiles/my_mindvision_camera.dir/src/mv_camera_node.cpp.o: /home/cly/project/
 /usr/include/x86_64-linux-gnu/bits/siginfo-arch.h:
 
 /usr/include/x86_64-linux-gnu/bits/sigaction.h:
-
-/usr/include/x86_64-linux-gnu/bits/select2.h:
 
 /usr/include/x86_64-linux-gnu/bits/select.h:
 
@@ -867,8 +848,6 @@ CMakeFiles/my_mindvision_camera.dir/src/mv_camera_node.cpp.o: /home/cly/project/
 /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
 
 /usr/include/x86_64-linux-gnu/bits/posix_opt.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
 
 /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
 
@@ -1264,8 +1243,6 @@ CMakeFiles/my_mindvision_camera.dir/src/mv_camera_node.cpp.o: /home/cly/project/
 
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stdalign.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdio.h:
-
 /usr/include/c++/11/bits/locale_facets.tcc:
 
 /usr/include/c++/11/bits/this_thread_sleep.h:
@@ -1657,8 +1634,6 @@ CMakeFiles/my_mindvision_camera.dir/src/mv_camera_node.cpp.o: /home/cly/project/
 /opt/ros/humble/include/rcl_interfaces/rcl_interfaces/srv/detail/get_parameters__builder.hpp:
 
 /opt/ros/humble/include/rclcpp_components/rclcpp_components/node_instance_wrapper.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/unistd.h:
 
 /opt/ros/humble/include/rcl_interfaces/rcl_interfaces/msg/parameter_type.hpp:
 
@@ -2057,8 +2032,6 @@ CMakeFiles/my_mindvision_camera.dir/src/mv_camera_node.cpp.o: /home/cly/project/
 /usr/include/c++/11/bits/cxxabi_forced.h:
 
 /usr/include/c++/11/bits/cxxabi_init_exception.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdlib.h:
 
 /usr/include/x86_64-linux-gnu/bits/getopt_core.h:
 

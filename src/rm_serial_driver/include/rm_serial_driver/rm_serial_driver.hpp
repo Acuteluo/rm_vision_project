@@ -72,7 +72,8 @@ private:
     void PNPCallback(const serial_driver_interfaces::msg::SendPNPInfo msg);
 
     // 确定两个坐标系是否都已经更新，尝试查询 TF 变换，得到最终数据，并发送串口
-    void confirmIfCanSendData();
+    // 传入电控的欧拉角，用来加到最终结果里一起发送给串口
+    void confirmIfCanSendData(float euler_pitch, float euler_yaw);
 
     // Serial port
     std::unique_ptr<IoContext> owned_ctx_;
@@ -90,7 +91,7 @@ private:
 
     // 相关类对象指针
     std::unique_ptr<TF> tf;
-    // std::unique_ptr<AngleFilter> angle_filter_;
+    
 
     // 日志相关
     bool SHOW_LOGGER_PNP; // pnp 相关日志

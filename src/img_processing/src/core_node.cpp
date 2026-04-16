@@ -160,48 +160,60 @@ private:
 
         
         // 4. 发送 pnp 消息，注意是转换后的右手系
+        int CONTINUOUS_THRESHOLD = 5; // 连续发布的帧数阈值，丢弃前面连续的几帧不稳定数据
+
         if(this->armorplate.size() > 0 && this->armorplate[0].is_success) // 只有当 pnp结算有结果 才发布消息
         {
-            auto msg = serial_driver_interfaces::msg::SendPNPInfo();
+            ++this->continuous_count; // 连续发布计数器 +1
 
-            msg.matrix_r = {
-                this->armorplate[0].R(0, 0), 
-                this->armorplate[0].R(0, 1), 
-                this->armorplate[0].R(0, 2), 
-                this->armorplate[0].R(1, 0), 
-                this->armorplate[0].R(1, 1), 
-                this->armorplate[0].R(1, 2), 
-                this->armorplate[0].R(2, 0), 
-                this->armorplate[0].R(2, 1), 
-                this->armorplate[0].R(2, 2), 
-            };
-
-            msg.tvec = {this->armorplate[0].t_vec(0), this->armorplate[0].t_vec(1), this->armorplate[0].t_vec(2)};
-
-            // 添加：填充帧头的时间戳信息，以便得到传输消息时间，以及后续在 serial_driver 节点中计算消息的延迟
-            msg.header.stamp = this->now();
-
-
-            pnp_pub_->publish(msg); // 发布消息 到 /send_pnp_info 话题
-            
-            RCLCPP_INFO_THROTTLE(this->get_logger(), *get_clock(), 1000, "[1000ms提示一次] pnp 消息已发布到 /send_pnp_info 话题 下");
-        
-            // 手动统计帧率
-            // 在构造函数中已经初始化了 last_print，所以这里不需要再赋值
-            static int pub_count = 0;
-            pub_count++;
-            auto now = this->now();
-            if ((now - this->last_print).seconds() >= 1.0) 
+            // 丢弃前面五帧不稳定的数据
+            if(this->continuous_count > CONTINUOUS_THRESHOLD)  
             {
-                double fps = pub_count / (now - this->last_print).seconds();
-                RCLCPP_INFO(this->get_logger(), "PNP 发布频率: %.2f Hz", fps);
-                pub_count = 0;
-                this->last_print = now;
+                auto msg = serial_driver_interfaces::msg::SendPNPInfo();
+
+                msg.continuous_count = this->continuous_count - CONTINUOUS_THRESHOLD; // id 从 1 开始
+
+                msg.matrix_r = {
+                    this->armorplate[0].R(0, 0), 
+                    this->armorplate[0].R(0, 1), 
+                    this->armorplate[0].R(0, 2), 
+                    this->armorplate[0].R(1, 0), 
+                    this->armorplate[0].R(1, 1), 
+                    this->armorplate[0].R(1, 2), 
+                    this->armorplate[0].R(2, 0), 
+                    this->armorplate[0].R(2, 1), 
+                    this->armorplate[0].R(2, 2), 
+                };
+
+                msg.tvec = {this->armorplate[0].t_vec(0), this->armorplate[0].t_vec(1), this->armorplate[0].t_vec(2)};
+
+                // 添加：填充帧头的时间戳信息，以便得到传输消息时间，以及后续在 serial_driver 节点中计算消息的延迟
+                msg.header.stamp = this->now();
+
+
+                pnp_pub_->publish(msg); // 发布消息 到 /send_pnp_info 话题
+                
+                RCLCPP_INFO_THROTTLE(this->get_logger(), *get_clock(), 1000, "[1000ms提示一次] pnp 消息已发布到 /send_pnp_info 话题 下");
+            
+                // 手动统计帧率
+                // 在构造函数中已经初始化了 last_print，所以这里不需要再赋值
+                static int pub_count = 0;
+                pub_count++;
+                auto now = this->now();
+                if ((now - this->last_print).seconds() >= 1.0) 
+                {
+                    double fps = pub_count / (now - this->last_print).seconds();
+                    RCLCPP_INFO(this->get_logger(), "PNP 发布频率: %.2f Hz", fps);
+                    pub_count = 0;
+                    this->last_print = now;
+                }
             }
+            
         
         }
         else
         {
+            this->continuous_count = 0; // 重置连续发布计数器
             RCLCPP_WARN_THROTTLE(this->get_logger(), *get_clock(), 500, "[500ms提示一次] 未识别到装甲板! corenode 未 发布 PNP 消息");
         }
          
@@ -282,7 +294,10 @@ private:
     std::string CAMERA_NAME; // 选择相机名称 mind_vision / galaxy ，注意改对应的 qos
     std::string ARMOR_TYPE; // 选择装甲板类型 normal / hero ，决定了配对的参数
 
-    rclcpp::Time last_print;
+    ///////// 工具类参数 /////////
+    rclcpp::Time last_print; // 记录上一次打印 pnp 发布频率的时间戳，用于统计 pnp 发布频率
+
+    int continuous_count = 0; // 记录连续有效的帧数，刚收到数据的前五帧不要（因为不稳定）
 
 };
 
