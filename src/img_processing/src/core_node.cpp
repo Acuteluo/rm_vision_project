@@ -160,18 +160,16 @@ private:
 
         
         // 4. 发送 pnp 消息，注意是转换后的右手系
-        int CONTINUOUS_THRESHOLD = 5; // 连续发布的帧数阈值，丢弃前面连续的几帧不稳定数据
+        int CONTINUOUS_THRESHOLD = 2; // 连续发布的帧数阈值，丢弃前面连续的 2 帧不稳定数据
 
         if(this->armorplate.size() > 0 && this->armorplate[0].is_success) // 只有当 pnp结算有结果 才发布消息
         {
             ++this->continuous_count; // 连续发布计数器 +1
 
-            // 丢弃前面五帧不稳定的数据
+            // 丢弃前面 2 帧不稳定的数据
             if(this->continuous_count > CONTINUOUS_THRESHOLD)  
             {
                 auto msg = serial_driver_interfaces::msg::SendPNPInfo();
-
-                msg.continuous_count = this->continuous_count - CONTINUOUS_THRESHOLD; // id 从 1 开始
 
                 msg.matrix_r = {
                     this->armorplate[0].R(0, 0), 

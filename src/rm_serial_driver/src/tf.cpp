@@ -191,8 +191,8 @@ void TF::updateCameraToArmorplate(const serial_driver_interfaces::msg::SendPNPIn
 
 
 // 查询【世界坐标系】-> 【装甲板坐标系】和【世界坐标系】->【相机坐标系】是否可以变换
-// 可以就变换就先滤波，通过引用回传滤波后的最终结果（加上电控的欧拉角），返回1或者0表示是否有效
-bool TF::getTransform(float& pitch, float& yaw, float euler_pitch, float euler_yaw)
+// 可以就变换就先滤波，通过引用回传滤波后的最终结果，返回1或者0表示是否有效
+bool TF::getTransform(float& pitch, float& yaw)
 {
 
     geometry_msgs::msg::TransformStamped transform_world_armorplate; // 世界 -> 装甲板
@@ -200,13 +200,10 @@ bool TF::getTransform(float& pitch, float& yaw, float euler_pitch, float euler_y
     try 
     {
         transform_world_armorplate = tf_buffer_->lookupTransform("world_frame", "armorplate_frame", tf2::TimePointZero);
-        transform_world_camera = tf_buffer_->lookupTransform("world_frame", "camera_frame", tf2::TimePointZero);
-        // transform_world_armorplate = tf_buffer_->lookupTransform("world_frame", "armorplate_frame", this->node_->now());
-        // transform_world_armorplate = tf_buffer_->lookupTransform("world_frame", "armorplate_frame", this->node_->now(), tf2::durationFromSec(0.05));
     } 
     catch (tf2::TransformException &ex) 
     {
-        RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【世界坐标系 -> 相机 /装甲板 坐标系】TF lookup failed: %s", ex.what());
+        RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【世界坐标系 -> 装甲板 坐标系】TF lookup failed: %s", ex.what());
         return false; 
     }
 
@@ -245,7 +242,7 @@ bool TF::getTransform(float& pitch, float& yaw, float euler_pitch, float euler_y
     double X_prev, Y_prev, Z_prev;
 
     // 前几帧数据用来让 KF 稳定下来，不急着滤波，直接用测量值计算位置
-    if(count > 5) 
+    if(count > 2) 
     {
 
         this->kf_position_->getData(X_filt, Y_filt, Z_filt); // 获取滤波后的结果
@@ -259,66 +256,52 @@ bool TF::getTransform(float& pitch, float& yaw, float euler_pitch, float euler_y
         double dy = Y_prev - Y_armor;
         double dz = Z_prev - Z_armor;
         double distance = std::sqrt(dx * dx + dy * dy + dz * dz);
-        if(distance > 0.50) // 如果预测位置和当前测量位置相差太大，说明预测不准，直接用滤波值计算角度
+        if(distance > 0.30) // 如果预测位置和当前测量位置相差太大，说明预测不准，直接用滤波值计算角度
         {
-            RCLCPP_WARN(this->node_->get_logger(), "预测位置和当前测量位置相差 %.3f m, 超过 0.50 m 的阈值，说明预测不准，直接用测量值计算角度", distance);
+            RCLCPP_WARN(this->node_->get_logger(), "预测位置和当前测量位置相差 %.3f m, 超过 0.30 m 的阈值，说明预测不准，直接用测量值计算角度", distance);
             X_prev = X_filt;
             Y_prev = Y_filt;
             Z_prev = Z_filt;
         }
     }
-    else
+    else // 不够 2 帧就先用原来的值
     {
-        X_prev = X_filt;
-        Y_prev = Y_filt;
-        Z_prev = Z_filt;
+        X_prev = X_armor;
+        Y_prev = Y_armor;
+        Z_prev = Z_armor;
     }
 
 
 
     ///////////////////////////////////// 得到最终角度 ////////////////////////////////////////
-
-    // 获得 世界 -> 相机 的平移向量
-    double X_camera, Y_camera, Z_camera; 
-    X_camera = transform_world_camera.transform.translation.x;
-    Y_camera = transform_world_camera.transform.translation.y;
-    Z_camera = transform_world_camera.transform.translation.z;
-
-
-    // 计算装甲板相对于相机的坐标（相机坐标系下装甲板的位置），用来计算角度
-    double X_diff = X_prev - X_camera;
-    double Y_diff = Y_prev - Y_camera;
-    double Z_diff = Z_prev - Z_camera;
     
 
-    // 用 t 计算 滤波后的装甲板相对于相机的【偏差角】pitch & yaw
+    // 用 t 计算 滤波后的装甲板相对于世界的【偏差角】pitch & yaw
 
     // atan2(y, x) 的符号只由 y 决定，与 x 无关。
 
     // pitch + 表示目标在相机下方。当△z为-时，结果为-。装甲板在下方，需要pitch为+，所以要取负号
     // yaw + 表示目标在相机左侧。因为当△y为-时，结果为-。装甲板在右方，需要yaw为-，没问题
 
-    double pitch_diff = -std::atan2(Z_diff, std::sqrt(X_diff * X_diff + Y_diff * Y_diff)) * 180.0 / M_PI;   
-    double yaw_diff = std::atan2(Y_diff, X_diff) * 180.0 / M_PI;
+    double pitch_diff = -std::atan2(Z_prev, std::sqrt(X_prev * X_prev + Y_prev * Y_prev)) * 180.0 / M_PI;   
+    double yaw_diff = std::atan2(Y_prev, X_prev) * 180.0 / M_PI;
     
-
-    // 欧拉角 + 偏差角 = 最终绝对角
-    pitch = euler_pitch + pitch_diff;
-    yaw = euler_yaw + yaw_diff;
+    pitch = pitch_diff;
+    yaw = yaw_diff;
 
 
-    // 对最终结果再进行一次 KF 滤波，看看能不能更稳定一些
-    this->kf_data_->getKalman(pitch, yaw); // 更新 KF 的状态
+    // // 对最终结果再进行一次 KF 滤波，看看能不能更稳定一些
+    // this->kf_data_->getKalman(pitch, yaw); // 更新 KF 的状态
 
-    // 前几帧数据用来让 KF 稳定下来，不急着滤波，直接用计算值就好
-    if(count > 5)
-    {
-        double pitch_filt, yaw_filt;
-        this->kf_data_->getData(pitch_filt, yaw_filt); // 获取滤波后的结果
-        pitch = pitch_filt;
-        yaw = yaw_filt;
-        RCLCPP_INFO_EXPRESSION(node_->get_logger(), this->SHOW_RESULT, "滤波后【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.7f m, Y=%.7f m, Z=%.7f m", X_filt, Y_filt, Z_filt);
-    }
+    // // 前几帧数据用来让 KF 稳定下来，不急着滤波，直接用计算值就好
+    // if(count > 5)
+    // {
+    //     double pitch_filt, yaw_filt;
+    //     this->kf_data_->getData(pitch_filt, yaw_filt); // 获取滤波后的结果
+    //     pitch = pitch_filt;
+    //     yaw = yaw_filt;
+    //     RCLCPP_INFO_EXPRESSION(node_->get_logger(), this->SHOW_RESULT, "滤波后【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.7f m, Y=%.7f m, Z=%.7f m", X_filt, Y_filt, Z_filt);
+    // }
 
    
     this->last_lookup_time_ = transform_world_armorplate.header.stamp.sec + transform_world_armorplate.header.stamp.nanosec * 1e-9; // 更新上一次查询的时间戳

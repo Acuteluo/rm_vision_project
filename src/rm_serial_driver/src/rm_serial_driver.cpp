@@ -108,7 +108,8 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
         pnp_sub_ = this->create_subscription<serial_driver_interfaces::msg::SendPNPInfo>("/send_pnp_info", 10, std::bind(&RMSerialDriver::PNPCallback, this, std::placeholders::_1));
         RCLCPP_INFO_ONCE(get_logger(), "Step 6/7: 成功创建 pnp 话题订阅者");
 
-        this->send_once_start = this->now(); // 记录初始时间
+        this->receive_time = this->now();
+        this->pnp_time = this->now();
 
         this->last_print = this->now(); // 初始化 last_print，用于统计电控发来消息的频率
 
@@ -236,6 +237,7 @@ void RMSerialDriver::receiveData()
 
                     // ... 步骤2 确认数据可用的时间戳
                     t1 = this->now();
+                    this->receive_time = this->now(); // 最新收到电控数据的时间戳
 
                     // 手动统计帧率
                     // 在构造函数中已经初始化了 last_print，所以这里不需要再赋值
@@ -257,8 +259,12 @@ void RMSerialDriver::receiveData()
                     // 更新发布【世界坐标系】->【芯片坐标系】
                     this->tf->updateWorldToChip(packet.euler_roll, packet.euler_pitch, packet.euler_yaw);
 
-                    // 已经收到过了，可以查询
-                    this->world_to_chip_updated_ = true;
+                    // 已经收到过了（丢失后再次初始化了），可以查询
+                    this->world_to_chip_init_ = true;
+
+                    // 更新新的电控传来的数据
+                    this->euler_pitch = packet.euler_pitch;
+                    this->euler_yaw = packet.euler_yaw;
 
                     // ... 步骤3 更新发布【世界坐标系】->【芯片坐标系】完成时间戳
                     t2 = this->now();
@@ -271,8 +277,11 @@ void RMSerialDriver::receiveData()
                         RCLCPP_INFO(this->get_logger(), "处理电控数据耗时: 确认数据有效 = %.4f ms, 发布坐标变换 = %.4f ms, 总耗时 = %.4f ms", duration1, duration2, total_duration);
                     }
 
-                    // 尝试查询 TF，得到最终数据，并发送串口
-                    confirmIfCanSendData(packet.euler_pitch, packet.euler_yaw);
+
+                    // 串口频率高，可以多更新一点，但是超过50ms，pnp还没有新的数据，就别更新了吧
+                    // 尝试查询 TF，得到最终数据，并发送串口（在这个函数里有写，如果pnp信息新发布了才发）
+                    confirmIfCanSendData();
+
                 } 
                 else 
                 {
@@ -300,15 +309,22 @@ void RMSerialDriver::receiveData()
 
 // 确定两个坐标系是否都已经更新，尝试查询 TF 变换，得到最终数据，并发送串口
 
-void RMSerialDriver::confirmIfCanSendData(float euler_pitch, float euler_yaw)
+void RMSerialDriver::confirmIfCanSendData()
 {
     std::lock_guard<std::mutex> lock(state_mutex_); // 加锁，避免线程打架
 
-
-    // 只有数据都至少收到一次，才能查询到变换啊
-    if(this->world_to_chip_updated_ == false || this->chip_to_armorplate_updated_ == false)
+    // 如果超过50ms，pnp还没有新的数据，认为暂时丢失。就别更新了吧，这样可以避免丢失后还在发数据
+    double dt = (this->receive_time - this->pnp_time).seconds() * 1000; // 单位是ms
+    if(dt > 50.00)
     {
-        RCLCPP_WARN(get_logger(), "等待 两个坐标系变换 至少还有一个未更新完 退出尝试函数");
+        this->chip_to_armorplate_init_ = false;
+        this->world_to_chip_init_ = false;
+    }
+
+    // 只有数据都更新了，才能查询到最新变换啊
+    if(this->world_to_chip_init_ == false || this->chip_to_armorplate_init_ == false)
+    {
+        RCLCPP_WARN(get_logger(), "等待 两个坐标系变换 至少还有一个未更新完或未收到 退出尝试函数");
         return;
     }
 
@@ -321,7 +337,7 @@ void RMSerialDriver::confirmIfCanSendData(float euler_pitch, float euler_yaw)
     // 通过引用回传最终的 pitch 和 yaw，加上判断确保值有效
     float pitch = -9999.99;
     float yaw = -9999.99; 
-    bool flag = this->tf->getTransform(pitch, yaw, euler_pitch, euler_yaw); // 传入电控的欧拉角，用来加到最终结果里一起发送给串口
+    bool flag = this->tf->getTransform(pitch, yaw); 
 
     if(!flag || pitch == -9999.99 || yaw == -9999.99)
     {
@@ -419,12 +435,8 @@ void RMSerialDriver::ultimateSendData(float pitch, float yaw)
 
             RCLCPP_INFO(get_logger(), "-------------SUCCESSED--------------> 串口已经发送数据 absolute_pitch=%.2f absolute_yaw=%.2f", pitch, yaw);
 
-            auto diff_send_interval = (after_send - send_once_start).seconds(); // 整次 send 堵塞的时间差
             auto diff_send_duration = (after_send - before_send).seconds(); // 调用 send 过程前后的时间差
             RCLCPP_INFO(get_logger(), "[内_执行异步发送] send_duration = %.5f s", diff_send_duration);
-            RCLCPP_INFO(get_logger(), "[外_单次间隔] send_interval = %.5f s", diff_send_interval);
-            
-            send_once_start = after_send; //【计时开始】整次 send
         }
          
 
@@ -437,7 +449,7 @@ void RMSerialDriver::ultimateSendData(float pitch, float yaw)
         if (elapsed >= 1.000) 
         {
             double fps = send_count / elapsed;
-            RCLCPP_INFO(this->get_logger(), "串口实际发送帧率（包括重复数据）:--------------------->【 %.2f Hz】", fps);
+            RCLCPP_INFO(this->get_logger(), "串口实际发送帧率:--------------------->【 %.2f Hz】", fps);
             send_count = 0;
             last_time = now;
         }
@@ -463,6 +475,7 @@ void RMSerialDriver::PNPCallback(const serial_driver_interfaces::msg::SendPNPInf
 {
     // ... 步骤4 接收到pnp数据完成时间戳
     rclcpp::Time t4 = this->now();
+    this->pnp_time = this->now(); // 最新收到 pnp数据 的时间戳
     
 
     // 检查 pnp 的 t 矩阵数据是否和上次收到的一模一样
@@ -487,8 +500,8 @@ void RMSerialDriver::PNPCallback(const serial_driver_interfaces::msg::SendPNPInf
     // 更新【相机坐标系】->【装甲板坐标系】的变换
     this->tf->updateCameraToArmorplate(msg);
 
-    // 已经收到过了，可以查询
-    this->chip_to_armorplate_updated_ = true;
+    // 已经丢失后重新更新过了，可以查询
+    this->chip_to_armorplate_init_ = true;
     
     
     // ... 步骤5 更新【相机坐标系】->【装甲板坐标系】的变换 完成时间戳

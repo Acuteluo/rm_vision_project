@@ -42,17 +42,18 @@ public:
 
     ~RMSerialDriver() override;
 
-    // 一些用来对比的东西
+    // 一些用来对比是否重复的东西
     float last_tvec[3] = {-9999.99, -9999.99, -9999.99}; // 上一次发送的 t 矩阵数据
     int pnp_same_t_count = 0; // PNP 消息收到重复 t 矩阵的计数器
+    
     double last_pitch = -9999.99; // 上一次发送的 pitch 数据
     double last_yaw = -9999.99; // 上一次发送的 yaw 数据
-    int data_same_count = 0; // 最终要发送的数据 重复计数器
-    rclcpp::Time send_once_start; // 记录发送前的时刻，用于计算 整次 send_interval 的时间间隔
+    int data_same_count = 0; // 最终要发送的数据 重复计数
 
-    int receive_data_count = 0; // 接收数据计数器
+    rclcpp::Time last_print; // 用来统计电控发来消息的频率
 
-    rclcpp::Time last_print; // 统计电控发来消息的频率
+    double euler_pitch = 0;
+    double euler_yaw = 0;
 
 private:
 
@@ -72,8 +73,7 @@ private:
     void PNPCallback(const serial_driver_interfaces::msg::SendPNPInfo msg);
 
     // 确定两个坐标系是否都已经更新，尝试查询 TF 变换，得到最终数据，并发送串口
-    // 传入电控的欧拉角，用来加到最终结果里一起发送给串口
-    void confirmIfCanSendData(float euler_pitch, float euler_yaw);
+    void confirmIfCanSendData();
 
     // Serial port
     std::unique_ptr<IoContext> owned_ctx_;
@@ -85,12 +85,16 @@ private:
     rclcpp::Subscription<serial_driver_interfaces::msg::SendPNPInfo>::SharedPtr pnp_sub_; // 订阅 PnP 话题
     std::thread receive_thread_;
 
-    // 判断坐标系是否更新
-    bool world_to_chip_updated_ = false;      // 收到的数据，【世界坐标系】->【芯片坐标系】
-    bool chip_to_armorplate_updated_ = false; // 订阅的 PnP 数据，【芯片坐标系】->【装甲板坐标系】
+    // 判断坐标系丢失后是否更新
+    bool world_to_chip_init_ = false;      // 收到的数据，【世界坐标系】->【芯片坐标系】，丢失后是否更新
+    bool chip_to_armorplate_init_ = false; // 订阅的 PnP 数据，【芯片坐标系】->【装甲板坐标系】，丢失后是否更新
 
     // 相关类对象指针
     std::unique_ptr<TF> tf;
+
+    // 最新收到 电控数据 和 pnp数据 的时间戳
+    rclcpp::Time receive_time;
+    rclcpp::Time pnp_time;
     
 
     // 日志相关

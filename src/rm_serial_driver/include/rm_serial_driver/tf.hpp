@@ -51,14 +51,12 @@ public:
     // ---------- 查询 TF ----------
     /**
      * @brief 查询【世界坐标系】-> 【装甲板坐标系】和【世界坐标系】->【相机坐标系】是否可以变换
-              可以就变换就先滤波，通过引用回传滤波后的最终结果（加上电控的欧拉角），返回1或者0表示是否有效
+              可以就变换就先滤波，通过引用回传滤波后的最终结果，返回1或者0表示是否有效
      * @param pitch
      * @param yaw
-     * @param euler_pitch
-     * @param euler_yaw
      * @return 1 可变换，0 变换失败（TF 树不完整）
      */
-    bool getTransform(float& pitch, float& yaw, float euler_pitch, float euler_yaw);
+    bool getTransform(float& pitch, float& yaw);
 
 
 
