@@ -314,17 +314,22 @@ void RMSerialDriver::confirmIfCanSendData()
     std::lock_guard<std::mutex> lock(state_mutex_); // 加锁，避免线程打架
 
     // 如果超过50ms，pnp还没有新的数据，认为暂时丢失。就别更新了吧，这样可以避免丢失后还在发数据
-    double dt = (this->receive_time - this->pnp_time).seconds() * 1000; // 单位是ms
-    if(dt > 50.00)
+    double dt_pnp = (this->now() - this->pnp_time).seconds() * 1000; // 单位是ms
+    if(dt_pnp > 50.00)
     {
         this->chip_to_armorplate_init_ = false;
+    }
+
+    double dt_receive = (this->now() - this->receive_time).seconds() * 1000; // 单位是ms
+    if(dt_receive > 50.00)
+    {
         this->world_to_chip_init_ = false;
     }
 
     // 只有数据都更新了，才能查询到最新变换啊
     if(this->world_to_chip_init_ == false || this->chip_to_armorplate_init_ == false)
     {
-        RCLCPP_WARN(get_logger(), "等待 两个坐标系变换 至少还有一个未更新完或未收到 退出尝试函数");
+        RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 50, "等待 两个坐标系变换 至少还有一个未更新完或未收到 退出尝试函数");
         return;
     }
 
