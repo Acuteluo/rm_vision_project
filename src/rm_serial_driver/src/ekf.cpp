@@ -13,7 +13,7 @@ EKF::EKF(rclcpp::Node* node): node_(node)
     tf_buffer_ = std::make_shared<tf2_ros::Buffer>(node_->get_clock());
     tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
     
-    I = Eigen::Matrix<double, 8, 8>::Identity(); // 8*8 单位矩阵
+    I = Eigen::Matrix<double, 9, 9>::Identity(); // 9*9 单位矩阵
 }
 
 
@@ -53,10 +53,10 @@ void EKF::updateCarCenterToArmorplate(std::string child_frame, double x, double 
 
 void EKF::updateFourArmorplates()
 {
-    // 前装甲板： (R, 0, 0)，x轴朝向正前方（yaw=0）
+    // 前装甲板： (R, 0, 0)，x轴朝向正前方（yaw=π）
     updateCarCenterToArmorplate("front_armorplate", this->radius, 0.0, 0.0, 0.0, 0.0, M_PI);
     
-    // 后装甲板： (-R, 0, 0)，x轴朝向正后方（yaw=π）这与整车中心坐标系的 姿态 相等
+    // 后装甲板： (-R, 0, 0)，x轴朝向正后方（yaw=0）这与整车中心坐标系的 姿态 相等
     updateCarCenterToArmorplate("behind_armorplate", -this->radius, 0.0, 0.0, 0.0, 0.0, 0.0);
     
     // 左装甲板： (0, R, 0)，x轴朝向左方（yaw=-π/2）
@@ -67,8 +67,8 @@ void EKF::updateFourArmorplates()
 }
 
 
-// // 查询【世界坐标系】-> 【整车中心坐标系】
-// bool EKF::getTransform(double& x_c, double& y_c, double& z_c, double& yaw)
+// // 查询【世界坐标系】-> 【某个装甲板坐标系】和中心点在世界下坐标
+// bool EKF::getTransform(double& x_predict, double& y_predict, double& z_predict, double& center)
 // {
 //     geometry_msgs::msg::TransformStamped transform_world_armorplate; // 世界 -> 整车中心
 //     try 
@@ -147,7 +147,7 @@ void EKF::getArmorParams(double& dx, double& dy, double& theta_offset)
 
 
 // 非线性观测方程 
-Eigen::Matrix<double, 4, 1> EKF::h(const Eigen::Matrix<double, 8, 1>& X_in)
+Eigen::Matrix<double, 4, 1> EKF::h(const Eigen::Matrix<double, 9, 1>& X_in)
 {
     double x_c = X_in(0), y_c = X_in(1), z_c = X_in(2);
     double yaw = X_in(6);
@@ -170,7 +170,7 @@ Eigen::Matrix<double, 4, 1> EKF::h(const Eigen::Matrix<double, 8, 1>& X_in)
 
 
 // 观测矩阵 雅可比矩阵 H = ∂h/∂x
-Eigen::Matrix<double, 4, 8> EKF::computeH(const Eigen::Matrix<double, 8, 1>& X_in)
+Eigen::Matrix<double, 4, 9> EKF::computeH(const Eigen::Matrix<double, 9, 1>& X_in)
 {
     double yaw = X_in(6);
     double dx, dy, theta_offset;
@@ -179,7 +179,7 @@ Eigen::Matrix<double, 4, 8> EKF::computeH(const Eigen::Matrix<double, 8, 1>& X_i
     double cos_yaw = cos(yaw);
     double sin_yaw = sin(yaw);
 
-    Eigen::Matrix<double, 4, 8> H_mat = Eigen::Matrix<double, 4, 8>::Zero();
+    Eigen::Matrix<double, 4, 9> H_mat = Eigen::Matrix<double, 4, 9>::Zero();
 
     // 对 x_c, y_c, z_c 的偏导
     H_mat(0, 0) = 1.0;
@@ -203,7 +203,7 @@ Eigen::Matrix<double, 4, 8> EKF::computeH(const Eigen::Matrix<double, 8, 1>& X_i
 // 发布整车的 tf 动态变换，拿到整车中心作为观测数据，进行预测
 void EKF::getKalman(double x_armor, double y_armor, double z_armor, double yaw_armor, int armor_id, double dt)
 {
-    this->armor_id = armor_id;
+    this->armor_id = armor_id; // 传入的装甲板 id （1:前，2:右，3:后，4:左）
 
 	// 如果没有初始化就初始化 
     if (this->is_initialized == false)
@@ -221,7 +221,7 @@ void EKF::getKalman(double x_armor, double y_armor, double z_armor, double yaw_a
         double init_y = y_armor - (sin_yaw * dx + cos_yaw * dy);
         double init_z = z_armor;
 
-        X_prev << init_x, init_y, init_z, 0.0, 0.0, 0.0, init_yaw, 0.0;
+        X_prev << init_x, init_y, init_z, 0.0, 0.0, 0.0, init_yaw, 0.0, 0.0;
         X = X_prev;
     
         return; // 第一帧不输出结果
@@ -238,7 +238,7 @@ void EKF::getKalman(double x_armor, double y_armor, double z_armor, double yaw_a
 
 	UncertaintyPredict(); // 不确定性预测
 
-    // 计算当前原始观测值的 雅可比矩阵 H 和 预测观测值
+    // 计算当前原始观测值的 雅可比矩阵（偏导数矩阵），在 X_est 处求值
     H = computeH(X_est);
 
 	CalculateKalmanGain(); // 计算卡尔曼增益
@@ -295,26 +295,28 @@ void EKF::CalculateParameter(double dt)
     // v_z_k = v_z_k-1
     // yaw_k = yaw_k-1 + omega_k-1 * dt
     // omega_k = omega_k-1
-	F << 1, 0, 0, dt, 0, 0, 0, 0,
-        0, 1, 0, 0, dt, 0, 0, 0,
-        0, 0, 1, 0, 0, dt, 0, 0,
-        0, 0, 0, 1, 0, 0, 0, 0,
-        0, 0, 0, 0, 1, 0, 0, 0,
-        0, 0, 0, 0, 0, 1, 0, 0,
-        0, 0, 0, 0, 0, 0, 1, dt,
-        0, 0, 0, 0, 0, 0, 0, 1;
+	F << 1, 0, 0, dt, 0, 0, 0, 0, 0,
+        0, 1, 0, 0, dt, 0, 0, 0, 0,
+        0, 0, 1, 0, 0, dt, 0, 0, 0,
+        0, 0, 0, 1, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 1, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 1, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 1, dt, 0.5*dt*dt,
+        0, 0, 0, 0, 0, 0, 0, 1, dt,
+        0, 0, 0, 0, 0, 0, 0, 0, 1;
 
 
 	// 预测过程噪声矩阵
-    // 位置的预测过程噪声较小，速度的预测过程噪声较大，角度的预测过程噪声适中，角速度的预测过程噪声较大
-	Q << 1e-5, 0, 0, 0, 0, 0, 0, 0,
-        0, 1e-5, 0, 0, 0, 0, 0, 0,
-        0, 0, 1e-5, 0, 0, 0, 0, 0,
-        0, 0, 0, 1e-3, 0, 0, 0, 0,
-        0, 0, 0, 0, 1e-3, 0, 0, 0,
-        0, 0, 0, 0, 0, 1e-3, 0, 0,
-        0, 0, 0, 0, 0, 0, 5e-4, 0,
-        0, 0, 0, 0, 0, 0, 0, 1e-3;
+    // 位置的预测过程噪声较小，速度的预测过程噪声较大，角度的预测过程噪声适中，角速度的预测过程噪声较大，角加速度的预测过程噪声较大
+	Q << 1e-5, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 1e-5, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 1e-5, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 1e-3, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 1e-3, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 1e-3, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 5e-4, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 1e-3, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 1e-2;
 
 }
 
@@ -373,12 +375,37 @@ void EKF::getData(double& X_get, double& Y_get, double& Z_get)
 
 
 
-// 预测未来 future 秒的位置，通过传入引用，获得 x y z
-void EKF::getPredict(double& X_get, double& Y_get, double& Z_get, double future_time)
+// 预测未来 future 秒的中心点的位置，通过传入引用，获得 x y z
+void EKF::getCenterPredict(double& x_c_get, double& y_c_get, double& z_c_get, double future_time)
 {
-	X_get = this->X(0) + this->X(3) * future_time; // x + v_x * future_time
-    Y_get = this->X(1) + this->X(4) * future_time; // y + v_y * future_time
-    Z_get = this->X(2) + this->X(5) * future_time; // z + v_z * future_time
+	x_c_get = this->X(0) + this->X(3) * future_time; // x + v_x * future_time
+    y_c_get = this->X(1) + this->X(4) * future_time; // y + v_y * future_time
+    z_c_get = this->X(2) + this->X(5) * future_time; // z + v_z * future_time
 }
+
+
+void EKF::getArmorPredict(double& x_armor, double& y_armor, double& z_armor, 
+                          int armor_id, double future_time) 
+{
+    // 1. 先预测未来中心状态
+    double future_x_c = this->X(0) + this->X(3) * future_time; // x + v_x * future_time
+    double future_y_c = this->X(1) + this->X(4) * future_time; // y + v_y * future_time
+    double future_z_c = this->X(2) + this->X(5) * future_time; // z + v_z * future_time
+    double future_yaw = X(6) + X(7) * future_time + 0.5 * X(8) * future_time * future_time;
+
+    // 2. 根据装甲板ID获取几何参数
+    this->armor_id = armor_id;
+    double dx, dy, theta_offset;
+    getArmorParams(dx, dy, theta_offset);
+
+    // 3. 应用旋转得到装甲板世界坐标
+    double cos_yaw = cos(future_yaw);
+    double sin_yaw = sin(future_yaw);
+
+    x_armor = future_x_c + cos_yaw * dx - sin_yaw * dy;
+    y_armor = future_y_c + sin_yaw * dx + cos_yaw * dy;
+    z_armor = future_z_c;
+}
+
 
 }

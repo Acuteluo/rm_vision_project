@@ -22,6 +22,7 @@
 
 #include <rm_serial_driver/kf_position.hpp>
 #include <rm_serial_driver/kf_data.hpp>
+#include <rm_serial_driver/ekf.hpp>
 
 // 同一个命名空间
 namespace rm_serial_driver
@@ -89,6 +90,9 @@ private:
     // KF 类对象指针
     std::unique_ptr<KalmanFilter> kf_position_;
     std::unique_ptr<KF> kf_data_;
+
+    // EKF 类对象指针
+    std::unique_ptr<EKF> ekf_;
 
     // 上一次查询的的时间戳
     double last_lookup_time_ = -1;

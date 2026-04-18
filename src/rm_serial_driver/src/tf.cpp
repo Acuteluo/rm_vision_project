@@ -1,4 +1,5 @@
 #include "rm_serial_driver/tf.hpp"
+#include "rm_serial_driver/ekf.hpp"
 
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
@@ -21,9 +22,10 @@ TF::TF(rclcpp::Node* node): node_(node)
     static_broadcaster_ = std::make_unique<tf2_ros::StaticTransformBroadcaster>(node_);
     publishStaticCameraTransform();
 
-    // 初始化 KF 类指针
+    // 初始化 KF 类 和 EKF 类 指针
     kf_position_ = std::make_unique<KalmanFilter>(); 
     kf_data_ = std::make_unique<KF>(); 
+    ekf_ = std::make_unique<EKF>(); 
 
     // ------------------ 进行一个配置文件的读取 -----------------
 
@@ -260,6 +262,16 @@ bool TF::getTransform(float& pitch, float& yaw)
 
     RCLCPP_INFO_EXPRESSION(node_->get_logger(), this->SHOW_RESULT, "查询到【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.7f m, Y=%.7f m, Z=%.7f m", X_armor, Y_armor, Z_armor);
 
+    // 旋转矩阵
+    tf2::Quaternion q(
+            transform_world_armorplate.transform.rotation.x,
+            transform_world_armorplate.transform.rotation.y,
+            transform_world_armorplate.transform.rotation.z,
+            transform_world_armorplate.transform.rotation.w);
+        double roll_armor, pitch_armor, yaw_armor;
+        tf2::Matrix3x3(q).getRPY(roll_armor, pitch_armor, yaw_armor);
+
+
 
     // 调用滤波算法，滤波 世界 -> 装甲板 的位置
     double dt;
@@ -282,7 +294,6 @@ bool TF::getTransform(float& pitch, float& yaw)
     // 前几帧数据用来让 KF 稳定下来，不急着滤波，直接用测量值计算位置
     if(count > 2) 
     {
-
         this->kf_position_->getData(X_filt, Y_filt, Z_filt); // 获取滤波后的结果
         RCLCPP_INFO_EXPRESSION(node_->get_logger(), this->SHOW_RESULT, "滤波后【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.7f m, Y=%.7f m, Z=%.7f m", X_filt, Y_filt, Z_filt);
 
@@ -310,6 +321,24 @@ bool TF::getTransform(float& pitch, float& yaw)
     }
 
 
+    // EKF 预测
+    double X_ekf = 0.0;
+    double Y_ekf = 0.0;
+    double Z_ekf = 0.0;
+    double X_ekf_center = 0.0;
+    double Y_ekf_center = 0.0;
+    double Z_ekf_center = 0.0;
+
+
+    this->ekf_->getKalman(X_filt, Y_filt, Z_filt, yaw_armor, 3, dt);
+    this->ekf_->getArmorPredict(X_ekf, Y_ekf, Z_ekf, 3, 0.20);
+    this->ekf_->getCenterPredict(X_ekf_center, Y_ekf_center, Z_ekf_center, 0.20);
+    
+    double pitch_diff = -std::atan2(Z_ekf, std::sqrt(X_ekf * X_ekf + Y_ekf * Y_ekf)) * 180.0 / M_PI;   
+    double yaw_diff = std::atan2(Y_ekf, X_ekf) * 180.0 / M_PI;
+    pitch = pitch_diff;
+    yaw = yaw_diff;
+
 
     ///////////////////////////////////// 得到最终角度 ////////////////////////////////////////
     
@@ -321,10 +350,10 @@ bool TF::getTransform(float& pitch, float& yaw)
     // pitch + 表示目标在相机下方。当△z为-时，结果为-。装甲板在下方，需要pitch为+，所以要取负号
     // yaw + 表示目标在相机左侧。因为当△y为-时，结果为-。装甲板在右方，需要yaw为-，没问题
 
-    double pitch_diff = -std::atan2(Z_prev, std::sqrt(X_prev * X_prev + Y_prev * Y_prev)) * 180.0 / M_PI;   
-    double yaw_diff = std::atan2(Y_prev, X_prev) * 180.0 / M_PI;
-    pitch = pitch_diff;
-    yaw = yaw_diff;
+    // double pitch_diff = -std::atan2(Z_prev, std::sqrt(X_prev * X_prev + Y_prev * Y_prev)) * 180.0 / M_PI;   
+    // double yaw_diff = std::atan2(Y_prev, X_prev) * 180.0 / M_PI;
+    // pitch = pitch_diff;
+    // yaw = yaw_diff;
     
     // float pitch_genbil = 0, yaw_genbil = 0;
     // getFixCameraAngle(X_prev, Y_prev, Z_prev, pitch_genbil, yaw_genbil);

@@ -10,9 +10,12 @@
         "https://haowallpaper.com/link/common/file/previewFileImg/18070687097081216"
     ],
     "background.style": {                      // 图片样式
-        "opacity": 0.15,                       // 透明度 (0-1之间，推荐0.1-0.3)
+        "opacity": 0.16,                       // 透明度 (0-1之间，推荐0.1-0.3)
         "background-size": "cover",            // 覆盖模式
         "pointer-events": "none"               // 避免干扰点击 (必须)
-    }
+    },
     // ----- 背景图片插件设置结束 -----
+
+    "editor.fontFamily": "'Fira Code Nerd Font', 'Droid Sans Mono', monospace",
+    "editor.fontLigatures": true  // 开启连字，让 -> 和 => 显示更美观
 }

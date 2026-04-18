@@ -22,7 +22,7 @@ namespace rm_serial_driver
 
              传入观测数据 -> 推算几何中心位姿 -> ekf滤波 -> 发布整车中心与四个装甲板的坐标系 -> 预测
 
-        状态 X = [x_c, y_c, z_c, vx_c, vy_c, vz_c, yaw, ω]^T (8维)
+        状态 X = [x_c, y_c, z_c, vx_c, vy_c, vz_c, yaw, ω, a_ω]^T (9维)
         观测 Z = [x_armor, y_armor, z_armor, yaw_armor]^T (4维)
         观测方程（非线性）：
             （都在世界坐标系下）
@@ -35,8 +35,8 @@ namespace rm_serial_driver
                     |
                     0
 
-        其中 P_body 是 四个装甲板相对于中心的坐标，R_z(yaw) 是绕z轴旋转 yaw 的旋转矩阵，也就是装甲板相对于中心的坐标经过旋转后得到装甲板在世界坐标系中的位置。
-        Δyaw 取决于装甲板ID，比如 ID0 Δyaw = 0，ID1 Δyaw = 90°，ID2 Δyaw = 180°，ID3 Δyaw = -90°。
+        其中 P_body 是 四个装甲板相对于 整车中心 的坐标，R_z(yaw) 是绕z轴旋转 yaw 的旋转矩阵，也就是装甲板相对于中心的坐标经过旋转后得到装甲板在世界坐标系中的位置。
+        Δyaw 取决于装甲板ID，比如 ID=1 Δyaw = +180°，ID=2 Δyaw = +90°，ID3 Δyaw = 0°，ID4 Δyaw = -90°。
 */
 
 
@@ -101,9 +101,13 @@ public:
 	void getData(double& X_get, double& Y_get, double& Z_get);
 	
 
+    void getArmorPredict(double& x_armor, double& y_armor, double& z_armor, 
+                          int armor_id, double future_time);
 
-	// 预测未来 future 秒的位置，通过传入引用，获得 x y z
-	void getPredict(double& X_get, double& Y_get, double& Z_get, double future_time);
+
+
+	// 预测未来 future 秒的中心点的位置，通过传入引用，获得 x y z
+	void getCenterPredict(double& x_c_get, double& y_c_get, double& z_c_get, double future_time);
 	
 
     // 05【整车中心坐标系】-> 四个【装甲板坐标系】
@@ -117,10 +121,10 @@ public:
 private:
 
     // 非线性观测方程 h(x, armor_id)：将状态映射到装甲板观测空间
-    Eigen::Matrix<double, 4, 1> h(const Eigen::Matrix<double, 8, 1>& x);
+    Eigen::Matrix<double, 4, 1> h(const Eigen::Matrix<double, 9, 1>& x);
 
     // 计算观测雅可比矩阵 H = ∂h/∂x，在预测状态 X_est 处线性化
-    Eigen::Matrix<double, 4, 8> computeH(const Eigen::Matrix<double, 8, 1>& x);
+    Eigen::Matrix<double, 4, 9> computeH(const Eigen::Matrix<double, 9, 1>& x);
 
     // 根据装甲板 ID 获取车体系下偏移量 (dx, dy) 和偏航角差 θ_offset
     void getArmorParams(double& dx, double& dy, double& theta_offset);
@@ -129,23 +133,23 @@ private:
     double radius = 0.25; // 整车旋转半径m
 
 	// 状态矩阵
-	Eigen::Matrix<double, 8, 1> X;      // k 时刻状态
-	Eigen::Matrix<double, 8, 1> X_est;  // k 时刻预测状态
-	Eigen::Matrix<double, 8, 1> X_prev; // k-1 时刻状态
+	Eigen::Matrix<double, 9, 1> X;      // k 时刻状态
+	Eigen::Matrix<double, 9, 1> X_est;  // k 时刻预测状态
+	Eigen::Matrix<double, 9, 1> X_prev; // k-1 时刻状态
 
 	// 协方差矩阵
-	Eigen::Matrix<double, 8, 8> P;      // k 时刻协方差矩阵
-	Eigen::Matrix<double, 8, 8> P_est;  // k 时刻预测协方差矩阵
-	Eigen::Matrix<double, 8, 8> P_prev; // k-1 时刻协方差矩阵
+	Eigen::Matrix<double, 9, 9> P;      // k 时刻协方差矩阵
+	Eigen::Matrix<double, 9, 9> P_est;  // k 时刻预测协方差矩阵
+	Eigen::Matrix<double, 9, 9> P_prev; // k-1 时刻协方差矩阵
 
 	// 状态转移矩阵 
-	Eigen::Matrix<double, 8, 8> F;
+	Eigen::Matrix<double, 9, 9> F;
 
 	// 预测过程噪声矩阵
-	Eigen::Matrix<double, 8, 8> Q;
+	Eigen::Matrix<double, 9, 9> Q;
 
 	// 观测矩阵（不写定值，而是雅可比矩阵） 只观测 x_center y_center z_center yaw
-	Eigen::Matrix<double, 4, 8> H;
+	Eigen::Matrix<double, 4, 9> H;
 
 	// 测量过程噪声 
 	Eigen::Matrix<double, 4, 4> R;
@@ -154,10 +158,10 @@ private:
 	Eigen::Matrix<double, 4, 1> Z;
 
 	// 卡尔曼增益
-	Eigen::Matrix<double, 8, 4> K;
+	Eigen::Matrix<double, 9, 4> K;
 
 	// 单位矩阵
-	Eigen::Matrix<double, 8, 8> I;
+	Eigen::Matrix<double, 9, 9> I;
 
 	bool is_initialized; // 是否初始化
 
@@ -169,7 +173,7 @@ private:
 
     rclcpp::Node* node_;  // 拿到 ros2 的节点指针
 
-    int armor_id; // 传入的装甲板 id （正前方装甲板id=0，右侧id=1，正后方id=2，左侧id=3）
+    int armor_id; // 传入的装甲板 id （1:前，2:右，3:后，4:左）
 
 };
 
