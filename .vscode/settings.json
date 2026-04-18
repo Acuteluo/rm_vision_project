@@ -1,3 +1,18 @@
 {
-    "cmake.sourceDirectory": "/home/cly/project/src/bringup"
+    "cmake.sourceDirectory": "/home/cly/project/src/bringup",
+
+    // ----- 背景图片插件设置 (shalldie.background) -----
+    "background.enabled": true,                // 启用插件
+    "background.useDefault": false,            // 不使用默认图片
+    "background.customImages": [               // 你的图片路径列表
+        //"https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
+        //"file:////home/cly/图片/wallpaper/微信图片_20260118223854_2_131.jpg"
+        "https://haowallpaper.com/link/common/file/previewFileImg/18070687097081216"
+    ],
+    "background.style": {                      // 图片样式
+        "opacity": 0.15,                       // 透明度 (0-1之间，推荐0.1-0.3)
+        "background-size": "cover",            // 覆盖模式
+        "pointer-events": "none"               // 避免干扰点击 (必须)
+    }
+    // ----- 背景图片插件设置结束 -----
 }

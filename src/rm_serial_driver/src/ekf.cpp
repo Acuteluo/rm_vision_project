@@ -1,167 +1,384 @@
-// #include <rm_serial_driver/ekf.hpp>
+#include <rm_serial_driver/ekf.hpp>
+
+namespace rm_serial_driver
+{
+
+EKF::EKF(rclcpp::Node* node): node_(node)
+{
+	this->is_initialized = false; // 没有初始化
+
+    car_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(node_);
+	
+    // 创建 TF 缓存和监听器（用来查询【世界坐标系 -> 整车中心坐标系】是否可以变换）
+    tf_buffer_ = std::make_shared<tf2_ros::Buffer>(node_->get_clock());
+    tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+    
+    I = Eigen::Matrix<double, 8, 8>::Identity(); // 8*8 单位矩阵
+}
 
 
-// namespace rm_serial_driver
+
+// 05【整车中心坐标系】-> 四个【装甲板坐标系】
+void EKF::updateCarCenterToArmorplate(std::string child_frame, double x, double y, double z, double roll, double pitch, double yaw)
+{
+    // ------------- 正前方装甲板 -----------------
+    geometry_msgs::msg::TransformStamped tf;
+    tf.header.stamp = this->node_->now(); // 帧头 -> 直接获取当前时刻
+    tf.header.frame_id = "car_center_frame"; // 父坐标系 -> 整车中心坐标系
+    tf.child_frame_id = child_frame; // 子坐标系 -> 四个装甲板坐标系
+
+    // 平移
+    tf.transform.translation.x = x;
+    tf.transform.translation.y = y;
+    tf.transform.translation.z = z;
+    
+    // 旋转
+    tf2::Quaternion q;
+    q.setRPY(roll, pitch, yaw);  // 顺序：roll, pitch, yaw （XYZ） 
+
+    tf.transform.rotation.x = q.x();
+    tf.transform.rotation.y = q.y();
+    tf.transform.rotation.z = q.z();
+    tf.transform.rotation.w = q.w();
+
+    // 设置四元数
+    tf.transform.rotation.x = q.x();
+    tf.transform.rotation.y = q.y();
+    tf.transform.rotation.z = q.z();
+    tf.transform.rotation.w = q.w();
+
+    car_broadcaster_->sendTransform(tf);
+}
+
+
+void EKF::updateFourArmorplates()
+{
+    // 前装甲板： (R, 0, 0)，x轴朝向正前方（yaw=0）
+    updateCarCenterToArmorplate("front_armorplate", this->radius, 0.0, 0.0, 0.0, 0.0, M_PI);
+    
+    // 后装甲板： (-R, 0, 0)，x轴朝向正后方（yaw=π）这与整车中心坐标系的 姿态 相等
+    updateCarCenterToArmorplate("behind_armorplate", -this->radius, 0.0, 0.0, 0.0, 0.0, 0.0);
+    
+    // 左装甲板： (0, R, 0)，x轴朝向左方（yaw=-π/2）
+    updateCarCenterToArmorplate("left_armorplate", 0.0, this->radius, 0.0, 0.0, 0.0, -M_PI/2);
+    
+    // 右装甲板： (0, -R, 0)，x轴朝向右方（yaw=π/2）
+    updateCarCenterToArmorplate("right_armorplate", 0.0, -this->radius, 0.0, 0.0, 0.0, M_PI/2);
+}
+
+
+// // 查询【世界坐标系】-> 【整车中心坐标系】
+// bool EKF::getTransform(double& x_c, double& y_c, double& z_c, double& yaw)
 // {
-// // 匀速卡尔曼滤波 状态 [x y z v_x v_y v_z]^T
-// EKF::EKF()
-// {
-// 	this->is_initialized = false; // 没有初始化
-// 	I = Eigen::Matrix<double, 6, 6>::Identity(); // 6*6 单位矩阵
+//     geometry_msgs::msg::TransformStamped transform_world_armorplate; // 世界 -> 整车中心
+//     try 
+//     {
+//         transform_world_armorplate = tf_buffer_->lookupTransform("world_frame", "car_center_frame", tf2::TimePointZero);
+//     } 
+//     catch (tf2::TransformException &ex) 
+//     {
+//         RCLCPP_ERROR(node_->get_logger(), "【世界坐标系 -> 整车中心 坐标系】TF lookup failed: %s", ex.what());
+//         return false; 
+//     }
+
+//     // 获得 世界 -> 装甲板 的平移向量 
+//     x_c = transform_world_armorplate.transform.translation.x;
+//     y_c = transform_world_armorplate.transform.translation.y;
+//     z_c = transform_world_armorplate.transform.translation.z;
+
+//     // 获得 世界 -> 装甲板 的旋转向量（四元数转欧拉角，取 yaw）
+//     tf2::Quaternion q(
+//         transform_world_armorplate.transform.rotation.x,
+//         transform_world_armorplate.transform.rotation.y,
+//         transform_world_armorplate.transform.rotation.z,
+//         transform_world_armorplate.transform.rotation.w
+//     );
+//     double roll_c, pitch_c, yaw_c;
+//     tf2::Matrix3x3(q).getRPY(roll_c, pitch_c, yaw_c); // 顺序：roll, pitch, yaw （XYZ）
+    
+//     yaw = yaw_c; // 返回的 yaw 是弧度
+
+//     return true;
 // }
 
 
+// 根据 ID 获取装甲板在 整车中心坐标系 下的参数
+void EKF::getArmorParams(double& dx, double& dy, double& theta_offset)
+{
+    switch(this->armor_id)
+    {
+        case 1: // 正前方装甲板 (+, 0)
+        {
+            dx = this->radius;
+            dy = 0.0; 
+            theta_offset = M_PI; // 180
+            break;
+        }
+            
 
-// void EKF::getKalman(double x, double y, double z, double dt)
-// {
+        case 2: // 右侧装甲板 (0, +)
+        {
+            dx = 0.0; 
+            dy = -this->radius; 
+            theta_offset = M_PI / 2; // +90  
+            break;
+        }
 
-// 	// 如果没有初始化就初始化
-// 	if (this->is_initialized == false)
-// 	{
-// 		Initialized();
-// 		X_prev << x, y, z, 0.0, 0.0, 0.0;   // 初始位置是当前位置，速度 0 
-//         X = X_prev;        
-//         return; // 第一帧不输出结果
-// 	}
-
-// 	// 根据dt更新参数
-// 	CalculateParameter(dt); 
-
-// 	///////////////////////////////////// 卡尔曼五步 //////////////////////////////////////
-
-// 	StatusPredict(); // 状态预测
-
-// 	UncertaintyPredict(); // 不确定性预测
-
-// 	CalculateKalmanGain(); // 计算卡尔曼增益
-
-// 	Z << x, y, z; // 写入测量值[x y z]
-// 	UpdateStatus(); // 用测量值更新状态
-
-// 	UpdateUncertainty(); // 更新不确定性
-
-// 	UpdateHistoricalData(); // 更新历史数据
-
-// }
-
-
-
-// // 初始化  状态转移矩阵F  协方差矩阵P  预测过程噪声Q  观测矩阵H  测量过程噪声R
-// void EKF::Initialized()
-// {
-
-// 	// 协方差矩阵 位置 + 速度
-// 	P_prev << 0.1, 0, 0, 0, 0, 0,    
-// 		    0, 0.1, 0, 0, 0, 0,
-//             0, 0, 0.1, 0, 0, 0,
-//             0, 0, 0, 1.0, 0, 0,
-//             0, 0, 0, 1.0, 0, 0,
-//             0, 0, 0, 1.0, 0, 0;
+            
+        case 3: // 正后方装甲板 (与中心坐标系同向) (-, 0)
+        {
+            dx = -this->radius; 
+            dy = 0.0; 
+            theta_offset = 0.0; // 0
+            break;
+        }
+            
+        
+        case 4: // 左侧装甲板 (0, +)
+        {
+            dx = 0.0; 
+            dy = this->radius; 
+            theta_offset = -M_PI / 2; // -90  
+            break;
+        }
+            
+    }
+}
 
 
-// 	// 测量过程噪声 z 方向可能最不准
-// 	R << 0.1, 0, 0,
-//         0, 0.1, 0,
-//         0, 0, 0.3;
+// 非线性观测方程 
+Eigen::Matrix<double, 4, 1> EKF::h(const Eigen::Matrix<double, 8, 1>& X_in)
+{
+    double x_c = X_in(0), y_c = X_in(1), z_c = X_in(2);
+    double yaw = X_in(6);
+    double dx, dy, theta_offset;
+    getArmorParams(dx, dy, theta_offset);
 
-// 	this->is_initialized = true;
-// }
+    double cos_yaw = cos(yaw);
+    double sin_yaw = sin(yaw);
 
+    // 装甲板坐标系 在整车中心坐标系下的坐标
 
-// // 依据 dt 更新参数
-// void EKF::CalculateParameter(double dt)
-// {
-// 	// 观测矩阵 只观测位置
-// 	H << 1, 0, 0, 0, 0, 0,
-//         0, 1, 0, 0, 0, 0,
-//         0, 0, 1, 0, 0, 0;
+    Eigen::Matrix<double, 4, 1> z_pred;
+    z_pred(0) = x_c + cos_yaw * dx - sin_yaw * dy;   // x_armor
+    z_pred(1) = y_c + sin_yaw * dx + cos_yaw * dy;   // y_armor
+    z_pred(2) = z_c;                                 // z 相同
+    z_pred(3) = yaw + theta_offset;                  // yaw_armor
 
-
-// 	// 状态转移矩阵
-// 	// x_k = x_k-1 + v_x * dt
-// 	// y_k = y_k-1 + v_y * dt
-//     // z_k = z_k-1 + v_z * dt
-//     // v_x_k = v_x_k-1 
-//     // v_y_k = v_y_k-1 
-//     // v_z_k = v_z_k-1 
-// 	F << 1, 0, 0, dt, 0, 0,
-//         0, 1, 0, 0, dt, 0,
-//         0, 0, 1, 0, 0, dt,
-//         0, 0, 0, 1, 0, 0,
-//         0, 0, 0, 0, 1, 0,
-//         0, 0, 0, 0, 0, 1;
+    return z_pred;
+}
 
 
-// 	// 预测过程噪声矩阵
-// 	Q << 0.0001, 0, 0, 0, 0, 0,
-//         0, 0.0001, 0, 0, 0, 0,
-//         0, 0, 0.0001, 0, 0, 0,
-//         0, 0, 0, 0.005, 0, 0,
-//         0, 0, 0, 0, 0.005, 0,
-//         0, 0, 0, 0, 0, 0.005;
+// 观测矩阵 雅可比矩阵 H = ∂h/∂x
+Eigen::Matrix<double, 4, 8> EKF::computeH(const Eigen::Matrix<double, 8, 1>& X_in)
+{
+    double yaw = X_in(6);
+    double dx, dy, theta_offset;
+    getArmorParams(dx, dy, theta_offset);  // theta_offset 用不到，只关心 dx, dy
 
-// }
+    double cos_yaw = cos(yaw);
+    double sin_yaw = sin(yaw);
 
+    Eigen::Matrix<double, 4, 8> H_mat = Eigen::Matrix<double, 4, 8>::Zero();
 
-// // 状态预测 X_hat_k_est = F * X_hat_k-1
-// void EKF::StatusPredict()
-// {
-// 	X_est = F * X_prev;
-// }
+    // 对 x_c, y_c, z_c 的偏导
+    H_mat(0, 0) = 1.0;
+    H_mat(1, 1) = 1.0;
+    H_mat(2, 2) = 1.0;
 
+    // 对 yaw 的偏导
+    // ∂x_armor/∂yaw = -sin(yaw)*dx - cos(yaw)*dy
+    H_mat(0, 6) = -sin_yaw * dx - cos_yaw * dy;
+    // ∂y_armor/∂yaw =  cos(yaw)*dx - sin(yaw)*dy
+    H_mat(1, 6) =  cos_yaw * dx - sin_yaw * dy;
+    // ∂yaw_armor/∂yaw = 1
+    H_mat(3, 6) = 1.0;
 
-// // 不确定性预测 P_k_est = F * P_k-1 * F^T + Q
-// void EKF::UncertaintyPredict()
-// {
-// 	P_est = F * P_prev * F.transpose() + Q;
-// }
-
-
-// // 计算卡尔曼增益 K_k = P_k_est * H^T * [H * P_k_est * H^T + R]^-1
-// void EKF::CalculateKalmanGain()
-// {
-// 	K = P_est * H.transpose() * (H * P_est * H.transpose() + R).inverse();
-// }
-
-
-// // 用测量值更新状态 X_hat_k = X_hat_k_est + K_k * (Z_k - H * X^k_est)
-// void EKF::UpdateStatus()
-// {
-// 	X = X_est + K * (Z - H * X_est);
-// }
-
-
-// // 更新协方差，不确定性 P_k = (I - K_k * H) * P_k_est
-// void EKF::UpdateUncertainty()
-// {
-// 	P = (I - K * H) * P_est;
-// }
-
-
-// // 更新历史数据
-// void EKF::UpdateHistoricalData()
-// {
-// 	X_prev = X;
-// 	P_prev = P;
-// }
-
-
-// // 获得当前帧的预测位置。通过传入引用，获得 x y z
-// void EKF::getData(double& X_get, double& Y_get, double& Z_get)
-// {
-// 	X_get = this->X(0);
-//     Y_get = this->X(1);
-//     Z_get = this->X(2);
-// }
+    // 其余偏导（对速度、角速度）均为 0
+    return H_mat;
+}
 
 
 
-// // 预测未来 future 秒的位置，通过传入引用，获得 x y z
-// void EKF::getPredict(double& X_get, double& Y_get, double& Z_get, double future_time)
-// {
-// 	X_get = this->X(0) + this->X(3) * future_time; // x + v_x * future_time
-//     Y_get = this->X(1) + this->X(4) * future_time; // y + v_y * future_time
-//     Z_get = this->X(2) + this->X(5) * future_time; // z + v_z * future_time
-// }
+// 发布整车的 tf 动态变换，拿到整车中心作为观测数据，进行预测
+void EKF::getKalman(double x_armor, double y_armor, double z_armor, double yaw_armor, int armor_id, double dt)
+{
+    this->armor_id = armor_id;
 
-// }
+	// 如果没有初始化就初始化 
+    if (this->is_initialized == false)
+	{
+		Initialized();
+        
+        // 根据第一次观测反算一个粗略的中心初始状态
+        double dx, dy, theta_offset;
+        getArmorParams(dx, dy, theta_offset);
+        double init_yaw = yaw_armor - theta_offset;   // 粗略的中心偏航角
+
+        // 反推中心位置
+        double cos_yaw = cos(init_yaw), sin_yaw = sin(init_yaw);
+        double init_x = x_armor - (cos_yaw * dx - sin_yaw * dy);
+        double init_y = y_armor - (sin_yaw * dx + cos_yaw * dy);
+        double init_z = z_armor;
+
+        X_prev << init_x, init_y, init_z, 0.0, 0.0, 0.0, init_yaw, 0.0;
+        X = X_prev;
+    
+        return; // 第一帧不输出结果
+	}
+
+	// 根据dt更新参数
+	CalculateParameter(dt); 
+
+    Z << x_armor, y_armor, z_armor, yaw_armor; // 写入原始观测值
+
+	///////////////////////////////////// 卡尔曼五步 //////////////////////////////////////
+
+	StatusPredict(); // 状态预测
+
+	UncertaintyPredict(); // 不确定性预测
+
+    // 计算当前原始观测值的 雅可比矩阵 H 和 预测观测值
+    H = computeH(X_est);
+
+	CalculateKalmanGain(); // 计算卡尔曼增益
+
+	
+	UpdateStatus(); // 用测量值更新状态
+
+	UpdateUncertainty(); // 更新不确定性
+
+    // 偏航角归一化到 [-π, π]
+    X(6) = fmod(X(6) + M_PI, 2 * M_PI) - M_PI;
+
+	UpdateHistoricalData(); // 更新历史数据
+
+
+}
+
+
+
+// 初始化  状态转移矩阵F  协方差矩阵P  预测过程噪声Q  观测矩阵H  测量过程噪声R
+void EKF::Initialized()
+{
+
+	// 协方差矩阵
+	P_prev = 0.1 * I;
+
+
+	// 测量过程噪声 x y z yaw
+    // 单位m rad
+	R << 0.1, 0, 0, 0,
+        0, 0.1, 0, 0,
+        0, 0, 0.3, 0,
+        0, 0, 0, 0.1;
+
+	this->is_initialized = true;
+}
+
+
+// 依据 dt 更新参数
+void EKF::CalculateParameter(double dt)
+{
+	// // 观测矩阵 观测 x_c y_c z_c 和 yaw
+	// H << 1, 0, 0, 0, 0, 0, 0, 0,
+    //     0, 1, 0, 0, 0, 0, 0, 0,
+    //     0, 0, 1, 0, 0, 0, 0, 0,
+    //     0, 0, 0, 0, 0, 0, 1, 0;
+
+	// 状态转移矩阵
+	// x_k = x_k-1 + v_x * dt
+	// y_k = y_k-1 + v_y * dt
+    // z_k = z_k-1 + v_z * dt
+    // v_x_k = v_x_k-1 
+    // v_y_k = v_y_k-1 
+    // v_z_k = v_z_k-1
+    // yaw_k = yaw_k-1 + omega_k-1 * dt
+    // omega_k = omega_k-1
+	F << 1, 0, 0, dt, 0, 0, 0, 0,
+        0, 1, 0, 0, dt, 0, 0, 0,
+        0, 0, 1, 0, 0, dt, 0, 0,
+        0, 0, 0, 1, 0, 0, 0, 0,
+        0, 0, 0, 0, 1, 0, 0, 0,
+        0, 0, 0, 0, 0, 1, 0, 0,
+        0, 0, 0, 0, 0, 0, 1, dt,
+        0, 0, 0, 0, 0, 0, 0, 1;
+
+
+	// 预测过程噪声矩阵
+    // 位置的预测过程噪声较小，速度的预测过程噪声较大，角度的预测过程噪声适中，角速度的预测过程噪声较大
+	Q << 1e-5, 0, 0, 0, 0, 0, 0, 0,
+        0, 1e-5, 0, 0, 0, 0, 0, 0,
+        0, 0, 1e-5, 0, 0, 0, 0, 0,
+        0, 0, 0, 1e-3, 0, 0, 0, 0,
+        0, 0, 0, 0, 1e-3, 0, 0, 0,
+        0, 0, 0, 0, 0, 1e-3, 0, 0,
+        0, 0, 0, 0, 0, 0, 5e-4, 0,
+        0, 0, 0, 0, 0, 0, 0, 1e-3;
+
+}
+
+
+// 状态预测 X_hat_k_est = F * X_hat_k-1
+void EKF::StatusPredict()
+{
+	X_est = F * X_prev;
+}
+
+
+// 不确定性预测 P_k_est = F * P_k-1 * F^T + Q
+void EKF::UncertaintyPredict()
+{
+	P_est = F * P_prev * F.transpose() + Q;
+}
+
+
+// 计算卡尔曼增益 K_k = P_k_est * H^T * [H * P_k_est * H^T + R]^-1
+void EKF::CalculateKalmanGain()
+{
+	K = P_est * H.transpose() * (H * P_est * H.transpose() + R).inverse();
+}
+
+
+// 用测量值更新状态 X_hat_k = X_hat_k_est + K_k * (Z_k - H * X_k_est)
+// H * X_k_est 选出有效的量，但是 ekf 非线性，需要写一个函数 h 实现，只是把 X_k_est 换成了 h(X_est)
+void EKF::UpdateStatus()
+{
+	X = X_est + K * (Z - h(X_est));
+}
+
+
+// 更新协方差，不确定性 P_k = (I - K_k * H) * P_k_est
+void EKF::UpdateUncertainty()
+{
+	P = (I - K * H) * P_est;
+}
+
+
+// 更新历史数据
+void EKF::UpdateHistoricalData()
+{
+	X_prev = X;
+	P_prev = P;
+}
+
+
+// 获得当前帧的预测位置。通过传入引用，获得 x y z
+void EKF::getData(double& X_get, double& Y_get, double& Z_get)
+{
+	X_get = this->X(0);
+    Y_get = this->X(1);
+    Z_get = this->X(2);
+}
+
+
+
+// 预测未来 future 秒的位置，通过传入引用，获得 x y z
+void EKF::getPredict(double& X_get, double& Y_get, double& Z_get, double future_time)
+{
+	X_get = this->X(0) + this->X(3) * future_time; // x + v_x * future_time
+    Y_get = this->X(1) + this->X(4) * future_time; // y + v_y * future_time
+    Z_get = this->X(2) + this->X(5) * future_time; // z + v_z * future_time
+}
+
+}

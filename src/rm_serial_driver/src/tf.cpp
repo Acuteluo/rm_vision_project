@@ -235,7 +235,6 @@ bool TF::getTransform(float& pitch, float& yaw)
 {
 
     geometry_msgs::msg::TransformStamped transform_world_armorplate; // 世界 -> 装甲板
-    geometry_msgs::msg::TransformStamped transform_world_camera; // 世界 -> 相机
     try 
     {
         transform_world_armorplate = tf_buffer_->lookupTransform("world_frame", "armorplate_frame", tf2::TimePointZero);
