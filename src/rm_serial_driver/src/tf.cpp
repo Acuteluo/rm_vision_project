@@ -25,7 +25,7 @@ TF::TF(rclcpp::Node* node): node_(node)
     // 初始化 KF 类 和 EKF 类 指针
     kf_position_ = std::make_unique<KalmanFilter>(); 
     kf_data_ = std::make_unique<KF>(); 
-    ekf_ = std::make_unique<EKF>(); 
+    ekf_ = std::make_unique<EKF>(node_); 
 
     // ------------------ 进行一个配置文件的读取 -----------------
 
