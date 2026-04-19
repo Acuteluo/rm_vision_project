@@ -24,7 +24,6 @@ void EKF::reset()
 // 05【整车中心坐标系】-> 四个【装甲板坐标系】
 void EKF::updateCarCenterToArmorplate(std::string child_frame, double x, double y, double z, double roll, double pitch, double yaw)
 {
-    // ------------- 正前方装甲板 -----------------
     geometry_msgs::msg::TransformStamped tf;
     tf.header.stamp = this->node_->now(); // 帧头 -> 直接获取当前时刻
     tf.header.frame_id = "car_center_frame"; // 父坐标系 -> 整车中心坐标系
@@ -67,6 +66,38 @@ void EKF::updateFourArmorplates()
     
     // 右装甲板： (0, -R, 0)，x轴朝向右方（yaw=π/2）
     updateCarCenterToArmorplate("right_armorplate", 0.0, -this->radius, 0.0, 0.0, 0.0, M_PI/2);
+}
+
+
+// 05 【世界坐标系】->【整车中心坐标系】注意这里忽略了 pitch & roll
+void EKF::updateWorldToCarCenter()
+{
+    geometry_msgs::msg::TransformStamped tf;
+    tf.header.stamp = this->node_->now(); // 帧头 -> 直接获取当前时刻
+    tf.header.frame_id = "world_frame"; // 父坐标系 -> 世界坐标系
+    tf.child_frame_id = "car_center_frame"; // 子坐标系 -> 整车中心坐标系
+
+    // 平移
+    tf.transform.translation.x = this->X(0);
+    tf.transform.translation.y = this->X(1);
+    tf.transform.translation.z = this->X(2);
+    
+    // 旋转 这里忽略 pitch & roll
+    tf2::Quaternion q;
+    q.setRPY(0, 0, this->X(6));  // 顺序：roll, pitch, yaw （XYZ） 
+
+    tf.transform.rotation.x = q.x();
+    tf.transform.rotation.y = q.y();
+    tf.transform.rotation.z = q.z();
+    tf.transform.rotation.w = q.w();
+
+    // 设置四元数
+    tf.transform.rotation.x = q.x();
+    tf.transform.rotation.y = q.y();
+    tf.transform.rotation.z = q.z();
+    tf.transform.rotation.w = q.w();
+
+    car_broadcaster_->sendTransform(tf);
 }
 
 
@@ -256,7 +287,9 @@ void EKF::getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int arm
 
 	UpdateHistoricalData(); // 更新历史数据
 
-    updateFourArmorplates(); // 发布 tf 坐标系变换
+    updateFourArmorplates(); // 发布 整车中心 -> 四个装甲板 的 tf 坐标系变换
+
+    updateWorldToCarCenter(); // 发布 世界 -> 整车中心 的 tf 坐标系
 }
 
 

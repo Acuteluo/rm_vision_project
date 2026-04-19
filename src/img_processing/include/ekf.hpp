@@ -16,6 +16,8 @@
     EKF 
 
         思路：目前先固定R，根据R发布动态变换（传一次观测数据就发布一次），发布从中心到四周装甲板的变换（十字架模型）
+        
+        注意我们忽略了装甲板数据的 pitch & roll，意味着所有的都是只有 yaw，也就是底盘一定垂直于地面喵
 
              传入观测数据 -> 推算几何中心位姿 -> ekf滤波 -> 发布整车中心与四个装甲板的坐标系 -> 预测
 
@@ -111,6 +113,9 @@ public:
     void updateCarCenterToArmorplate(std::string child_frame, double x, double y, double z, double roll, double pitch, double yaw);
 
     void updateFourArmorplates();
+
+    // 06 【世界坐标系】->【整车中心坐标系】注意这里忽略了 pitch & roll
+    void updateWorldToCarCenter();
 
 
 
