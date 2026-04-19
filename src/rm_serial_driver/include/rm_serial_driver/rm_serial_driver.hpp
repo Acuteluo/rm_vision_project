@@ -5,6 +5,8 @@
 #ifndef RM_SERIAL_DRIVER__RM_SERIAL_DRIVER_HPP_
 #define RM_SERIAL_DRIVER__RM_SERIAL_DRIVER_HPP_
 
+#include <iostream>
+
 #include <tf2_ros/transform_broadcaster.h>
 
 #include <geometry_msgs/msg/transform_stamped.hpp>
@@ -24,13 +26,15 @@
 #include <vector>
 
 #include "rm_serial_driver/packet.hpp" // 需要使用 ReceivePacket 和 SendPacket 结构体
-
-#include "tf.hpp" // tf 类，封装所有 TF 广播、监听、查询功能
+#include "serial_driver_interfaces/msg/serial_driver.hpp" // 串口消息 发送方 的 话题类型 为 [serial_driver] 类
 
 #include <mutex> // 锁
 
-#include "statistics_msgs/msg/metrics_message.hpp" // 监听话题发送频率
-#include <chrono>
+#include <tf2/LinearMath/Quaternion.h>
+
+#include <fstream>
+#include <string>
+
 
 namespace rm_serial_driver
 {
@@ -43,25 +47,22 @@ public:
     ~RMSerialDriver() override;
 
     // 一些用来对比是否重复的东西
-    float last_tvec[3] = {-9999.99, -9999.99, -9999.99}; // 上一次发送的 t 矩阵数据
-    int pnp_same_t_count = 0; // PNP 消息收到重复 t 矩阵的计数器
-    
-    double last_pitch = -9999.99; // 上一次发送的 pitch 数据
-    double last_yaw = -9999.99; // 上一次发送的 yaw 数据
-    int data_same_count = 0; // 最终要发送的数据 重复计数
+    double last_send_pitch = -9999.99; // 上一次发送的 pitch 数据
+    double last_send_yaw = -9999.99; // 上一次发送的 yaw 数据
+    int send_data_same_count = 0; // 最终要发送的数据 重复计数
 
-    rclcpp::Time last_print; // 用来统计电控发来消息的频率
-
-    double euler_pitch = 0;
-    double euler_yaw = 0;
+    rclcpp::Time last_receive_time; // 用来统计电控发来消息的频率
 
 private:
 
     // 接收电控回传数据，并且调用 TF 类方法，更新【世界坐标系】->【芯片坐标系】变换的函数
     void receiveData();
 
-    // 最终发送给串口的函数（已经确认过）
-    void ultimateSendData(float pitch, float yaw);
+    // 订阅 最终数据 的回调信息，检查数据是否有效
+    void CheckData(const serial_driver_interfaces::msg::SerialDriver msg);
+
+    // 发送给串口数据的函数（检查过有效性的）
+    void SendData(float pitch, float yaw);
 
     // 重试打开串口的函数（在接收数据时发生异常时调用）
     void reopenPort();
@@ -69,11 +70,8 @@ private:
     // 读取 config 文件中的参数
     void getParams();
 
-    // 订阅 PnP 的回调信息，更新【芯片坐标系】->【装甲板坐标系】的变换
-    void PNPCallback(const serial_driver_interfaces::msg::SendPNPInfo msg);
-
-    // 确定两个坐标系是否都已经更新，尝试查询 TF 变换，得到最终数据，并发送串口
-    void confirmIfCanSendData();
+    // 01【世界坐标系】->【芯片坐标系】当前芯片位姿的坐标系 -> 动态，用 R 矩阵
+    void updateWorldToChip(double roll, double pitch, double yaw);
 
     // Serial port
     std::unique_ptr<IoContext> owned_ctx_;
@@ -82,23 +80,18 @@ private:
     std::unique_ptr<drivers::serial_driver::SerialDriver> serial_driver_;
 
     // 收数据
-    rclcpp::Subscription<serial_driver_interfaces::msg::SendPNPInfo>::SharedPtr pnp_sub_; // 订阅 PnP 话题
+    rclcpp::Subscription<serial_driver_interfaces::msg::SerialDriver>::SharedPtr data_sub_; // 订阅 /serial_driver 话题
     std::thread receive_thread_;
 
-    // 判断坐标系丢失后是否更新
-    bool world_to_chip_init_ = false;      // 收到的数据，【世界坐标系】->【芯片坐标系】，丢失后是否更新
-    bool chip_to_armorplate_init_ = false; // 订阅的 PnP 数据，【芯片坐标系】->【装甲板坐标系】，丢失后是否更新
 
-    // 相关类对象指针
-    std::unique_ptr<TF> tf;
-
-    // 最新收到 电控数据 和 pnp数据 的时间戳
+    // 最新收到 电控数据的时间戳
     rclcpp::Time receive_time;
-    rclcpp::Time pnp_time;
     
+    // TF 广播器、缓存、监听器
+    std::unique_ptr<tf2_ros::TransformBroadcaster> chip_broadcaster_;
+
 
     // 日志相关
-    bool SHOW_LOGGER_PNP; // pnp 相关日志
     bool SHOW_LOGGER_RECEIVE; // 收到电控数据相关日志
     bool SHOW_LOGGER_TRY_AND_SEND; // 尝试发送数据相关日志
 

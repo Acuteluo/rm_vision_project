@@ -1,8 +1,11 @@
 /home/cly/project/install/img_processing/lib/img_processing/core_node
-/home/cly/project/install/img_processing/lib/img_processing/tf_node
+/home/cly/project/install/img_processing/include/kf_position.hpp
 /home/cly/project/install/img_processing/include/strip.h
+/home/cly/project/install/img_processing/include/tf.hpp
 /home/cly/project/install/img_processing/include/armorplate.h
+/home/cly/project/install/img_processing/include/ekf.hpp
 /home/cly/project/install/img_processing/include/prepare_algorithm.h
+/home/cly/project/install/img_processing/include/kf_data.hpp
 /home/cly/project/install/img_processing/share/ament_index/resource_index/package_run_dependencies/img_processing
 /home/cly/project/install/img_processing/share/ament_index/resource_index/parent_prefix_path/img_processing
 /home/cly/project/install/img_processing/share/img_processing/environment/ament_prefix_path.sh

@@ -1,7 +1,5 @@
-#include <rm_serial_driver/ekf.hpp>
+#include <ekf.hpp>
 
-namespace rm_serial_driver
-{
 
 EKF::EKF(rclcpp::Node* node): node_(node)
 {
@@ -16,6 +14,11 @@ EKF::EKF(rclcpp::Node* node): node_(node)
     I = Eigen::Matrix<double, 9, 9>::Identity(); // 9*9 单位矩阵
 }
 
+
+void EKF::reset()
+{
+    this->is_initialized = false; // 重置初始化
+}
 
 
 // 05【整车中心坐标系】-> 四个【装甲板坐标系】
@@ -201,7 +204,7 @@ Eigen::Matrix<double, 4, 9> EKF::computeH(const Eigen::Matrix<double, 9, 1>& X_i
 
 
 // 发布整车的 tf 动态变换，拿到整车中心作为观测数据，进行预测
-void EKF::getKalman(double x_armor, double y_armor, double z_armor, double yaw_armor, int armor_id, double dt)
+void EKF::getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int armor_id, double dt)
 {
     this->armor_id = armor_id; // 传入的装甲板 id （1:前，2:右，3:后，4:左）
 
@@ -217,9 +220,9 @@ void EKF::getKalman(double x_armor, double y_armor, double z_armor, double yaw_a
 
         // 反推中心位置
         double cos_yaw = cos(init_yaw), sin_yaw = sin(init_yaw);
-        double init_x = x_armor - (cos_yaw * dx - sin_yaw * dy);
-        double init_y = y_armor - (sin_yaw * dx + cos_yaw * dy);
-        double init_z = z_armor;
+        double init_x = armorplate_center[0] - (cos_yaw * dx - sin_yaw * dy);
+        double init_y = armorplate_center[1] - (sin_yaw * dx + cos_yaw * dy);
+        double init_z = armorplate_center[2];
 
         X_prev << init_x, init_y, init_z, 0.0, 0.0, 0.0, init_yaw, 0.0, 0.0;
         X = X_prev;
@@ -230,7 +233,7 @@ void EKF::getKalman(double x_armor, double y_armor, double z_armor, double yaw_a
 	// 根据dt更新参数
 	CalculateParameter(dt); 
 
-    Z << x_armor, y_armor, z_armor, yaw_armor; // 写入原始观测值
+    Z << armorplate_center[0], armorplate_center[1], armorplate_center[2], yaw_armor; // 写入原始观测值
 
 	///////////////////////////////////// 卡尔曼五步 //////////////////////////////////////
 
@@ -253,7 +256,7 @@ void EKF::getKalman(double x_armor, double y_armor, double z_armor, double yaw_a
 
 	UpdateHistoricalData(); // 更新历史数据
 
-
+    updateFourArmorplates(); // 发布 tf 坐标系变换
 }
 
 
@@ -365,26 +368,17 @@ void EKF::UpdateHistoricalData()
 }
 
 
-// 获得当前帧的预测位置。通过传入引用，获得 x y z
-void EKF::getData(double& X_get, double& Y_get, double& Z_get)
-{
-	X_get = this->X(0);
-    Y_get = this->X(1);
-    Z_get = this->X(2);
-}
-
-
 
 // 预测未来 future 秒的中心点的位置，通过传入引用，获得 x y z
-void EKF::getCenterPredict(double& x_c_get, double& y_c_get, double& z_c_get, double future_time)
+void EKF::getCenterPredict(Eigen::Vector3d& car_center_predict, double future_time)
 {
-	x_c_get = this->X(0) + this->X(3) * future_time; // x + v_x * future_time
-    y_c_get = this->X(1) + this->X(4) * future_time; // y + v_y * future_time
-    z_c_get = this->X(2) + this->X(5) * future_time; // z + v_z * future_time
+	car_center_predict[0] = this->X(0) + this->X(3) * future_time; // x + v_x * future_time
+    car_center_predict[1] = this->X(1) + this->X(4) * future_time; // y + v_y * future_time
+    car_center_predict[2] = this->X(2) + this->X(5) * future_time; // z + v_z * future_time
 }
 
-
-void EKF::getArmorPredict(double& x_armor, double& y_armor, double& z_armor, 
+// 获得装甲板的预测位置
+void EKF::getArmorPredict(Eigen::Vector3d& armorplate_center_predict, 
                           int armor_id, double future_time) 
 {
     // 1. 先预测未来中心状态
@@ -402,10 +396,26 @@ void EKF::getArmorPredict(double& x_armor, double& y_armor, double& z_armor,
     double cos_yaw = cos(future_yaw);
     double sin_yaw = sin(future_yaw);
 
-    x_armor = future_x_c + cos_yaw * dx - sin_yaw * dy;
-    y_armor = future_y_c + sin_yaw * dx + cos_yaw * dy;
-    z_armor = future_z_c;
+    armorplate_center_predict[0] = future_x_c + cos_yaw * dx - sin_yaw * dy;
+    armorplate_center_predict[1] = future_y_c + sin_yaw * dx + cos_yaw * dy;
+    armorplate_center_predict[2] = future_z_c;
 }
 
 
+// 改变滤波器内部状态的预测，会更新状态
+void EKF::predictOnly(double dt)
+{
+    if (!this->is_initialized) return;
+
+    CalculateParameter(dt);
+    StatusPredict();
+    UncertaintyPredict();
+
+    X = X_est; // 将预测状态作为当前状态
+    P = P_est;
+
+    X(6) = fmod(X(6) + M_PI, 2 * M_PI) - M_PI; // 注意：偏航角归一化
+
+    X_prev = X;
+    P_prev = P;
 }

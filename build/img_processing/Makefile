@@ -210,19 +210,6 @@ core_node/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/build
 .PHONY : core_node/fast
 
-#=============================================================================
-# Target rules for targets named tf_node
-
-# Build rule for target.
-tf_node: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tf_node
-.PHONY : tf_node
-
-# fast build rule for target.
-tf_node/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tf_node.dir/build.make CMakeFiles/tf_node.dir/build
-.PHONY : tf_node/fast
-
 src/armorplate.o: src/armorplate.cpp.o
 .PHONY : src/armorplate.o
 
@@ -270,6 +257,78 @@ src/core_node.s: src/core_node.cpp.s
 src/core_node.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/core_node.cpp.s
 .PHONY : src/core_node.cpp.s
+
+src/ekf.o: src/ekf.cpp.o
+.PHONY : src/ekf.o
+
+# target to build an object file
+src/ekf.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/ekf.cpp.o
+.PHONY : src/ekf.cpp.o
+
+src/ekf.i: src/ekf.cpp.i
+.PHONY : src/ekf.i
+
+# target to preprocess a source file
+src/ekf.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/ekf.cpp.i
+.PHONY : src/ekf.cpp.i
+
+src/ekf.s: src/ekf.cpp.s
+.PHONY : src/ekf.s
+
+# target to generate assembly for a file
+src/ekf.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/ekf.cpp.s
+.PHONY : src/ekf.cpp.s
+
+src/kf_data.o: src/kf_data.cpp.o
+.PHONY : src/kf_data.o
+
+# target to build an object file
+src/kf_data.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/kf_data.cpp.o
+.PHONY : src/kf_data.cpp.o
+
+src/kf_data.i: src/kf_data.cpp.i
+.PHONY : src/kf_data.i
+
+# target to preprocess a source file
+src/kf_data.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/kf_data.cpp.i
+.PHONY : src/kf_data.cpp.i
+
+src/kf_data.s: src/kf_data.cpp.s
+.PHONY : src/kf_data.s
+
+# target to generate assembly for a file
+src/kf_data.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/kf_data.cpp.s
+.PHONY : src/kf_data.cpp.s
+
+src/kf_position.o: src/kf_position.cpp.o
+.PHONY : src/kf_position.o
+
+# target to build an object file
+src/kf_position.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/kf_position.cpp.o
+.PHONY : src/kf_position.cpp.o
+
+src/kf_position.i: src/kf_position.cpp.i
+.PHONY : src/kf_position.i
+
+# target to preprocess a source file
+src/kf_position.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/kf_position.cpp.i
+.PHONY : src/kf_position.cpp.i
+
+src/kf_position.s: src/kf_position.cpp.s
+.PHONY : src/kf_position.s
+
+# target to generate assembly for a file
+src/kf_position.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/kf_position.cpp.s
+.PHONY : src/kf_position.cpp.s
 
 src/prepare_algorithm.o: src/prepare_algorithm.cpp.o
 .PHONY : src/prepare_algorithm.o
@@ -319,29 +378,29 @@ src/strip.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/strip.cpp.s
 .PHONY : src/strip.cpp.s
 
-src/tf_node.o: src/tf_node.cpp.o
-.PHONY : src/tf_node.o
+src/tf.o: src/tf.cpp.o
+.PHONY : src/tf.o
 
 # target to build an object file
-src/tf_node.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tf_node.dir/build.make CMakeFiles/tf_node.dir/src/tf_node.cpp.o
-.PHONY : src/tf_node.cpp.o
+src/tf.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/tf.cpp.o
+.PHONY : src/tf.cpp.o
 
-src/tf_node.i: src/tf_node.cpp.i
-.PHONY : src/tf_node.i
+src/tf.i: src/tf.cpp.i
+.PHONY : src/tf.i
 
 # target to preprocess a source file
-src/tf_node.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tf_node.dir/build.make CMakeFiles/tf_node.dir/src/tf_node.cpp.i
-.PHONY : src/tf_node.cpp.i
+src/tf.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/tf.cpp.i
+.PHONY : src/tf.cpp.i
 
-src/tf_node.s: src/tf_node.cpp.s
-.PHONY : src/tf_node.s
+src/tf.s: src/tf.cpp.s
+.PHONY : src/tf.s
 
 # target to generate assembly for a file
-src/tf_node.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tf_node.dir/build.make CMakeFiles/tf_node.dir/src/tf_node.cpp.s
-.PHONY : src/tf_node.cpp.s
+src/tf.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/tf.cpp.s
+.PHONY : src/tf.cpp.s
 
 # Help Target
 help:
@@ -359,22 +418,30 @@ help:
 	@echo "... img_processing_uninstall"
 	@echo "... uninstall"
 	@echo "... core_node"
-	@echo "... tf_node"
 	@echo "... src/armorplate.o"
 	@echo "... src/armorplate.i"
 	@echo "... src/armorplate.s"
 	@echo "... src/core_node.o"
 	@echo "... src/core_node.i"
 	@echo "... src/core_node.s"
+	@echo "... src/ekf.o"
+	@echo "... src/ekf.i"
+	@echo "... src/ekf.s"
+	@echo "... src/kf_data.o"
+	@echo "... src/kf_data.i"
+	@echo "... src/kf_data.s"
+	@echo "... src/kf_position.o"
+	@echo "... src/kf_position.i"
+	@echo "... src/kf_position.s"
 	@echo "... src/prepare_algorithm.o"
 	@echo "... src/prepare_algorithm.i"
 	@echo "... src/prepare_algorithm.s"
 	@echo "... src/strip.o"
 	@echo "... src/strip.i"
 	@echo "... src/strip.s"
-	@echo "... src/tf_node.o"
-	@echo "... src/tf_node.i"
-	@echo "... src/tf_node.s"
+	@echo "... src/tf.o"
+	@echo "... src/tf.i"
+	@echo "... src/tf.s"
 .PHONY : help
 
 

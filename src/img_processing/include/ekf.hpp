@@ -12,9 +12,6 @@
 #include <geometry_msgs/msg/transform_stamped.hpp>
 
 
-namespace rm_serial_driver
-{
-
 /*
     EKF 
 
@@ -55,13 +52,14 @@ public:
     * @param    dt
 	* @return   无返回值
 	*/
-	void getKalman(double x_armor, double y_armor, double z_armor, double yaw_armor, int armor_id, double dt);
+	void getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int armor_id, double dt);
 	
 
 	// 初始化  状态转移矩阵F  协方差矩阵P  预测过程噪声Q  观测矩阵H  测量过程噪声R
 	void Initialized();
 	
-
+    // 重置初始化（丢失目标超过一定帧数时）
+    void reset();
 
 	// 更新参数
 	void CalculateParameter(double dt);
@@ -94,26 +92,27 @@ public:
 
 	// 更新历史数据
 	void UpdateHistoricalData();
-	
-	
 
-	// 获得当前帧的预测位置。通过传入引用，获得 x y z
-	void getData(double& X_get, double& Y_get, double& Z_get);
-	
 
-    void getArmorPredict(double& x_armor, double& y_armor, double& z_armor, 
+	// 获得装甲板的预测位置。通过传入引用，获得 x y z
+    void getArmorPredict(Eigen::Vector3d& armorplate_center_predict, 
                           int armor_id, double future_time);
 
 
-
 	// 预测未来 future 秒的中心点的位置，通过传入引用，获得 x y z
-	void getCenterPredict(double& x_c_get, double& y_c_get, double& z_c_get, double future_time);
+	void getCenterPredict(Eigen::Vector3d& car_center_predict, double future_time);
 	
+
+    // 改变滤波器内部状态的预测，会更新状态
+    void predictOnly(double dt);
+
 
     // 05【整车中心坐标系】-> 四个【装甲板坐标系】
     void updateCarCenterToArmorplate(std::string child_frame, double x, double y, double z, double roll, double pitch, double yaw);
 
     void updateFourArmorplates();
+
+
 
     // 查询【世界坐标系】-> 【整车中心坐标系】
     // bool getTransform(double& x_c, double& y_c, double& z_c, double& yaw);
@@ -176,5 +175,3 @@ private:
     int armor_id; // 传入的装甲板 id （1:前，2:右，3:后，4:左）
 
 };
-
-}

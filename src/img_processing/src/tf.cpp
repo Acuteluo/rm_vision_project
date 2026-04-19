@@ -1,17 +1,14 @@
-#include "rm_serial_driver/tf.hpp"
-#include "rm_serial_driver/ekf.hpp"
+#include "tf.hpp"
+#include "ekf.hpp"
 
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
-namespace rm_serial_driver
-{
 
 // 有参构造：node 节点指针创建
 TF::TF(rclcpp::Node* node): node_(node)
 {
     // 创建两个广播器：一个用于 chip_frame 相关（包括静态 camera 变换），一个用于 armorplate_frame
-    chip_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(node_);
     armorplate_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(node_);
 
     // 创建 TF 缓存和监听器（用来查询【世界坐标系 -> 装甲板坐标系】是否可以变换）
@@ -22,10 +19,6 @@ TF::TF(rclcpp::Node* node): node_(node)
     static_broadcaster_ = std::make_unique<tf2_ros::StaticTransformBroadcaster>(node_);
     publishStaticCameraTransform();
 
-    // 初始化 KF 类 和 EKF 类 指针
-    kf_position_ = std::make_unique<KalmanFilter>(); 
-    kf_data_ = std::make_unique<KF>(); 
-    ekf_ = std::make_unique<EKF>(node_); 
 
     // ------------------ 进行一个配置文件的读取 -----------------
 
@@ -85,41 +78,6 @@ TF::TF(rclcpp::Node* node): node_(node)
 
 
 
-// 01【世界坐标系】->【芯片坐标系】当前芯片位姿的坐标系 -> 动态，用 R 矩阵
-void TF::updateWorldToChip(double roll, double pitch, double yaw)
-{
-    geometry_msgs::msg::TransformStamped tf;
-    tf.header.stamp = this->node_->now(); // 帧头 -> 直接获取当前时刻
-    tf.header.frame_id = "world_frame"; // 父坐标系 -> 世界坐标系
-    tf.child_frame_id = "chip_frame"; // 子坐标系 -> 芯片坐标系
-
-    // 先忽略 t
-    tf.transform.translation.x = 0.00;
-    tf.transform.translation.y = 0.00;
-    tf.transform.translation.z = 0.00;
-    
-
-    // 欧拉角（度）->（弧度）再转四元数
-
-    // 先把 度 -> 弧度，注意 setRPY() 需要弧度
-    double roll_rad = roll * M_PI / 180.0;
-    double pitch_rad = pitch * M_PI / 180.0;
-    double yaw_rad = yaw * M_PI / 180.0;
-
-    // 然后转四元数
-    tf2::Quaternion q;
-    q.setRPY(roll_rad, pitch_rad, yaw_rad);  // 顺序：roll, pitch, yaw （XYZ） 
-
-    tf.transform.rotation.x = q.x();
-    tf.transform.rotation.y = q.y();
-    tf.transform.rotation.z = q.z();
-    tf.transform.rotation.w = q.w();
-
-    chip_broadcaster_->sendTransform(tf);
-}
-
-
-
 
 // 02【芯片坐标系】->【相机坐标系】当前相机位姿的坐标系 -> 静态，和芯片坐标系可以视为刚体，用 t 向量
 void TF::publishStaticCameraTransform()
@@ -149,37 +107,24 @@ void TF::publishStaticCameraTransform()
 
 
 // 03【相机坐标系 -> 装甲板坐标系】当前装甲板位姿的坐标系 -> 动态
-// 直接传入 serial_driver 节点拿到的 pnp 的 msg 消息的引用
-void TF::updateCameraToArmorplate(const serial_driver_interfaces::msg::SendPNPInfo& msg)
+void TF::updateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t)
 {
     // 已经在 serial_driver 里判断过 PNP 是否和上次收到的完全相同了
 
     geometry_msgs::msg::TransformStamped tf;
-    tf.header.stamp = msg.header.stamp; // 帧头
+    tf.header.stamp = this->node_->now();
     tf.header.frame_id = "camera_frame"; // 父坐标系 -> 相机坐标系
     tf.child_frame_id = "armorplate_frame"; // 子坐标系 -> 装甲板坐标系
 
 
     // 1. mm -> m（因为 tf 单位都是 m）
-    tf.transform.translation.x = msg.tvec[0] / 1000.0; // x
-    tf.transform.translation.y = msg.tvec[1] / 1000.0; // y
-    tf.transform.translation.z = msg.tvec[2] / 1000.0; // z
+    tf.transform.translation.x = t[0] / 1000.0; // x
+    tf.transform.translation.y = t[1] / 1000.0; // y
+    tf.transform.translation.z = t[2] / 1000.0; // z
 
         
-    // 2. 转存到 Eigen 矩阵，方便转换成四元数
-    Eigen::Matrix3d R_eigen;
-    for (int i = 0; i < 3; i++)
-    {
-        for (int j = 0; j < 3; j++)
-        {
-            R_eigen(i, j) = msg.matrix_r[i * 3 + j];
-        }
-            
-    }
-        
-
-    // 3. 旋转矩阵 -> 四元数
-    Eigen::Quaterniond q(R_eigen); 
+    // 2. 旋转矩阵 -> 四元数
+    Eigen::Quaterniond q(R); 
     q.normalize();  // 归一化
 
     tf.transform.rotation.x = q.x();
@@ -231,11 +176,10 @@ void TF::getFixCameraAngle(float X, float Y, float Z, float& pitch, float& yaw)
 
 
 
-// 查询【世界坐标系】-> 【装甲板坐标系】和【世界坐标系】->【相机坐标系】是否可以变换
-// 可以就变换就先滤波，通过引用回传滤波后的最终结果，返回1或者0表示是否有效
-bool TF::getTransform(float& pitch, float& yaw)
+// 查询【世界坐标系】->【装甲板坐标系】是否可以变换
+// 通过引用回传滤波后的最终结果，返回1或者0表示是否有效
+bool TF::getWorldToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor)
 {
-
     geometry_msgs::msg::TransformStamped transform_world_armorplate; // 世界 -> 装甲板
     try 
     {
@@ -247,20 +191,16 @@ bool TF::getTransform(float& pitch, float& yaw)
         return false; 
     }
 
-    // 计数器，这样就可以用前几帧数据来初始化滤波器
-    ++this->count;
+
+    ///////////////////////////////////// 世界 -> 装甲板 的 位置 ////////////////////////////////////////
 
 
-    ///////////////////////////////////// 世界 -> 装甲板 的 位置////////////////////////////////////////
+    // 获得 世界 -> 装甲板 的平移向量 
+    armorplate_center[0] = transform_world_armorplate.transform.translation.x;
+    armorplate_center[1] = transform_world_armorplate.transform.translation.y;
+    armorplate_center[2] = transform_world_armorplate.transform.translation.z;
 
-
-    // 获得 世界 -> 装甲板 的平移向量
-    double X_armor, Y_armor, Z_armor; 
-    X_armor = transform_world_armorplate.transform.translation.x;
-    Y_armor = transform_world_armorplate.transform.translation.y;
-    Z_armor = transform_world_armorplate.transform.translation.z;
-
-    RCLCPP_INFO_EXPRESSION(node_->get_logger(), this->SHOW_RESULT, "查询到【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.7f m, Y=%.7f m, Z=%.7f m", X_armor, Y_armor, Z_armor);
+    RCLCPP_INFO_EXPRESSION(node_->get_logger(), this->SHOW_RESULT, "查询到【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.7f m, Y=%.7f m, Z=%.7f m", armorplate_center[0], armorplate_center[1], armorplate_center[2]);
 
     // 旋转矩阵
     tf2::Quaternion q(
@@ -268,21 +208,14 @@ bool TF::getTransform(float& pitch, float& yaw)
             transform_world_armorplate.transform.rotation.y,
             transform_world_armorplate.transform.rotation.z,
             transform_world_armorplate.transform.rotation.w);
-        double roll_armor, pitch_armor, yaw_armor;
-        tf2::Matrix3x3(q).getRPY(roll_armor, pitch_armor, yaw_armor);
+    double roll_armor, pitch_armor;
+    tf2::Matrix3x3(q).getRPY(roll_armor, pitch_armor, yaw_armor);
 
 
-
+/*
     // 调用滤波算法，滤波 世界 -> 装甲板 的位置
-    double dt;
-    if(this->last_lookup_time_ != -1)
-    {
-        dt = (transform_world_armorplate.header.stamp.sec + transform_world_armorplate.header.stamp.nanosec * 1e-9) - this->last_lookup_time_;
-    }
-    else
-    {
-        dt = 0;
-    }
+
+    
     
     this->kf_position_->getKalman(X_armor, Y_armor, Z_armor, dt); // 更新 KF 的状态
 
@@ -374,13 +307,8 @@ bool TF::getTransform(float& pitch, float& yaw)
     //     yaw = yaw_filt;
     //     RCLCPP_INFO_EXPRESSION(node_->get_logger(), this->SHOW_RESULT, "滤波后【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.7f m, Y=%.7f m, Z=%.7f m", X_filt, Y_filt, Z_filt);
     // }
-
-   
-    this->last_lookup_time_ = transform_world_armorplate.header.stamp.sec + transform_world_armorplate.header.stamp.nanosec * 1e-9; // 更新上一次查询的时间戳
+*/
 
     return true;
 
 }
-
-
-}// namespace rm_serial_driver

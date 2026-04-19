@@ -29,10 +29,6 @@ find_package(serial_driver_interfaces REQUIRED)
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/rm_serial_driver.cpp
   src/crc.cpp
-  src/tf.cpp   # 添加这一行
-  src/kf_position.cpp   # 添加这一行
-  src/kf_data.cpp   # 添加这一行
-  src/ekf.cpp   # 添加这一行
 )
 
 ament_target_dependencies(${PROJECT_NAME} serial_driver_interfaces)
