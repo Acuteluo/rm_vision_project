@@ -208,6 +208,8 @@ private:
             // 丢弃前面 2 帧不稳定的数据，纯丢。这两个数据不计重复丢失次数
             if(this->continuous_count <= CONTINUOUS_THRESHOLD)  
             {
+                RCLCPP_WARN(this->get_logger(), "已丢弃连续帧的第 %d 帧", this->continuous_count);
+                showImg();
                 return;
             }
 
@@ -223,6 +225,7 @@ private:
             // 如果查到了变换，就开始滤波
             if(flag)
             {
+                this->ekf_->setParam(this->ARMOR_TYPE); // 设置装甲板尺寸，方便后期转换装甲板的四个角点到世界下
                 this->ekf_->getKalman(armorplate_center, yaw_armorplate, 3, dt);
                 
                 armorplate_center_predict = armorplate_center; // 【3-4帧】先用观测值
@@ -254,6 +257,7 @@ private:
                     this->continuous_count = 0; // 数据作废
                     this->ekf_->reset();
                     RCLCPP_WARN_ONCE(this->get_logger(), "目标丢失超过 %d 帧, 或者滤波器未初始化好。EKF 已重置", this->MAX_LOST_COUNT);
+                    showImg();
                     return;
                 }
             }
@@ -283,6 +287,7 @@ private:
                 this->continuous_count = 0; // 数据作废
                 this->ekf_->reset();
                 RCLCPP_WARN_ONCE(this->get_logger(), "目标丢失超过 %d 帧, EKF 已重置", this->MAX_LOST_COUNT);
+                showImg();
                 return;
             }
 
@@ -293,15 +298,58 @@ private:
         yaw_result = std::atan2(armorplate_center_predict[1], armorplate_center_predict[0]) * 180.0 / M_PI;
 
         this->last_lookup_time_ = this->now(); // 更新上一次滤波时间
+
+        
+        // ... 步骤4 发布 tf变换 + 滤波 完成时间戳
+        rclcpp::Time t4 = this->now();
+
+
+        // 5. 重投影
+        // ========== 重投影可视化 ==========
+        if (this->ekf_ready)
+        {
+            // 1. 获取相机内参和畸变系数（可从当前处理的装甲板对象获取，因为 ArmorPlate 已保存）
+            //    注意：如果本帧没有成功检测到装甲板，则无法获取相机参数，此时跳过重投影。
+            if (!this->armorplate.empty() && this->armorplate[0].is_success)
+            {
+                // 查询 world → camera 的 TF
+                tf2::Transform T_world_cam;
+                if (this->tf->getWorldToCameraTransform(T_world_cam))
+                {
+                    // 3. 对每个装甲板 ID 进行重投影（用不同颜色区分）
+                    std::vector<cv::Scalar> colors = 
+                    {
+                        cv::Scalar(0, 255, 0),   // 前: 绿
+                        cv::Scalar(255, 0, 0),   // 右: 蓝
+                        cv::Scalar(0, 0, 255),   // 后: 红
+                        cv::Scalar(255, 255, 0)  // 左: 青
+                    };
+
+                    for (int id = 1; id <= 4; id++)
+                    {
+                        std::vector<Eigen::Vector3d> corners;
+                        this->ekf_->getArmorFourCorners(corners, id);
+                        projectAndDraw(corners, this->armorplate[0].K, this->armorplate[0].D, T_world_cam, colors[id - 1]);
+                    }
+
+                    // 可选：也绘制整车中心点
+                    std::vector<Eigen::Vector3d> center_world = { car_center_predict };
+                    projectAndDraw(center_world, this->armorplate[0].K, this->armorplate[0].D, T_world_cam, cv::Scalar(255, 255, 255));
+                }
+            }
+        }
+        
             
         
-        // 5. 发送 最终信息
+        // 6. 发送 最终信息
         auto send_msg = serial_driver_interfaces::msg::SerialDriver();
         send_msg.pitch = pitch_result;
         send_msg.yaw = yaw_result;
         serial_pub_->publish(send_msg);
          
         
+        // ... 步骤5 重投影 + 发送消息 完成时间戳
+        rclcpp::Time t5 = this->now();
 
 
 
@@ -311,8 +359,10 @@ private:
             double duration1 = (t1 - start).seconds() * 1000.0; // 转换为毫秒
             double duration2 = (t2 - t1).seconds() * 1000.0; // 转换为毫秒
             double duration3 = (t3 - t2).seconds() * 1000.0; // 转换为毫秒
-            double total_duration = (t3 - start).seconds() * 1000.0; // 转换为毫秒
-            RCLCPP_INFO(this->get_logger(), "本帧处理耗时: 接受图像 = %.4f ms, 预处理 = %.4f ms, pnp 解算 = %.4f ms, 总耗时 = %.4f ms", duration1, duration2, duration3, total_duration);
+            double duration4 = (t4 - t3).seconds() * 1000.0; // 转换为毫秒
+            double duration5 = (t5 - t4).seconds() * 1000.0; // 转换为毫秒
+            double total_duration = (t5 - start).seconds() * 1000.0; // 转换为毫秒
+            RCLCPP_INFO(this->get_logger(), "本帧处理耗时: 接受图像 = %.4f ms, 预处理 = %.4f ms, pnp 解算 = %.4f ms, tf 变换 + 滤波 = %.4f ms, 重投影 + 发布消息 = %.4f ms. 总耗时 = %.4f ms", duration1, duration2, duration3, duration4, duration5, total_duration);
         }
         
 
@@ -320,16 +370,68 @@ private:
         ///////////////////////////////////////////////////////
 
         // cv::imshow("img", img);
+        showImg();
 
+        RCLCPP_INFO_ONCE(this->get_logger(), "coreNode 正在发布...");
+    }
+
+
+
+    /**
+     * @brief 将世界坐标系下的点投影到图像平面并绘制
+     * @param world_points 世界坐标系下的三维点
+     * @param K            相机内参矩阵 (3x3)
+     * @param D            畸变系数 (1x5)
+     * @param T_world_cam  世界到相机的变换
+     * @param color        绘制颜色
+     */
+    void projectAndDraw(const std::vector<Eigen::Vector3d>& world_points,
+                                 const cv::Mat& K, const cv::Mat& D,
+                                 const tf2::Transform& T_world_cam,
+                                 const cv::Scalar& color)
+    {
+        if (world_points.empty()) return;
+
+        // 将世界坐标点转换到相机坐标系
+        std::vector<cv::Point3f> cam_points;
+        cam_points.reserve(world_points.size());
+        for (const auto& wp : world_points) 
+        {
+            tf2::Vector3 p_world(wp.x(), wp.y(), wp.z());
+            tf2::Vector3 p_cam = T_world_cam * p_world;   // world -> camera
+            cam_points.emplace_back(p_cam.x(), p_cam.y(), p_cam.z());
+        }
+
+        // 投影到像素平面（考虑畸变）
+        std::vector<cv::Point2f> img_points;
+        cv::Mat rvec = cv::Mat::zeros(3, 1, CV_64F);
+        cv::Mat tvec = cv::Mat::zeros(3, 1, CV_64F);
+        cv::projectPoints(cam_points, rvec, tvec, K, D, img_points);
+
+        // 绘制：假设传入的是四个角点（左上、右上、右下、左下），连成矩形
+        if (img_points.size() == 4) 
+        {
+            for (int i = 0; i < 4; ++i) 
+            {
+                cv::line(this->img_show, img_points[i], img_points[(i + 1) % 4], color, 2);
+            }
+            // 可选：绘制中心点
+            cv::Point2f center = (img_points[0] + img_points[1] + img_points[2] + img_points[3]) / 4;
+            cv::circle(this->img_show, center, 3, cv::Scalar(0, 255, 255), -1);
+        }
+    }
+
+    // 由于写了return，必须在每次 return 前 显示图片
+    void showImg()
+    {
         if(this->SHOW_IMG_SHOW)
         {
             cv::imshow("img_show_armorplate", this->img_show);
             int key = cv::waitKey(1);
         }
-        
-
-        RCLCPP_INFO_ONCE(this->get_logger(), "coreNode 正在发布...");
     }
+
+
 
 
 

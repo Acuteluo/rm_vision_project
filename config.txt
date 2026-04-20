@@ -30,11 +30,8 @@ true
 
 # ------------- 串口 类相关 -------------
 
-# 9 SHOW_LOGGER_PNP = false / true
+# 9 SHOW_LOGGER_RECEIVE = false / true
 false
 
-# 10 SHOW_LOGGER_RECEIVE = false / true
-false
-
-# 11 SHOW_LOGGER_TRY_AND_SEND = false / true
+# 10 SHOW_LOGGER_TRY_AND_SEND = false / true
 false

@@ -129,7 +129,7 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
                 ++line_count;
                 RCLCPP_INFO(this->get_logger(), "已读取配置文件第 %d 个有效行: %s", line_count, each_line.c_str());
 
-                if(line_count == 10)
+                if(line_count == 9)
                 {
                     if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
                     {
@@ -139,7 +139,7 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
                     RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_LOGGER_RECEIVE = %s", each_line.c_str());
                 }
 
-                else if(line_count == 11)
+                else if(line_count == 10)
                 {
                     if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
                     {
@@ -152,9 +152,9 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
             }
         }
 
-        if(line_count < 11)
+        if(line_count < 10)
         {
-            RCLCPP_ERROR(this->get_logger(), "配置文件的有效行数不足 11 行, 检查配置文件。即将退出 core 节点\n");
+            RCLCPP_ERROR(this->get_logger(), "配置文件的有效行数不足 10 行, 检查配置文件。即将退出 core 节点\n");
             exit(-1);
         }
         else

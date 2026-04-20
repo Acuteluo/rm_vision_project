@@ -40,6 +40,7 @@ TF::TF(rclcpp::Node* node): node_(node)
             {
                 ++line_count;
                 RCLCPP_INFO(this->node_->get_logger(), "已读取配置文件第 %d 个有效行: %s", line_count, each_line.c_str());
+                
                 if(line_count == 7)
                 {
                     if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
@@ -117,10 +118,10 @@ void TF::updateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t)
     tf.child_frame_id = "armorplate_frame"; // 子坐标系 -> 装甲板坐标系
 
 
-    // 1. mm -> m（因为 tf 单位都是 m）
-    tf.transform.translation.x = t[0] / 1000.0; // x
-    tf.transform.translation.y = t[1] / 1000.0; // y
-    tf.transform.translation.z = t[2] / 1000.0; // z
+    // 1. tf 单位都是 m，pnp 结算里已经换成了 m 了！
+    tf.transform.translation.x = t[0]; // x
+    tf.transform.translation.y = t[1]; // y
+    tf.transform.translation.z = t[2]; // z
 
         
     // 2. 旋转矩阵 -> 四元数
@@ -172,6 +173,27 @@ void TF::getFixCameraAngle(float X, float Y, float Z, float& pitch, float& yaw)
     // 第四步：转换为偏航和俯仰
     pitch = -std::atan2(d1.z(), std::sqrt(d1.x() * d1.x() + d1.y() * d1.y())) * 180.0 / M_PI;   
     yaw = std::atan2(d1.y(), d1.x()) * 180.0 / M_PI;
+}
+
+
+// 查询【世界坐标系】->【相机坐标系】是否可以变换
+bool TF::getWorldToCameraTransform(tf2::Transform& T_world_cam)
+{
+    geometry_msgs::msg::TransformStamped transform;
+    try 
+    {
+        // 查询 world_frame 到 camera_frame 的变换
+        transform = tf_buffer_->lookupTransform("world_frame", "camera_frame", tf2::TimePointZero);
+    }
+     catch (tf2::TransformException &ex) 
+     {
+        RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【世界坐标系 -> 相机 坐标系】 TF lookup failed: %s", ex.what());
+        return false;
+    }
+
+    // 将 geometry_msgs::Transform 转换为 tf2::Transform
+    tf2::fromMsg(transform.transform, T_world_cam);
+    return true;
 }
 
 

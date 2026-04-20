@@ -26,15 +26,15 @@ void ArmorPlate::setParam()
     if(this->ARMOR_TYPE == "normal")
     {
         // [步兵] 装甲板的物理参数
-        this->armorplate_width = 135.00; // 装甲板宽，单位mm
-        this->armorplate_height = 55.00; // 装甲板高，单位mm
+        this->armorplate_width = 0.135; // 装甲板宽，单位m
+        this->armorplate_height = 0.055; // 装甲板高，单位m
     }
 
     else
     {
         // [英雄] 装甲板的物理参数
-        this->armorplate_width = 225.00; // 装甲板宽，单位mm
-        this->armorplate_height = 55.00; // 装甲板高，单位mm
+        this->armorplate_width = 0.225; // 装甲板宽，单位m
+        this->armorplate_height = 0.055; // 装甲板高，单位m
     }
 
 
@@ -199,7 +199,7 @@ void ArmorPlate::drawArmorPlateAndPrintPNPInfo()
     cv::putText(this->img_show, "moderation = " + std::to_string((double)this->moderation), cv::Point2f(0, 450), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
 	cv::putText(this->img_show, "t_pitch = " + std::to_string((double)this->t_pitch), cv::Point2f(0, 500), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);\
     cv::putText(this->img_show, "t_yaw = " + std::to_string((double)this->t_yaw), cv::Point2f(0, 550), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-	cv::putText(this->img_show, "t_distance = " + std::to_string((double)this->t_distance) + "mm", cv::Point2f(0, 600), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+	cv::putText(this->img_show, "t_distance = " + std::to_string((double)this->t_distance) + "m", cv::Point2f(0, 600), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
 }
 
 
@@ -306,10 +306,12 @@ void ArmorPlate::perspectiveNPoint()
 
 
     // atan2(y, x) 的符号只由 y 决定，与 x 无关。
-    // yaw + 表示目标在相机左侧。因为当△y为-时，结果为-。装甲板在右方，需要yaw为-，没问题
     // pitch + 表示目标在相机下方。当△z为-时，结果为-。装甲板在下方，需要pitch为+，所以要取负号
-    this->t_yaw = std::atan2(Y, X) * 180.0 / CV_PI;
+    // yaw + 表示目标在相机左侧。因为当△y为-时，结果为-。装甲板在右方，需要yaw为-，没问题
+    
     this->t_pitch = -std::atan2(Z, std::sqrt(X * X + Y * Y)) * 180.0 / CV_PI;
+    this->t_yaw = std::atan2(Y, X) * 180.0 / CV_PI;
+    
 
 }
 

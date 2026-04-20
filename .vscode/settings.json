@@ -2,20 +2,26 @@
     "cmake.sourceDirectory": "/home/cly/project/src/bringup",
 
     // ----- 背景图片插件设置 (shalldie.background) -----
-    "background.enabled": true,                // 启用插件
-    "background.useDefault": false,            // 不使用默认图片
-    "background.customImages": [               // 你的图片路径列表
-        //"https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
-        //"file:////home/cly/图片/wallpaper/微信图片_20260118223854_2_131.jpg"
-        "https://haowallpaper.com/link/common/file/previewFileImg/18070687097081216"
-    ],
-    "background.style": {                      // 图片样式
-        "opacity": 0.16,                       // 透明度 (0-1之间，推荐0.1-0.3)
-        "background-size": "cover",            // 覆盖模式
-        "pointer-events": "none"               // 避免干扰点击 (必须)
-    },
-    // ----- 背景图片插件设置结束 -----
+    "background.enabled": true,
+    "background.useDefault": false,
+    // 随机切换的核心：random 设为 true，interval 是轮播间隔（秒），
+    // 如果只想每次启动 VSCode 时随机换一张，可以把 interval 设为一个很大的数（如 86400），
+    // 或者不写 interval（插件会在每次窗口重载时随机选一张）。
+    "background.random": true,
+    "background.interval": 300,   // 每 300s 换一张（可选，不写则只在启动/重载时随机）
+    "background.customImages": [
+        // 本地图片（注意路径格式：file:/// + 绝对路径，斜杠用 /）
+        "file:///home/cly/图片/wallpaper/微信图片_20260118223854_2_131.jpg",
 
-    "editor.fontFamily": "'Fira Code Nerd Font', 'Droid Sans Mono', monospace",
-    "editor.fontLigatures": true  // 开启连字，让 -> 和 => 显示更美观
+        // 再添加至少一张其他图片，可以是本地或网络图片
+        "https://haowallpaper.com/link/common/file/previewFileImg/18070687097081216",
+        
+        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4",
+    ],
+    "background.style": {
+        "opacity": 0.16,
+        "background-size": "cover",
+        "pointer-events": "none"
+    }
+    // ----- 背景图片插件设置结束 -----
 }

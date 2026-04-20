@@ -49,6 +49,9 @@ public:
     cv::Point2f br; // 装甲板右下
     cv::Point2f tr; // 装甲板右上
 
+    cv::Mat K; // 内参矩阵
+	cv::Mat D; // 畸变矩阵
+
 
     ///////// pnp 结算的原始结果（opencv 默认 相机坐标系下） /////////
 
@@ -71,9 +74,6 @@ private:
 	std::vector<cv::Point3f> vertice_world; // [世界坐标系]装甲板四个角点，[顺序：左上，左下，右下，右上]，单位mm
 
     std::string CAMERA_NAME; // 相机名称，决定了内参矩阵和畸变矩阵
-
-	cv::Mat K; // 内参矩阵
-	cv::Mat D; // 畸变矩阵
 
     // pnp 解算结果可视化（从 opencv 默认相机坐标系 转换到 右手系后）
     

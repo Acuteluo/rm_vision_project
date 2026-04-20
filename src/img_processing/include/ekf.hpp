@@ -59,6 +59,9 @@ public:
 
 	// 初始化  状态转移矩阵F  协方差矩阵P  预测过程噪声Q  观测矩阵H  测量过程噪声R
 	void Initialized();
+
+    // 设置装甲板的 width 和 height
+    void setParam(std::string ARMOR_TYPE);
 	
     // 重置初始化（丢失目标超过一定帧数时）
     void reset();
@@ -118,6 +121,8 @@ public:
     void updateWorldToCarCenter();
 
 
+    // 得到某个 id 装甲板四个角点在世界下的坐标
+    void getArmorFourCorners(std::vector<Eigen::Vector3d>& corners, int armor_id);
 
     // 查询【世界坐标系】-> 【整车中心坐标系】
     // bool getTransform(double& x_c, double& y_c, double& z_c, double& yaw);
@@ -178,5 +183,8 @@ private:
     rclcpp::Node* node_;  // 拿到 ros2 的节点指针
 
     int armor_id; // 传入的装甲板 id （1:前，2:右，3:后，4:左）
+
+    double width; // 当前装甲板的长，单位 m
+    double height; // 当前装甲板的宽，单位 m
 
 };

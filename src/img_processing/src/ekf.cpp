@@ -15,6 +15,24 @@ EKF::EKF(rclcpp::Node* node): node_(node)
 }
 
 
+
+// 设置装甲板的 width 和 height
+void EKF::setParam(std::string ARMOR_TYPE)
+{
+    if(ARMOR_TYPE == "normal") // 步兵装甲板
+    {
+        this->width = 0.135;
+        this->height = 0.055;
+    }
+    else //英雄装甲板
+    {
+        this->width = 0.225;
+        this->height = 0.055;
+    }
+}
+
+
+
 void EKF::reset()
 {
     this->is_initialized = false; // 重置初始化
@@ -101,6 +119,7 @@ void EKF::updateWorldToCarCenter()
 }
 
 
+
 // // 查询【世界坐标系】-> 【某个装甲板坐标系】和中心点在世界下坐标
 // bool EKF::getTransform(double& x_predict, double& y_predict, double& z_predict, double& center)
 // {
@@ -176,6 +195,49 @@ void EKF::getArmorParams(double& dx, double& dy, double& theta_offset)
             break;
         }
             
+    }
+}
+
+
+
+// 得到某个 id 装甲板四个角点在世界下的坐标
+void EKF::getArmorFourCorners(std::vector<Eigen::Vector3d>& corners, int armor_id)
+{
+    corners.resize(4);
+    double x_c = this->X(0), y_c = this->X(1), z_c = this->X(2), yaw = this->X(6);
+    this->armor_id = armor_id;
+    double dx, dy, theta_offset;
+    getArmorParams(dx, dy, theta_offset);
+
+    // 根据 ARMOR_TYPE 实际值，单位m
+    const double width = this->width;   
+    const double height = this->height;
+
+    double cos_yaw = cos(yaw), sin_yaw = sin(yaw);
+    double cx = x_c + cos_yaw * dx - sin_yaw * dy;
+    double cy = y_c + sin_yaw * dx + cos_yaw * dy;
+    double cz = z_c;
+    double armor_yaw = yaw + theta_offset;
+
+    double half_w = width / 2.0, half_h = height / 2.0;
+    double cos_ay = cos(armor_yaw), sin_ay = sin(armor_yaw);
+
+    // 局部坐标 (y, z) 偏移 (法向为 x，所以角点在 x=0 平面上)
+    std::pair<double, double> offsets[4] = {
+        {-half_w,  half_h},  // 左上
+        { half_w,  half_h},  // 右上
+        { half_w, -half_h},  // 右下
+        {-half_w, -half_h}   // 左下
+    };
+
+    for (int i = 0; i < 4; ++i) 
+    {
+        double local_y = offsets[i].first;
+        double local_z = offsets[i].second;
+        double wx = cx + cos_ay * 0 - sin_ay * local_y;
+        double wy = cy + sin_ay * 0 + cos_ay * local_y;
+        double wz = cz + local_z;
+        corners[i] = Eigen::Vector3d(wx, wy, wz);
     }
 }
 
@@ -344,14 +406,14 @@ void EKF::CalculateParameter(double dt)
 
 	// 预测过程噪声矩阵
     // 位置的预测过程噪声较小，速度的预测过程噪声较大，角度的预测过程噪声适中，角速度的预测过程噪声较大，角加速度的预测过程噪声较大
-	Q << 1e-5, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 1e-5, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 1e-5, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 1e-3, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 1e-3, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 1e-3, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 5e-4, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 1e-3, 0,
+	Q << 1e-3, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 1e-3, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 1e-3, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 1, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 1, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 1, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 5e-3, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 1e-2, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 1e-2;
 
 }

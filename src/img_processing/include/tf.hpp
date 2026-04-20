@@ -38,6 +38,9 @@ public:
     bool getWorldToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor);
 
 
+    // 查询【世界坐标系】->【相机坐标系】是否可以变换
+    bool getWorldToCameraTransform(tf2::Transform& T_world_cam);
+
 
     /**
      * @brief 直接发布 camera_frame -> armorplate_frame 的变换
@@ -79,5 +82,6 @@ private:
 
     bool SHOW_LOGGER_ERROR; // 从日志文件读取，是否展示tf查询错误
     bool SHOW_RESULT; // 从日志文件读取，是否展示最终查询结果
+
 };
 
