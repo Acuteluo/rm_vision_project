@@ -10,97 +10,138 @@ public:
     ProcessNode(): Node("core_node_cpp")
     {
 
-        this->tf = std::make_unique<TF>(this); // 传 this 指针给 TF 类来构造，让它能创建 ROS2 相关对象，同时发布静态变换
+        // // ------------------ 进行一个配置文件的读取 -----------------
 
-        // 初始化 KF 类 和 EKF 类 指针
-        // kf_position_ = std::make_unique<KalmanFilter>(); 
-        // kf_data_ = std::make_unique<KF>(); 
-        ekf_ = std::make_unique<EKF>(this); 
+        // std::ifstream file("config.txt");  // 打开配置文件，注意是在工作空间下
+        // if (!file.is_open()) 
+        // {
+        //     RCLCPP_ERROR(this->get_logger(), "【 EXIT 】无法打开 config.txt 配置文件。。。。即将退出 core 节点\n");
+        //     exit(-1);
+        // }
 
-        this->last_lookup_time_ = this->now(); // 初始化 上一次滤波时间
+        // std::string each_line;
+        // int line_count = 0; // 记录行数
 
-        // ------------------ 进行一个配置文件的读取 -----------------
+        // while (std::getline(file, each_line)) 
+        // {
+        //     // 处理每一行，each_line 即为当前行的字符串
+        //     if (each_line.empty() || each_line[0] == '#' || each_line[0] == '/') continue;
+        //     else
+        //     {
+        //         ++line_count;
+        //         RCLCPP_INFO(this->get_logger(), "已读取配置文件第 %d 个有效行: %s", line_count, each_line.c_str());
+        //         if(line_count == 1)
+        //         {
+        //             if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
+        //             {
+        //                 this->SHOW_LOGGER_TIME = false;
+        //             }
+        //             else this->SHOW_LOGGER_TIME = true;
+        //             RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_LOGGER_TIME = %s", each_line.c_str());
+        //         }
 
-        std::ifstream file("config.txt");  // 打开配置文件，注意是在工作空间下
-        if (!file.is_open()) 
-        {
-            RCLCPP_ERROR(this->get_logger(), "【 EXIT 】无法打开 config.txt 配置文件。。。。即将退出 core 节点\n");
-            exit(-1);
-        }
+        //         else if(line_count == 2)
+        //         {
+        //             if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
+        //             {
+        //                 this->SHOW_IMG_SHOW = false;
+        //             }
+        //             else this->SHOW_IMG_SHOW = true;
+        //             RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_IMG_SHOW = %s", each_line.c_str());
+        //         }
 
-        std::string each_line;
-        int line_count = 0; // 记录行数
+        //         else if(line_count == 3)
+        //         {
+        //             if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
+        //             {
+        //                 this->SHOW_LOGGER_PREPARE = false;
+        //             }
+        //             else this->SHOW_LOGGER_PREPARE = true;
+        //             RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_LOGGER_PREPARE = %s", each_line.c_str());
+        //         }
 
-        while (std::getline(file, each_line)) 
-        {
-            // 处理每一行，each_line 即为当前行的字符串
-            if (each_line.empty() || each_line[0] == '#' || each_line[0] == '/') continue;
-            else
-            {
-                ++line_count;
-                RCLCPP_INFO(this->get_logger(), "已读取配置文件第 %d 个有效行: %s", line_count, each_line.c_str());
-                if(line_count == 1)
-                {
-                    if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
-                    {
-                        this->SHOW_LOGGER_TIME = false;
-                    }
-                    else this->SHOW_LOGGER_TIME = true;
-                    RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_LOGGER_TIME = %s", each_line.c_str());
-                }
+        //         else if(line_count == 4)
+        //         {
+        //             this->CHOSEN_COLOR = each_line;
+        //             RCLCPP_INFO(this->get_logger(), "【 设置参数 】CHOSEN_COLOR = %s", each_line.c_str());
+        //         }
 
-                else if(line_count == 2)
-                {
-                    if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
-                    {
-                        this->SHOW_IMG_SHOW = false;
-                    }
-                    else this->SHOW_IMG_SHOW = true;
-                    RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_IMG_SHOW = %s", each_line.c_str());
-                }
+        //         else if(line_count == 5)
+        //         {
+        //             this->CAMERA_NAME = each_line;
+        //             RCLCPP_INFO(this->get_logger(), "【 设置参数 】CAMERA_NAME = %s", each_line.c_str());
+        //         }
 
-                else if(line_count == 3)
-                {
-                    if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
-                    {
-                        this->SHOW_LOGGER_PREPARE = false;
-                    }
-                    else this->SHOW_LOGGER_PREPARE = true;
-                    RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_LOGGER_PREPARE = %s", each_line.c_str());
-                }
+        //         else if(line_count == 6)
+        //         {
+        //             this->ARMOR_TYPE = each_line;
+        //             RCLCPP_INFO(this->get_logger(), "【 设置参数 】ARMOR_TYPE = %s", each_line.c_str());
+        //         }
+        //     }
+        // }
 
-                else if(line_count == 4)
-                {
-                    this->CHOSEN_COLOR = each_line;
-                    RCLCPP_INFO(this->get_logger(), "【 设置参数 】CHOSEN_COLOR = %s", each_line.c_str());
-                }
+        // if(line_count < 6)
+        // {
+        //     RCLCPP_ERROR(this->get_logger(), "配置文件的有效行数不足6行, 检查配置文件。即将退出 core 节点\n");
+        //     exit(-1);
+        // }
+        // else
+        // {
+        //     RCLCPP_INFO(this->get_logger(), "【 设置参数完成 】ALL SET! 共设置了 %d 个有效参数", line_count);
+        // }
 
-                else if(line_count == 5)
-                {
-                    this->CAMERA_NAME = each_line;
-                    RCLCPP_INFO(this->get_logger(), "【 设置参数 】CAMERA_NAME = %s", each_line.c_str());
-                }
+        // file.close();
 
-                else if(line_count == 6)
-                {
-                    this->ARMOR_TYPE = each_line;
-                    RCLCPP_INFO(this->get_logger(), "【 设置参数 】ARMOR_TYPE = %s", each_line.c_str());
-                }
-            }
-        }
 
-        if(line_count < 6)
-        {
-            RCLCPP_ERROR(this->get_logger(), "配置文件的有效行数不足6行, 检查配置文件。即将退出 core 节点\n");
-            exit(-1);
-        }
-        else
-        {
-            RCLCPP_INFO(this->get_logger(), "【 设置参数完成 】ALL SET! 共设置了 %d 个有效参数", line_count);
-        }
 
-        file.close();
+        // 改为动态传参：
 
+        // 声明参数（带默认值）
+
+        // core 节点
+        this->declare_parameter("core.logger.show_logger_time", false); // 是否打印时间相关日志
+        this->declare_parameter("core.image.show_img", true); // 是否显示图片
+        
+        // prepare 类
+        this->declare_parameter("core.logger.show_logger_prepare", false); // 是否打印 prepare 类中的日志
+        this->declare_parameter("core.param.chosen_color", "red"); // 选择的装甲板颜色
+        this->declare_parameter("core.param.camera_name", "galaxy"); // 使用的相机名称
+        this->declare_parameter("core.param.armor_type", "normal"); // 识别装甲板的类型
+
+        // EKF相关（传递给ekf_）
+        this->declare_parameter("ekf.predict_time", 0.20); // 预测时间
+
+        this->declare_parameter("ekf.q_x", 1e-5);
+        this->declare_parameter("ekf.q_y", 1e-5);
+        this->declare_parameter("ekf.q_z", 1e-5);
+        this->declare_parameter("ekf.q_v_x", 1e-3);
+        this->declare_parameter("ekf.q_v_y", 1e-3);
+        this->declare_parameter("ekf.q_v_z", 1e-3);
+        this->declare_parameter("ekf.q_yaw", 5e-4);
+        this->declare_parameter("ekf.q_omega", 1e-3);
+        this->declare_parameter("ekf.q_a_omega", 1e-2);
+        this->declare_parameter("ekf.r_x", 0.1);
+        this->declare_parameter("ekf.r_y", 0.1);
+        this->declare_parameter("ekf.r_z", 0.3);
+        this->declare_parameter("ekf.r_yaw", 0.1);
+        this->declare_parameter("ekf.radius", 0.25);
+
+        // TF 参数声明
+        this->declare_parameter("tf.show_logger_error", false);
+        this->declare_parameter("tf.show_result", true);
+
+        // corenode 节点变量获取初始值
+        this->SHOW_LOGGER_TIME = this->get_parameter("core.logger.show_logger_time").as_bool();
+        this->SHOW_IMG_SHOW = this->get_parameter("core.image.show_img").as_bool();
+        this->SHOW_LOGGER_PREPARE = this->get_parameter("core.logger.show_logger_prepare").as_bool();
+        this->CHOSEN_COLOR = this->get_parameter("core.param.chosen_color").as_string();
+        this->CAMERA_NAME = this->get_parameter("core.param.camera_name").as_string();
+        this->ARMOR_TYPE = this->get_parameter("core.param.armor_type").as_string();
+        this->PREDICT_TIME = this->get_parameter("ekf.predict_time").as_double();
+
+
+        // 注册参数变化回调（用于运行时动态修改）
+        param_callback_handle_ = this->add_on_set_parameters_callback(std::bind(&ProcessNode::onParameterChange, this, std::placeholders::_1));
 
         // --------------------------- 配置 -> 相机相关 qos sub pub ---------------------------
 
@@ -125,6 +166,17 @@ public:
 
         // 初始化pnp帧率的计时器
         this->last_print = this->now();
+
+        this->tf = std::make_unique<TF>(this); // 传 this 指针给 TF 类来构造，让它能创建 ROS2 相关对象，同时发布静态变换
+
+        // 初始化 KF 类 和 EKF 类 指针
+        // kf_position_ = std::make_unique<KalmanFilter>(); 
+        // kf_data_ = std::make_unique<KF>(); 
+        ekf_ = std::make_unique<EKF>(this); 
+        ekf_->updateParamsFromServer(); // 设置一大堆参数
+        ekf_->setParam(this->ARMOR_TYPE); // 装甲板类型
+
+        this->last_lookup_time_ = this->now(); // 初始化 上一次滤波时间
     }
 
 
@@ -234,8 +286,8 @@ private:
                 if(this->continuous_count > CONTINUOUS_THRESHOLD + FILTER_INIT_THRESHOLD)
                 {
                     this->ekf_ready = true; // 已经稳定，无论怎么丢我都外推
-                    this->ekf_->getArmorPredict(armorplate_center_predict, 3, 0.20);
-                    this->ekf_->getCenterPredict(car_center_predict, 0.20);
+                    this->ekf_->getArmorPredict(armorplate_center_predict, 3, this->PREDICT_TIME);
+                    this->ekf_->getCenterPredict(car_center_predict, this->PREDICT_TIME);
                 }
 
             }
@@ -248,8 +300,8 @@ private:
                     this->ekf_->predictOnly(dt);  // 继续预测 dt 时间，维持状态外推
 
                     // 用外推的信息发
-                    this->ekf_->getArmorPredict(armorplate_center_predict, 3, 0.20);
-                    this->ekf_->getCenterPredict(car_center_predict, 0.20);
+                    this->ekf_->getArmorPredict(armorplate_center_predict, 3, this->PREDICT_TIME);
+                    this->ekf_->getCenterPredict(car_center_predict, this->PREDICT_TIME);
                 }
                 else
                 {
@@ -278,8 +330,8 @@ private:
                 this->ekf_->predictOnly(dt);  // 继续预测 dt 时间，维持状态外推
 
                 // 用外推的信息发
-                this->ekf_->getArmorPredict(armorplate_center_predict, 3, 0.20);
-                this->ekf_->getCenterPredict(car_center_predict, 0.20);
+                this->ekf_->getArmorPredict(armorplate_center_predict, 3, this->PREDICT_TIME);
+                this->ekf_->getCenterPredict(car_center_predict, this->PREDICT_TIME);
             }
             else
             {
@@ -433,6 +485,61 @@ private:
 
 
 
+    // 回调：当参数被外部修改时触发
+    rcl_interfaces::msg::SetParametersResult onParameterChange(const std::vector<rclcpp::Parameter>& params)
+    {
+        for (const auto& p : params) 
+        {
+            const std::string& name = p.get_name();
+            if (name == "core.logger.show_logger_time") 
+            {
+                this->SHOW_LOGGER_TIME = p.as_bool();
+            } 
+            else if (name == "core.image.show_img") 
+            {
+                this->SHOW_IMG_SHOW = p.as_bool();
+            } 
+            else if (name == "core.logger.show_logger_prepare") 
+            {
+                this->SHOW_LOGGER_PREPARE = p.as_bool();
+                prepare.setParam(this->SHOW_LOGGER_PREPARE, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE);
+            } 
+            else if (name == "core.param.chosen_color") 
+            {
+                this->CHOSEN_COLOR = p.as_string();
+                prepare.setParam(this->SHOW_LOGGER_PREPARE, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE);
+            } 
+            else if (name == "core.param.armor_type") 
+            {
+                this->ARMOR_TYPE = p.as_string();
+                prepare.setParam(this->SHOW_LOGGER_PREPARE, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE);
+            } 
+            else if (name == "ekf.q_x" || name == "ekf.q_y" || name == "ekf.q_z" || 
+                    name == "ekf.q_v_x" || name == "ekf.q_v_y" || name == "ekf.q_v_z" ||
+                    name == "ekf.q_yaw" || name == "ekf.q_omega" || name == "ekf.q_a_omega" ||
+                    name == "ekf.r_x" || name == "ekf.r_y" || name == "ekf.r_z" ||
+                    name == "ekf.r_yaw" || name == "ekf.radius") 
+            {
+                this->ekf_->updateParamsFromServer();  // 让EKF自己重新读取参数
+            }
+            else if (name == "tf.show_logger_error" || name == "tf.show_result")
+            {
+                this->tf->updateParamsFromServer();  // 通知 TF 刷新
+            }
+            else if (name == "ekf.predict_time") // 更新 ekf 预测时间
+            {
+                this->PREDICT_TIME = p.as_double();
+            }
+            
+            // 注意：检测颜色、相机名称等通常不应运行时改变，如需改变可类似处理
+        }
+        rcl_interfaces::msg::SetParametersResult res;
+        res.successful = true;
+        return res;
+    }
+
+
+
 
 
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr sub_; // 订阅 mindvision_publisher 发过来的原图
@@ -463,6 +570,8 @@ private:
     std::string CAMERA_NAME; // 选择相机名称 mind_vision / galaxy ，注意改对应的 qos
     std::string ARMOR_TYPE; // 选择装甲板类型 normal / hero ，决定了配对的参数
 
+    double PREDICT_TIME; // ekf 预测时间
+
     ///////// 工具类参数 /////////
     rclcpp::Time last_print; // 记录上一次打印 pnp 发布频率的时间戳，用于统计 pnp 发布频率
 
@@ -484,6 +593,9 @@ private:
 
     // ekf 是否已经稳定跟踪
     bool ekf_ready = false; 
+
+    // 动态参数变化 
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
 
 };
 

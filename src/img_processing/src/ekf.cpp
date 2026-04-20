@@ -16,6 +16,35 @@ EKF::EKF(rclcpp::Node* node): node_(node)
 
 
 
+// 从参数服务器更新（运行时调用）
+void EKF::updateParamsFromServer() 
+{
+    if (!node_) return;
+
+    // 预测矩阵 q
+    this->q_x_ = node_->get_parameter("ekf.q_x").as_double();
+    this->q_y_ = node_->get_parameter("ekf.q_y").as_double();
+    this->q_z_ = node_->get_parameter("ekf.q_z").as_double();
+    this->q_v_x_ = node_->get_parameter("ekf.q_v_x").as_double();
+    this->q_v_y_ = node_->get_parameter("ekf.q_v_y").as_double();
+    this->q_v_z_ = node_->get_parameter("ekf.q_v_z").as_double();
+    this->q_yaw_ = node_->get_parameter("ekf.q_yaw").as_double();
+    this->q_omega_ = node_->get_parameter("ekf.q_omega").as_double();
+    this->q_a_omega_ = node_->get_parameter("ekf.q_a_omega").as_double();
+
+    // 观测矩阵 r
+    this->r_x_ = node_->get_parameter("ekf.r_x").as_double();
+    this->r_y_ = node_->get_parameter("ekf.r_y").as_double();
+    this->r_z_ = node_->get_parameter("ekf.r_z").as_double();
+    this->r_yaw_ = node_->get_parameter("ekf.r_yaw").as_double();
+
+    // 整车半径
+    this->radius = node_->get_parameter("ekf.radius").as_double();
+}
+    
+
+
+
 // 设置装甲板的 width 和 height
 void EKF::setParam(std::string ARMOR_TYPE)
 {
@@ -304,6 +333,8 @@ void EKF::getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int arm
 	// 如果没有初始化就初始化 
     if (this->is_initialized == false)
 	{
+        updateParamsFromServer();  // 确保读取有效值
+
 		Initialized();
         
         // 根据第一次观测反算一个粗略的中心初始状态
@@ -366,10 +397,10 @@ void EKF::Initialized()
 
 	// 测量过程噪声 x y z yaw
     // 单位m rad
-	R << 0.1, 0, 0, 0,
-        0, 0.1, 0, 0,
-        0, 0, 0.3, 0,
-        0, 0, 0, 0.1;
+	R << this->r_x_, 0, 0, 0,
+        0, this->r_y_, 0, 0,
+        0, 0, this->r_z_, 0,
+        0, 0, 0, this->r_yaw_;
 
 	this->is_initialized = true;
 }
@@ -406,15 +437,22 @@ void EKF::CalculateParameter(double dt)
 
 	// 预测过程噪声矩阵
     // 位置的预测过程噪声较小，速度的预测过程噪声较大，角度的预测过程噪声适中，角速度的预测过程噪声较大，角加速度的预测过程噪声较大
-	Q << 1e-3, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 1e-3, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 1e-3, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 1, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 1, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 1, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 5e-3, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 1e-2, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 1e-2;
+	Q << this->q_x_, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, this->q_y_, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, this->q_z_, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, this->q_v_x_, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, this->q_v_y_, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, this->q_v_z_, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, this->q_yaw_, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, this->q_omega_, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, this->q_a_omega_;
+
+
+    // 同时更新 R 矩阵（因为参数可能已改变）
+    R << this->r_x_, 0, 0, 0,
+        0, this->r_y_, 0, 0,
+        0, 0, this->r_z_, 0,
+        0, 0, 0, this->r_yaw_;
 
 }
 

@@ -55,6 +55,9 @@ public:
 
 private:
 
+    // 参数变化回调
+    rcl_interfaces::msg::SetParametersResult onParameterChange(const std::vector<rclcpp::Parameter>& params);
+
     // 接收电控回传数据，并且调用 TF 类方法，更新【世界坐标系】->【芯片坐标系】变换的函数
     void receiveData();
 
@@ -96,6 +99,9 @@ private:
     bool SHOW_LOGGER_TRY_AND_SEND; // 尝试发送数据相关日志
 
     mutable std::mutex state_mutex_;   // 加锁。保护共享状态（标志位、重复检测变量等）
+
+    // 动态参数回调句柄
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
 };  
 
 } // namespace rm_serial_driver

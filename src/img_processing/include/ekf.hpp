@@ -56,6 +56,12 @@ public:
 	*/
 	void getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int armor_id, double dt);
 	
+    ////////// 动态传参 ///////////
+
+    // 从参数服务器更新（运行时调用）
+    void updateParamsFromServer();
+
+
 
 	// 初始化  状态转移矩阵F  协方差矩阵P  预测过程噪声Q  观测矩阵H  测量过程噪声R
 	void Initialized();
@@ -139,7 +145,7 @@ private:
     void getArmorParams(double& dx, double& dy, double& theta_offset);
 
 
-    double radius = 0.25; // 整车旋转半径m
+    double radius = 0.25; // 整车旋转半径 m
 
 	// 状态矩阵
 	Eigen::Matrix<double, 9, 1> X;      // k 时刻状态
@@ -157,11 +163,26 @@ private:
 	// 预测过程噪声矩阵
 	Eigen::Matrix<double, 9, 9> Q;
 
+    double q_x_;
+    double q_y_;
+    double q_z_;
+    double q_v_x_;
+    double q_v_y_;
+    double q_v_z_;
+    double q_yaw_;
+    double q_omega_;
+    double q_a_omega_;
+
 	// 观测矩阵（不写定值，而是雅可比矩阵） 只观测 x_center y_center z_center yaw
 	Eigen::Matrix<double, 4, 9> H;
 
 	// 测量过程噪声 
 	Eigen::Matrix<double, 4, 4> R;
+
+    double r_x_;
+    double r_y_;
+    double r_z_;
+    double r_yaw_;
 
 	// 测量矩阵 测量 xyz
 	Eigen::Matrix<double, 4, 1> Z;

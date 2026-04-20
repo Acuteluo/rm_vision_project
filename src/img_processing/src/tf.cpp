@@ -20,61 +20,79 @@ TF::TF(rclcpp::Node* node): node_(node)
     publishStaticCameraTransform();
 
 
-    // ------------------ 进行一个配置文件的读取 -----------------
+    // 从参数服务器读取初始参数
+    this->SHOW_LOGGER_ERROR = node_->get_parameter("tf.show_logger_error").as_bool();
+    this->SHOW_RESULT = node_->get_parameter("tf.show_result").as_bool();
 
-        std::ifstream file("config.txt");  // 打开配置文件，注意是在工作空间下
-        if (!file.is_open()) 
-        {
-            RCLCPP_ERROR(this->node_->get_logger(), "【 EXIT 】无法打开 config.txt 配置文件。。。。即将退出 tf\n");
-            exit(-1);
-        }
+    RCLCPP_INFO(node_->get_logger(), "TF 参数已加载: SHOW_LOGGER_ERROR=%d, SHOW_RESULT=%d",
+                SHOW_LOGGER_ERROR, SHOW_RESULT);
 
-        std::string each_line;
-        int line_count = 0; // 记录行数
 
-        while (std::getline(file, each_line)) 
-        {
-            // 处理每一行，each_line 即为当前行的字符串
-            if (each_line.empty() || each_line[0] == '#' || each_line[0] == '/') continue;
-            else
-            {
-                ++line_count;
-                RCLCPP_INFO(this->node_->get_logger(), "已读取配置文件第 %d 个有效行: %s", line_count, each_line.c_str());
+
+    // // ------------------ 进行一个配置文件的读取 -----------------
+
+    //     std::ifstream file("config.txt");  // 打开配置文件，注意是在工作空间下
+    //     if (!file.is_open()) 
+    //     {
+    //         RCLCPP_ERROR(this->node_->get_logger(), "【 EXIT 】无法打开 config.txt 配置文件。。。。即将退出 tf\n");
+    //         exit(-1);
+    //     }
+
+    //     std::string each_line;
+    //     int line_count = 0; // 记录行数
+
+    //     while (std::getline(file, each_line)) 
+    //     {
+    //         // 处理每一行，each_line 即为当前行的字符串
+    //         if (each_line.empty() || each_line[0] == '#' || each_line[0] == '/') continue;
+    //         else
+    //         {
+    //             ++line_count;
+    //             RCLCPP_INFO(this->node_->get_logger(), "已读取配置文件第 %d 个有效行: %s", line_count, each_line.c_str());
                 
-                if(line_count == 7)
-                {
-                    if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
-                    {
-                        this->SHOW_LOGGER_ERROR = false;
-                    }
-                    else this->SHOW_LOGGER_ERROR = true;
-                    RCLCPP_INFO(this->node_->get_logger(), "【 设置参数 】SHOW_LOGGER_ERROR = %s", each_line.c_str());
-                }
+    //             if(line_count == 7)
+    //             {
+    //                 if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
+    //                 {
+    //                     this->SHOW_LOGGER_ERROR = false;
+    //                 }
+    //                 else this->SHOW_LOGGER_ERROR = true;
+    //                 RCLCPP_INFO(this->node_->get_logger(), "【 设置参数 】SHOW_LOGGER_ERROR = %s", each_line.c_str());
+    //             }
 
-                else if(line_count == 8)
-                {
-                    if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
-                    {
-                        this->SHOW_RESULT = false;
-                    }
-                    else this->SHOW_RESULT = true;
-                    RCLCPP_INFO(this->node_->get_logger(), "【 设置参数 】SHOW_RESULT = %s", each_line.c_str());
-                }
+    //             else if(line_count == 8)
+    //             {
+    //                 if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
+    //                 {
+    //                     this->SHOW_RESULT = false;
+    //                 }
+    //                 else this->SHOW_RESULT = true;
+    //                 RCLCPP_INFO(this->node_->get_logger(), "【 设置参数 】SHOW_RESULT = %s", each_line.c_str());
+    //             }
 
-            }
-        }
+    //         }
+    //     }
 
-        if(line_count < 8)
-        {
-            RCLCPP_ERROR(this->node_->get_logger(), "配置文件的有效行数不足7行, 检查配置文件。即将退出 core 节点\n");
-            exit(-1);
-        }
-        else
-        {
-            RCLCPP_INFO(this->node_->get_logger(), "【 设置参数完成 】TF ALL SET! 共设置了 %d 个有效参数", line_count);
-        }
+    //     if(line_count < 8)
+    //     {
+    //         RCLCPP_ERROR(this->node_->get_logger(), "配置文件的有效行数不足7行, 检查配置文件。即将退出 core 节点\n");
+    //         exit(-1);
+    //     }
+    //     else
+    //     {
+    //         RCLCPP_INFO(this->node_->get_logger(), "【 设置参数完成 】TF ALL SET! 共设置了 %d 个有效参数", line_count);
+    //     }
 
-        file.close();
+    //     file.close();
+}
+
+
+// 在参数变化时立即刷新
+void TF::updateParamsFromServer()
+{
+    if (!node_) return;
+    this->SHOW_LOGGER_ERROR = node_->get_parameter("tf.show_logger_error").as_bool();
+    this->SHOW_RESULT = node_->get_parameter("tf.show_result").as_bool();
 }
 
 
@@ -88,10 +106,10 @@ void TF::publishStaticCameraTransform()
     tf.header.frame_id = "chip_frame"; // 父坐标系 -> 芯片坐标系
     tf.child_frame_id = "camera_frame"; // 子坐标系 -> 相机坐标系
 
-    // 静态平移：芯片坐标系下相机的位置（前60mm，下30mm）
-    tf.transform.translation.x = 0.06;   // 米
+    // 静态平移：芯片坐标系下相机的位置（前60mm，下30mm -> 0mm）
+    tf.transform.translation.x = 0.06;   // m
     tf.transform.translation.y = 0.0;
-    tf.transform.translation.z = -0.03;
+    tf.transform.translation.z = 0.0; // 注意！位置和姿态是分开的，既然我只能拿到芯片的姿态欧拉角，那芯片在轴上哪个位置，难道还重要吗！
 
     // 无旋转，所以用单位四元数
     tf.transform.rotation.x = 0.0;

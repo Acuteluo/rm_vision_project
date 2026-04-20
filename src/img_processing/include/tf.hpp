@@ -27,6 +27,10 @@ public:
     explicit TF(rclcpp::Node* node); 
 
 
+    // 从参数服务器更新内部开关（运行时调用）
+    void updateParamsFromServer();
+
+
     // ---------- 查询 TF ----------
     /**
      * @brief 查询【世界坐标系】->【装甲板坐标系】是否可以变换

@@ -66,24 +66,40 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
         signal(SIGFPE, signal_handler);
         RCLCPP_INFO_ONCE(get_logger(), "Step 1/7: 函数注册信号处理器 创建完成");
 
+
+        // ---------- 动态参数声明 ----------
+        this->declare_parameter("serial.show_logger_receive", false);
+        this->declare_parameter("serial.show_logger_try_send", false);
+
+        // 读取初始值
+        this->SHOW_LOGGER_RECEIVE = this->get_parameter("serial.show_logger_receive").as_bool();
+        this->SHOW_LOGGER_TRY_AND_SEND = this->get_parameter("serial.show_logger_try_send").as_bool();
+
+        // 注册参数变化回调
+        param_callback_handle_ = this->add_on_set_parameters_callback(std::bind(&RMSerialDriver::onParameterChange, this, std::placeholders::_1));
+
+        RCLCPP_INFO(this->get_logger(), "Step 2/7: 串口节点动态参数已初始化: SHOW_LOGGER_RECEIVE=%d, SHOW_LOGGER_TRY_AND_SEND=%d", SHOW_LOGGER_RECEIVE, SHOW_LOGGER_TRY_AND_SEND);
+
+
+
         getParams();
-        RCLCPP_INFO_ONCE(get_logger(), "Step 2/7: 已经从 config 文件读取参数, device_name=%s", device_name_.c_str());
+        RCLCPP_INFO_ONCE(get_logger(), "Step 3/7: 已经从 config 文件读取参数, device_name=%s", device_name_.c_str());
 
 
         // 串口初始化核心
         try 
         {
             serial_driver_->init_port(device_name_, *device_config_);
-            RCLCPP_INFO_ONCE(get_logger(), "Step 3/7: 初始化串口 成功");
+            RCLCPP_INFO_ONCE(get_logger(), "Step 4/7: 初始化串口 成功");
 
             // 如果串口没打开，尝试打开
             if (!serial_driver_->port()->is_open()) 
             {
                 serial_driver_->port()->open();
-                RCLCPP_INFO_ONCE(get_logger(), "Step 4/7: 未打开串口，现在串口已经打开成功");
+                RCLCPP_INFO_ONCE(get_logger(), "Step 5/7: 未打开串口，现在串口已经打开成功");
 
                 receive_thread_ = std::thread(&RMSerialDriver::receiveData, this); 
-                RCLCPP_INFO_ONCE(get_logger(), "Step 5/7: 启动接收线程 成功");
+                RCLCPP_INFO_ONCE(get_logger(), "Step 6/7: 启动接收线程 成功");
             }
         } 
         catch (const std::exception & ex) 
@@ -100,69 +116,68 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
 
         // 创建 core 消息订阅者，话题 /serial_driver
         data_sub_ = this->create_subscription<serial_driver_interfaces::msg::SerialDriver>("/serial_driver", 10, std::bind(&RMSerialDriver::CheckData, this, std::placeholders::_1));
-        RCLCPP_INFO_ONCE(get_logger(), "Step 6/7: 成功创建 /serial_driver 话题订阅者");
+        RCLCPP_INFO_ONCE(get_logger(), "Step 7/7: 成功创建 /serial_driver 话题订阅者");
 
         // 初始化 last_receive_time，上一次接收电控数据的时间，用于统计电控发来消息的频率
         this->last_receive_time = this->now(); 
 
         this->chip_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(this);
 
+        // // ------------------ 进行一个配置文件的读取 -----------------
 
-        // ------------------ 进行一个配置文件的读取 -----------------
+        // std::ifstream file("config.txt");  // 打开配置文件，注意是在工作空间下
+        // if (!file.is_open()) 
+        // {
+        //     RCLCPP_ERROR(this->get_logger(), "【 EXIT 】无法打开 config.txt 配置文件。。。。即将退出 tf\n");
+        //     exit(-1);
+        // }
 
-        std::ifstream file("config.txt");  // 打开配置文件，注意是在工作空间下
-        if (!file.is_open()) 
-        {
-            RCLCPP_ERROR(this->get_logger(), "【 EXIT 】无法打开 config.txt 配置文件。。。。即将退出 tf\n");
-            exit(-1);
-        }
+        // std::string each_line;
+        // int line_count = 0; // 记录行数
 
-        std::string each_line;
-        int line_count = 0; // 记录行数
+        // while (std::getline(file, each_line)) 
+        // {
+        //     // 处理每一行，each_line 即为当前行的字符串
+        //     if (each_line.empty() || each_line[0] == '#' || each_line[0] == '/') continue;
+        //     else
+        //     {
+        //         ++line_count;
+        //         RCLCPP_INFO(this->get_logger(), "已读取配置文件第 %d 个有效行: %s", line_count, each_line.c_str());
 
-        while (std::getline(file, each_line)) 
-        {
-            // 处理每一行，each_line 即为当前行的字符串
-            if (each_line.empty() || each_line[0] == '#' || each_line[0] == '/') continue;
-            else
-            {
-                ++line_count;
-                RCLCPP_INFO(this->get_logger(), "已读取配置文件第 %d 个有效行: %s", line_count, each_line.c_str());
+        //         if(line_count == 9)
+        //         {
+        //             if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
+        //             {
+        //                 this->SHOW_LOGGER_RECEIVE = false;
+        //             }
+        //             else this->SHOW_LOGGER_RECEIVE = true;
+        //             RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_LOGGER_RECEIVE = %s", each_line.c_str());
+        //         }
 
-                if(line_count == 9)
-                {
-                    if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
-                    {
-                        this->SHOW_LOGGER_RECEIVE = false;
-                    }
-                    else this->SHOW_LOGGER_RECEIVE = true;
-                    RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_LOGGER_RECEIVE = %s", each_line.c_str());
-                }
+        //         else if(line_count == 10)
+        //         {
+        //             if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
+        //             {
+        //                 this->SHOW_LOGGER_TRY_AND_SEND = false;
+        //             }
+        //             else this->SHOW_LOGGER_TRY_AND_SEND = true;
+        //             RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_LOGGER_TRY_AND_SEND = %s", each_line.c_str());
+        //         }
 
-                else if(line_count == 10)
-                {
-                    if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
-                    {
-                        this->SHOW_LOGGER_TRY_AND_SEND = false;
-                    }
-                    else this->SHOW_LOGGER_TRY_AND_SEND = true;
-                    RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_LOGGER_TRY_AND_SEND = %s", each_line.c_str());
-                }
+        //     }
+        // }
 
-            }
-        }
+        // if(line_count < 10)
+        // {
+        //     RCLCPP_ERROR(this->get_logger(), "配置文件的有效行数不足 10 行, 检查配置文件。即将退出 core 节点\n");
+        //     exit(-1);
+        // }
+        // else
+        // {
+        //     RCLCPP_INFO(this->get_logger(), "Step 7/7: 串口 ALL SET! 共设置了 %d 个有效参数", line_count);
+        // }
 
-        if(line_count < 10)
-        {
-            RCLCPP_ERROR(this->get_logger(), "配置文件的有效行数不足 10 行, 检查配置文件。即将退出 core 节点\n");
-            exit(-1);
-        }
-        else
-        {
-            RCLCPP_INFO(this->get_logger(), "Step 7/7: 串口 ALL SET! 共设置了 %d 个有效参数", line_count);
-        }
-
-        file.close();
+        // file.close();
 
         RCLCPP_INFO_ONCE(get_logger(), ">>>>>>>>>>>>>>> 串口构造函数已经初始化完成。");
 
@@ -183,6 +198,33 @@ RMSerialDriver::~RMSerialDriver()
     owned_ctx_->waitForExit();
   }
 }
+
+
+rcl_interfaces::msg::SetParametersResult RMSerialDriver::onParameterChange(
+    const std::vector<rclcpp::Parameter>& params)
+{
+    std::lock_guard<std::mutex> lock(state_mutex_);  // 线程安全
+
+    for (const auto& p : params) 
+    {
+        const std::string& name = p.get_name();
+        if (name == "serial.show_logger_receive") 
+        {
+            this->SHOW_LOGGER_RECEIVE = p.as_bool();
+            RCLCPP_INFO(get_logger(), "SHOW_LOGGER_RECEIVE 更新为 %d", SHOW_LOGGER_RECEIVE);
+        } 
+        else if (name == "serial.show_logger_try_send")
+        {
+            this->SHOW_LOGGER_TRY_AND_SEND = p.as_bool();
+            RCLCPP_INFO(get_logger(), "SHOW_LOGGER_TRY_AND_SEND 更新为 %d", SHOW_LOGGER_TRY_AND_SEND);
+        }
+    }
+
+    rcl_interfaces::msg::SetParametersResult res;
+    res.successful = true;
+    return res;
+}
+
 
 
 // 01【世界坐标系】->【芯片坐标系】当前芯片位姿的坐标系 -> 动态，用 R 矩阵
