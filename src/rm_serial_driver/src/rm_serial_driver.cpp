@@ -207,6 +207,7 @@ rcl_interfaces::msg::SetParametersResult RMSerialDriver::onParameterChange(
 
     for (const auto& p : params) 
     {
+        RCLCPP_INFO(this->get_logger(), "RMSerialDriver 节点参数更新! ");
         const std::string& name = p.get_name();
         if (name == "serial.show_logger_receive") 
         {

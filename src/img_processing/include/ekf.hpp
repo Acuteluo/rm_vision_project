@@ -68,6 +68,9 @@ public:
 
     // 设置装甲板的 width 和 height
     void setParam(std::string ARMOR_TYPE);
+
+    // 设置是否打印日志
+    void setDebugLogger(bool SHOW_LOGGER_DEBUG);
 	
     // 重置初始化（丢失目标超过一定帧数时）
     void reset();
@@ -146,6 +149,8 @@ private:
 
 
     double radius = 0.25; // 整车旋转半径 m
+
+    bool SHOW_LOGGER_DEBUG; // 是否打印调参日志
 
 	// 状态矩阵
 	Eigen::Matrix<double, 9, 1> X;      // k 时刻状态

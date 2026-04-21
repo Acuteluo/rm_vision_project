@@ -62,13 +62,6 @@ private:
     void publishStaticCameraTransform();  // 实际发布静态变换的回调
 
 
-    // ---------- 辅助函数 ----------
-    /**
-     * @brief 根据世界坐标系下装甲板的预测坐标，推算相机对准时的角度
-     */
-    void getFixCameraAngle(float X_armor, float Y_armor, float Z_armor, float& pitch, float& yaw);
-
-
 
     rclcpp::Node* node_;  // 拿到 ros2 的节点指针
 

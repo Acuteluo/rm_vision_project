@@ -99,6 +99,8 @@ void TF::updateParamsFromServer()
 
 
 // 02【芯片坐标系】->【相机坐标系】当前相机位姿的坐标系 -> 静态，和芯片坐标系可以视为刚体，用 t 向量
+// 但是，由于姿态是姿态，可以平移，和位置无关，所以直接把相机当做在轴上转，直接拿 imu 的数据 作为姿态喵
+// 所以目前，这个直接没有任何作用
 void TF::publishStaticCameraTransform()
 {
     geometry_msgs::msg::TransformStamped tf;
@@ -107,7 +109,7 @@ void TF::publishStaticCameraTransform()
     tf.child_frame_id = "camera_frame"; // 子坐标系 -> 相机坐标系
 
     // 静态平移：芯片坐标系下相机的位置（前60mm，下30mm -> 0mm）
-    tf.transform.translation.x = 0.06;   // m
+    tf.transform.translation.x = 0.0;   // m
     tf.transform.translation.y = 0.0;
     tf.transform.translation.z = 0.0; // 注意！位置和姿态是分开的，既然我只能拿到芯片的姿态欧拉角，那芯片在轴上哪个位置，难道还重要吗！
 
@@ -155,43 +157,6 @@ void TF::updateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t)
 
 }
 
-
-
-// ---------- 辅助函数 ----------
-// 根据世界坐标系下装甲板的预测坐标，推算相机对准时云台应转动的角度
-
-void TF::getFixCameraAngle(float X, float Y, float Z, float& pitch, float& yaw)
-{
-    // 相机相对于芯片的固定平移（米）
-    const double dx = 0.06;
-    const double dz = -0.03;
-    Eigen::Vector3d t(dx, 0.0, dz);   // 相机在芯片坐标系下的位置
-    Eigen::Vector3d e(1.0, 0.0, 0.0); // 芯片的 X 轴（光轴方向）
-    Eigen::Vector3d P(X, Y, Z);       // 装甲板在世界坐标系下的位置
-
-    // 第一步：粗略方向（忽略相机偏移）
-    Eigen::Vector3d d0 = P.normalized();
-
-    // 第二步：计算从 e 到 d0 的旋转轴和角度
-    Eigen::Vector3d axis = e.cross(d0);
-    double angle = std::acos(e.dot(d0));
-    
-    Eigen::Vector3d C0; // 估算的相机位置
-    if (axis.norm() < 1e-8) {
-        // e 与 d0 平行（目标正好在正前方或正后方），此时旋转轴任意，旋转角0
-        C0 = t; // 芯片未旋转，相机位置就是 t 本身
-    } else {
-        Eigen::AngleAxisd rot(angle, axis.normalized()); // 旋转矩阵
-        C0 = rot * t; // 将相机偏移旋转到世界系
-    }
-
-    // 第三步：修正方向
-    Eigen::Vector3d d1 = (P - C0).normalized(); // 方向向量
-
-    // 第四步：转换为偏航和俯仰
-    pitch = -std::atan2(d1.z(), std::sqrt(d1.x() * d1.x() + d1.y() * d1.y())) * 180.0 / M_PI;   
-    yaw = std::atan2(d1.y(), d1.x()) * 180.0 / M_PI;
-}
 
 
 // 查询【世界坐标系】->【相机坐标系】是否可以变换

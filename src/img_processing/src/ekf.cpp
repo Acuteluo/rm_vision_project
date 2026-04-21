@@ -61,6 +61,13 @@ void EKF::setParam(std::string ARMOR_TYPE)
 }
 
 
+// 设置是否打印日志
+void EKF::setDebugLogger(bool SHOW_LOGGER_DEBUG)
+{
+    this->SHOW_LOGGER_DEBUG = SHOW_LOGGER_DEBUG;
+}
+
+
 
 void EKF::reset()
 {
@@ -228,7 +235,7 @@ void EKF::getArmorParams(double& dx, double& dy, double& theta_offset)
 }
 
 
-
+// 这是滤波的实时值，而不是预测位置喵
 // 得到某个 id 装甲板四个角点在世界下的坐标
 void EKF::getArmorFourCorners(std::vector<Eigen::Vector3d>& corners, int armor_id)
 {
@@ -483,6 +490,29 @@ void EKF::CalculateKalmanGain()
 void EKF::UpdateStatus()
 {
 	X = X_est + K * (Z - h(X_est));
+
+    if(this->SHOW_LOGGER_DEBUG)
+    {
+        // ---------- 临时调参日志 ----------
+        Eigen::Matrix<double, 4, 1> innovation = Z - h(X_est);
+        RCLCPP_INFO(rclcpp::get_logger("ekf_debug"),
+            "Innovation: x=%.4f, y=%.4f, z=%.4f, yaw=%.4f",
+            innovation(0), innovation(1), innovation(2), innovation(3));
+
+        RCLCPP_INFO(rclcpp::get_logger("ekf_debug"),
+            "State: x=%.3f, y=%.3f, z=%.3f, vx=%.3f, vy=%.3f, vz=%.3f, yaw=%.3f, omega=%.3f",
+            X(0), X(1), X(2), X(3), X(4), X(5), X(6), X(7));
+
+        RCLCPP_INFO(rclcpp::get_logger("ekf_debug"),
+            "P_diag: px=%.4f, py=%.4f, pz=%.4f, pyaw=%.4f",
+            P(0,0), P(1,1), P(2,2), P(6,6));
+
+        RCLCPP_INFO(rclcpp::get_logger("ekf_debug"),
+            "K_gain: Kx=%.4f, Ky=%.4f, Kz=%.4f, Kyaw=%.4f",
+            K(0,0), K(1,1), K(2,2), K(6,3));
+        // ---------- 日志结束 ----------
+    }
+    
 }
 
 

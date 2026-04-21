@@ -359,7 +359,7 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 	{
         corners_num = 0;
 		int area = cv::contourArea(contours[i]);
-		if (area > 20) // 面积去除噪点（目前暂时不以面积作为筛选，因为只要够远，面积会非常小，但是饱和度可以保证）
+		if (area > 15) // 面积去除噪点（目前暂时不以面积作为筛选，因为只要够远，面积会非常小，但是饱和度可以保证）
 		{
 			/*
 				所以旋转矩形的angle和width height是这样定义的
@@ -445,9 +445,9 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 
             // ------- 3. 高宽比处理 -------
 
-			double ratio = height / width; // [高宽比]不能太小，确保像灯带
+			double ratio = height / width; // 面积大的时候[高宽比]不能太小，确保像灯带
 
-            if (area > 100 && ratio < 2.50) continue; // 面积不小，高宽比又不小，不是灯条，不要
+            if (area > 300 && ratio < 2.50) continue; // 面积不小，高宽比又不小，不是灯条，不要
 
             
             // 统计：灯条 + 1

@@ -99,7 +99,7 @@ public:
         // 声明参数（带默认值）
 
         // core 节点
-        this->declare_parameter("core.logger.show_logger_time", false); // 是否打印时间相关日志
+        this->declare_parameter("core.logger.show_logger_time", true); // 是否打印时间相关日志
         this->declare_parameter("core.image.show_img", true); // 是否显示图片
         
         // prepare 类
@@ -110,19 +110,20 @@ public:
 
         // EKF相关（传递给ekf_）
         this->declare_parameter("ekf.predict_time", 0.20); // 预测时间
+        this->declare_parameter("ekf.show_logger_debug", false); // ekf 调试
 
-        this->declare_parameter("ekf.q_x", 1e-5);
-        this->declare_parameter("ekf.q_y", 1e-5);
-        this->declare_parameter("ekf.q_z", 1e-5);
-        this->declare_parameter("ekf.q_v_x", 1e-3);
-        this->declare_parameter("ekf.q_v_y", 1e-3);
-        this->declare_parameter("ekf.q_v_z", 1e-3);
-        this->declare_parameter("ekf.q_yaw", 5e-4);
-        this->declare_parameter("ekf.q_omega", 1e-3);
+        this->declare_parameter("ekf.q_x", 0.1);
+        this->declare_parameter("ekf.q_y", 0.1);
+        this->declare_parameter("ekf.q_z", 0.1);
+        this->declare_parameter("ekf.q_v_x", 1.0);
+        this->declare_parameter("ekf.q_v_y", 1.0);
+        this->declare_parameter("ekf.q_v_z", 1.0);
+        this->declare_parameter("ekf.q_yaw", 5e-3);
+        this->declare_parameter("ekf.q_omega", 0.1);
         this->declare_parameter("ekf.q_a_omega", 1e-2);
-        this->declare_parameter("ekf.r_x", 0.1);
-        this->declare_parameter("ekf.r_y", 0.1);
-        this->declare_parameter("ekf.r_z", 0.3);
+        this->declare_parameter("ekf.r_x", 0.2);
+        this->declare_parameter("ekf.r_y", 0.2);
+        this->declare_parameter("ekf.r_z", 0.6);
         this->declare_parameter("ekf.r_yaw", 0.1);
         this->declare_parameter("ekf.radius", 0.25);
 
@@ -138,6 +139,7 @@ public:
         this->CAMERA_NAME = this->get_parameter("core.param.camera_name").as_string();
         this->ARMOR_TYPE = this->get_parameter("core.param.armor_type").as_string();
         this->PREDICT_TIME = this->get_parameter("ekf.predict_time").as_double();
+        this->SHOW_LOGGER_DEBUG = this->get_parameter("ekf.show_logger_debug").as_bool();
 
 
         // 注册参数变化回调（用于运行时动态修改）
@@ -177,6 +179,8 @@ public:
         ekf_->setParam(this->ARMOR_TYPE); // 装甲板类型
 
         this->last_lookup_time_ = this->now(); // 初始化 上一次滤波时间
+
+        prepare.setParam(this->SHOW_LOGGER_PREPARE, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE); // 传入从配置文件读取的参数
     }
 
 
@@ -194,8 +198,8 @@ private:
         // ... 步骤1 接收图像完成时间戳
         rclcpp::Time t1 = this->now();
 
+
         // 2. 预处理（掩码、灯条筛选、灯条配对）
-        prepare.setParam(this->SHOW_LOGGER_PREPARE, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE); // 传入从配置文件读取的参数
         prepare.setImgShow(this->img_show); // 设置 img_show
         prepare.preProcessing(img); // 图像预处理
         this->strip = prepare.findAndJudgeLightStrip(); // 找灯带 返回灯带集合
@@ -242,8 +246,8 @@ private:
                         那直接重置得了
         */
 
-        double pitch_result;
-        double yaw_result;
+        double pitch_result = -999;
+        double yaw_result = -999;
 
         double dt = (this->now() - this->last_lookup_time_).seconds(); // 距离上一次滤波的时间间隔
 
@@ -289,11 +293,16 @@ private:
                     this->ekf_->getArmorPredict(armorplate_center_predict, 3, this->PREDICT_TIME);
                     this->ekf_->getCenterPredict(car_center_predict, this->PREDICT_TIME);
                 }
+                else
+                {
+                    RCLCPP_INFO(this->get_logger(), "第 %d 帧，正在初始化滤波器，使用了观测值", this->continuous_count);
+                }
 
             }
             else // 丢失方法2：没查到变换
             {
                 ++this->lost_count; // 连续丢失计数器 + 1
+                RCLCPP_WARN_ONCE(this->get_logger(), "未查到【世界坐标系】->【装甲板坐标系】变换");
 
                 if(this->ekf_ready && this->lost_count <= this-> MAX_LOST_COUNT)
                 {
@@ -307,21 +316,22 @@ private:
                 {
                     this->ekf_ready = false; // 丢的太多了 不ready
                     this->continuous_count = 0; // 数据作废
-                    this->ekf_->reset();
-                    RCLCPP_WARN_ONCE(this->get_logger(), "目标丢失超过 %d 帧, 或者滤波器未初始化好。EKF 已重置", this->MAX_LOST_COUNT);
+                    this->ekf_->reset(); // 重置滤波器为未初始化状态。因为当前帧已经没有用了，等下一帧初始化
+                    RCLCPP_WARN_ONCE(this->get_logger(), "有目标但未查到变换，目标丢失超过 %d 帧。或者滤波器未初始化好。EKF 已重置", this->MAX_LOST_COUNT);
                     showImg();
                     return;
                 }
             }
-
-            
 
         }
         else // 丢失方法1：不存在装甲板 或者 pnp解算失败
         {
             ++this->lost_count; // 连续丢失计数器 + 1
 
-            if(this->armorplate.size() == 0) RCLCPP_WARN_THROTTLE(this->get_logger(), *get_clock(), 500, "未检测到装甲板");
+            if(this->armorplate.size() == 0) 
+            {
+                RCLCPP_WARN_THROTTLE(this->get_logger(), *get_clock(), 500, "未检测到装甲板");
+            }
             else RCLCPP_ERROR(this->get_logger(), "pnp 解算失败");
 
 
@@ -337,8 +347,8 @@ private:
             {
                 this->ekf_ready = false; // 丢的太多了 不ready
                 this->continuous_count = 0; // 数据作废
-                this->ekf_->reset();
-                RCLCPP_WARN_ONCE(this->get_logger(), "目标丢失超过 %d 帧, EKF 已重置", this->MAX_LOST_COUNT);
+                this->ekf_->reset(); // 重置滤波器为未初始化状态。因为当前帧已经没有用了，等下一帧初始化
+                RCLCPP_WARN_ONCE(this->get_logger(), "不存在装甲板 或者 pnp解算失败。目标丢失超过 %d 帧, EKF 已重置", this->MAX_LOST_COUNT);
                 showImg();
                 return;
             }
@@ -356,36 +366,38 @@ private:
         rclcpp::Time t4 = this->now();
 
 
+
         // 5. 重投影
         // ========== 重投影可视化 ==========
-        if (this->ekf_ready)
+        if (this->ekf_ready && pitch_result != -999 && yaw_result != -999)
         {
-            // 1. 获取相机内参和畸变系数（可从当前处理的装甲板对象获取，因为 ArmorPlate 已保存）
+            // 先获取相机内参和畸变系数（可从当前处理的装甲板对象获取，因为 ArmorPlate 已保存）
             //    注意：如果本帧没有成功检测到装甲板，则无法获取相机参数，此时跳过重投影。
             if (!this->armorplate.empty() && this->armorplate[0].is_success)
             {
-                // 查询 world → camera 的 TF
+                // 再查询 world → camera 的 TF
                 tf2::Transform T_world_cam;
                 if (this->tf->getWorldToCameraTransform(T_world_cam))
                 {
-                    // 3. 对每个装甲板 ID 进行重投影（用不同颜色区分）
+                    // 对每个装甲板 ID 进行重投影（用不同颜色区分）（实时滤波位置）
                     std::vector<cv::Scalar> colors = 
                     {
                         cv::Scalar(0, 255, 0),   // 前: 绿
                         cv::Scalar(255, 0, 0),   // 右: 蓝
-                        cv::Scalar(0, 0, 255),   // 后: 红
+                        cv::Scalar(255, 255, 255), // 后: 白
                         cv::Scalar(255, 255, 0)  // 左: 青
                     };
 
                     for (int id = 1; id <= 4; id++)
                     {
-                        std::vector<Eigen::Vector3d> corners;
-                        this->ekf_->getArmorFourCorners(corners, id);
-                        projectAndDraw(corners, this->armorplate[0].K, this->armorplate[0].D, T_world_cam, colors[id - 1]);
+                        std::vector<Eigen::Vector3d> corners_world;
+                        this->ekf_->getArmorFourCorners(corners_world, id); // id=1 前, id=2 右, id=3 后, id=4 左
+                        projectAndDraw(corners_world, this->armorplate[0].K, this->armorplate[0].D, T_world_cam, colors[id - 1]);
                     }
 
-                    // 可选：也绘制整车中心点
-                    std::vector<Eigen::Vector3d> center_world = { car_center_predict };
+                    // 也绘制整车中心点（实时滤波位置）
+                    std::vector<Eigen::Vector3d> center_world(1);
+                    this->ekf_->getCenterPredict(center_world[0], 0.00); // 获取实时位置下的整车中心点 在世界下 的位置坐标
                     projectAndDraw(center_world, this->armorplate[0].K, this->armorplate[0].D, T_world_cam, cv::Scalar(255, 255, 255));
                 }
             }
@@ -398,7 +410,7 @@ private:
         send_msg.pitch = pitch_result;
         send_msg.yaw = yaw_result;
         serial_pub_->publish(send_msg);
-         
+        RCLCPP_INFO(this->get_logger(), "已发送信息");
         
         // ... 步骤5 重投影 + 发送消息 完成时间戳
         rclcpp::Time t5 = this->now();
@@ -451,7 +463,12 @@ private:
         {
             tf2::Vector3 p_world(wp.x(), wp.y(), wp.z());
             tf2::Vector3 p_cam = T_world_cam * p_world;   // world -> camera
-            cam_points.emplace_back(p_cam.x(), p_cam.y(), p_cam.z());
+
+            // 注意 opencv坐标系的定义！
+            double camera_frame_x = -p_cam.y();
+            double camera_frame_y = -p_cam.z();
+            double camera_frame_z = p_cam.x();
+            cam_points.emplace_back(camera_frame_x, camera_frame_y, camera_frame_z); // 转换到 opencv 相机坐标系下
         }
 
         // 投影到像素平面（考虑畸变）
@@ -467,9 +484,13 @@ private:
             {
                 cv::line(this->img_show, img_points[i], img_points[(i + 1) % 4], color, 2);
             }
-            // 可选：绘制中心点
+            // 可选：绘制装甲板中心点
             cv::Point2f center = (img_points[0] + img_points[1] + img_points[2] + img_points[3]) / 4;
             cv::circle(this->img_show, center, 3, cv::Scalar(0, 255, 255), -1);
+        }
+        else // 否则就是投影整车中心点
+        {
+            cv::circle(this->img_show, img_points[0], 3, cv::Scalar(0, 0, 255), -1);
         }
     }
 
@@ -488,29 +509,25 @@ private:
     // 回调：当参数被外部修改时触发
     rcl_interfaces::msg::SetParametersResult onParameterChange(const std::vector<rclcpp::Parameter>& params)
     {
+        RCLCPP_INFO(this->get_logger(), "修改参数的回调函数已被调用! ");
         for (const auto& p : params) 
         {
             const std::string& name = p.get_name();
             if (name == "core.logger.show_logger_time") 
             {
+                RCLCPP_INFO(this->get_logger(), "打印 corenode 节点耗时开关已打开! ");
                 this->SHOW_LOGGER_TIME = p.as_bool();
             } 
             else if (name == "core.image.show_img") 
             {
+                RCLCPP_INFO(this->get_logger(), "显示图片开关已打开! ");
                 this->SHOW_IMG_SHOW = p.as_bool();
             } 
-            else if (name == "core.logger.show_logger_prepare") 
+            else if (name == "core.logger.show_logger_prepare" || name == "core.param.chosen_color" || name == "core.param.armor_type") 
             {
+                RCLCPP_INFO(this->get_logger(), "预处理 节点参数已更新! ");
                 this->SHOW_LOGGER_PREPARE = p.as_bool();
-                prepare.setParam(this->SHOW_LOGGER_PREPARE, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE);
-            } 
-            else if (name == "core.param.chosen_color") 
-            {
                 this->CHOSEN_COLOR = p.as_string();
-                prepare.setParam(this->SHOW_LOGGER_PREPARE, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE);
-            } 
-            else if (name == "core.param.armor_type") 
-            {
                 this->ARMOR_TYPE = p.as_string();
                 prepare.setParam(this->SHOW_LOGGER_PREPARE, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE);
             } 
@@ -520,15 +537,24 @@ private:
                     name == "ekf.r_x" || name == "ekf.r_y" || name == "ekf.r_z" ||
                     name == "ekf.r_yaw" || name == "ekf.radius") 
             {
+                RCLCPP_INFO(this->get_logger(), "EKF 参数已更新! ");
                 this->ekf_->updateParamsFromServer();  // 让EKF自己重新读取参数
             }
             else if (name == "tf.show_logger_error" || name == "tf.show_result")
             {
+                RCLCPP_INFO(this->get_logger(), "TF 节点参数已更新! ");
                 this->tf->updateParamsFromServer();  // 通知 TF 刷新
             }
             else if (name == "ekf.predict_time") // 更新 ekf 预测时间
             {
+                RCLCPP_INFO(this->get_logger(), "EKF 预测时间已更新! ");
                 this->PREDICT_TIME = p.as_double();
+            }
+            else if (name == "ekf.show_logger_debug") // 是否打印 ekf 调参参数
+            {
+                RCLCPP_INFO(this->get_logger(), "EKF 调参日志开关已打开! ");
+                this->SHOW_LOGGER_DEBUG = p.as_bool();
+                this->ekf_->setDebugLogger(this->SHOW_LOGGER_DEBUG);
             }
             
             // 注意：检测颜色、相机名称等通常不应运行时改变，如需改变可类似处理
@@ -571,6 +597,7 @@ private:
     std::string ARMOR_TYPE; // 选择装甲板类型 normal / hero ，决定了配对的参数
 
     double PREDICT_TIME; // ekf 预测时间
+    bool SHOW_LOGGER_DEBUG; // ekf 打印调试日志
 
     ///////// 工具类参数 /////////
     rclcpp::Time last_print; // 记录上一次打印 pnp 发布频率的时间戳，用于统计 pnp 发布频率
