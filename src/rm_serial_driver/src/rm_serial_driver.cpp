@@ -123,61 +123,6 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
 
         this->chip_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(this);
 
-        // // ------------------ 进行一个配置文件的读取 -----------------
-
-        // std::ifstream file("config.txt");  // 打开配置文件，注意是在工作空间下
-        // if (!file.is_open()) 
-        // {
-        //     RCLCPP_ERROR(this->get_logger(), "【 EXIT 】无法打开 config.txt 配置文件。。。。即将退出 tf\n");
-        //     exit(-1);
-        // }
-
-        // std::string each_line;
-        // int line_count = 0; // 记录行数
-
-        // while (std::getline(file, each_line)) 
-        // {
-        //     // 处理每一行，each_line 即为当前行的字符串
-        //     if (each_line.empty() || each_line[0] == '#' || each_line[0] == '/') continue;
-        //     else
-        //     {
-        //         ++line_count;
-        //         RCLCPP_INFO(this->get_logger(), "已读取配置文件第 %d 个有效行: %s", line_count, each_line.c_str());
-
-        //         if(line_count == 9)
-        //         {
-        //             if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
-        //             {
-        //                 this->SHOW_LOGGER_RECEIVE = false;
-        //             }
-        //             else this->SHOW_LOGGER_RECEIVE = true;
-        //             RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_LOGGER_RECEIVE = %s", each_line.c_str());
-        //         }
-
-        //         else if(line_count == 10)
-        //         {
-        //             if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
-        //             {
-        //                 this->SHOW_LOGGER_TRY_AND_SEND = false;
-        //             }
-        //             else this->SHOW_LOGGER_TRY_AND_SEND = true;
-        //             RCLCPP_INFO(this->get_logger(), "【 设置参数 】SHOW_LOGGER_TRY_AND_SEND = %s", each_line.c_str());
-        //         }
-
-        //     }
-        // }
-
-        // if(line_count < 10)
-        // {
-        //     RCLCPP_ERROR(this->get_logger(), "配置文件的有效行数不足 10 行, 检查配置文件。即将退出 core 节点\n");
-        //     exit(-1);
-        // }
-        // else
-        // {
-        //     RCLCPP_INFO(this->get_logger(), "Step 7/7: 串口 ALL SET! 共设置了 %d 个有效参数", line_count);
-        // }
-
-        // file.close();
 
         RCLCPP_INFO_ONCE(get_logger(), ">>>>>>>>>>>>>>> 串口构造函数已经初始化完成。");
 
