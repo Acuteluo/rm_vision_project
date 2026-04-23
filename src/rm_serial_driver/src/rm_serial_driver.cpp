@@ -241,6 +241,7 @@ void RMSerialDriver::receiveData()
                 // 帧尾正确
                 if (packet.checksum == 0xFE) 
                 {
+                    RCLCPP_INFO_ONCE(get_logger(), "成功接收到电控数据，正在处理...");
                     // 接收数据部分
 
                     // ... 步骤2 确认数据可用的时间戳

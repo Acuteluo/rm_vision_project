@@ -218,10 +218,10 @@ void ArmorPlate::perspectiveNPoint()
         输出：旋转向量r 平移向量t （在 opencv 默认坐标系下）
         设置：是否使用外点剔除 迭代次数 内点距离阈值 内点置信度阈值 以及使用的pnp算法
     */ 
-	this->is_success = cv::solvePnPRansac(
-        this->vertice_world, this->vertice_pixel, K, D, 
+	this->is_success = cv::solvePnP(this->vertice_world, this->vertice_pixel, K, D, 
         this->r, this->t, 
-        false, 300, 4.0, 0.99, inliers, cv::SOLVEPNP_IPPE);
+        false, 
+        cv::SOLVEPNP_IPPE); 
 
 
     // 如果解算不成功

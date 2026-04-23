@@ -168,8 +168,8 @@ bool TF::getWorldToCameraTransform(tf2::Transform& T_world_cam)
         // 查询 world_frame 到 camera_frame 的变换
         transform = tf_buffer_->lookupTransform("world_frame", "camera_frame", tf2::TimePointZero);
     }
-     catch (tf2::TransformException &ex) 
-     {
+    catch (tf2::TransformException &ex) 
+    {
         RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【世界坐标系 -> 相机 坐标系】 TF lookup failed: %s", ex.what());
         return false;
     }
@@ -188,7 +188,7 @@ bool TF::getWorldToArmorplateTransform(Eigen::Vector3d& armorplate_center, doubl
     geometry_msgs::msg::TransformStamped transform_world_armorplate; // 世界 -> 装甲板
     try 
     {
-        transform_world_armorplate = tf_buffer_->lookupTransform("world_frame", "armorplate_frame", tf2::TimePointZero);
+        transform_world_armorplate = tf_buffer_->lookupTransform("camera_frame", "armorplate_frame", tf2::TimePointZero);
     } 
     catch (tf2::TransformException &ex) 
     {
@@ -213,8 +213,19 @@ bool TF::getWorldToArmorplateTransform(Eigen::Vector3d& armorplate_center, doubl
             transform_world_armorplate.transform.rotation.y,
             transform_world_armorplate.transform.rotation.z,
             transform_world_armorplate.transform.rotation.w);
-    double roll_armor, pitch_armor;
-    tf2::Matrix3x3(q).getRPY(roll_armor, pitch_armor, yaw_armor);
+
+    // double roll_armor, pitch_armor;
+    // tf2::Matrix3x3(q).getRPY(roll_armor, pitch_armor, yaw_armor);
+
+    // 1. 转成矩阵
+    tf2::Matrix3x3 mat(q);
+
+    // 2. 提取第一列的前两个元素 (世界坐标系下的 X 和 Y 投影) 注意这里是 R 矩阵！
+    double vec_x = mat[0][0]; 
+    double vec_y = mat[1][0]; 
+
+    // 3. 直接用 atan2 算出偏航角
+    yaw_armor = std::atan2(vec_y, vec_x);
 
 
 /*

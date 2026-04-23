@@ -359,7 +359,7 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 	{
         corners_num = 0;
 		int area = cv::contourArea(contours[i]);
-		if (area > 15) // 面积去除噪点（目前暂时不以面积作为筛选，因为只要够远，面积会非常小，但是饱和度可以保证）
+		if (area > 0) // 面积去除噪点（目前暂时不以面积作为筛选，因为只要够远，面积会非常小，但是饱和度可以保证）
 		{
 			/*
 				所以旋转矩形的angle和width height是这样定义的
@@ -381,44 +381,6 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 
             // 将顶点放入 vector 以便 cornerSubPix 处理
             std::vector<cv::Point2f> vec_vertices(vertices, vertices + 4);
-
-
-            // 检查所有顶点是否在图像范围内（防止越界）
-            bool all_in_range = true;
-            for (const auto& pt : vec_vertices) 
-            {
-                if (pt.x < 3 || pt.x >= img.cols - 3 || pt.y < 3 || pt.y >= img.rows - 3) 
-                {
-                    all_in_range = false;
-                    break;
-                }
-            }
-
-
-            // 只有当所有顶点都在范围内时才进行亚像素优化，否则跳过以避免越界访问
-            if(all_in_range)
-            {
-                // 设置亚像素细化的参数
-                cv::Size winSize(5, 5);          // 搜索窗口半宽为5，实际窗口 11x11
-                cv::Size zeroZone(-1, -1);       // 不使用死区
-                cv::TermCriteria criteria(cv::TermCriteria::EPS + cv::TermCriteria::COUNT, 30, 0.01);
-
-                // 执行亚像素细化（必须在灰度图上进行）
-                cv::cornerSubPix(this->img_gray, vec_vertices, winSize, zeroZone, criteria);
-
-                // 将细化后的顶点拷贝回 vertices
-                for (int i = 0; i < 4; ++i) 
-                {
-                    vertices[i] = vec_vertices[i];
-                }
-
-                // 【可选】用细化后的顶点重新生成一个更精确的旋转矩形（推荐）
-                cv::RotatedRect refined_rect = cv::minAreaRect(vec_vertices);
-
-                temp_rotatedRect = refined_rect; // 这样 temp_rotatedRect 就是亚像素优化后的旋转矩形了
-
-                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 的旋转矩形经过亚像素优化了！", i);
-            }
 
 
 			double angle = temp_rotatedRect.angle; // 获取角度
@@ -511,14 +473,18 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 
             // ------- 4.2 区分颜色 之 总体部分 注意是针对 strip_mask，与 contours 无关！ -------
 
+            cv::Rect strip_rec = cv::boundingRect(contours[i]);  // 获取外接矩形
+
             int saturation_total = 0; //  总饱和度
             double saturation_average = 0.00; // 平均饱和度
             int pixels_num = 0; // 灯条像素点总数
 
-            for(int j = 0; j < strip_mask.rows; j++) // 行y
+            for(int j = strip_rec.y; j < strip_rec.y + strip_rec.height; j++) // 行y
             {
-                for(int k = 0; k < strip_mask.cols; k++) // 列x
+                for(int k = strip_rec.x; k < strip_rec.x + strip_rec.width; k++) // 列x
                 {
+                    if (k < 0 || k >= strip_mask.cols || j < 0 || j >= strip_mask.rows) continue;
+
                     // 在该点的 strip_mask 值
                     uchar mask_value = strip_mask.at<uchar>(j, k);
                     if(mask_value) 
@@ -537,11 +503,40 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
             
 
             // ------- 4.3 区分灯条与判断颜色（还需完善）-------
+            // 不如大道至简：红蓝相差倍数优先 总体饱和度高优先 边缘饱和度作为辅助
             std::string color;
-            double times = std::max((double)red_edge_average / (double)blue_edge_average, (double)blue_edge_average / (double)red_edge_average); // 红蓝值相差倍数，至少要 4 以上才比较合理
-            
+            double times = std::max((double)red_edge_average / (double)blue_edge_average, (double)blue_edge_average / (double)red_edge_average); 
+            int TIMES_THRESHOLD = 3; // 红蓝值相差倍数阈值，至少要 3 以上才比较合理
+
+            if(times > TIMES_THRESHOLD)
+            {
+                if(red_edge_average > blue_edge_average) // 红值偏高，一般都会相差 100 以上的
+                {
+                    color = "red"; // red
+                }
+                
+                else 
+                {
+                    color = "blue"; // blue
+                }
+            }
+
+            // 红蓝值至少有一个高，另一个低，且相差大，说明是灯条
+            else if(std::max(red_edge_average, blue_edge_average) > 200.00 && std::min(red_edge_average, blue_edge_average) < 100.00)
+            {
+                if(red_edge_average > blue_edge_average) // 红值偏高，一般都会相差 100 以上的
+                {
+                    color = "red"; // red
+                }
+                
+                else 
+                {
+                    color = "blue"; // blue
+                }
+            }
+
             // 边缘饱和度高，一定是灯条
-            if(saturation_edge_average > 150.00 || saturation_average > 150.00)
+            else if(saturation_average > 175.00 || saturation_edge_average > 175.00)
             {
                 if(red_edge_average > blue_edge_average) // 红值偏高，一般都会相差 100 以上的
                 {
@@ -564,39 +559,6 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
                 color = "white";
             }
 
-            else if(saturation_average > 50.00 && saturation_edge_average > 50.00 && green_edge_average < 150.00) // 总体饱和度高，边缘饱和度也高，绿值低，说明是灯条
-            {
-                if(std::fabs(red_edge_average - blue_edge_average) < 100.00) // 红蓝值相差不大，说明是白炽灯
-                {
-                    color = "white";
-                }
-
-                else if(times < 4.00) // 红蓝值相差倍数不大，说明是白炽灯
-                {
-                    color = "white";
-                }
-
-                else if(std::min(red_edge_average, blue_edge_average) > 75.00) // 红蓝值的最低值不低，说明是白炽灯
-                {
-                    color = "white";
-                }
-
-                
-                else
-                {
-                    if(red_edge_average > blue_edge_average) // 红值偏高，一般都会相差 100 以上的
-                    {
-                        color = "red"; // red
-                    }
-                
-                    else 
-                    {
-                        color = "blue"; // blue
-                    }
-                }
-                
-            }
-
             else // 总体饱和度低，边缘饱和度也低，说明是白炽灯
             {
                 color = "white";
@@ -606,7 +568,9 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
             // ------- 4,4 画画部分 -------
 
             // 信息
-            cv::putText(
+            if (this->SHOW_LOGGER)
+            {
+                cv::putText(
                 img_show, 
                 "strip " + std::to_string((int)sum) + 
                 " corners = " + std::to_string((int)corners_num) + 
@@ -619,29 +583,84 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
                 " color = " + color,
                 cv::Point2f(0, sum * 50), cv::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(255, 255, 255), 2);
             
-            // 灯条编号
-            cv::putText(img_show, "L" + std::to_string((int)sum), cv::Point2f(temp_rotatedRect.center.x, temp_rotatedRect.center.y), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 180, 255), 1.25);
+                // 灯条编号
+                cv::putText(img_show, "L" + std::to_string((int)sum), cv::Point2f(temp_rotatedRect.center.x, temp_rotatedRect.center.y), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 180, 255), 1.25);
 
-            // 获取角点，根据color画出不同颜色的旋转矩形
-            cv::Scalar color_scalar; // 临时标注灯条边框的颜色
-            if(color == "red") color_scalar = cv::Scalar(0, 255, 255); // 红色灯条 -> 黄色
-            else if(color == "blue") color_scalar = cv::Scalar(255, 255, 0); // 蓝色灯条 -> 青色
-            else color_scalar = cv::Scalar(255, 0, 255); // 白炽灯 -> 紫色
-            
-            cv::Point2f corners[4]; // 四个顶点
-			temp_rotatedRect.points(corners); // 获取顶点
+                // 获取角点，根据color画出不同颜色的旋转矩形
+                cv::Scalar color_scalar; // 临时标注灯条边框的颜色
+                if(color == "red") color_scalar = cv::Scalar(0, 255, 255); // 红色灯条 -> 黄色
+                else if(color == "blue") color_scalar = cv::Scalar(255, 255, 0); // 蓝色灯条 -> 青色
+                else color_scalar = cv::Scalar(255, 0, 255); // 白炽灯 -> 紫色
+                
+                cv::Point2f corners[4]; // 四个顶点
+                temp_rotatedRect.points(corners); // 获取顶点
 
-            for (int j = 0; j < 4; j++)
-	        {
-		        cv::putText(img_show, "[" + std::to_string((int)j + 1) + "][" + std::to_string((int)corners[j].x) + ", " + std::to_string((int)corners[j].y) + "]", cv::Point2f(corners[j].x, corners[j].y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 255, 255), 0.65);
-		        cv::line(img_show, corners[j], corners[(j + 1) % 4], color_scalar, 3); //画线
-	        }
+                for (int j = 0; j < 4; j++)
+                {
+                    cv::putText(img_show, "[" + std::to_string((int)j + 1) + "][" + std::to_string((int)corners[j].x) + ", " + std::to_string((int)corners[j].y) + "]", cv::Point2f(corners[j].x, corners[j].y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 255, 255), 0.65);
+                    cv::line(img_show, corners[j], corners[(j + 1) % 4], color_scalar, 3); //画线
+                }
+
+            }
             
 
 			// ------- 5. 颜色和所选颜色相同，则确认是目标灯带，入队 -------
             if(color == this->CHOSEN_COLOR) 
             {
-			    strip.push_back(Strip(temp_rotatedRect, angle, width, height, color));
+                // 检查所有顶点是否在图像范围内（防止越界）
+                bool all_in_range = true;
+                for (const auto& pt : vec_vertices) 
+                {
+                    if (pt.x < 3 || pt.x >= img.cols - 3 || pt.y < 3 || pt.y >= img.rows - 3) 
+                    {
+                        all_in_range = false;
+                        break;
+                    }
+                }
+
+
+                // 只有当所有顶点都在范围内时才进行亚像素优化，否则跳过以避免越界访问
+                if(all_in_range)
+                {
+                    // 设置亚像素细化的参数
+                    cv::Size winSize(5, 5);          // 搜索窗口半宽为5，实际窗口 11x11
+                    cv::Size zeroZone(-1, -1);       // 不使用死区
+                    cv::TermCriteria criteria(cv::TermCriteria::EPS + cv::TermCriteria::COUNT, 30, 0.01);
+
+                    // 执行亚像素细化（必须在灰度图上进行）
+                    cv::cornerSubPix(this->img_gray, vec_vertices, winSize, zeroZone, criteria);
+
+
+                    // 【可选】用细化后的顶点重新生成一个更精确的旋转矩形（推荐）
+                    cv::RotatedRect refined_rect = cv::minAreaRect(vec_vertices);
+
+                    // 重新计算 angle, width, height
+                    cv::Size2d refined_size = refined_rect.size;
+                    double refined_width = refined_size.width;
+                    double refined_height = refined_size.height;
+                    double refined_angle = refined_rect.angle;
+                    if (refined_width > refined_height) 
+                    {
+                        refined_angle -= 90.0;
+                        std::swap(refined_width, refined_height);
+                    }
+                    if (refined_angle == 90.0)
+                    {
+                        refined_angle = 0.0;
+                    }
+
+                    // 使用细化后的参数构造 Strip
+                    strip.push_back(Strip(refined_rect, refined_angle, refined_width, refined_height, color));
+                    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 经过亚像素优化并入选", sum);
+
+                }
+
+                else 
+                {
+                    // 边界不安全，直接使用原矩形
+                    strip.push_back(Strip(temp_rotatedRect, angle, width, height, color));
+                }
+
             }
 		}
 	}
@@ -865,5 +884,6 @@ void Prepare::preProcessing(cv::Mat& img)
     // this->img = img; // 原图
     // this->img_hsv = img_hsv; // hsv图
     
+    // cv::imshow("mask", this->mask);
 
 }

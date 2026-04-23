@@ -25,22 +25,22 @@ public:
         this->declare_parameter("core.param.armor_type", "normal"); // 识别装甲板的类型
 
         // EKF相关（传递给ekf_）
-        this->declare_parameter("ekf.predict_time", 0.20); // 预测时间
-        this->declare_parameter("ekf.show_logger_debug", false); // ekf 调试
+        this->declare_parameter("ekf.predict_time", 0.05); // 预测时间
+        this->declare_parameter("ekf.show_logger_debug", true); // ekf 调试
 
         this->declare_parameter("ekf.q_x", 0.1);
         this->declare_parameter("ekf.q_y", 0.1);
         this->declare_parameter("ekf.q_z", 0.1);
-        this->declare_parameter("ekf.q_v_x", 1.0);
-        this->declare_parameter("ekf.q_v_y", 1.0);
-        this->declare_parameter("ekf.q_v_z", 1.0);
+        this->declare_parameter("ekf.q_v_x", 3.0);
+        this->declare_parameter("ekf.q_v_y", 3.0);
+        this->declare_parameter("ekf.q_v_z", 3.0);
         this->declare_parameter("ekf.q_yaw", 5e-3);
-        this->declare_parameter("ekf.q_omega", 0.1);
-        this->declare_parameter("ekf.q_a_omega", 1e-2);
-        this->declare_parameter("ekf.r_x", 0.2);
-        this->declare_parameter("ekf.r_y", 0.2);
-        this->declare_parameter("ekf.r_z", 0.6);
-        this->declare_parameter("ekf.r_yaw", 0.1);
+        this->declare_parameter("ekf.q_omega", 1.0);
+        this->declare_parameter("ekf.q_a_omega", 0.5);
+        this->declare_parameter("ekf.r_x", 0.05);
+        this->declare_parameter("ekf.r_y", 0.05);
+        this->declare_parameter("ekf.r_z", 0.1);
+        this->declare_parameter("ekf.r_yaw", 0.05);
         this->declare_parameter("ekf.radius", 0.25);
 
         // TF 参数声明
@@ -117,9 +117,13 @@ private:
 
         // 2. 预处理（掩码、灯条筛选、灯条配对）
         prepare.setImgShow(this->img_show); // 设置 img_show
+        rclcpp::Time t1_1 = this->now();
         prepare.preProcessing(img); // 图像预处理
+        rclcpp::Time t1_2 = this->now();
         this->strip = prepare.findAndJudgeLightStrip(); // 找灯带 返回灯带集合
+        rclcpp::Time t1_3 = this->now();
 		this->armorplate = prepare.pairStrip(); // 灯条配对 【修改】返回按置信度排序后的装甲板集合
+        rclcpp::Time t1_4 = this->now();
         this->img_show = prepare.getImgShow(); // 获取预处理后带有信息的 img_show
 
         // ... 步骤2 预处理完成时间戳
@@ -192,7 +196,7 @@ private:
             // 查找【世界坐标系】->【装甲板坐标系】变换
             Eigen::Vector3d armorplate_center;
             double yaw_armorplate;
-            bool flag = this->tf->getWorldToArmorplateTransform(armorplate_center, yaw_armorplate);
+            bool flag = this->tf->getWorldToArmorplateTransform(armorplate_center, yaw_armorplate); // 没有电控调试时，把函数里父坐标系名字改为 camera_frame
 
             // 如果查到了变换，就开始滤波
             if(flag)
@@ -218,7 +222,7 @@ private:
             else // 丢失方法2：没查到变换
             {
                 ++this->lost_count; // 连续丢失计数器 + 1
-                RCLCPP_WARN_ONCE(this->get_logger(), "未查到【世界坐标系】->【装甲板坐标系】变换");
+                RCLCPP_WARN(this->get_logger(), "未查到【世界坐标系】->【装甲板坐标系】变换");
 
                 if(this->ekf_ready && this->lost_count <= this-> MAX_LOST_COUNT)
                 {
@@ -233,7 +237,7 @@ private:
                     this->ekf_ready = false; // 丢的太多了 不ready
                     this->continuous_count = 0; // 数据作废
                     this->ekf_->reset(); // 重置滤波器为未初始化状态。因为当前帧已经没有用了，等下一帧初始化
-                    RCLCPP_WARN_ONCE(this->get_logger(), "有目标但未查到变换，目标丢失超过 %d 帧。或者滤波器未初始化好。EKF 已重置", this->MAX_LOST_COUNT);
+                    RCLCPP_WARN(this->get_logger(), "有目标但未查到变换，目标丢失超过 %d 帧。或者滤波器未初始化好。EKF 已重置", this->MAX_LOST_COUNT);
                     showImg();
                     return;
                 }
@@ -264,7 +268,7 @@ private:
                 this->ekf_ready = false; // 丢的太多了 不ready
                 this->continuous_count = 0; // 数据作废
                 this->ekf_->reset(); // 重置滤波器为未初始化状态。因为当前帧已经没有用了，等下一帧初始化
-                RCLCPP_WARN_ONCE(this->get_logger(), "不存在装甲板 或者 pnp解算失败。目标丢失超过 %d 帧, EKF 已重置", this->MAX_LOST_COUNT);
+                RCLCPP_WARN(this->get_logger(), "不存在装甲板 或者 pnp解算失败。目标丢失超过 %d 帧, EKF 已重置", this->MAX_LOST_COUNT);
                 showImg();
                 return;
             }
@@ -337,12 +341,16 @@ private:
         if(this->SHOW_LOGGER_TIME && this->armorplate.size() > 0 && this->armorplate[0].is_success)
         {
             double duration1 = (t1 - start).seconds() * 1000.0; // 转换为毫秒
+            double duration1_1 = (t1_1 - t1).seconds() * 1000.0; // 转换为毫秒
+            double duration1_2 = (t1_2 - t1_1).seconds() * 1000.0; // 转换为毫秒
+            double duration1_3 = (t1_3- t1_2).seconds() * 1000.0; // 转换为毫秒
+            double duration1_4 = (t1_4 - t1_3).seconds() * 1000.0; // 转换为毫秒
             double duration2 = (t2 - t1).seconds() * 1000.0; // 转换为毫秒
             double duration3 = (t3 - t2).seconds() * 1000.0; // 转换为毫秒
             double duration4 = (t4 - t3).seconds() * 1000.0; // 转换为毫秒
             double duration5 = (t5 - t4).seconds() * 1000.0; // 转换为毫秒
             double total_duration = (t5 - start).seconds() * 1000.0; // 转换为毫秒
-            RCLCPP_INFO(this->get_logger(), "本帧处理耗时: 接受图像 = %.4f ms, 预处理 = %.4f ms, pnp 解算 = %.4f ms, tf 变换 + 滤波 = %.4f ms, 重投影 + 发布消息 = %.4f ms. 总耗时 = %.4f ms", duration1, duration2, duration3, duration4, duration5, total_duration);
+            RCLCPP_INFO(this->get_logger(), "本帧处理耗时: 接受图像 = %.4f ms, 预处理 = %.4f ms, pnp 解算 = %.4f ms, tf 变换 + 滤波 = %.4f ms, 重投影 + 发布消息 = %.4f ms. 总耗时 = %.4f ms, t1_1 = %.4f ms, t1_2 = %.4f ms, t1_3 = %.4f ms, t1_4 = %.4f ms", duration1, duration2, duration3, duration4, duration5, total_duration, duration1_1, duration1_2, duration1_3, duration1_4);
         }
         
 
@@ -428,25 +436,42 @@ private:
         RCLCPP_INFO(this->get_logger(), "修改参数的回调函数已被调用! ");
         for (const auto& p : params) 
         {
+            // 注意 p 一次 只能被当做一种类型来看
             const std::string& name = p.get_name();
+
             if (name == "core.logger.show_logger_time") 
             {
-                RCLCPP_INFO(this->get_logger(), "打印 corenode 节点耗时开关已打开! ");
                 this->SHOW_LOGGER_TIME = p.as_bool();
+                RCLCPP_INFO(this->get_logger(), "打印 corenode 节点耗时开关已打开! ");
             } 
+
             else if (name == "core.image.show_img") 
             {
-                RCLCPP_INFO(this->get_logger(), "显示图片开关已打开! ");
                 this->SHOW_IMG_SHOW = p.as_bool();
+                RCLCPP_INFO(this->get_logger(), "显示图片开关已打开! ");
             } 
-            else if (name == "core.logger.show_logger_prepare" || name == "core.param.chosen_color" || name == "core.param.armor_type") 
+
+            else if (name == "core.logger.show_logger_prepare") 
             {
-                RCLCPP_INFO(this->get_logger(), "预处理 节点参数已更新! ");
                 this->SHOW_LOGGER_PREPARE = p.as_bool();
+                prepare.setParam(this->SHOW_LOGGER_PREPARE, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE);
+                RCLCPP_INFO(this->get_logger(), "预处理日志开关已更新!");
+            } 
+
+            else if (name == "core.param.chosen_color") 
+            {
                 this->CHOSEN_COLOR = p.as_string();
+                prepare.setParam(this->SHOW_LOGGER_PREPARE, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE);
+                RCLCPP_INFO(this->get_logger(), "装甲板颜色已更新!");
+            } 
+
+            else if (name == "core.param.armor_type") 
+            {
                 this->ARMOR_TYPE = p.as_string();
                 prepare.setParam(this->SHOW_LOGGER_PREPARE, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE);
-            } 
+                RCLCPP_INFO(this->get_logger(), "装甲板类型已更新!");
+            }
+
             else if (name == "ekf.q_x" || name == "ekf.q_y" || name == "ekf.q_z" || 
                     name == "ekf.q_v_x" || name == "ekf.q_v_y" || name == "ekf.q_v_z" ||
                     name == "ekf.q_yaw" || name == "ekf.q_omega" || name == "ekf.q_a_omega" ||
@@ -456,21 +481,24 @@ private:
                 RCLCPP_INFO(this->get_logger(), "EKF 参数已更新! ");
                 this->ekf_->updateParamsFromServer();  // 让EKF自己重新读取参数
             }
+
             else if (name == "tf.show_logger_error" || name == "tf.show_result")
             {
                 RCLCPP_INFO(this->get_logger(), "TF 节点参数已更新! ");
                 this->tf->updateParamsFromServer();  // 通知 TF 刷新
             }
+
             else if (name == "ekf.predict_time") // 更新 ekf 预测时间
             {
-                RCLCPP_INFO(this->get_logger(), "EKF 预测时间已更新! ");
                 this->PREDICT_TIME = p.as_double();
+                RCLCPP_INFO(this->get_logger(), "EKF 预测时间已更新! ");
             }
+
             else if (name == "ekf.show_logger_debug") // 是否打印 ekf 调参参数
             {
-                RCLCPP_INFO(this->get_logger(), "EKF 调参日志开关已打开! ");
                 this->SHOW_LOGGER_DEBUG = p.as_bool();
                 this->ekf_->setDebugLogger(this->SHOW_LOGGER_DEBUG);
+                RCLCPP_INFO(this->get_logger(), "EKF 调参日志开关已打开! ");
             }
             
             // 注意：检测颜色、相机名称等通常不应运行时改变，如需改变可类似处理
@@ -529,7 +557,7 @@ private:
     std::unique_ptr<EKF> ekf_;
 
     // 参数量
-    int MAX_LOST_COUNT = 10; // 最大连续丢失量，超过这个就不用 ekf 的预测了
+    int MAX_LOST_COUNT = 30; // 最大连续丢失量，超过这个就不用 ekf 的预测了
 
     // 上一次查询的的时间戳
     rclcpp::Time last_lookup_time_;

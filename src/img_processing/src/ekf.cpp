@@ -128,7 +128,7 @@ void EKF::updateWorldToCarCenter()
 {
     geometry_msgs::msg::TransformStamped tf;
     tf.header.stamp = this->node_->now(); // 帧头 -> 直接获取当前时刻
-    tf.header.frame_id = "world_frame"; // 父坐标系 -> 世界坐标系
+    tf.header.frame_id = "camera_frame"; // 父坐标系 -> 世界坐标系 // 没有电控调试时，把坐标系名字改为 camera_frame
     tf.child_frame_id = "car_center_frame"; // 子坐标系 -> 整车中心坐标系
 
     // 平移
@@ -383,7 +383,7 @@ void EKF::getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int arm
 	UpdateUncertainty(); // 更新不确定性
 
     // 偏航角归一化到 [-π, π]
-    X(6) = fmod(X(6) + M_PI, 2 * M_PI) - M_PI;
+    X(6) = std::atan2(std::sin(X(6)), std::cos(X(6)));
 
 	UpdateHistoricalData(); // 更新历史数据
 
@@ -429,8 +429,9 @@ void EKF::CalculateParameter(double dt)
     // v_x_k = v_x_k-1 
     // v_y_k = v_y_k-1 
     // v_z_k = v_z_k-1
-    // yaw_k = yaw_k-1 + omega_k-1 * dt
-    // omega_k = omega_k-1
+    // yaw_k = yaw_k-1 + omega_k-1 * dt + 0.5 * a_omega_k-1 * dt^2
+    // omega_k = omega_k-1 + a_omega_k-1 * dt
+    // a_omega_k = a_omega_k-1
 	F << 1, 0, 0, dt, 0, 0, 0, 0, 0,
         0, 1, 0, 0, dt, 0, 0, 0, 0,
         0, 0, 1, 0, 0, dt, 0, 0, 0,
@@ -489,12 +490,31 @@ void EKF::CalculateKalmanGain()
 // H * X_k_est 选出有效的量，但是 ekf 非线性，需要写一个函数 h 实现，只是把 X_k_est 换成了 h(X_est)
 void EKF::UpdateStatus()
 {
-	X = X_est + K * (Z - h(X_est));
+	// 计算新息
+    Eigen::Matrix<double, 4, 1> innovation = Z - h(X_est);
+    
+    // 将角度差 (yaw偏差) 限制在 [-π, π] 的最短路径上！
+    // 否则比如 从 +179 到 -179，就会跳 358 度！但是用 sin 和 cos 就可以归一化到 -PI 到 PI 内，再 atan2 反求角度
+    innovation(3) = std::atan2(std::sin(innovation(3)), std::cos(innovation(3)));
+
+
+    // 3. 【新增】角度跳变门控防爆机制
+    // 如果观测角度与预测角度偏差大于 35度 (约 0.6 rad)，说明 PnP 肯定算错了
+    // 只要滤波器已经初始化，我们绝对不相信这个离谱的观测，强行将其拉回 0
+    if (std::abs(innovation(3)) > 0.6 && this->is_initialized) 
+    {
+        innovation(3) = 0.0; // 离谱的角度观测我不听，用 EKF 自己的预测！
+    }
+
+    // 再用处理后的新息进行状态更新
+    X = X_est + K * innovation;
+
+    // 再归一化
+    X(6) = std::atan2(std::sin(X(6)), std::cos(X(6))); 
 
     if(this->SHOW_LOGGER_DEBUG)
     {
         // ---------- 临时调参日志 ----------
-        Eigen::Matrix<double, 4, 1> innovation = Z - h(X_est);
         RCLCPP_INFO(rclcpp::get_logger("ekf_debug"),
             "Innovation: x=%.4f, y=%.4f, z=%.4f, yaw=%.4f",
             innovation(0), innovation(1), innovation(2), innovation(3));
@@ -577,7 +597,7 @@ void EKF::predictOnly(double dt)
     X = X_est; // 将预测状态作为当前状态
     P = P_est;
 
-    X(6) = fmod(X(6) + M_PI, 2 * M_PI) - M_PI; // 注意：偏航角归一化
+    X(6) = std::atan2(std::sin(X(6)), std::cos(X(6)));
 
     X_prev = X;
     P_prev = P;
