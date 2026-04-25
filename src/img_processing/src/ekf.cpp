@@ -40,6 +40,12 @@ void EKF::updateParamsFromServer()
 
     // 整车半径
     this->radius = node_->get_parameter("ekf.radius").as_double();
+
+    // 父坐标系名称，即发布谁到整车中心的变换。单机模式下是 camera_frame，联调模式下是 world_frame
+    this->father_frame = node_->get_parameter("is_standalone").as_bool() ? "camera_frame" : "world_frame";
+
+    // 是否打印调参日志
+    this->SHOW_LOGGER_DEBUG = node_->get_parameter("ekf.show_logger_debug").as_bool();
 }
     
 
@@ -123,12 +129,13 @@ void EKF::updateFourArmorplates()
 }
 
 
-// 05 【世界坐标系】->【整车中心坐标系】注意这里忽略了 pitch & roll
-void EKF::updateWorldToCarCenter()
+// 05 【父坐标系】->【整车中心坐标系】注意这里忽略了 pitch & roll
+// 如果是单机模式，父坐标系是 camera_frame，如果是联调模式，父坐标系是 world_frame
+void EKF::updateFatherToCarCenter()
 {
     geometry_msgs::msg::TransformStamped tf;
     tf.header.stamp = this->node_->now(); // 帧头 -> 直接获取当前时刻
-    tf.header.frame_id = "camera_frame"; // 父坐标系 -> 世界坐标系 // 没有电控调试时，把坐标系名字改为 camera_frame
+    tf.header.frame_id = this->father_frame; // 父坐标系 -> 相机坐标系 / 世界坐标系
     tf.child_frame_id = "car_center_frame"; // 子坐标系 -> 整车中心坐标系
 
     // 平移
@@ -389,7 +396,7 @@ void EKF::getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int arm
 
     updateFourArmorplates(); // 发布 整车中心 -> 四个装甲板 的 tf 坐标系变换
 
-    updateWorldToCarCenter(); // 发布 世界 -> 整车中心 的 tf 坐标系
+    updateFatherToCarCenter(); // 发布 父坐标系 -> 整车中心 的 tf 坐标系
 }
 
 

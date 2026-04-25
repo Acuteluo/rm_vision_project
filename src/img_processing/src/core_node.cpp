@@ -16,6 +16,7 @@ public:
 
         // core 节点
         this->declare_parameter("core.logger.show_logger_time", true); // 是否打印时间相关日志
+        this->declare_parameter("core.logger.show_logger_else", false); // 是否打印corenode其他的相关日志
         this->declare_parameter("core.image.show_img", true); // 是否显示图片
         
         // prepare 类
@@ -28,13 +29,13 @@ public:
         this->declare_parameter("ekf.predict_time", 0.05); // 预测时间
         this->declare_parameter("ekf.show_logger_debug", true); // ekf 调试
 
-        this->declare_parameter("ekf.q_x", 0.1);
-        this->declare_parameter("ekf.q_y", 0.1);
-        this->declare_parameter("ekf.q_z", 0.1);
-        this->declare_parameter("ekf.q_v_x", 3.0);
-        this->declare_parameter("ekf.q_v_y", 3.0);
-        this->declare_parameter("ekf.q_v_z", 3.0);
-        this->declare_parameter("ekf.q_yaw", 0.05);
+        this->declare_parameter("ekf.q_x", 0.05);
+        this->declare_parameter("ekf.q_y", 0.05);
+        this->declare_parameter("ekf.q_z", 0.05);
+        this->declare_parameter("ekf.q_v_x", 0.5);
+        this->declare_parameter("ekf.q_v_y", 0.5);
+        this->declare_parameter("ekf.q_v_z", 0.5);
+        this->declare_parameter("ekf.q_yaw", 0.008);
         this->declare_parameter("ekf.q_omega", 0.05);
         this->declare_parameter("ekf.q_a_omega", 0.1);
         this->declare_parameter("ekf.r_x", 0.05);
@@ -46,9 +47,12 @@ public:
         // TF 参数声明
         this->declare_parameter("tf.show_logger_error", false);
         this->declare_parameter("tf.show_result", true);
+        this->declare_parameter("is_standalone", true); // 单机 / 联调模式
+
 
         // corenode 节点变量获取初始值
         this->SHOW_LOGGER_TIME = this->get_parameter("core.logger.show_logger_time").as_bool();
+        this->SHOW_LOGGER_ELSE = this->get_parameter("core.logger.show_logger_else").as_bool();
         this->SHOW_IMG_SHOW = this->get_parameter("core.image.show_img").as_bool();
         this->SHOW_LOGGER_PREPARE = this->get_parameter("core.logger.show_logger_prepare").as_bool();
         this->CHOSEN_COLOR = this->get_parameter("core.param.chosen_color").as_string();
@@ -56,6 +60,7 @@ public:
         this->ARMOR_TYPE = this->get_parameter("core.param.armor_type").as_string();
         this->PREDICT_TIME = this->get_parameter("ekf.predict_time").as_double();
         this->SHOW_LOGGER_DEBUG = this->get_parameter("ekf.show_logger_debug").as_bool();
+        this->IS_STANDALONE = this->get_parameter("is_standalone").as_bool();
 
 
         // 注册参数变化回调（用于运行时动态修改）
@@ -191,7 +196,7 @@ private:
             // 丢弃前面 2 帧不稳定的数据，纯丢。这两个数据不计重复丢失次数
             if(this->continuous_count <= CONTINUOUS_THRESHOLD)  
             {
-                RCLCPP_WARN(this->get_logger(), "已丢弃连续帧的第 %d 帧", this->continuous_count);
+                RCLCPP_WARN_EXPRESSION(this->get_logger(), this->SHOW_LOGGER_ELSE, "已丢弃连续帧的第 %d 帧", this->continuous_count);
                 showImg();
                 return;
             }
@@ -200,10 +205,11 @@ private:
             // 发送【相机坐标系】->【装甲板坐标系】的 tf
             this->tf->updateCameraToArmorplate(this->armorplate[0].R, this->armorplate[0].t_vec);
         
-            // 查找【世界坐标系】->【装甲板坐标系】变换
+            // 查找【父坐标系】->【装甲板坐标系】变换，也就是实时值
+            // 单机模式下是【相机坐标系】->【装甲板坐标系】，联调模式下是【世界坐标系】->【装甲板坐标系】
             Eigen::Vector3d armorplate_center;
             double yaw_armorplate;
-            bool flag = this->tf->getWorldToArmorplateTransform(armorplate_center, yaw_armorplate); // 没有电控调试时，把函数里父坐标系名字改为 camera_frame
+            bool flag = this->tf->getFatherToArmorplateTransform(armorplate_center, yaw_armorplate); // 获取父坐标系到装甲板坐标系的变换，单机模式下父坐标系是相机坐标系，联调模式下父坐标系是世界坐标系。返回值表示是否成功获取变换
 
             // 如果查到了变换，就开始滤波
             if(flag)
@@ -222,14 +228,15 @@ private:
                 }
                 else
                 {
-                    RCLCPP_INFO(this->get_logger(), "第 %d 帧，正在初始化滤波器，使用了观测值", this->continuous_count);
+                    RCLCPP_INFO_EXPRESSION(this->get_logger(), this->SHOW_LOGGER_ELSE, "第 %d 帧，正在初始化滤波器，使用了观测值", this->continuous_count);
                 }
 
             }
             else // 丢失方法2：没查到变换
             {
                 ++this->lost_count; // 连续丢失计数器 + 1
-                RCLCPP_WARN(this->get_logger(), "未查到【世界坐标系】->【装甲板坐标系】变换");
+                if(this->IS_STANDALONE) RCLCPP_WARN(this->get_logger(), "未查到【相机坐标系】->【装甲板坐标系】变换");
+                else RCLCPP_WARN(this->get_logger(), "未查到【世界坐标系】->【装甲板坐标系】变换");
 
                 if(this->ekf_ready && this->lost_count <= this-> MAX_LOST_COUNT)
                 {
@@ -244,7 +251,7 @@ private:
                     this->ekf_ready = false; // 丢的太多了 不ready
                     this->continuous_count = 0; // 数据作废
                     this->ekf_->reset(); // 重置滤波器为未初始化状态。因为当前帧已经没有用了，等下一帧初始化
-                    RCLCPP_WARN(this->get_logger(), "有目标但未查到变换，目标丢失超过 %d 帧。或者滤波器未初始化好。EKF 已重置", this->MAX_LOST_COUNT);
+                    RCLCPP_WARN_EXPRESSION(this->get_logger(), this->SHOW_LOGGER_ELSE, "有目标但未查到变换，目标丢失超过 %d 帧。或者滤波器未初始化好。EKF 已重置", this->MAX_LOST_COUNT);
                     showImg();
                     return;
                 }
@@ -276,7 +283,7 @@ private:
                 this->ekf_ready = false; // 丢的太多了 不ready
                 this->continuous_count = 0; // 数据作废
                 this->ekf_->reset(); // 重置滤波器为未初始化状态。因为当前帧已经没有用了，等下一帧初始化
-                RCLCPP_WARN(this->get_logger(), "不存在装甲板 或者 pnp解算失败。目标丢失超过 %d 帧, EKF 已重置", this->MAX_LOST_COUNT);
+                RCLCPP_WARN_EXPRESSION(this->get_logger(), this->SHOW_LOGGER_ELSE, "不存在装甲板 或者 pnp解算失败。目标丢失超过 %d 帧, EKF 已重置", this->MAX_LOST_COUNT);
                 showImg();
                 return;
             }
@@ -286,7 +293,7 @@ private:
         // 计算最终角（滤波器没初始好就用原始值，连续检测多就用预测值，丢帧但滤波器稳定就用外推值）
         pitch_result = -std::atan2(armorplate_center_predict[2], std::sqrt(armorplate_center_predict[0] * armorplate_center_predict[0] + armorplate_center_predict[1] * armorplate_center_predict[1])) * 180.0 / M_PI;   
         yaw_result = std::atan2(armorplate_center_predict[1], armorplate_center_predict[0]) * 180.0 / M_PI;
-
+        RCLCPP_INFO_EXPRESSION(this->get_logger(), this->SHOW_LOGGER_ELSE, "armorplate_center_predict: [%.3f, %.3f, %.3f]", armorplate_center_predict[0], armorplate_center_predict[1], armorplate_center_predict[2]);
 
         
         // ... 步骤4 发布 tf变换 + 滤波 完成时间戳
@@ -294,7 +301,7 @@ private:
 
 
 
-        // 5. 重投影
+        // 5. 重投影 ekf_->getArmorFourCorners 拿到的是实时值
         // ========== 重投影可视化 ==========
         if (this->ekf_ready && pitch_result != -999 && yaw_result != -999)
         {
@@ -302,9 +309,9 @@ private:
             //    注意：如果本帧没有成功检测到装甲板，则无法获取相机参数，此时跳过重投影。
             if (!this->armorplate.empty() && this->armorplate[0].is_success)
             {
-                // 再查询 world → camera 的 TF
+                // 再查询 父坐标系 → camera 的 TF
                 tf2::Transform T_world_cam;
-                if (this->tf->getWorldToCameraTransform(T_world_cam)) // 临时修改成相机坐标系自己查自己
+                if (this->tf->getWorldToCameraTransform(T_world_cam)) 
                 {
                     // 对每个装甲板 ID 进行重投影（用不同颜色区分）（实时滤波位置）
                     std::vector<cv::Scalar> colors = 
@@ -324,8 +331,13 @@ private:
 
                     // 也绘制整车中心点（实时滤波位置）
                     std::vector<Eigen::Vector3d> center_world(1);
-                    this->ekf_->getCenterPredict(center_world[0], 0.00); // 获取实时位置下的整车中心点 在世界下 的位置坐标
+                    this->ekf_->getCenterPredict(center_world[0], 0.00); // 获取实时位置下的整车中心点 在父坐标系下 的位置坐标
                     projectAndDraw(center_world, this->armorplate[0].K, this->armorplate[0].D, T_world_cam, cv::Scalar(255, 255, 255));
+                
+                    // 也绘制当前装甲板 dt后的 预测值（不是外推值）
+                    std::vector<Eigen::Vector3d> armorplate_center_world(1);
+                    armorplate_center_world[0] = armorplate_center_predict; // 预测位置的装甲板中心点 在父坐标系下 的位置坐标
+                    projectAndDraw(armorplate_center_world, this->armorplate[0].K, this->armorplate[0].D, T_world_cam, cv::Scalar(255, 0, 255));
                 }
             }
         }
@@ -337,7 +349,7 @@ private:
         send_msg.pitch = pitch_result;
         send_msg.yaw = yaw_result;
         serial_pub_->publish(send_msg);
-        RCLCPP_INFO(this->get_logger(), "已发送信息");
+        RCLCPP_INFO_EXPRESSION(this->get_logger(), this->SHOW_LOGGER_ELSE, "已发送信息");
         
         // ... 步骤5 重投影 + 发送消息 完成时间戳
         rclcpp::Time t5 = this->now();
@@ -465,6 +477,12 @@ private:
                 RCLCPP_INFO(this->get_logger(), "打印 corenode 节点耗时开关已打开! ");
             } 
 
+            else if (name == "core.logger.show_logger_else") 
+            {
+                this->SHOW_LOGGER_ELSE = p.as_bool();
+                RCLCPP_INFO(this->get_logger(), "打印 corenode 节点其他日志的开关已打开! ");
+            } 
+
             else if (name == "core.image.show_img") 
             {
                 this->SHOW_IMG_SHOW = p.as_bool();
@@ -496,7 +514,7 @@ private:
                     name == "ekf.q_v_x" || name == "ekf.q_v_y" || name == "ekf.q_v_z" ||
                     name == "ekf.q_yaw" || name == "ekf.q_omega" || name == "ekf.q_a_omega" ||
                     name == "ekf.r_x" || name == "ekf.r_y" || name == "ekf.r_z" ||
-                    name == "ekf.r_yaw" || name == "ekf.radius") 
+                    name == "ekf.r_yaw" || name == "ekf.radius" || name == "ekf.show_logger_debug") 
             {
                 RCLCPP_INFO(this->get_logger(), "EKF 参数已更新! ");
                 this->ekf_->updateParamsFromServer();  // 让EKF自己重新读取参数
@@ -506,6 +524,16 @@ private:
             {
                 RCLCPP_INFO(this->get_logger(), "TF 节点参数已更新! ");
                 this->tf->updateParamsFromServer();  // 通知 TF 刷新
+            }
+
+            else if(name == "is_standalone")
+            {
+                this->IS_STANDALONE = p.as_bool();
+                if(this->IS_STANDALONE) RCLCPP_INFO(this->get_logger(), "已切换到单机模式! 父坐标系是 camera_frame");
+                else RCLCPP_INFO(this->get_logger(), "已切换到联调模式! 父坐标系是 world_frame");
+                this->tf->updateParamsFromServer();  // 通知 TF 刷新
+                this->ekf_->updateParamsFromServer();  // 通知 EKF 刷新坐标系
+                this->ekf_->reset(); // 必须重置一下滤波器，因为坐标系都变了，之前的数据都没用了
             }
 
             else if (name == "ekf.predict_time") // 更新 ekf 预测时间
@@ -553,8 +581,12 @@ private:
     ////////////////////// 从配置文件读取的变量 //////////////////////
     
     bool SHOW_LOGGER_TIME; // 是否显示 core 节点中的每帧耗时日志（计算耗时）
+    bool SHOW_LOGGER_ELSE; // 是否显示 core 节点中的其他日志（不计算耗时的日志）
     bool SHOW_IMG_SHOW; // 是否显示 img_show 窗口
-    
+
+    // 单机模式 / 联调模式的切换，决定了父坐标系是谁（主要是为了调试时不依赖电控的 TF 发布）
+    bool IS_STANDALONE; // true 就是单机模式，父坐标系是 camera_frame；false 就是联调模式，父坐标系是 world// 单机模式 / 联调模式的切换，决定了父坐标系是谁（主要是为了调试时不依赖电控的 TF 发布）
+
     bool SHOW_LOGGER_PREPARE; // 是否显示 prepare 中的日志
     std::string CHOSEN_COLOR; // 选择检测的颜色 red / blue
     std::string CAMERA_NAME; // 选择相机名称 mind_vision / galaxy ，注意改对应的 qos

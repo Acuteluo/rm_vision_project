@@ -33,13 +33,14 @@ public:
 
     // ---------- 查询 TF ----------
     /**
-     * @brief 查询【世界坐标系】->【装甲板坐标系】是否可以变换
+     * @brief 查询【父坐标系】->【装甲板坐标系】是否可以变换
+     *        单机模式时父坐标系是 camera_frame，联调模式时父坐标系是 world_frame
               通过引用回传滤波后的最终结果，返回1或者0表示是否有效
      * @param 
      * @param 
      * @return 1 可变换，0 变换失败（TF 树不完整）
      */
-    bool getWorldToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor);
+    bool getFatherToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor);
 
 
     // 查询【世界坐标系】->【相机坐标系】是否可以变换
@@ -80,5 +81,6 @@ private:
     bool SHOW_LOGGER_ERROR; // 从日志文件读取，是否展示tf查询错误
     bool SHOW_RESULT; // 从日志文件读取，是否展示最终查询结果
 
+    std::string father_frame; // 从参数服务器读取，查询父坐标系->装甲板坐标系时候要用。单机模式时是 camera_frame，联调模式时是 world_frame
 };
 

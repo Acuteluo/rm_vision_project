@@ -23,9 +23,10 @@ TF::TF(rclcpp::Node* node): node_(node)
     // 从参数服务器读取初始参数
     this->SHOW_LOGGER_ERROR = node_->get_parameter("tf.show_logger_error").as_bool();
     this->SHOW_RESULT = node_->get_parameter("tf.show_result").as_bool();
+    this->father_frame = node_->get_parameter("is_standalone").as_bool() ? "camera_frame" : "world_frame"; // 根据单机/联调模式设置父坐标系名字
 
-    RCLCPP_INFO(node_->get_logger(), "TF 参数已加载: SHOW_LOGGER_ERROR=%d, SHOW_RESULT=%d",
-                SHOW_LOGGER_ERROR, SHOW_RESULT);
+    RCLCPP_INFO(node_->get_logger(), "TF 参数已加载: SHOW_LOGGER_ERROR=%d, SHOW_RESULT=%d, father_frame=%s", 
+                SHOW_LOGGER_ERROR, SHOW_RESULT, father_frame.c_str());
 
 
 
@@ -93,6 +94,7 @@ void TF::updateParamsFromServer()
     if (!node_) return;
     this->SHOW_LOGGER_ERROR = node_->get_parameter("tf.show_logger_error").as_bool();
     this->SHOW_RESULT = node_->get_parameter("tf.show_result").as_bool();
+    this->father_frame = node_->get_parameter("is_standalone").as_bool() ? "camera_frame" : "world_frame"; // 根据单机/联调模式设置父坐标系名字
 }
 
 
@@ -159,18 +161,19 @@ void TF::updateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t)
 
 
 
-// 查询【世界坐标系】->【相机坐标系】是否可以变换
+// 查询【父坐标系】->【相机坐标系】是否可以变换
+// 单机模式时父坐标系是 camera_frame，联调模式时父坐标系是 world_frame
 bool TF::getWorldToCameraTransform(tf2::Transform& T_world_cam)
 {
     geometry_msgs::msg::TransformStamped transform;
     try 
     {
         // 查询 world_frame 到 camera_frame 的变换
-        transform = tf_buffer_->lookupTransform("camera_frame", "camera_frame", tf2::TimePointZero);
+        transform = tf_buffer_->lookupTransform(this->father_frame, "camera_frame", tf2::TimePointZero);
     }
     catch (tf2::TransformException &ex) 
     {
-        RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【世界坐标系 -> 相机 坐标系】 TF lookup failed: %s", ex.what());
+        RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【%s 坐标系 -> 相机 坐标系】 TF lookup failed: %s", this->father_frame, ex.what());
         return false;
     }
 
@@ -181,18 +184,19 @@ bool TF::getWorldToCameraTransform(tf2::Transform& T_world_cam)
 
 
 
-// 查询【世界坐标系】->【装甲板坐标系】是否可以变换
+// 查询【父坐标系】->【装甲板坐标系】是否可以变换
+// 单机模式时父坐标系是 camera_frame，联调模式时父坐标系是 world_frame
 // 通过引用回传滤波后的最终结果，返回1或者0表示是否有效
-bool TF::getWorldToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor)
+bool TF::getFatherToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor)
 {
     geometry_msgs::msg::TransformStamped transform_world_armorplate; // 世界 -> 装甲板
     try 
     {
-        transform_world_armorplate = tf_buffer_->lookupTransform("camera_frame", "armorplate_frame", tf2::TimePointZero);
+        transform_world_armorplate = tf_buffer_->lookupTransform(this->father_frame, "armorplate_frame", tf2::TimePointZero);
     } 
     catch (tf2::TransformException &ex) 
     {
-        RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【世界坐标系 -> 装甲板 坐标系】TF lookup failed: %s", ex.what());
+        RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【%s -> 装甲板 坐标系】TF lookup failed: %s", this->father_frame, ex.what());
         return false; 
     }
 

@@ -126,8 +126,9 @@ public:
 
     void updateFourArmorplates();
 
-    // 06 【世界坐标系】->【整车中心坐标系】注意这里忽略了 pitch & roll
-    void updateWorldToCarCenter();
+    // 06【父坐标系】->【整车中心坐标系】注意这里忽略了 pitch & roll
+    // 父坐标系在单机模式下是 camera_frame，在联调模式下是 world_frame
+    void updateFatherToCarCenter();
 
 
     // 得到某个 id 装甲板四个角点在世界下的坐标
@@ -213,4 +214,5 @@ private:
     double width; // 当前装甲板的长，单位 m
     double height; // 当前装甲板的宽，单位 m
 
+    std::string father_frame; // 从参数服务器读取，查询父坐标系->装甲板坐标系时候要用。单机模式下是 camera_frame，联调模式下是 world_frame
 };
