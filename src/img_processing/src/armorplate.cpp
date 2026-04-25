@@ -185,19 +185,23 @@ ArmorPlate::ArmorPlate(Strip a, Strip b, double moderation, std::string camera_n
 * @brief	画出装甲板并标点，打印 pnp 信息
 * @return   无返回值，直接画图
 */
-void ArmorPlate::drawArmorPlateAndPrintPNPInfo()
+void ArmorPlate::drawArmorPlateAndPrintPNPInfo(std::string CHOSEN_COLOR)
 {
+    cv::Scalar color;
+    if(CHOSEN_COLOR == "red") color = cv::Scalar(0, 255, 255); // 红色装甲板 -> 黄色
+    else color = cv::Scalar(0, 255, 0); // 蓝色装甲板 -> 绿色
+
     // 画出装甲板的四个角点、中心点和边框
     for (int i = 0; i < 4; i++)
     {
-        cv::putText(this->img_show, "[" + std::to_string((int)i + 1) + "] [" + std::to_string((int)vertice_pixel[i].x) + ", " + std::to_string((int)vertice_pixel[i].y) + "]", cv::Point2f(vertice_pixel[i].x, vertice_pixel[i].y - 5), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 0.65);
-        cv::line(this->img_show, vertice_pixel[i], vertice_pixel[(i + 1) % 4], cv::Scalar(0, 0, 255), 2); // 画线
+        cv::putText(this->img_show, "[" + std::to_string((int)i + 1) + "] [" + std::to_string((int)vertice_pixel[i].x) + ", " + std::to_string((int)vertice_pixel[i].y) + "]", cv::Point2f(vertice_pixel[i].x, vertice_pixel[i].y - 5), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 128, 255), 0.65);
+        cv::line(this->img_show, vertice_pixel[i], vertice_pixel[(i + 1) % 4], color, 2); // 画线
     }
-    cv::circle(this->img_show, this->center, 3, cv::Scalar(0, 0, 255), cv::FILLED); // 中心点
+    cv::circle(this->img_show, this->center, 3, color, cv::FILLED); // 中心点
 
     // 打印 置信度 和 pnp 信息
     cv::putText(this->img_show, "moderation = " + std::to_string((double)this->moderation), cv::Point2f(0, 450), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-	cv::putText(this->img_show, "t_pitch = " + std::to_string((double)this->t_pitch), cv::Point2f(0, 500), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);\
+	cv::putText(this->img_show, "t_pitch = " + std::to_string((double)this->t_pitch), cv::Point2f(0, 500), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
     cv::putText(this->img_show, "t_yaw = " + std::to_string((double)this->t_yaw), cv::Point2f(0, 550), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
 	cv::putText(this->img_show, "t_distance = " + std::to_string((double)this->t_distance) + "m", cv::Point2f(0, 600), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
 }

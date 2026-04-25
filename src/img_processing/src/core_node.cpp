@@ -21,7 +21,7 @@ public:
         // prepare 类
         this->declare_parameter("core.logger.show_logger_prepare", false); // 是否打印 prepare 类中的日志
         this->declare_parameter("core.param.chosen_color", "red"); // 选择的装甲板颜色
-        this->declare_parameter("core.param.camera_name", "galaxy"); // 使用的相机名称
+        this->declare_parameter("core.param.camera_name", "mind_vision"); // 使用的相机名称
         this->declare_parameter("core.param.armor_type", "normal"); // 识别装甲板的类型
 
         // EKF相关（传递给ekf_）
@@ -36,7 +36,7 @@ public:
         this->declare_parameter("ekf.q_v_z", 3.0);
         this->declare_parameter("ekf.q_yaw", 5e-3);
         this->declare_parameter("ekf.q_omega", 1.0);
-        this->declare_parameter("ekf.q_a_omega", 0.5);
+        this->declare_parameter("ekf.q_a_omega", 3.0);
         this->declare_parameter("ekf.r_x", 0.05);
         this->declare_parameter("ekf.r_y", 0.05);
         this->declare_parameter("ekf.r_z", 0.1);
@@ -93,6 +93,7 @@ public:
         ekf_ = std::make_unique<EKF>(this); 
         ekf_->updateParamsFromServer(); // 设置一大堆参数
         ekf_->setParam(this->ARMOR_TYPE); // 装甲板类型
+        ekf_->setDebugLogger(this->SHOW_LOGGER_DEBUG);
 
         // 初始化上一次收到图像的时间，一切的 dt 都依照这个来算
         this->last_image_time = this->now(); 
@@ -142,7 +143,7 @@ private:
         {
             this->armorplate[0].setImgShow(this->img_show); // 设置 img_show
             this->armorplate[0].perspectiveNPoint(); // 解算 pnp
-            this->armorplate[0].drawArmorPlateAndPrintPNPInfo(); // 画置信度最高的装甲板，并打印 pnp 信息
+            this->armorplate[0].drawArmorPlateAndPrintPNPInfo(this->CHOSEN_COLOR); // 画置信度最高的装甲板，并打印 pnp 信息
             this->img_show = this->armorplate[0].getImgShow(); // 获取带有装甲板信息的 img_show
         }
 
@@ -309,7 +310,7 @@ private:
                     std::vector<cv::Scalar> colors = 
                     {
                         cv::Scalar(0, 255, 0),   // 前: 绿
-                        cv::Scalar(255, 0, 0),   // 右: 蓝
+                        cv::Scalar(0, 165, 255), // 右: 橙
                         cv::Scalar(255, 255, 255), // 后: 白
                         cv::Scalar(255, 255, 0)  // 左: 青
                     };
@@ -426,13 +427,14 @@ private:
             {
                 cv::line(this->img_show, img_points[i], img_points[(i + 1) % 4], color, 2);
             }
+
             // 绘制装甲板中心点
             cv::Point2f center = (img_points[0] + img_points[1] + img_points[2] + img_points[3]) / 4.0f;
-            cv::circle(this->img_show, center, 3, cv::Scalar(0, 255, 255), -1);
+            cv::circle(this->img_show, center, 2.5, color, -1);
         }
         else // 否则就是投影整车中心点
         {
-            cv::circle(this->img_show, img_points[0], 3, cv::Scalar(0, 0, 255), -1);
+            cv::circle(this->img_show, img_points[0], 5, color, -1);
         }
     }
 

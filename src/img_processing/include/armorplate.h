@@ -33,7 +33,7 @@ public:
 	* @brief	画出装甲板并标点，打印 pnp 信息
 	* @return   无返回值，直接画图
 	*/
-	void drawArmorPlateAndPrintPNPInfo();
+	void drawArmorPlateAndPrintPNPInfo(std::string CHOSEN_COLOR);
 
 
 	/**

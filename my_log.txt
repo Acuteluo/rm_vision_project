@@ -1,0 +1,341 @@
+[INFO] [launch]: All log files can be found below /home/cly/.ros/log/2026-04-25-15-31-28-932409-acuteluo-639074
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [rm_serial_driver_node-3]: process started with pid [639083]
+[INFO] [mv_camera_node-1]: process started with pid [639079]
+[INFO] [core_node-2]: process started with pid [639081]
+[mv_camera_node-1] [INFO] [1777102288.987994971] [mind_vision_camera]: Starting MVCameraNode!
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.990377964] [IoContext::IoContext]: Thread(s) Created: 2[0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.990601654] [serial_driver]: SerialDriver 构造函数启动![0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.990653303] [serial_driver]: Step 1/7: 函数注册信号处理器 创建完成[0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.990873868] [serial_driver]: Step 2/7: 串口节点动态参数已初始化: SHOW_LOGGER_RECEIVE=0, SHOW_LOGGER_TRY_AND_SEND=0[0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.990960298] [serial_driver]: RMSerialDriver 节点参数更新! [0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.991015623] [serial_driver]: RMSerialDriver 节点参数更新! [0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.991051917] [serial_driver]: RMSerialDriver 节点参数更新! [0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.991075613] [serial_driver]: flow_control string = 'none'[0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.991088499] [serial_driver]: RMSerialDriver 节点参数更新! [0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.991110208] [serial_driver]: RMSerialDriver 节点参数更新! [0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.991173393] [serial_driver]: Step 3/7: 已经从 config 文件读取参数, device_name=/dev/ttyACM0[0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.991244593] [serial_driver]: Step 4/7: 初始化串口 成功[0m
+[rm_serial_driver_node-3] [31m[ERROR] [1777102288.991319847] [serial_driver]: 创建串口时 发生错误: /dev/ttyACM0 - open: No such file or directory[0m
+[rm_serial_driver_node-3] [31m[ERROR] [1777102288.991332144] [serial_driver]: 【串口初始化异常】串口设备不存在（/dev/ttyACM0 未连接）或无法打开。。。。。。。。。。[0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.993076407] [serial_driver]: Step 7/7: 成功创建 /serial_driver 话题订阅者[0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.993228729] [serial_driver]: RMSerialDriver 节点参数更新! [0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.993408492] [serial_driver]: RMSerialDriver 节点参数更新! [0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.993467173] [serial_driver]: RMSerialDriver 节点参数更新! [0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.993521180] [serial_driver]: RMSerialDriver 节点参数更新! [0m
+[rm_serial_driver_node-3] [0m[INFO] [1777102288.994776999] [serial_driver]: >>>>>>>>>>>>>>> 串口构造函数已经初始化完成。[0m
+[core_node-2] [INFO] [1777102289.070630940] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777102289.074188900] [core_node]: CoreNode 节点创建成功! 
+[core_node-2] [INFO] [1777102289.074263579] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777102289.074314391] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777102289.074341356] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777102289.074368960] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777102289.077737198] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777102289.077849674] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777102289.077903640] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777102289.078370853] [core_node]: 已发布静态变换【芯片坐标系 -> 相机坐标系】，平移: x=0.000 m, y=0.000 m, z=0.000 m
+[core_node-2] [INFO] [1777102289.078416648] [core_node]: TF 参数已加载: SHOW_LOGGER_ERROR=0, SHOW_RESULT=1
+[mv_camera_node-1] [INFO] [1777102289.221189051] [mind_vision_camera]: Enumerate state = 0
+[mv_camera_node-1] [INFO] [1777102289.221254377] [mind_vision_camera]: Found camera count = 1
+[mv_camera_node-1] [INFO] [1777102289.532374695] [mind_vision_camera]: Init state = 0
+[mv_camera_node-1] [INFO] [1777102289.533536768] [mind_vision_camera]: 曝光时间 Exposure time = 1000.000000
+[mv_camera_node-1] [INFO] [1777102289.534030918] [mind_vision_camera]: Analog gain = 5
+[mv_camera_node-1] [INFO] [1777102289.535215989] [mind_vision_camera]: RGB Gain: R = 100
+[mv_camera_node-1] [INFO] [1777102289.535235947] [mind_vision_camera]: RGB Gain: G = 100
+[mv_camera_node-1] [INFO] [1777102289.535242675] [mind_vision_camera]: RGB Gain: B = 100
+[mv_camera_node-1] [INFO] [1777102289.536079959] [mind_vision_camera]: Saturation = 100
+[mv_camera_node-1] [INFO] [1777102289.537555348] [mind_vision_camera]: Gamma = 200
+[mv_camera_node-1] [INFO] [1777102289.572309308] [mind_vision_camera]: camera calibration URL: package://my_mindvision_camera/config/camera_info.yaml
+[mv_camera_node-1] [INFO] [1777102289.572851041] [mind_vision_camera]: -------  Publishing image! 相机已经启动! -------
+[core_node-2] [WARN] [1777102289.624538890] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777102289.624619740] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.717761776] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.737548208] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.742538304] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.747025967] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.752607413] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.765263196] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.792872196] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.806496339] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.826978017] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.833710299] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.840601908] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.846564100] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.854017297] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.860322632] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.868683515] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.875710370] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.901968099] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.919430769] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.936420532] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.955304189] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.965946858] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.973347406] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102289.983813823] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.000509023] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.008218733] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.017045906] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.026771080] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.037292036] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.052195860] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.076905988] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.098500181] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.108577597] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.121363266] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.139460156] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777102290.139532223] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.162352216] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.174941042] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.194760988] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.200671431] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.235912647] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.252144559] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.264845034] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.274465557] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.287006183] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.309992726] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.317703585] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.333729883] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.349362977] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.356255032] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.364964805] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.384753943] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.395316839] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.404211381] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.430004575] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.440457764] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.447018291] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.455521028] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.462925114] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.469238525] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.479673089] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.487919297] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.495001719] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.505762702] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.518016207] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.526657329] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.535242536] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.551690004] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.557629547] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.567899981] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.593822935] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.601530048] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.614891519] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.620577779] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.649450449] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777102290.649565649] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.657761690] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.664099090] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.670301510] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.677985880] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.683424659] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.694122691] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.739548263] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.758041316] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.769027831] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.778403618] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.787886453] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.794484213] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.803899595] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.817198175] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.826731412] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.837710476] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.844842540] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.854848626] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.869473707] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.883437653] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.891108340] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.901386398] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.917660390] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.971911232] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.982439640] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102290.991004527] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.000963641] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.006788468] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.012975858] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.027510965] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.037932446] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.078783998] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.087147541] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.096447870] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.113031721] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.146493176] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.158821117] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777102291.158888861] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.165834125] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.179351883] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.188785827] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.194918190] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.207324246] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.224119390] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.230143137] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.246159392] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.254751100] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.286612041] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.294200652] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.304567911] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.312249428] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.331943350] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.349314884] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.377000607] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.382939967] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.405799627] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.417285037] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.427928451] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.441734528] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.447799291] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.454006810] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.462912253] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.473998402] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.487869412] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.507781838] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.528417445] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.536668910] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.550783469] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.569426584] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.576943321] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.586513205] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.593204601] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.611658162] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.620409245] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.628745099] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.639964714] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.647928814] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.658929079] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777102291.659052445] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.667686846] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.679658724] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.687619993] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.696548741] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.703981248] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.716740692] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.730140346] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.739855852] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.748017502] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.764515805] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.819812806] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.845162555] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.859809198] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.890742285] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.911489438] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.923921501] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.938625936] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.949609758] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.966693214] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.975949184] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.982685531] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.990821825] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102291.999136740] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.009842569] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.022072045] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.030629036] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.045520956] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.053004716] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.059196770] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.070762711] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.088208094] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.095603439] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.101700227] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.136688788] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.146871843] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.163304217] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777102292.163413054] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.169649064] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.204186770] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.210810133] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.262662228] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.269112095] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.274089495] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.282719902] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.295511076] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.307711206] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.342816818] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.361010644] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.367224725] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.386756746] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.395101146] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.402201691] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.407736184] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.414792933] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.422501476] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.429909103] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.439762111] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.446323289] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.452396211] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.461638394] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.476110785] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.482142669] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.489063209] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.526534630] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.548747343] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.564766947] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.575913640] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.585520644] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.612053834] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.620429942] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.629366472] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.636417413] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.642881937] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.652461701] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.665003506] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777102292.665101153] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.673401210] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.692396864] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.699080175] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.705467391] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.713195651] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.732415909] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.739487649] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.747309547] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.752729564] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.772356005] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.783114361] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.801957499] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.814810278] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.825371555] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.834407702] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.852072553] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.870189008] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.880802301] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.891749716] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.898889885] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.906367056] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.920763722] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.949984587] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.969190826] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.977206095] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102292.983367436] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.007632171] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.013942760] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.030328786] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.064034584] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.076317757] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.083353501] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.089544778] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.097589142] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.107056900] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.114864420] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.128462825] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.145047615] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.153187069] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.167521538] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777102293.167615329] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.174843235] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.192367188] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.199381675] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.218198613] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.224240456] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.233839743] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.241586562] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.249274337] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.256794245] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.264355989] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.272178946] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.277954196] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.283947654] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.307152615] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.317116766] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.341812827] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.348789730] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.363396570] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置
+[core_node-2] [WARN] [1777102293.374082973] [core_node]: 不存在装甲板 或者 pnp解算失败。目标丢失超过 30 帧, EKF 已重置

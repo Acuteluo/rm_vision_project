@@ -121,6 +121,9 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
         // 初始化 last_receive_time，上一次接收电控数据的时间，用于统计电控发来消息的频率
         this->last_receive_time = this->now(); 
 
+        // 初始化 receive_time，最新收到电控数据的时间戳
+        this->receive_time = this->now(); 
+
         this->chip_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(this);
 
 
