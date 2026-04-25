@@ -34,13 +34,13 @@ public:
         this->declare_parameter("ekf.q_v_x", 3.0);
         this->declare_parameter("ekf.q_v_y", 3.0);
         this->declare_parameter("ekf.q_v_z", 3.0);
-        this->declare_parameter("ekf.q_yaw", 5e-3);
-        this->declare_parameter("ekf.q_omega", 1.0);
-        this->declare_parameter("ekf.q_a_omega", 3.0);
+        this->declare_parameter("ekf.q_yaw", 0.05);
+        this->declare_parameter("ekf.q_omega", 0.05);
+        this->declare_parameter("ekf.q_a_omega", 0.1);
         this->declare_parameter("ekf.r_x", 0.05);
         this->declare_parameter("ekf.r_y", 0.05);
         this->declare_parameter("ekf.r_z", 0.1);
-        this->declare_parameter("ekf.r_yaw", 0.05);
+        this->declare_parameter("ekf.r_yaw", 0.4);
         this->declare_parameter("ekf.radius", 0.25);
 
         // TF 参数声明
