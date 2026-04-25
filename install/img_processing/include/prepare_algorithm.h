@@ -64,8 +64,6 @@ private:
 	////// 灯条配对成装甲板相关 /////
 
 	std::vector<Strip> strip; // 灯条集合
-	std::vector<ArmorPlate> armorplate; // 装甲板集合
-
 
 
     // ------ 预处理关键参数（从 config.txt 读取）------
@@ -74,4 +72,8 @@ private:
     std::string CHOSEN_COLOR; // 选择检测的颜色 red / blue
     std::string CAMERA_NAME; // 选择相机名称 mind_vision / galaxy ，注意改对应的 qos
     std::string ARMOR_TYPE; // 选择装甲板类型 normal / hero ，决定了配对的参数
+
+
+    // 记录上一次的最佳装甲板中心的位置
+    cv::Point2f last_best_center = cv::Point2f(-1.00, -1.00); // 上一帧最佳装甲板中心的位置，初始值为 (-1, -1)，如果没有检测到装甲板，设置为 (-1, -1) 表示无效
 };

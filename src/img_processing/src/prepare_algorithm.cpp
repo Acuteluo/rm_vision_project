@@ -49,7 +49,7 @@ cv::Mat Prepare::getImgShow()
 std::vector<ArmorPlate> Prepare::pairStrip()
 {
 	std::vector<ArmorPlate> armorplate; // 装甲板集合
-	double moderation[101][101] = { 0.00 }; // [编号][编号]，合理性
+	std::vector<std::vector<double>> moderation(strip.size(), std::vector<double>(strip.size(), 0.00)); // [编号][编号]，合理性
 	std::vector<int> moderation_number(strip.size(), -1); // 对于当前灯条，最合理的是谁（ -1 表示没找到目标 ）
 
 
@@ -269,6 +269,8 @@ std::vector<ArmorPlate> Prepare::pairStrip()
 
 
 	// 3. 整理简化数据，明确每个灯条 最合理的配对对象 是谁，放入 moderation_number 数组中
+    double MAX_DISTANCE = 200.00; // 距离上一次最佳装甲板中心的位置不能超过这个阈值，才算合理
+
 	for (int i = 0; i < strip.size(); i++)
 	{
 		double max_moderation = 0.00; // 对于当前灯条，最大合理性
@@ -276,22 +278,52 @@ std::vector<ArmorPlate> Prepare::pairStrip()
 
 		for (int j = 0; j < strip.size(); j++)
 		{
-			if (i == j || moderation[i][j] <= 25.00) continue; // 跳过 自己 和 没有合理性的，以及合理性不高的
-			if (moderation[i][j] > max_moderation) // 合理性更高，更新合理性和最合理的是谁
-			{
-				max_moderation = moderation[i][j];
-				number = j;
-			}
+			if (i == j) continue; // 跳过 自己
+
+            // 计算当前两个灯条构成的装甲板，和之前最佳装甲板中心的距离
+            double center_x = (strip[i].center.x + strip[j].center.x) / 2.00;
+            double center_y = (strip[i].center.y + strip[j].center.y) / 2.00;
+            double dx = center_x - this->last_best_center.x;
+            double dy = center_y - this->last_best_center.y;
+            double distance_to_last_best = std::sqrt(dx * dx + dy * dy);
+
+
+            // 根据上一次最佳装甲板中心位置确定合理性阈值，去掉合理性不高的
+            // 如果上一帧有装甲板而且在附近，那就跟着就好了
+            if(this->last_best_center != cv::Point2f(-1.00, -1.00) && distance_to_last_best <= MAX_DISTANCE)
+            {
+                if(moderation[i][j] <= 35.00) continue;
+            }
+            else
+            {
+                if(moderation[i][j] <= 50.00) continue;
+            }
+
+
+            // 引入综合得分机制
+            double current_score = moderation[i][j];
+
+            if (this->last_best_center != cv::Point2f(-1.00, -1.00)) 
+            {
+                // 必须在这里就加上距离惩罚，和 Step 5 保持同频！
+                current_score -= distance_to_last_best * 0.1; 
+            }
+
+            // 比较的是 current_score 而不是原始的 moderation
+            if (current_score > max_moderation) 
+            {
+                max_moderation = current_score; 
+                number = j;
+            }
 
             RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 与 灯条 %d 的 moderation 是 %.2f", i, j, moderation[i][j]);
 		}
-		moderation_number[i] = number;
 
+		moderation_number[i] = number;
 
         RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "\n--------------------------");  
         RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 的 max_moderation 是 %.2f", i, max_moderation);
         RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 的最佳配对是 灯条 %d", i, moderation_number[i]);
-        
 	}
 
 
@@ -315,19 +347,43 @@ std::vector<ArmorPlate> Prepare::pairStrip()
     RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "共检测到 %d 个装甲板", armorplate.size());
 
 
-    // 5. 对于每一个装甲板，按照置信度排序
-    for(int i = 0; i < this->armorplate.size(); i++)
+    // 5. 对于每一个装甲板，不仅按照置信度排序，还按照距离排列得到跟踪目标
+    std::sort(armorplate.begin(), armorplate.end(), 
+    [this](const ArmorPlate& a, const ArmorPlate& b) 
     {
-        for(int j = i; j < this->armorplate.size(); j++)
+        // 如果系统刚刚启动，没有历史中心，按 moderation 排序
+        if (this->last_best_center == cv::Point2f(-1.00, -1.00)) 
         {
-            if(this->armorplate[j].moderation > this->armorplate[i].moderation)
-            {
-                // 交换装甲板 i 和装甲板 j
-                ArmorPlate temp = this->armorplate[i];
-                this->armorplate[i] = this->armorplate[j];
-                this->armorplate[j] = temp;
-            }
+            return a.moderation > b.moderation;
         }
+
+        // 计算综合得分 (Score = 置信度 - 距离惩罚)
+        
+        // 算 A 的距离惩罚
+        double dist_A = cv::norm(a.center - this->last_best_center);
+        // 距离越远，扣分越多。惩罚系数可以调，比如 0.1 意味着每偏离 10 像素扣 1 分
+        double score_A = a.moderation - (dist_A * 0.1); 
+
+        // 算 B 的距离惩罚
+        double dist_B = cv::norm(b.center - this->last_best_center);
+        double score_B = b.moderation - (dist_B * 0.1); 
+
+        // 【可选：锁定奖励】如果你想极其死板地咬住老目标，甚至可以给距离近的额外加分
+        // if (dist_A < 100) score_A += 20.0;
+        // if (dist_B < 100) score_B += 20.0;
+
+        return score_A > score_B; // 按综合得分降序排列
+    }
+);
+
+
+    if(armorplate.size() == 0)
+    {
+        this->last_best_center = cv::Point2f(-1.00, -1.00);
+    }
+    else
+    {
+        this->last_best_center = armorplate[0].center; // 更新最佳装甲板中心位置为当前帧第一个装甲板（置信度最高的装甲板）的中心位置
     }
 
     return armorplate; 
@@ -505,7 +561,18 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
             // ------- 4.3 区分灯条与判断颜色（还需完善）-------
             // 不如大道至简：红蓝相差倍数优先 总体饱和度高优先 边缘饱和度作为辅助
             std::string color;
-            double times = std::max((double)red_edge_average / (double)blue_edge_average, (double)blue_edge_average / (double)red_edge_average); 
+            double times; // 红蓝值相差倍数
+            if(red_edge_average < 5 && blue_edge_average < 5) // 两个都小直接不要了
+            {
+                times = 0;
+            }
+            if(std::min(red_edge_average, blue_edge_average) < 1e-2) // 除数太小直接认为有效，万一除以 0 崩溃就老实了
+            {
+                times = 1000;
+            }
+            else times = std::max((double)red_edge_average / (double)blue_edge_average, (double)blue_edge_average / (double)red_edge_average); 
+            
+
             int TIMES_THRESHOLD = 3; // 红蓝值相差倍数阈值，至少要 3 以上才比较合理
 
             if(times > TIMES_THRESHOLD)
@@ -668,6 +735,10 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 
     // ------- 6. 存储灯带，返回灯带集合 -------
 	this->strip = strip;
+    if(strip.size() == 0)
+    {
+        this->last_best_center = cv::Point2f(-1.00, -1.00); // 没有灯条了，重置 last_best_center
+    }
     return strip;
 
 }

@@ -94,7 +94,8 @@ public:
         ekf_->updateParamsFromServer(); // 设置一大堆参数
         ekf_->setParam(this->ARMOR_TYPE); // 装甲板类型
 
-        this->last_lookup_time_ = this->now(); // 初始化 上一次滤波时间
+        // 初始化上一次收到图像的时间，一切的 dt 都依照这个来算
+        this->last_image_time = this->now(); 
 
         prepare.setParam(this->SHOW_LOGGER_PREPARE, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE); // 传入从配置文件读取的参数
     }
@@ -107,9 +108,14 @@ private:
     {
         rclcpp::Time start = this->now();
     
-        // 1. 接收图像
+        // 1. 接收图像 并 记录时间和更新 dt，dt 是整个的基准！！
         this->img = cv_bridge::toCvCopy(msg, "bgr8")->image; // 需要 SharedPtr 作为参数
         this->img_show = this->img.clone(); // 复制一份用来显示信息
+        
+        rclcpp::Time current_image_time = msg->header.stamp; // 从消息头获取图像的时间戳
+        double dt = (current_image_time - this->last_image_time).seconds(); // 计算与上一次图像的时间间隔，注意sec已经是精确时间！ 
+        this->last_image_time = current_image_time; // 更新上一次图像的时间戳
+
 
         // ... 步骤1 接收图像完成时间戳
         rclcpp::Time t1 = this->now();
@@ -129,6 +135,7 @@ private:
         // ... 步骤2 预处理完成时间戳
         rclcpp::Time t2 = this->now();
         
+
 
         // 3. 解算 pnp
         if(this->armorplate.size() > 0) // 存在装甲板
@@ -169,7 +176,6 @@ private:
         double pitch_result = -999;
         double yaw_result = -999;
 
-        double dt = (this->now() - this->last_lookup_time_).seconds(); // 距离上一次滤波的时间间隔
 
         Eigen::Vector3d armorplate_center_predict; // 预测点位置
         Eigen::Vector3d car_center_predict; // 整车中心的预测点位置
@@ -248,6 +254,7 @@ private:
         {
             ++this->lost_count; // 连续丢失计数器 + 1
 
+            // 提示信息
             if(this->armorplate.size() == 0) 
             {
                 RCLCPP_WARN_THROTTLE(this->get_logger(), *get_clock(), 500, "未检测到装甲板");
@@ -279,7 +286,6 @@ private:
         pitch_result = -std::atan2(armorplate_center_predict[2], std::sqrt(armorplate_center_predict[0] * armorplate_center_predict[0] + armorplate_center_predict[1] * armorplate_center_predict[1])) * 180.0 / M_PI;   
         yaw_result = std::atan2(armorplate_center_predict[1], armorplate_center_predict[0]) * 180.0 / M_PI;
 
-        this->last_lookup_time_ = this->now(); // 更新上一次滤波时间
 
         
         // ... 步骤4 发布 tf变换 + 滤波 完成时间戳
@@ -297,7 +303,7 @@ private:
             {
                 // 再查询 world → camera 的 TF
                 tf2::Transform T_world_cam;
-                if (this->tf->getWorldToCameraTransform(T_world_cam))
+                if (this->tf->getWorldToCameraTransform(T_world_cam)) // 临时修改成相机坐标系自己查自己
                 {
                     // 对每个装甲板 ID 进行重投影（用不同颜色区分）（实时滤波位置）
                     std::vector<cv::Scalar> colors = 
@@ -374,33 +380,45 @@ private:
      * @param color        绘制颜色
      */
     void projectAndDraw(const std::vector<Eigen::Vector3d>& world_points,
-                                 const cv::Mat& K, const cv::Mat& D,
-                                 const tf2::Transform& T_world_cam,
-                                 const cv::Scalar& color)
+                        const cv::Mat& K, const cv::Mat& D,
+                        const tf2::Transform& T_world_cam,
+                        const cv::Scalar& color)
     {
         if (world_points.empty()) return;
 
-        // 将世界坐标点转换到相机坐标系
+        // P: 你的 FLU -> OpenCV 相机系
+        Eigen::Matrix3d P_flu2cv;
+        P_flu2cv << 0, -1,  0,
+                    0,  0, -1,
+                    1,  0,  0;
+
         std::vector<cv::Point3f> cam_points;
         cam_points.reserve(world_points.size());
+        
         for (const auto& wp : world_points) 
         {
+            // 1. 【空间刚体变换】：World -> Camera (此时坐标系依然是 FLU)
             tf2::Vector3 p_world(wp.x(), wp.y(), wp.z());
-            tf2::Vector3 p_cam = T_world_cam * p_world;   // world -> camera
-
-            // 注意 opencv坐标系的定义！
-            double camera_frame_x = -p_cam.y();
-            double camera_frame_y = -p_cam.z();
-            double camera_frame_z = p_cam.x();
-            cam_points.emplace_back(camera_frame_x, camera_frame_y, camera_frame_z); // 转换到 opencv 相机坐标系下
+            tf2::Vector3 p_cam_tf = T_world_cam * p_world;   
+            
+            // 转换为 Eigen 向量
+            Eigen::Vector3d p_cam_flu(p_cam_tf.x(), p_cam_tf.y(), p_cam_tf.z());
+            
+            // 2. 【纯粹的数学基变换】：利用矩阵乘法，将 FLU 坐标系切换为 OpenCV 坐标系
+            Eigen::Vector3d p_cam_cv = P_flu2cv * p_cam_flu;
+            
+            // 存入 OpenCV 容器
+            cam_points.emplace_back(p_cam_cv.x(), p_cam_cv.y(), p_cam_cv.z()); 
         }
 
-        // 投影到像素平面（考虑畸变）
+        // ================= 投影到像素平面 =================
         std::vector<cv::Point2f> img_points;
+        // 因为我们已经把点转换到了相机的真实物理位置，所以 rvec 和 tvec 必须为 0
         cv::Mat rvec = cv::Mat::zeros(3, 1, CV_64F);
         cv::Mat tvec = cv::Mat::zeros(3, 1, CV_64F);
         cv::projectPoints(cam_points, rvec, tvec, K, D, img_points);
 
+        // ================= 绘制部分 =================
         // 绘制：假设传入的是四个角点（左上、右上、右下、左下），连成矩形
         if (img_points.size() == 4) 
         {
@@ -408,8 +426,8 @@ private:
             {
                 cv::line(this->img_show, img_points[i], img_points[(i + 1) % 4], color, 2);
             }
-            // 可选：绘制装甲板中心点
-            cv::Point2f center = (img_points[0] + img_points[1] + img_points[2] + img_points[3]) / 4;
+            // 绘制装甲板中心点
+            cv::Point2f center = (img_points[0] + img_points[1] + img_points[2] + img_points[3]) / 4.0f;
             cv::circle(this->img_show, center, 3, cv::Scalar(0, 255, 255), -1);
         }
         else // 否则就是投影整车中心点
@@ -560,7 +578,7 @@ private:
     int MAX_LOST_COUNT = 30; // 最大连续丢失量，超过这个就不用 ekf 的预测了
 
     // 上一次查询的的时间戳
-    rclcpp::Time last_lookup_time_;
+    rclcpp::Time last_image_time; // 上一帧收到图像的时间戳，是一切 dt 的基础
 
     // ekf 是否已经稳定跟踪
     bool ekf_ready = false; 

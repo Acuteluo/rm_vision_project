@@ -210,7 +210,25 @@ void ArmorPlate::drawArmorPlateAndPrintPNPInfo()
 */
 void ArmorPlate::perspectiveNPoint()
 {
-	std::vector<int> inliers;
+	// P: 你的 FLU 右手系 -> OpenCV 相机系
+    Eigen::Matrix3d P;
+    P << 0, -1,  0,
+         0,  0, -1,
+         1,  0,  0;
+
+    // vertice_cv = P * vertice_world
+    std::vector<cv::Point3f> vertice_cv;
+    for (const auto& pt : this->vertice_world) 
+    {
+        // 1. 取出你定义的 FLU 坐标点
+        Eigen::Vector3d pt_flu(pt.x, pt.y, pt.z);
+        
+        // 2. 【核心】施加线性变换：P_cv = P * P_flu
+        Eigen::Vector3d pt_cv = P * pt_flu;
+        
+        // 3. 存入交给 OpenCV 的点集中
+        vertice_cv.push_back(cv::Point3f(pt_cv(0), pt_cv(1), pt_cv(2)));
+    }
 
 
     /*
@@ -218,7 +236,9 @@ void ArmorPlate::perspectiveNPoint()
         输出：旋转向量r 平移向量t （在 opencv 默认坐标系下）
         设置：是否使用外点剔除 迭代次数 内点距离阈值 内点置信度阈值 以及使用的pnp算法
     */ 
-	this->is_success = cv::solvePnP(this->vertice_world, this->vertice_pixel, K, D, 
+
+    // 换用 IPPE ，但是需要 z=0 平面，所以索性先转到cv系下，到时候再转回去，也就是相似变换 
+	this->is_success = cv::solvePnP(vertice_cv, this->vertice_pixel, K, D, 
         this->r, this->t, 
         false, 
         cv::SOLVEPNP_IPPE); 
@@ -255,17 +275,10 @@ void ArmorPlate::perspectiveNPoint()
     /// >>>>>>>>>>>>>>>>>>>>> t -> t_vec <<<<<<<<<<<<<<<<<<<<
 
     // 先获取在 opencv 默认相机系下的坐标
-    double x = this->t.at<double>(0, 0); 
-    double y = this->t.at<double>(1, 0);
-    double z = this->t.at<double>(2, 0);
-
-    // 必须转换到右手系
-    double X = z;
-    double Y = -x;
-    double Z = -y;
-
-    // 构造右手系坐标下的 平移向量 t_vec
-    this->t_vec = Eigen::Vector3d(X, Y, Z);
+    // 提取平移向量 t_cv
+    Eigen::Vector3d t_cv(this->t.at<double>(0, 0), 
+                         this->t.at<double>(1, 0), 
+                         this->t.at<double>(2, 0));
 
 
     /// >>>>>>>>>>>>>>>>>>>>> r -> R <<<<<<<<<<<<<<<<<<<<
@@ -274,30 +287,30 @@ void ArmorPlate::perspectiveNPoint()
     cv::Mat R_origin;
     cv::Rodrigues(this->r, R_origin);
 
-    // 定义坐标系转换矩阵 R_transform (opencv 默认 相机系 -> 右手系)
-    Eigen::Matrix3d R_transform;
-    R_transform << 0,  0,  1,
-                  -1,  0,  0,
-                   0, -1,  0;
-
-
     // 将 cv::Mat 转换为 Eigen::Matrix3d
-    Eigen::Matrix3d R_origin_eigen;
+    Eigen::Matrix3d A;
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
         {
-            R_origin_eigen(i, j) = R_origin.at<double>(i, j);
+            A(i, j) = R_origin.at<double>(i, j);
         }
             
     }
         
+    // 构造右手系坐标下的 平移向量 t_vec
+    // 用 p逆 也就是 p的转置
+    this->t_vec = P.transpose() * t_cv; 
+
 
     // 计算新的旋转矩阵并存储到 this->R
     // 注意：这里是 R_transform * R_origin_eigen，左乘
-    this->R = R_transform * R_origin_eigen;
+    // 【旋转矩阵转换】：使用相似变换 P_inv * A * P 完美还原模型
+    this->R = P.transpose() * A * P;
 
-
+    double X = this->t_vec(0);
+    double Y = this->t_vec(1);
+    double Z = this->t_vec(2);
 
     // ------ 下面信息是给人验证的，因为 yaw pitch 是 t_vec 向量计算出来的，相对于相机坐标系右手系的偏差角 ------
 

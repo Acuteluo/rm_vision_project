@@ -166,7 +166,7 @@ bool TF::getWorldToCameraTransform(tf2::Transform& T_world_cam)
     try 
     {
         // 查询 world_frame 到 camera_frame 的变换
-        transform = tf_buffer_->lookupTransform("world_frame", "camera_frame", tf2::TimePointZero);
+        transform = tf_buffer_->lookupTransform("camera_frame", "camera_frame", tf2::TimePointZero);
     }
     catch (tf2::TransformException &ex) 
     {
