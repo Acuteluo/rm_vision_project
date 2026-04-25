@@ -163,13 +163,13 @@ void TF::updateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t)
 
 // 查询【父坐标系】->【相机坐标系】是否可以变换
 // 单机模式时父坐标系是 camera_frame，联调模式时父坐标系是 world_frame
-bool TF::getWorldToCameraTransform(tf2::Transform& T_world_cam)
+bool TF::getWorldToCameraTransform(tf2::Transform& T_world_to_cam_point)
 {
     geometry_msgs::msg::TransformStamped transform;
     try 
     {
         // 查询 world_frame 到 camera_frame 的变换
-        transform = tf_buffer_->lookupTransform(this->father_frame, "camera_frame", tf2::TimePointZero);
+        transform = tf_buffer_->lookupTransform("camera_frame", this->father_frame, tf2::TimePointZero);
     }
     catch (tf2::TransformException &ex) 
     {
@@ -178,7 +178,7 @@ bool TF::getWorldToCameraTransform(tf2::Transform& T_world_cam)
     }
 
     // 将 geometry_msgs::Transform 转换为 tf2::Transform
-    tf2::fromMsg(transform.transform, T_world_cam);
+    tf2::fromMsg(transform.transform, T_world_to_cam_point);
     return true;
 }
 

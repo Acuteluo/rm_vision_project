@@ -22,7 +22,7 @@ public:
         // prepare 类
         this->declare_parameter("core.logger.show_logger_prepare", false); // 是否打印 prepare 类中的日志
         this->declare_parameter("core.param.chosen_color", "red"); // 选择的装甲板颜色
-        this->declare_parameter("core.param.camera_name", "mind_vision"); // 使用的相机名称
+        this->declare_parameter("core.param.camera_name", "galaxy"); // 使用的相机名称
         this->declare_parameter("core.param.armor_type", "normal"); // 识别装甲板的类型
 
         // EKF相关（传递给ekf_）
@@ -47,7 +47,7 @@ public:
         // TF 参数声明
         this->declare_parameter("tf.show_logger_error", false);
         this->declare_parameter("tf.show_result", true);
-        this->declare_parameter("is_standalone", true); // 单机 / 联调模式
+        this->declare_parameter("is_standalone", false); // 单机 / 联调模式
 
 
         // corenode 节点变量获取初始值
@@ -609,7 +609,7 @@ private:
     std::unique_ptr<EKF> ekf_;
 
     // 参数量
-    int MAX_LOST_COUNT = 30; // 最大连续丢失量，超过这个就不用 ekf 的预测了
+    int MAX_LOST_COUNT = 60; // 最大连续丢失量，超过这个就不用 ekf 的预测了
 
     // 上一次查询的的时间戳
     rclcpp::Time last_image_time; // 上一帧收到图像的时间戳，是一切 dt 的基础
