@@ -36,15 +36,17 @@ public:
      * @brief 查询【父坐标系】->【装甲板坐标系】是否可以变换
      *        单机模式时父坐标系是 camera_frame，联调模式时父坐标系是 world_frame
               通过引用回传滤波后的最终结果，返回1或者0表示是否有效
-     * @param 
-     * @param 
+     * @param armorplate_center 装甲板中心点坐标（输出参数，世界坐标系下）
+     * @param yaw_armor 装甲板朝向（输出参数，世界坐标系下，单位：弧度）
+     * @param time_stamp 查询时间戳，保证和图像时间戳对齐
      * @return 1 可变换，0 变换失败（TF 树不完整）
      */
-    bool getFatherToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor);
+    bool getFatherToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp);
 
 
     // 查询【世界坐标系】->【相机坐标系】是否可以变换
-    bool getWorldToCameraTransform(tf2::Transform& T_world_cam);
+    // time_stamp 查询时间戳，保证和图像时间戳对齐
+    bool getWorldToCameraTransform(tf2::Transform& T_world_cam, rclcpp::Time time_stamp);
 
 
     /**

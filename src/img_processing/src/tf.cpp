@@ -163,13 +163,15 @@ void TF::updateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t)
 
 // 查询【父坐标系】->【相机坐标系】是否可以变换
 // 单机模式时父坐标系是 camera_frame，联调模式时父坐标系是 world_frame
-bool TF::getWorldToCameraTransform(tf2::Transform& T_world_to_cam_point)
+// 最后一个参数是查询时间戳，保证和图像时间戳对齐
+bool TF::getWorldToCameraTransform(tf2::Transform& T_world_to_cam_point, rclcpp::Time time_stamp)
 {
     geometry_msgs::msg::TransformStamped transform;
     try 
     {
         // 查询 world_frame 到 camera_frame 的变换
-        transform = tf_buffer_->lookupTransform("camera_frame", this->father_frame, tf2::TimePointZero);
+        // transform = tf_buffer_->lookupTransform("camera_frame", this->father_frame, tf2::TimePointZero);
+        transform = tf_buffer_->lookupTransform("camera_frame", this->father_frame, time_stamp);
     }
     catch (tf2::TransformException &ex) 
     {
@@ -187,12 +189,14 @@ bool TF::getWorldToCameraTransform(tf2::Transform& T_world_to_cam_point)
 // 查询【父坐标系】->【装甲板坐标系】是否可以变换
 // 单机模式时父坐标系是 camera_frame，联调模式时父坐标系是 world_frame
 // 通过引用回传滤波后的最终结果，返回1或者0表示是否有效
-bool TF::getFatherToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor)
+// 最后一个参数是查询时间戳，保证和图像时间戳对齐
+bool TF::getFatherToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp)
 {
     geometry_msgs::msg::TransformStamped transform_world_armorplate; // 世界 -> 装甲板
     try 
     {
-        transform_world_armorplate = tf_buffer_->lookupTransform(this->father_frame, "armorplate_frame", tf2::TimePointZero);
+        // transform_world_armorplate = tf_buffer_->lookupTransform(this->father_frame, "armorplate_frame", tf2::TimePointZero);
+        transform_world_armorplate = tf_buffer_->lookupTransform(this->father_frame, "armorplate_frame", time_stamp);
     } 
     catch (tf2::TransformException &ex) 
     {

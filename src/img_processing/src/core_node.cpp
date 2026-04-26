@@ -190,6 +190,31 @@ private:
         // 首先 pnp结算必须要有结果 才能发布tf变换
         if(this->armorplate.size() > 0 && this->armorplate[0].is_success) 
         {
+            // 引入分层丢失机制，根据丢失帧数来采取不同策略
+            if(this->lost_count > 0)
+            {
+                if(this->lost_count <= MAX_LOST_COUNT * 0.1)
+                {
+                    // 丢失很少，基本可以认为是偶尔的误检或者轻微的遮挡，相信 ekf 外推，继续保持当前状态，等待恢复
+                    RCLCPP_WARN(this->get_logger(), "【轻度丢失】%d 帧后找回, 啥也不动, 相信 ekf", this->lost_count);
+                }
+                else if(this->lost_count < MAX_LOST_COUNT * 0.4)
+                {
+                    // 丢失一般，可能是持续的遮挡或者误检，直接重置滤波器，并用这一帧来初始化喵
+                    this->ekf_->reset(); 
+                    RCLCPP_WARN(this->get_logger(), "【中度丢失】%d 帧后找回，仅仅重置滤波器！", this->lost_count);
+                }
+                else
+                {
+                    // 丢太多了，放弃吧
+                    this->ekf_ready = false; // 丢的太多了 不ready
+                    this->continuous_count = 0; // 数据作废
+                    this->ekf_->reset(); // 重置滤波器为未初始化状态
+                    RCLCPP_WARN(this->get_logger(), "【重度丢失】%d 帧后找回，全部作废重来", this->lost_count);
+                }
+            }
+
+
             ++this->continuous_count; // 连续计数器 + 1
             this->lost_count = 0; // 连续丢失计数器清零
 
@@ -207,17 +232,18 @@ private:
         
             // 查找【父坐标系】->【装甲板坐标系】变换，也就是实时值
             // 单机模式下是【相机坐标系】->【装甲板坐标系】，联调模式下是【世界坐标系】->【装甲板坐标系】
-            Eigen::Vector3d armorplate_center;
-            double yaw_armorplate;
-            bool flag = this->tf->getFatherToArmorplateTransform(armorplate_center, yaw_armorplate); // 获取父坐标系到装甲板坐标系的变换，单机模式下父坐标系是相机坐标系，联调模式下父坐标系是世界坐标系。返回值表示是否成功获取变换
+
+            Eigen::Vector3d armorplate_center_now; // 实时点位置
+            double yaw_armorplate_now; // 实时装甲板偏航角
+            bool flag = this->tf->getFatherToArmorplateTransform(armorplate_center_now, yaw_armorplate_now, msg->header.stamp); // 获取父坐标系到装甲板坐标系的变换，单机模式下父坐标系是相机坐标系，联调模式下父坐标系是世界坐标系。返回值表示是否成功获取变换
 
             // 如果查到了变换，就开始滤波
             if(flag)
             {
                 this->ekf_->setParam(this->ARMOR_TYPE); // 设置装甲板尺寸，方便后期转换装甲板的四个角点到世界下
-                this->ekf_->getKalman(armorplate_center, yaw_armorplate, 3, dt);
+                this->ekf_->getKalman(armorplate_center_now, yaw_armorplate_now, 3, dt);
                 
-                armorplate_center_predict = armorplate_center; // 【3-4帧】先用观测值
+                armorplate_center_predict = armorplate_center_now; // 【3-4帧】先用观测值
 
                 // 只有 用有效帧的前几帧初始化了滤波器 才用预测值，否则就用观测值
                 if(this->continuous_count > CONTINUOUS_THRESHOLD + FILTER_INIT_THRESHOLD)
@@ -311,7 +337,7 @@ private:
             {
                 // 再查询 父坐标系 → camera 的 TF
                 tf2::Transform T_world_cam;
-                if (this->tf->getWorldToCameraTransform(T_world_cam)) 
+                if (this->tf->getWorldToCameraTransform(T_world_cam, msg->header.stamp)) 
                 {
                     // 对每个装甲板 ID 进行重投影（用不同颜色区分）（实时滤波位置）
                     std::vector<cv::Scalar> colors = 
@@ -609,7 +635,7 @@ private:
     std::unique_ptr<EKF> ekf_;
 
     // 参数量
-    int MAX_LOST_COUNT = 60; // 最大连续丢失量，超过这个就不用 ekf 的预测了
+    int MAX_LOST_COUNT = 60; // 最大连续丢失量，超过这个就不用 ekf 的预测了，大概 60 / 200 = 0.3s
 
     // 上一次查询的的时间戳
     rclcpp::Time last_image_time; // 上一帧收到图像的时间戳，是一切 dt 的基础
