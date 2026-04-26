@@ -49,6 +49,10 @@ public:
     bool getCameraToWorldTransform(tf2::Transform& T_world_cam, rclcpp::Time time_stamp);
 
 
+    // 查询【世界坐标系】->【芯片坐标系】，通过引用回传角度值，返回1或者0表示是否有效
+    bool getWorldToChipTransform(double& pitch_chip, double& yaw_chip, rclcpp::Time time_stamp);
+
+
     /**
      * @brief 直接发布 camera_frame -> armorplate_frame 的变换
      * @param 

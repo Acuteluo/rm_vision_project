@@ -130,6 +130,41 @@ bool TF::getCameraToWorldTransform(tf2::Transform& T_world_to_cam_point, rclcpp:
 }
 
 
+// 查询【世界坐标系】->【芯片坐标系】，通过引用回传角度值，返回1或者0表示是否有效
+bool TF::getWorldToChipTransform(double& pitch_chip, double& yaw_chip, rclcpp::Time time_stamp)
+{
+    geometry_msgs::msg::TransformStamped tf_world_chip;
+    try 
+    {
+        // 查询 world_frame -> chip_frame 的变换
+        tf_world_chip = tf_buffer_->lookupTransform("world_frame", "chip_frame", time_stamp);
+    } 
+    catch (tf2::TransformException &ex) 
+    {
+        // 查不到时使用节流打印，防止刷屏
+        RCLCPP_WARN(this->node_->get_logger(), "获取【世界坐标系】->【芯片坐标系】失败: %s", ex.what());
+        return false; 
+    }
+
+    // 提取四元数
+    tf2::Quaternion q_chip(
+        tf_world_chip.transform.rotation.x,
+        tf_world_chip.transform.rotation.y,
+        tf_world_chip.transform.rotation.z,
+        tf_world_chip.transform.rotation.w
+    );
+
+    // 转换为欧拉角 (Roll, Pitch, Yaw)
+    double roll_chip;
+    tf2::Matrix3x3(q_chip).getRPY(roll_chip, pitch_chip, yaw_chip);
+
+    // 弧度 (rad) 转为 角度 (degree)
+    pitch_chip = pitch_chip * 180.0 / M_PI;
+    yaw_chip = yaw_chip * 180.0 / M_PI;
+
+    return true;
+}
+
 
 // // 查询【父坐标系】->【装甲板坐标系】是否可以变换
 // // 单机模式时父坐标系是 camera_frame，联调模式时父坐标系是 world_frame

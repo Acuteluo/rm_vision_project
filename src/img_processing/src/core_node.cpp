@@ -22,7 +22,7 @@ public:
         // prepare 类
         this->declare_parameter("core.logger.show_logger_prepare", false); // 是否打印 prepare 类中的日志
         this->declare_parameter("core.param.chosen_color", "red"); // 选择的装甲板颜色
-        this->declare_parameter("core.param.camera_name", "mind_vision"); // 使用的相机名称
+        this->declare_parameter("core.param.camera_name", "galaxy"); // 使用的相机名称
         this->declare_parameter("core.param.armor_type", "normal"); // 识别装甲板的类型
 
         // EKF相关（传递给ekf_）
@@ -47,7 +47,7 @@ public:
         // TF 参数声明
         this->declare_parameter("tf.show_logger_error", false);
         this->declare_parameter("tf.show_result", true);
-        this->declare_parameter("is_standalone", true); // 单机 / 联调模式
+        this->declare_parameter("is_standalone", false); // 单机 / 联调模式
 
 
         // corenode 节点变量获取初始值
@@ -404,13 +404,44 @@ private:
         send_msg.yaw = yaw_result;
         serial_pub_->publish(send_msg);
         RCLCPP_INFO_EXPRESSION(this->get_logger(), this->SHOW_LOGGER_ELSE, "已发送信息");
+
+
+        // 7. 联调模式下，在图上打印要发布的目标角度 和 电控发来的目前芯片姿态
+        if(!this->IS_STANDALONE)
+        {
+            double pitch_chip;
+            double yaw_chip;
+            bool flag = this->tf->getWorldToChipTransform(pitch_chip, yaw_chip, msg->header.stamp); // 获取【世界坐标系】->【芯片坐标系的变换】
+            
+            if(flag)
+            {
+                // 1. 提前计算好差值 (目标值 - 当前查到的值)
+                double pitch_diff = pitch_result - pitch_chip;
+                double yaw_diff = yaw_result - yaw_chip;
+
+                // 2. 打印第一行 Target 信息 (Y 坐标 = 700，白色)
+                cv::putText(this->img_show, 
+                            cv::format("Target: pitch = %.2f, yaw = %.2f", pitch_result, yaw_result), 
+                            cv::Point2f(0, 700), 
+                            cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+
+                // 3. 打印第二行 Current 信息及差值 (Y 坐标下移到 740 防止重叠，我顺手给你用上了樱花粉方便区分)
+                cv::putText(this->img_show, 
+                            cv::format("Current: pitch = %.2f ( %+.2f ), yaw = %.2f ( %+.2f )", 
+                                    pitch_chip, pitch_diff, yaw_chip, yaw_diff), 
+                            cv::Point2f(0, 750), 
+                            cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(193, 182, 255), 2.5);
+            }
+        }
         
-        // ... 步骤5 重投影 + 发送消息 完成时间戳
+
+
+        // ... 步骤5 重投影 + 发送消息 + 打印 完成时间戳
         rclcpp::Time t5 = this->now();
 
 
 
-        // 6. 计算每个步骤的耗时，并打印
+        // 8. 计算每个步骤的耗时，并打印
         if(this->SHOW_LOGGER_TIME && this->armorplate.size() > 0 && this->armorplate[0].is_success)
         {
             double duration1 = (t1 - start).seconds() * 1000.0; // 转换为毫秒
