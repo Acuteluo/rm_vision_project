@@ -189,7 +189,7 @@ void ArmorPlate::drawArmorPlateAndPrintPNPInfo(std::string CHOSEN_COLOR)
 {
     cv::Scalar color;
     if(CHOSEN_COLOR == "red") color = cv::Scalar(0, 255, 255); // 红色装甲板 -> 黄色
-    else color = cv::Scalar(0, 255, 0); // 蓝色装甲板 -> 绿色
+    else color = cv::Scalar(180, 153, 255); // 蓝色装甲板 -> 粉色
 
     // 画出装甲板的四个角点、中心点和边框
     for (int i = 0; i < 4; i++)

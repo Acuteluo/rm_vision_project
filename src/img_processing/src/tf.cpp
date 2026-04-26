@@ -29,62 +29,6 @@ TF::TF(rclcpp::Node* node): node_(node)
                 SHOW_LOGGER_ERROR, SHOW_RESULT, father_frame.c_str());
 
 
-
-    // // ------------------ 进行一个配置文件的读取 -----------------
-
-    //     std::ifstream file("config.txt");  // 打开配置文件，注意是在工作空间下
-    //     if (!file.is_open()) 
-    //     {
-    //         RCLCPP_ERROR(this->node_->get_logger(), "【 EXIT 】无法打开 config.txt 配置文件。。。。即将退出 tf\n");
-    //         exit(-1);
-    //     }
-
-    //     std::string each_line;
-    //     int line_count = 0; // 记录行数
-
-    //     while (std::getline(file, each_line)) 
-    //     {
-    //         // 处理每一行，each_line 即为当前行的字符串
-    //         if (each_line.empty() || each_line[0] == '#' || each_line[0] == '/') continue;
-    //         else
-    //         {
-    //             ++line_count;
-    //             RCLCPP_INFO(this->node_->get_logger(), "已读取配置文件第 %d 个有效行: %s", line_count, each_line.c_str());
-                
-    //             if(line_count == 7)
-    //             {
-    //                 if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
-    //                 {
-    //                     this->SHOW_LOGGER_ERROR = false;
-    //                 }
-    //                 else this->SHOW_LOGGER_ERROR = true;
-    //                 RCLCPP_INFO(this->node_->get_logger(), "【 设置参数 】SHOW_LOGGER_ERROR = %s", each_line.c_str());
-    //             }
-
-    //             else if(line_count == 8)
-    //             {
-    //                 if(each_line == "false" || each_line == "False" || each_line == "FALSE") 
-    //                 {
-    //                     this->SHOW_RESULT = false;
-    //                 }
-    //                 else this->SHOW_RESULT = true;
-    //                 RCLCPP_INFO(this->node_->get_logger(), "【 设置参数 】SHOW_RESULT = %s", each_line.c_str());
-    //             }
-
-    //         }
-    //     }
-
-    //     if(line_count < 8)
-    //     {
-    //         RCLCPP_ERROR(this->node_->get_logger(), "配置文件的有效行数不足7行, 检查配置文件。即将退出 core 节点\n");
-    //         exit(-1);
-    //     }
-    //     else
-    //     {
-    //         RCLCPP_INFO(this->node_->get_logger(), "【 设置参数完成 】TF ALL SET! 共设置了 %d 个有效参数", line_count);
-    //     }
-
-    //     file.close();
 }
 
 
