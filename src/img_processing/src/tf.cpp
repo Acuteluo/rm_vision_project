@@ -106,7 +106,7 @@ void TF::updateParamsFromServer()
 void TF::publishStaticCameraTransform()
 {
     geometry_msgs::msg::TransformStamped tf;
-    tf.header.stamp = rclcpp::Time(0); // 帧头 -> 设置成 0
+    tf.header.stamp = rclcpp::Time(0); // 帧头 -> 设置成 0, 表示无论什么时候查，这个矩阵都永远有效
     tf.header.frame_id = "chip_frame"; // 父坐标系 -> 芯片坐标系
     tf.child_frame_id = "camera_frame"; // 子坐标系 -> 相机坐标系
 
@@ -254,28 +254,35 @@ bool TF::getFatherToArmorplateTransform(const Eigen::Matrix3d& R, const Eigen::V
     else
     {
         // 2. 如果是联调模式，父坐标系是 world_frame。只查询【相机】在世界中的姿态！
-        geometry_msgs::msg::TransformStamped tf_father_cam; 
-        try 
+        tf2::Transform T_world_to_cam; 
+
+        // 调用我们已经写好的函数查 TF，如果查不到直接返回 false，报错日志在那个函数里已经打印了
+        if (!this->getCameraToWorldTransform(T_world_to_cam, time_stamp)) 
         {
-            // 注意 Target 和 Source：我们要把相机里的点转到世界里
-            tf_father_cam = tf_buffer_->lookupTransform(this->father_frame, "camera_frame", time_stamp);
-        } 
-        catch (tf2::TransformException &ex) 
-        {
-            RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【%s -> camera_frame】TF lookup failed: %s", this->father_frame.c_str(), ex.what());
             return false; 
         }
 
+        // 【数学魔法】：getCameraToWorld 拿到的是 World -> Camera 的映射
+        // 我们将其求逆，就得到了 Camera -> World 的映射 (即相机在世界中的绝对姿态)
+        tf2::Transform T_cam_to_world = T_world_to_cam.inverse();
+
         // 提取相机在世界系下的平移和旋转
-        Eigen::Vector3d t_father_cam(tf_father_cam.transform.translation.x, 
-                                    tf_father_cam.transform.translation.y, 
-                                    tf_father_cam.transform.translation.z);
+        Eigen::Vector3d t_father_cam(
+            T_cam_to_world.getOrigin().x(), 
+            T_cam_to_world.getOrigin().y(), 
+            T_cam_to_world.getOrigin().z()
+        );
         
-        Eigen::Quaterniond q_father_cam(tf_father_cam.transform.rotation.w, 
-                                        tf_father_cam.transform.rotation.x, 
-                                        tf_father_cam.transform.rotation.y, 
-                                        tf_father_cam.transform.rotation.z);
-        Eigen::Matrix3d R_father_cam = q_father_cam.toRotationMatrix();
+        // 提取相机在世界系下的旋转，并转为 Eigen 矩阵
+        tf2::Matrix3x3 mat(T_cam_to_world.getRotation());
+        Eigen::Matrix3d R_father_cam;
+        for (int i = 0; i < 3; i++) 
+        {
+            for (int j = 0; j < 3; j++) 
+            {
+                R_father_cam(i, j) = mat[i][j];
+            }
+        }
 
         // =================================================================
         // 核心数学映射：世界坐标 = 相机在世界的原点 + (相机在世界的朝向 * 相对坐标)
