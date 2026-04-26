@@ -22,7 +22,7 @@ public:
         // prepare 类
         this->declare_parameter("core.logger.show_logger_prepare", false); // 是否打印 prepare 类中的日志
         this->declare_parameter("core.param.chosen_color", "red"); // 选择的装甲板颜色
-        this->declare_parameter("core.param.camera_name", "galaxy"); // 使用的相机名称
+        this->declare_parameter("core.param.camera_name", "mind_vision"); // 使用的相机名称
         this->declare_parameter("core.param.armor_type", "normal"); // 识别装甲板的类型
 
         // EKF相关（传递给ekf_）
@@ -47,7 +47,7 @@ public:
         // TF 参数声明
         this->declare_parameter("tf.show_logger_error", false);
         this->declare_parameter("tf.show_result", true);
-        this->declare_parameter("is_standalone", false); // 单机 / 联调模式
+        this->declare_parameter("is_standalone", true); // 单机 / 联调模式
 
 
         // corenode 节点变量获取初始值
@@ -202,6 +202,7 @@ private:
                 {
                     // 丢失一般，可能是持续的遮挡或者误检，直接重置滤波器，并用这一帧来初始化喵
                     this->ekf_->reset(); 
+                    this->tracking_id = 3; // 重置追踪装甲板 ID
                     RCLCPP_WARN(this->get_logger(), "【中度丢失】%d 帧后找回，仅仅重置滤波器！", this->lost_count);
                 }
                 else
@@ -210,6 +211,7 @@ private:
                     this->ekf_ready = false; // 丢的太多了 不ready
                     this->continuous_count = 0; // 数据作废
                     this->ekf_->reset(); // 重置滤波器为未初始化状态
+                    this->tracking_id = 3; // 重置追踪装甲板 ID
                     RCLCPP_WARN(this->get_logger(), "【重度丢失】%d 帧后找回，全部作废重来", this->lost_count);
                 }
             }
@@ -227,21 +229,45 @@ private:
             }
 
 
-            // 发送【相机坐标系】->【装甲板坐标系】的 tf
-            this->tf->updateCameraToArmorplate(this->armorplate[0].R, this->armorplate[0].t_vec);
+            // 发送【相机坐标系】->【装甲板坐标系】的 tf，仅仅是可视化使用，不可能刚发就查毕竟查不到喵，会有延迟
+            this->tf->updateCameraToArmorplate(this->armorplate[0].R, this->armorplate[0].t_vec, msg->header.stamp);
         
             // 查找【父坐标系】->【装甲板坐标系】变换，也就是实时值
             // 单机模式下是【相机坐标系】->【装甲板坐标系】，联调模式下是【世界坐标系】->【装甲板坐标系】
 
             Eigen::Vector3d armorplate_center_now; // 实时点位置
             double yaw_armorplate_now; // 实时装甲板偏航角
-            bool flag = this->tf->getFatherToArmorplateTransform(armorplate_center_now, yaw_armorplate_now, msg->header.stamp); // 获取父坐标系到装甲板坐标系的变换，单机模式下父坐标系是相机坐标系，联调模式下父坐标系是世界坐标系。返回值表示是否成功获取变换
+            bool flag = this->tf->getFatherToArmorplateTransform(this->armorplate[0].R, this->armorplate[0].t_vec, armorplate_center_now, yaw_armorplate_now, msg->header.stamp); // 获取父坐标系到装甲板坐标系的变换，单机模式下父坐标系是相机坐标系，联调模式下父坐标系是世界坐标系。返回值表示是否成功获取变换
 
             // 如果查到了变换，就开始滤波
             if(flag)
             {
+                // 修改：增加猜板和切板的逻辑
+
+                if(this->ekf_ready)
+                {
+                    double min_diff = 10.0;
+                    // EKF 中定义：1前(PI), 2右(PI/2), 3后(0), 4左(-PI/2)
+                    double offsets[4] = {M_PI, M_PI/2, 0.0, -M_PI/2}; 
+                    for (int i = 0; i < 4; i++) 
+                    {
+                        // 根据 EKF 内部的底盘朝向，推算出这 4 块板子【理论上应该在什么角度】
+                        double target_yaw = this->ekf_->X(6) + offsets[i]; 
+                        
+                        // 将【理论角度】与【你手里的实际角度】进行相减，并用 atan2 规范化到 [-pi, pi]
+                        double diff = std::abs(std::atan2(std::sin(target_yaw - yaw_armorplate_now), std::cos(target_yaw - yaw_armorplate_now)));
+                        
+                        // 找出一个误差最小的，那就是你当前正拿着的这面！
+                        if (diff < min_diff) 
+                        {
+                            min_diff = diff;
+                            this->tracking_id = i + 1; // 得到 1, 2, 3, 4
+                        }
+                    }
+                }
+
                 this->ekf_->setParam(this->ARMOR_TYPE); // 设置装甲板尺寸，方便后期转换装甲板的四个角点到世界下
-                this->ekf_->getKalman(armorplate_center_now, yaw_armorplate_now, 3, dt);
+                this->ekf_->getKalman(armorplate_center_now, yaw_armorplate_now, this->tracking_id, dt);
                 
                 armorplate_center_predict = armorplate_center_now; // 【3-4帧】先用观测值
 
@@ -249,7 +275,7 @@ private:
                 if(this->continuous_count > CONTINUOUS_THRESHOLD + FILTER_INIT_THRESHOLD)
                 {
                     this->ekf_ready = true; // 已经稳定，无论怎么丢我都外推
-                    this->ekf_->getArmorPredict(armorplate_center_predict, 3, this->PREDICT_TIME);
+                    this->ekf_->getArmorPredict(armorplate_center_predict, this->tracking_id, this->PREDICT_TIME);
                     this->ekf_->getCenterPredict(car_center_predict, this->PREDICT_TIME);
                 }
                 else
@@ -269,13 +295,14 @@ private:
                     this->ekf_->predictOnly(dt);  // 继续预测 dt 时间，维持状态外推
 
                     // 用外推的信息发
-                    this->ekf_->getArmorPredict(armorplate_center_predict, 3, this->PREDICT_TIME);
+                    this->ekf_->getArmorPredict(armorplate_center_predict, this->tracking_id, this->PREDICT_TIME);
                     this->ekf_->getCenterPredict(car_center_predict, this->PREDICT_TIME);
                 }
                 else
                 {
                     this->ekf_ready = false; // 丢的太多了 不ready
                     this->continuous_count = 0; // 数据作废
+                    this->tracking_id = 3; // 重置追踪装甲板 ID
                     this->ekf_->reset(); // 重置滤波器为未初始化状态。因为当前帧已经没有用了，等下一帧初始化
                     RCLCPP_WARN_EXPRESSION(this->get_logger(), this->SHOW_LOGGER_ELSE, "有目标但未查到变换，目标丢失超过 %d 帧。或者滤波器未初始化好。EKF 已重置", this->MAX_LOST_COUNT);
                     showImg();
@@ -301,13 +328,14 @@ private:
                 this->ekf_->predictOnly(dt);  // 继续预测 dt 时间，维持状态外推
 
                 // 用外推的信息发
-                this->ekf_->getArmorPredict(armorplate_center_predict, 3, this->PREDICT_TIME);
+                this->ekf_->getArmorPredict(armorplate_center_predict, this->tracking_id, this->PREDICT_TIME);
                 this->ekf_->getCenterPredict(car_center_predict, this->PREDICT_TIME);
             }
             else
             {
                 this->ekf_ready = false; // 丢的太多了 不ready
                 this->continuous_count = 0; // 数据作废
+                this->tracking_id = 3; // 重置追踪装甲板 ID
                 this->ekf_->reset(); // 重置滤波器为未初始化状态。因为当前帧已经没有用了，等下一帧初始化
                 RCLCPP_WARN_EXPRESSION(this->get_logger(), this->SHOW_LOGGER_ELSE, "不存在装甲板 或者 pnp解算失败。目标丢失超过 %d 帧, EKF 已重置", this->MAX_LOST_COUNT);
                 showImg();
@@ -335,9 +363,9 @@ private:
             //    注意：如果本帧没有成功检测到装甲板，则无法获取相机参数，此时跳过重投影。
             if (!this->armorplate.empty() && this->armorplate[0].is_success)
             {
-                // 再查询 父坐标系 → camera 的 TF
+                // 再查询 camera → 父坐标系 的 TF，因为要转到相机下投影！
                 tf2::Transform T_world_cam;
-                if (this->tf->getWorldToCameraTransform(T_world_cam, msg->header.stamp)) 
+                if (this->tf->getCameraToWorldTransform(T_world_cam, msg->header.stamp)) 
                 {
                     // 对每个装甲板 ID 进行重投影（用不同颜色区分）（实时滤波位置）
                     std::vector<cv::Scalar> colors = 
@@ -645,6 +673,9 @@ private:
 
     // 动态参数变化 
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
+
+    // 当前正在追踪的最好的装甲板 ID
+    int tracking_id = 3;
 
 };
 

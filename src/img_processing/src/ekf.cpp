@@ -505,13 +505,13 @@ void EKF::UpdateStatus()
     innovation(3) = std::atan2(std::sin(innovation(3)), std::cos(innovation(3)));
 
 
-    // 3. 【新增】角度跳变门控防爆机制
-    // 如果观测角度与预测角度偏差大于 35度 (约 0.6 rad)，说明 PnP 肯定算错了
-    // 只要滤波器已经初始化，我们绝对不相信这个离谱的观测，强行将其拉回 0
-    if (std::abs(innovation(3)) > 0.6 && this->is_initialized) 
-    {
-        innovation(3) = 0.0; // 离谱的角度观测我不听，用 EKF 自己的预测！
-    }
+    // // 3. 【新增】角度跳变门控防爆机制
+    // // 如果观测角度与预测角度偏差大于 35度 (约 0.6 rad)，说明 PnP 肯定算错了
+    // // 只要滤波器已经初始化，我们绝对不相信这个离谱的观测，强行将其拉回 0
+    // if (std::abs(innovation(3)) > 0.6 && this->is_initialized) 
+    // {
+    //     innovation(3) = 0.0; // 离谱的角度观测我不听，用 EKF 自己的预测！
+    // }
 
     // 再用处理后的新息进行状态更新
     X = X_est + K * innovation;

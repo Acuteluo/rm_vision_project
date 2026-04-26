@@ -130,12 +130,13 @@ void TF::publishStaticCameraTransform()
 
 
 // 03【相机坐标系 -> 装甲板坐标系】当前装甲板位姿的坐标系 -> 动态
-void TF::updateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t)
+// 发布归发布，为的只是可视化！由于刚发完很快就要查根本来不及，我们直接在另一个tf函数里，用pnp得到的R|t直接查father->装甲板，保证能查到！
+void TF::updateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t, rclcpp::Time time_stamp)
 {
     // 已经在 serial_driver 里判断过 PNP 是否和上次收到的完全相同了
 
     geometry_msgs::msg::TransformStamped tf;
-    tf.header.stamp = this->node_->now();
+    tf.header.stamp = time_stamp; // 帧头 -> 直接使用传入的时间戳，保证和图像时间戳对齐
     tf.header.frame_id = "camera_frame"; // 父坐标系 -> 相机坐标系
     tf.child_frame_id = "armorplate_frame"; // 子坐标系 -> 装甲板坐标系
 
@@ -161,10 +162,10 @@ void TF::updateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t)
 
 
 
-// 查询【父坐标系】->【相机坐标系】是否可以变换
+// 查询【相机坐标系】-> 【父坐标系】是否可以变换
 // 单机模式时父坐标系是 camera_frame，联调模式时父坐标系是 world_frame
 // 最后一个参数是查询时间戳，保证和图像时间戳对齐
-bool TF::getWorldToCameraTransform(tf2::Transform& T_world_to_cam_point, rclcpp::Time time_stamp)
+bool TF::getCameraToWorldTransform(tf2::Transform& T_world_to_cam_point, rclcpp::Time time_stamp)
 {
     geometry_msgs::msg::TransformStamped transform;
     try 
@@ -186,153 +187,108 @@ bool TF::getWorldToCameraTransform(tf2::Transform& T_world_to_cam_point, rclcpp:
 
 
 
-// 查询【父坐标系】->【装甲板坐标系】是否可以变换
-// 单机模式时父坐标系是 camera_frame，联调模式时父坐标系是 world_frame
-// 通过引用回传滤波后的最终结果，返回1或者0表示是否有效
-// 最后一个参数是查询时间戳，保证和图像时间戳对齐
-bool TF::getFatherToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp)
+// // 查询【父坐标系】->【装甲板坐标系】是否可以变换
+// // 单机模式时父坐标系是 camera_frame，联调模式时父坐标系是 world_frame
+// // 通过引用回传滤波后的最终结果，返回1或者0表示是否有效
+// // 最后一个参数是查询时间戳，保证和图像时间戳对齐
+// bool TF::getFatherToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp)
+// {
+//     geometry_msgs::msg::TransformStamped transform_world_armorplate; // 世界 -> 装甲板
+//     try 
+//     {
+//         // transform_world_armorplate = tf_buffer_->lookupTransform(this->father_frame, "armorplate_frame", tf2::TimePointZero);
+//         transform_world_armorplate = tf_buffer_->lookupTransform(this->father_frame, "armorplate_frame", tf2::TimePointZero);
+//     } 
+//     catch (tf2::TransformException &ex) 
+//     {
+//         RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【%s -> 装甲板 坐标系】TF lookup failed: %s", this->father_frame, ex.what());
+//         return false; 
+//     }
+
+
+//     ///////////////////////////////////// 世界 -> 装甲板 的 位置 ////////////////////////////////////////
+
+
+//     // 获得 世界 -> 装甲板 的平移向量 
+//     armorplate_center[0] = transform_world_armorplate.transform.translation.x;
+//     armorplate_center[1] = transform_world_armorplate.transform.translation.y;
+//     armorplate_center[2] = transform_world_armorplate.transform.translation.z;
+
+//     RCLCPP_INFO_EXPRESSION(node_->get_logger(), this->SHOW_RESULT, "查询到【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.7f m, Y=%.7f m, Z=%.7f m", armorplate_center[0], armorplate_center[1], armorplate_center[2]);
+
+//     // 旋转矩阵
+//     tf2::Quaternion q(
+//             transform_world_armorplate.transform.rotation.x,
+//             transform_world_armorplate.transform.rotation.y,
+//             transform_world_armorplate.transform.rotation.z,
+//             transform_world_armorplate.transform.rotation.w);
+
+//     // double roll_armor, pitch_armor;
+//     // tf2::Matrix3x3(q).getRPY(roll_armor, pitch_armor, yaw_armor);
+
+//     // 1. 转成矩阵
+//     tf2::Matrix3x3 mat(q);
+
+//     // 2. 提取第一列的前两个元素 (世界坐标系下的 X 和 Y 投影) 注意这里是 R 矩阵！
+//     double vec_x = mat[0][0]; 
+//     double vec_y = mat[1][0]; 
+
+//     // 3. 直接用 atan2 算出偏航角
+//     yaw_armor = std::atan2(vec_y, vec_x);
+
+//     return true;
+// }
+
+
+
+bool TF::getFatherToArmorplateTransform(const Eigen::Matrix3d& R, const Eigen::Vector3d& t, Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp)
 {
-    geometry_msgs::msg::TransformStamped transform_world_armorplate; // 世界 -> 装甲板
-    try 
+    // 1. 如果是单机模式，父坐标系就是 camera_frame，直接使用 PnP 的计算结果，0延迟！
+    if (this->father_frame == "camera_frame")
     {
-        // transform_world_armorplate = tf_buffer_->lookupTransform(this->father_frame, "armorplate_frame", tf2::TimePointZero);
-        transform_world_armorplate = tf_buffer_->lookupTransform(this->father_frame, "armorplate_frame", time_stamp);
-    } 
-    catch (tf2::TransformException &ex) 
-    {
-        RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【%s -> 装甲板 坐标系】TF lookup failed: %s", this->father_frame, ex.what());
-        return false; 
+        armorplate_center = t;
+        yaw_armor = std::atan2(R(1, 0), R(0, 0)); // 直接求旋转矩阵第一列的偏航角
+        return true;
     }
 
-
-    ///////////////////////////////////// 世界 -> 装甲板 的 位置 ////////////////////////////////////////
-
-
-    // 获得 世界 -> 装甲板 的平移向量 
-    armorplate_center[0] = transform_world_armorplate.transform.translation.x;
-    armorplate_center[1] = transform_world_armorplate.transform.translation.y;
-    armorplate_center[2] = transform_world_armorplate.transform.translation.z;
-
-    RCLCPP_INFO_EXPRESSION(node_->get_logger(), this->SHOW_RESULT, "查询到【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.7f m, Y=%.7f m, Z=%.7f m", armorplate_center[0], armorplate_center[1], armorplate_center[2]);
-
-    // 旋转矩阵
-    tf2::Quaternion q(
-            transform_world_armorplate.transform.rotation.x,
-            transform_world_armorplate.transform.rotation.y,
-            transform_world_armorplate.transform.rotation.z,
-            transform_world_armorplate.transform.rotation.w);
-
-    // double roll_armor, pitch_armor;
-    // tf2::Matrix3x3(q).getRPY(roll_armor, pitch_armor, yaw_armor);
-
-    // 1. 转成矩阵
-    tf2::Matrix3x3 mat(q);
-
-    // 2. 提取第一列的前两个元素 (世界坐标系下的 X 和 Y 投影) 注意这里是 R 矩阵！
-    double vec_x = mat[0][0]; 
-    double vec_y = mat[1][0]; 
-
-    // 3. 直接用 atan2 算出偏航角
-    yaw_armor = std::atan2(vec_y, vec_x);
-
-
-/*
-    // 调用滤波算法，滤波 世界 -> 装甲板 的位置
-
-    
-    
-    this->kf_position_->getKalman(X_armor, Y_armor, Z_armor, dt); // 更新 KF 的状态
-
-
-    // 写在外面不更新没问题，因为是直接赋值
-    double X_filt, Y_filt, Z_filt;
-    double X_prev, Y_prev, Z_prev;
-
-    // 前几帧数据用来让 KF 稳定下来，不急着滤波，直接用测量值计算位置
-    if(count > 2) 
+    else
     {
-        this->kf_position_->getData(X_filt, Y_filt, Z_filt); // 获取滤波后的结果
-        RCLCPP_INFO_EXPRESSION(node_->get_logger(), this->SHOW_RESULT, "滤波后【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.7f m, Y=%.7f m, Z=%.7f m", X_filt, Y_filt, Z_filt);
-
-        this->kf_position_->getPredict(X_prev, Y_prev, Z_prev, 0.010); // 预测未来 10ms 的位置，看看趋势
-        RCLCPP_INFO_EXPRESSION(node_->get_logger(), this->SHOW_RESULT, "预测未来 10ms 后【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.7f m, Y=%.7f m, Z=%.7f m", X_prev, Y_prev, Z_prev);
-
-        // 计算预测位置和当前测量位置的距离，看看 KF 的预测是否靠谱。如果距离超过 0.50m 的阈值，说明预测不准，直接用滤波值计算角度
-        double dx = X_prev - X_armor;
-        double dy = Y_prev - Y_armor;
-        double dz = Z_prev - Z_armor;
-        double distance = std::sqrt(dx * dx + dy * dy + dz * dz);
-        if(distance > 0.30) // 如果预测位置和当前测量位置相差太大，说明预测不准，直接用滤波值计算角度
+        // 2. 如果是联调模式，父坐标系是 world_frame。只查询【相机】在世界中的姿态！
+        geometry_msgs::msg::TransformStamped tf_father_cam; 
+        try 
         {
-            RCLCPP_WARN(this->node_->get_logger(), "预测位置和当前测量位置相差 %.3f m, 超过 0.30 m 的阈值，说明预测不准，直接用测量值计算角度", distance);
-            X_prev = X_filt;
-            Y_prev = Y_filt;
-            Z_prev = Z_filt;
+            // 注意 Target 和 Source：我们要把相机里的点转到世界里
+            tf_father_cam = tf_buffer_->lookupTransform(this->father_frame, "camera_frame", time_stamp);
+        } 
+        catch (tf2::TransformException &ex) 
+        {
+            RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【%s -> camera_frame】TF lookup failed: %s", this->father_frame.c_str(), ex.what());
+            return false; 
         }
+
+        // 提取相机在世界系下的平移和旋转
+        Eigen::Vector3d t_father_cam(tf_father_cam.transform.translation.x, 
+                                    tf_father_cam.transform.translation.y, 
+                                    tf_father_cam.transform.translation.z);
+        
+        Eigen::Quaterniond q_father_cam(tf_father_cam.transform.rotation.w, 
+                                        tf_father_cam.transform.rotation.x, 
+                                        tf_father_cam.transform.rotation.y, 
+                                        tf_father_cam.transform.rotation.z);
+        Eigen::Matrix3d R_father_cam = q_father_cam.toRotationMatrix();
+
+        // =================================================================
+        // 核心数学映射：世界坐标 = 相机在世界的原点 + (相机在世界的朝向 * 相对坐标)
+        // =================================================================
+        armorplate_center = t_father_cam + R_father_cam * t;
+
+        // 姿态叠加，并提取绝对 Yaw 角
+        Eigen::Matrix3d R_father_armor = R_father_cam * R;
+        yaw_armor = std::atan2(R_father_armor(1, 0), R_father_armor(0, 0));
+
+        RCLCPP_INFO_EXPRESSION(node_->get_logger(), this->SHOW_RESULT, "装甲板在【世界坐标系】的坐标: X=%.3f, Y=%.3f, Z=%.3f", armorplate_center[0], armorplate_center[1], armorplate_center[2]);
+
+        return true;
     }
-    else // 不够 2 帧就先用原来的值
-    {
-        X_prev = X_armor;
-        Y_prev = Y_armor;
-        Z_prev = Z_armor;
-    }
-
-
-    // EKF 预测
-    double X_ekf = 0.0;
-    double Y_ekf = 0.0;
-    double Z_ekf = 0.0;
-    double X_ekf_center = 0.0;
-    double Y_ekf_center = 0.0;
-    double Z_ekf_center = 0.0;
-
-
-    this->ekf_->getKalman(X_filt, Y_filt, Z_filt, yaw_armor, 3, dt);
-    this->ekf_->getArmorPredict(X_ekf, Y_ekf, Z_ekf, 3, 0.20);
-    this->ekf_->getCenterPredict(X_ekf_center, Y_ekf_center, Z_ekf_center, 0.20);
     
-    double pitch_diff = -std::atan2(Z_ekf, std::sqrt(X_ekf * X_ekf + Y_ekf * Y_ekf)) * 180.0 / M_PI;   
-    double yaw_diff = std::atan2(Y_ekf, X_ekf) * 180.0 / M_PI;
-    pitch = pitch_diff;
-    yaw = yaw_diff;
-
-
-    ///////////////////////////////////// 得到最终角度 ////////////////////////////////////////
-    
-
-    // 用 t 计算 滤波后的装甲板相对于世界的【偏差角】pitch & yaw
-
-    // atan2(y, x) 的符号只由 y 决定，与 x 无关。
-
-    // pitch + 表示目标在相机下方。当△z为-时，结果为-。装甲板在下方，需要pitch为+，所以要取负号
-    // yaw + 表示目标在相机左侧。因为当△y为-时，结果为-。装甲板在右方，需要yaw为-，没问题
-
-    // double pitch_diff = -std::atan2(Z_prev, std::sqrt(X_prev * X_prev + Y_prev * Y_prev)) * 180.0 / M_PI;   
-    // double yaw_diff = std::atan2(Y_prev, X_prev) * 180.0 / M_PI;
-    // pitch = pitch_diff;
-    // yaw = yaw_diff;
-    
-    // float pitch_genbil = 0, yaw_genbil = 0;
-    // getFixCameraAngle(X_prev, Y_prev, Z_prev, pitch_genbil, yaw_genbil);
-
-    // pitch = pitch_genbil;
-    // yaw = yaw_genbil;
-
-
-    // // 对最终结果再进行一次 KF 滤波，看看能不能更稳定一些
-    // this->kf_data_->getKalman(pitch, yaw); // 更新 KF 的状态
-
-    // // 前几帧数据用来让 KF 稳定下来，不急着滤波，直接用计算值就好
-    // if(count > 5)
-    // {
-    //     double pitch_filt, yaw_filt;
-    //     this->kf_data_->getData(pitch_filt, yaw_filt); // 获取滤波后的结果
-    //     pitch = pitch_filt;
-    //     yaw = yaw_filt;
-    //     RCLCPP_INFO_EXPRESSION(node_->get_logger(), this->SHOW_RESULT, "滤波后【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.7f m, Y=%.7f m, Z=%.7f m", X_filt, Y_filt, Z_filt);
-    // }
-*/
-
-    return true;
-
 }

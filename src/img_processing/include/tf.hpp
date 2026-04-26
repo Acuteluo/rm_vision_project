@@ -41,19 +41,19 @@ public:
      * @param time_stamp 查询时间戳，保证和图像时间戳对齐
      * @return 1 可变换，0 变换失败（TF 树不完整）
      */
-    bool getFatherToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp);
+    //bool getFatherToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp);
+    bool getFatherToArmorplateTransform(const Eigen::Matrix3d& R, const Eigen::Vector3d& t, Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp);
 
-
-    // 查询【世界坐标系】->【相机坐标系】是否可以变换
+    // 查询【相机坐标系】->【世界坐标系】是否可以变换
     // time_stamp 查询时间戳，保证和图像时间戳对齐
-    bool getWorldToCameraTransform(tf2::Transform& T_world_cam, rclcpp::Time time_stamp);
+    bool getCameraToWorldTransform(tf2::Transform& T_world_cam, rclcpp::Time time_stamp);
 
 
     /**
      * @brief 直接发布 camera_frame -> armorplate_frame 的变换
      * @param 
      */
-    void updateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t);
+    void updateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t, rclcpp::Time time_stamp);
 
 
 private:

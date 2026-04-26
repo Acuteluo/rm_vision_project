@@ -137,6 +137,14 @@ public:
     // 查询【世界坐标系】-> 【整车中心坐标系】
     // bool getTransform(double& x_c, double& y_c, double& z_c, double& yaw);
 
+
+    // 状态矩阵
+	Eigen::Matrix<double, 9, 1> X;      // k 时刻状态
+	Eigen::Matrix<double, 9, 1> X_est;  // k 时刻预测状态
+	Eigen::Matrix<double, 9, 1> X_prev; // k-1 时刻状态
+
+
+
 private:
 
     // 非线性观测方程 h(x, armor_id)：将状态映射到装甲板观测空间
@@ -152,11 +160,6 @@ private:
     double radius = 0.25; // 整车旋转半径 m
 
     bool SHOW_LOGGER_DEBUG; // 是否打印调参日志
-
-	// 状态矩阵
-	Eigen::Matrix<double, 9, 1> X;      // k 时刻状态
-	Eigen::Matrix<double, 9, 1> X_est;  // k 时刻预测状态
-	Eigen::Matrix<double, 9, 1> X_prev; // k-1 时刻状态
 
 	// 协方差矩阵
 	Eigen::Matrix<double, 9, 9> P;      // k 时刻协方差矩阵
