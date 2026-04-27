@@ -16,9 +16,9 @@ struct ReceivePacket
   
   // 欧拉角顺序为 RPY
   // --- 有效数据起 ---
-  float euler_roll;    // 先 roll
-  float euler_pitch;   // 然后 pitch
-  float euler_yaw;     // 最后 yaw
+  float euler_pitch;    // 先 pitch
+  float euler_yaw;   // 然后 yaw
+  float euler_roll;     // 最后 roll
   // --- 有效数据止 ---
 
   uint8_t checksum = 0xFE; // CRC8 校验值，注意这里是固定

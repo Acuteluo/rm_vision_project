@@ -1,3 +1,7 @@
+// 我的 pitch 是你的 yaw
+// 我的 roll 是你的 pitch
+// 我的 yaw 是你的 roll
+
 #include "prepare_algorithm.h"
 #include "tf.hpp"
 #include "ekf.hpp"
@@ -416,8 +420,8 @@ private:
             if(flag)
             {
                 // 1. 提前计算好差值 (目标值 - 当前查到的值)
-                double pitch_diff = pitch_result - pitch_chip;
-                double yaw_diff = yaw_result - yaw_chip;
+                double pitch_diff = pitch_chip - pitch_result;
+                double yaw_diff = yaw_chip - yaw_result;
 
                 // 2. 打印第一行 Target 信息 (Y 坐标 = 700，白色)
                 cv::putText(this->img_show, 
