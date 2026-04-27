@@ -2,6 +2,7 @@
 /home/cly/project/install/img_processing/include/kf_position.hpp
 /home/cly/project/install/img_processing/include/strip.h
 /home/cly/project/install/img_processing/include/tf.hpp
+/home/cly/project/install/img_processing/include/plotter.hpp
 /home/cly/project/install/img_processing/include/armorplate.h
 /home/cly/project/install/img_processing/include/ekf.hpp
 /home/cly/project/install/img_processing/include/prepare_algorithm.h

@@ -330,6 +330,30 @@ src/kf_position.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/kf_position.cpp.s
 .PHONY : src/kf_position.cpp.s
 
+src/plotter.o: src/plotter.cpp.o
+.PHONY : src/plotter.o
+
+# target to build an object file
+src/plotter.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/plotter.cpp.o
+.PHONY : src/plotter.cpp.o
+
+src/plotter.i: src/plotter.cpp.i
+.PHONY : src/plotter.i
+
+# target to preprocess a source file
+src/plotter.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/plotter.cpp.i
+.PHONY : src/plotter.cpp.i
+
+src/plotter.s: src/plotter.cpp.s
+.PHONY : src/plotter.s
+
+# target to generate assembly for a file
+src/plotter.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/plotter.cpp.s
+.PHONY : src/plotter.cpp.s
+
 src/prepare_algorithm.o: src/prepare_algorithm.cpp.o
 .PHONY : src/prepare_algorithm.o
 
@@ -433,6 +457,9 @@ help:
 	@echo "... src/kf_position.o"
 	@echo "... src/kf_position.i"
 	@echo "... src/kf_position.s"
+	@echo "... src/plotter.o"
+	@echo "... src/plotter.i"
+	@echo "... src/plotter.s"
 	@echo "... src/prepare_algorithm.o"
 	@echo "... src/prepare_algorithm.i"
 	@echo "... src/prepare_algorithm.s"
