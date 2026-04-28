@@ -32,8 +32,9 @@ public:
 	/**
 	* @brief	画出装甲板并标点，打印 pnp 信息
 	* @return   无返回值，直接画图
+    // sum 是按置信度排列的第几个装甲板
 	*/
-	void drawArmorPlateAndPrintPNPInfo(std::string CHOSEN_COLOR);
+	void drawArmorPlateAndPrintPNPInfo(std::string CHOSEN_COLOR, int sum);
 
 
 	/**

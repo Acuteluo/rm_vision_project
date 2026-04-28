@@ -185,7 +185,7 @@ ArmorPlate::ArmorPlate(Strip a, Strip b, double moderation, std::string camera_n
 * @brief	画出装甲板并标点，打印 pnp 信息
 * @return   无返回值，直接画图
 */
-void ArmorPlate::drawArmorPlateAndPrintPNPInfo(std::string CHOSEN_COLOR)
+void ArmorPlate::drawArmorPlateAndPrintPNPInfo(std::string CHOSEN_COLOR, int sum)
 {
     cv::Scalar color;
     if(CHOSEN_COLOR == "red") color = cv::Scalar(0, 255, 255); // 红色装甲板 -> 黄色
@@ -199,11 +199,16 @@ void ArmorPlate::drawArmorPlateAndPrintPNPInfo(std::string CHOSEN_COLOR)
     }
     cv::circle(this->img_show, this->center, 3, color, cv::FILLED); // 中心点
 
-    // 打印 置信度 和 pnp 信息
-    cv::putText(this->img_show, "moderation = " + std::to_string((double)this->moderation), cv::Point2f(0, 450), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-	cv::putText(this->img_show, "t_pitch = " + std::to_string((double)this->t_pitch), cv::Point2f(0, 500), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-    cv::putText(this->img_show, "t_yaw = " + std::to_string((double)this->t_yaw), cv::Point2f(0, 550), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-	cv::putText(this->img_show, "t_distance = " + std::to_string((double)this->t_distance) + "m", cv::Point2f(0, 600), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+    // 只打印综合置信度（考虑与上一帧追踪装甲板的距离）最高的装甲板的信息，也就是现在跟踪的装甲板的信息
+    if(sum == 0)
+    {
+         // 打印 置信度 和 pnp 信息
+        cv::putText(this->img_show, "moderation = " + std::to_string((double)this->moderation), cv::Point2f(0, 450), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+	    cv::putText(this->img_show, "t_pitch = " + std::to_string((double)this->t_pitch), cv::Point2f(0, 500), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+        cv::putText(this->img_show, "t_yaw = " + std::to_string((double)this->t_yaw), cv::Point2f(0, 550), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+	    cv::putText(this->img_show, "t_distance = " + std::to_string((double)this->t_distance) + "m", cv::Point2f(0, 600), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+    }
+   
 }
 
 

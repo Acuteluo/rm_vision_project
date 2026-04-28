@@ -27,7 +27,7 @@ public:
         // prepare 类
         this->declare_parameter("core.logger.show_logger_prepare", false); // 是否打印 prepare 类中的日志
         this->declare_parameter("core.param.chosen_color", "red"); // 选择的装甲板颜色
-        this->declare_parameter("core.param.camera_name", "mind_vision"); // 使用的相机名称
+        this->declare_parameter("core.param.camera_name", "galaxy"); // 使用的相机名称
         this->declare_parameter("core.param.armor_type", "normal"); // 识别装甲板的类型
 
         // EKF相关（传递给ekf_）
@@ -52,7 +52,7 @@ public:
         // TF 参数声明
         this->declare_parameter("tf.show_logger_error", false);
         this->declare_parameter("tf.show_result", true);
-        this->declare_parameter("is_standalone", true); // 单机 / 联调模式
+        this->declare_parameter("is_standalone", false); // 单机 / 联调模式
 
         // 在 ProcessNode 构造函数里加一个控制开关和对象实例化：
         this->declare_parameter("core.image.show_plot", true); 
@@ -164,7 +164,14 @@ private:
         {
             this->armorplate[0].setImgShow(this->img_show); // 设置 img_show
             this->armorplate[0].perspectiveNPoint(); // 解算 pnp
-            this->armorplate[0].drawArmorPlateAndPrintPNPInfo(this->CHOSEN_COLOR); // 画置信度最高的装甲板，并打印 pnp 信息
+
+            // 画出所有装甲板（按置信度排序的）并打印信息
+            for(int i = 0; i < this->armorplate.size(); i++) 
+            {
+                // 画所有的装甲板，并打印综合置信度（考虑与上一帧追踪装甲板的距离）最高的装甲板的 pnp 信息
+                this->armorplate[i].drawArmorPlateAndPrintPNPInfo(this->CHOSEN_COLOR, i); 
+            }
+            
             this->img_show = this->armorplate[0].getImgShow(); // 获取带有装甲板信息的 img_show
         }
 

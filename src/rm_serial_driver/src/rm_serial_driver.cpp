@@ -85,21 +85,33 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
         getParams();
         RCLCPP_INFO_ONCE(get_logger(), "Step 3/7: 已经从 config 文件读取参数, device_name=%s", device_name_.c_str());
 
+        // 创建 core 消息订阅者，话题 /serial_driver
+        data_sub_ = this->create_subscription<serial_driver_interfaces::msg::SerialDriver>("/serial_driver", 10, std::bind(&RMSerialDriver::CheckData, this, std::placeholders::_1));
+        RCLCPP_INFO_ONCE(get_logger(), "Step 4/7: 成功创建 /serial_driver 话题订阅者");
+
+        // 初始化 last_receive_time，上一次接收电控数据的时间，用于统计电控发来消息的频率
+        this->last_receive_time = this->now(); 
+
+        // 初始化 receive_time，最新收到电控数据的时间戳
+        this->receive_time = this->now(); 
+
+        this->chip_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(this);
+
 
         // 串口初始化核心
         try 
         {
             serial_driver_->init_port(device_name_, *device_config_);
-            RCLCPP_INFO_ONCE(get_logger(), "Step 4/7: 初始化串口 成功");
+            RCLCPP_INFO_ONCE(get_logger(), "Step 5/7: 初始化串口 成功");
 
             // 如果串口没打开，尝试打开
             if (!serial_driver_->port()->is_open()) 
             {
                 serial_driver_->port()->open();
-                RCLCPP_INFO_ONCE(get_logger(), "Step 5/7: 未打开串口，现在串口已经打开成功");
+                RCLCPP_INFO_ONCE(get_logger(), "Step 6/7: 未打开串口，现在串口已经打开成功");
 
                 receive_thread_ = std::thread(&RMSerialDriver::receiveData, this); 
-                RCLCPP_INFO_ONCE(get_logger(), "Step 6/7: 启动接收线程 成功");
+                RCLCPP_INFO_ONCE(get_logger(), "Step 7/7: 启动接收线程 成功");
             }
         } 
         catch (const std::exception & ex) 
@@ -113,19 +125,6 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
                         // 否则节点会直接退出
             
         }
-
-        // 创建 core 消息订阅者，话题 /serial_driver
-        data_sub_ = this->create_subscription<serial_driver_interfaces::msg::SerialDriver>("/serial_driver", 10, std::bind(&RMSerialDriver::CheckData, this, std::placeholders::_1));
-        RCLCPP_INFO_ONCE(get_logger(), "Step 7/7: 成功创建 /serial_driver 话题订阅者");
-
-        // 初始化 last_receive_time，上一次接收电控数据的时间，用于统计电控发来消息的频率
-        this->last_receive_time = this->now(); 
-
-        // 初始化 receive_time，最新收到电控数据的时间戳
-        this->receive_time = this->now(); 
-
-        this->chip_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(this);
-
 
         RCLCPP_INFO_ONCE(get_logger(), ">>>>>>>>>>>>>>> 串口构造函数已经初始化完成。");
 
