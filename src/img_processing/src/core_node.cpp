@@ -19,19 +19,21 @@ public:
 
         // 声明参数（带默认值）
 
+        // 说明：如果单机，就改一下 camera_name (galaxy -> mind_vision) 和 is_standalone (false -> true)
+
         // core 节点
-        this->declare_parameter("core.logger.show_logger_time", false); // 是否打印时间相关日志
+        this->declare_parameter("core.logger.show_logger_time", true); // 是否打印时间相关日志
         this->declare_parameter("core.logger.show_logger_else", false); // 是否打印corenode其他的相关日志
         this->declare_parameter("core.image.show_img", true); // 是否显示图片
         
         // prepare 类
         this->declare_parameter("core.logger.show_logger_prepare", false); // 是否打印 prepare 类中的日志
         this->declare_parameter("core.param.chosen_color", "red"); // 选择的装甲板颜色
-        this->declare_parameter("core.param.camera_name", "galaxy"); // 使用的相机名称
+        this->declare_parameter("core.param.camera_name", "mind_vision"); // 使用的相机名称
         this->declare_parameter("core.param.armor_type", "normal"); // 识别装甲板的类型
 
         // EKF相关（传递给ekf_）
-        this->declare_parameter("ekf.predict_time", 0.05); // 预测时间
+        this->declare_parameter("ekf.predict_time", 0.2); // 预测时间（记得改！）
         this->declare_parameter("ekf.show_logger_debug", true); // ekf 调试
 
         this->declare_parameter("ekf.q_x", 0.05);
@@ -52,7 +54,7 @@ public:
         // TF 参数声明
         this->declare_parameter("tf.show_logger_error", false);
         this->declare_parameter("tf.show_result", true);
-        this->declare_parameter("is_standalone", false); // 单机 / 联调模式
+        this->declare_parameter("is_standalone", true); // 单机 / 联调模式
 
         // 在 ProcessNode 构造函数里加一个控制开关和对象实例化：
         this->declare_parameter("core.image.show_plot", true); 

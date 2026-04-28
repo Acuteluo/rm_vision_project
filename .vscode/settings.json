@@ -12,13 +12,6 @@
     "background.customImages": [
         // 本地图片（注意路径格式：file:/// + 绝对路径，斜杠用 /）
 
-        // // 自用壁纸
-        "file:///home/cly/图片/wallpaper/微信图片_20260118223852_1_131.jpg",
-
-        "file:///home/cly/图片/wallpaper/微信图片_20260118223854_2_131.jpg",
-
-        "file:///home/cly/图片/wallpaper/微信图片_20260118223855_3_131.jpg",
-
         // 绒爪实验室
 
         "file:///home/cly/图片/wallpaper/53.jpg",
@@ -28,6 +21,13 @@
         "file:///home/cly/图片/wallpaper/Yubi_Torobi 1.jpg",
 
         "file:///home/cly/图片/wechat_pictures/微信图片_20260427125537_63_131.jpg",
+
+        // // 自用壁纸
+        "file:///home/cly/图片/wallpaper/微信图片_20260118223852_1_131.jpg",
+
+        "file:///home/cly/图片/wallpaper/微信图片_20260118223854_2_131.jpg",
+
+        "file:///home/cly/图片/wallpaper/微信图片_20260118223855_3_131.jpg",
 
         // 再添加至少一张其他图片，可以是本地或网络图片
         "https://mcdn.wallpapersafari.com/medium/25/96/XeSrPT.jpg",
