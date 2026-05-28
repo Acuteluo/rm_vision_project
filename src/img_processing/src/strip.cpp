@@ -20,7 +20,7 @@ Strip::Strip()
 	angle = 0.00; // 倾斜角
 	height = 0.00; // 高度
 	width = 0.00; // 宽度
-}
+} 
 
 
 /**

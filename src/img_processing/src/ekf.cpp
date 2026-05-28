@@ -39,10 +39,10 @@ void EKF::updateParamsFromServer()
     this->r_yaw_ = node_->get_parameter("ekf.r_yaw").as_double();
 
     // 整车半径
-    this->radius = node_->get_parameter("ekf.radius").as_double();
+    this->radius = node_->get_parameter("ekf.radius").as_double(); 
 
     // 父坐标系名称，即发布谁到整车中心的变换。单机模式下是 camera_frame，联调模式下是 world_frame
-    this->father_frame = node_->get_parameter("is_standalone").as_bool() ? "camera_frame" : "world_frame";
+    this->father_frame = node_->get_parameter("is_standalone_mode").as_bool() ? "camera_frame" : "world_frame";
 
     // 是否打印调参日志
     this->SHOW_LOGGER_DEBUG = node_->get_parameter("ekf.show_logger_debug").as_bool();

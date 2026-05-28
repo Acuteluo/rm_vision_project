@@ -20,21 +20,12 @@ public:
     void setParam(); 
 
 
-    // 传入 img_show
-    void setImgShow(cv::Mat& img_show);
-
-
-    // 获取 img_show
-    cv::Mat getImgShow();
-
-
-
 	/**
 	* @brief	画出装甲板并标点，打印 pnp 信息
 	* @return   无返回值，直接画图
     // sum 是按置信度排列的第几个装甲板
 	*/
-	void drawArmorPlateAndPrintPNPInfo(std::string CHOSEN_COLOR, int sum);
+	void drawArmorPlateAndPrintPNPInfo(cv::Mat& img_show, std::string CHOSEN_COLOR, int sum);
 
 
 	/**
@@ -87,9 +78,5 @@ private:
 
     double armorplate_width; // 装甲板宽度，单位mm
     double armorplate_height; // 装甲板高度，单位mm
-
-    
-
-    cv::Mat img_show; // 要画的图
 
 };

@@ -15,11 +15,10 @@ public:
     ProcessNode(): Node("core_node_cpp")
     {
 
-        // 改为动态传参：
+        // ============================== 1. 采用动态传参，声明参数（带默认值）==============================
 
-        // 声明参数（带默认值）
-
-        // 说明：如果单机，就改一下 camera_name (galaxy -> mind_vision) 和 is_standalone (false -> true)
+        // 说明：单机模式决定是否依赖串口（最终坐标系看 相机/云台），本地视频模式决定是否以来相机（图像来源于 本地视频/摄像头）
+        // 如果单机，就改一下 camera_name (galaxy -> mind_vision) 和 is_standalone_mode (false -> true)
 
         // core 节点
         this->declare_parameter("core.logger.show_logger_time", true); // 是否打印时间相关日志
@@ -27,14 +26,14 @@ public:
         this->declare_parameter("core.image.show_img", true); // 是否显示图片
         
         // prepare 类
-        this->declare_parameter("core.logger.show_logger_prepare", false); // 是否打印 prepare 类中的日志
-        this->declare_parameter("core.param.chosen_color", "red"); // 选择的装甲板颜色
-        this->declare_parameter("core.param.camera_name", "mind_vision"); // 使用的相机名称
+        this->declare_parameter("core.logger.show_logger_prepare", true); // 是否打印 prepare 类中的日志
+        this->declare_parameter("core.param.chosen_color", "blue"); // 选择的装甲板颜色
+        this->declare_parameter("core.param.camera_name", "galaxy"); // 使用的相机名称
         this->declare_parameter("core.param.armor_type", "normal"); // 识别装甲板的类型
 
         // EKF相关（传递给ekf_）
-        this->declare_parameter("ekf.predict_time", 0.2); // 预测时间（记得改！）
-        this->declare_parameter("ekf.show_logger_debug", true); // ekf 调试
+        this->declare_parameter("ekf.predict_time", 0.2); // 预测时间（记得改！）0.2? 0.225? 其实未来还要根据速度来确定
+        this->declare_parameter("ekf.show_logger_debug", false); // ekf 调试
 
         this->declare_parameter("ekf.q_x", 0.05);
         this->declare_parameter("ekf.q_y", 0.05);
@@ -53,13 +52,20 @@ public:
 
         // TF 参数声明
         this->declare_parameter("tf.show_logger_error", false);
-        this->declare_parameter("tf.show_result", true);
-        this->declare_parameter("is_standalone", true); // 单机 / 联调模式
+        this->declare_parameter("tf.show_result", false);
+        this->declare_parameter("is_standalone_mode", false); // 单机 / 联调模式
 
         // 在 ProcessNode 构造函数里加一个控制开关和对象实例化：
         this->declare_parameter("core.image.show_plot", true); 
 
+        // 新增：模式选择与视频路径参数
+        this->declare_parameter("core.mode.is_video_mode", true); // 是否为读取 本地视频模式
+        this->declare_parameter("core.mode.video_path", "/home/cly/下载/rm_test_videos/20260501_160636__camera_0_rgb_output.mp4"); // 视频的绝对路径
 
+
+
+
+        // ============================== 2. 参数变量获取初始值 ==============================
 
         // corenode 节点变量获取初始值
         this->SHOW_LOGGER_TIME = this->get_parameter("core.logger.show_logger_time").as_bool();
@@ -71,33 +77,33 @@ public:
         this->ARMOR_TYPE = this->get_parameter("core.param.armor_type").as_string();
         this->PREDICT_TIME = this->get_parameter("ekf.predict_time").as_double();
         this->SHOW_LOGGER_DEBUG = this->get_parameter("ekf.show_logger_debug").as_bool();
-        this->IS_STANDALONE = this->get_parameter("is_standalone").as_bool();
+        this->IS_STANDALONE_MODE = this->get_parameter("is_standalone_mode").as_bool();
         this->SHOW_PLOT = this->get_parameter("core.image.show_plot").as_bool(); // 画图类 
 
+        // 新增：关于 本地视频模式 的参数获取
+        this->IS_VIDEO_MODE = this->get_parameter("core.mode.is_video_mode").as_bool();
+        this->VIDEO_PATH = this->get_parameter("core.mode.video_path").as_string();
+
+        // 本地视频模式下强制为单机模式（因为没有电控发TF）
+        if(this->IS_VIDEO_MODE) 
+        {
+            this->IS_STANDALONE_MODE = true; // 本地视频模式 下强制为单机模式（一定为 相机+corenode）
+        } 
+        else 
+        {
+            this->IS_STANDALONE_MODE = this->get_parameter("is_standalone_mode").as_bool(); // 否则按照原本的声明（单机模式下就是 相机+corenode，不要串口）
+        }
 
         // 注册参数变化回调（用于运行时动态修改）
         param_callback_handle_ = this->add_on_set_parameters_callback(std::bind(&ProcessNode::onParameterChange, this, std::placeholders::_1));
 
-        // --------------------------- 配置 -> 相机相关 qos sub pub ---------------------------
 
 
-        // 声明 QoS 参数
 
-        // 适用于 mind_vision 的 qos
-        this->declare_parameter("use_sensor_data_qos", false);
-        bool qos1 = this->get_parameter("use_sensor_data_qos").as_bool();
-        
-        // 适用于 galaxy 的 qos
-        auto qos2 = rclcpp::SensorDataQoS(); 
+        // ============================== 3. 初始化 串口publisher TF类 Prepare类 KF和EKF指针 画图类 ==============================
 
-        // 根据 CAMERA_NAME 选择 qos，以创建订阅原图方
-        if(this->CAMERA_NAME == "mind_vision") sub_ = this->create_subscription<sensor_msgs::msg::Image>("image_raw", qos1, std::bind(&ProcessNode::process_callback, this, std::placeholders::_1));
-        else sub_ = this->create_subscription<sensor_msgs::msg::Image>("image_raw", qos2, std::bind(&ProcessNode::process_callback, this, std::placeholders::_1));
-
-        // 发布 pnp 消息
+        // 发布串口所需消息 publisher
         serial_pub_ = this->create_publisher<serial_driver_interfaces::msg::SerialDriver>("/serial_driver", 10);
-
-        RCLCPP_INFO_ONCE(this->get_logger(), "CoreNode 节点创建成功! ");
 
         // 初始化pnp帧率的计时器
         this->last_print = this->now();
@@ -115,28 +121,139 @@ public:
         // 初始化上一次收到图像的时间，一切的 dt 都依照这个来算
         this->last_image_time = this->now(); 
 
-        prepare.setParam(this->SHOW_LOGGER_PREPARE, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE); // 传入从配置文件读取的参数
+        // 初始化 Prepare 类，传入从配置文件读取的参数
+        prepare.setParam(this->SHOW_LOGGER_PREPARE, this->CHOSEN_COLOR, this->CAMERA_NAME, this->ARMOR_TYPE); 
+
+        // 初始化动态示波器 (参数: 宽 1200, 高 800, 存最近 500 帧)
+        this->plotter = std::make_unique<Plotter>(1200, 800, 500);
 
 
-        // 初始化动态示波器 (参数: 宽 1200, 高 800, 存最近 1000 帧)
-        this->plotter = std::make_unique<Plotter>(1200, 800, 1000);
+
+        // ============================== 4. 分支启动逻辑（本地视频模式/使用相机） ==============================
+
+        // 声明 QoS 参数
+
+        // 适用于 mind_vision 的 qos
+        this->declare_parameter("use_sensor_data_qos", false);
+        bool qos1 = this->get_parameter("use_sensor_data_qos").as_bool();
+        
+        // 适用于 galaxy 的 qos
+        auto qos2 = rclcpp::SensorDataQoS(); 
 
 
+        // 如果是本地视频模式
+        if(this->IS_VIDEO_MODE) 
+        {
+            RCLCPP_INFO(this->get_logger(), "【本地视频模式】将读取本地视频: %s", this->VIDEO_PATH.c_str());
+            // 启动一个子线程专门用来读视频，防止阻塞 rclcpp::spin()
+            video_thread_ = std::thread(&ProcessNode::video_loop, this);
+        }
+        else
+        {
+            // 否则将根据 CAMERA_NAME 选择 qos，以创建订阅原图方
+            if(this->CAMERA_NAME == "mind_vision") sub_ = this->create_subscription<sensor_msgs::msg::Image>("image_raw", qos1, std::bind(&ProcessNode::process_callback, this, std::placeholders::_1));
+            else sub_ = this->create_subscription<sensor_msgs::msg::Image>("image_raw", qos2, std::bind(&ProcessNode::process_callback, this, std::placeholders::_1));
+        }
+        
+
+        RCLCPP_INFO_ONCE(this->get_logger(), "CoreNode 节点创建成功! ");
     }
+
+
+    ~ProcessNode()
+    {
+        // 析构时安全退出线程
+        if(video_thread_.joinable()) 
+        {
+            video_thread_.join();
+        }
+    }
+
 
 
 private:
 
-    // 核心逻辑
+    // ================= 3. 新增：视频读取专用线程函数 =================
+    void video_loop()
+    {
+        // 既然是读取视频而不是用相机，那么真实时间并不重要！
+
+        // 打开视频
+        cv::VideoCapture cap(this->VIDEO_PATH);
+        if(!cap.isOpened()) 
+        {
+            RCLCPP_ERROR(this->get_logger(), "无法打开视频文件: %s, 请检查路径是否正确", this->VIDEO_PATH.c_str());
+            return;
+        }
+
+
+        cv::Mat frame;
+        rclcpp::Time base_time = this->now(); // 记录开始时间
+        rclcpp::Time virtual_time = base_time; // 模拟时间。初始值为当前时间，后续每一帧都加上 视频帧时刻 来模拟时间流逝
+        rclcpp::Time last_virtual_time = this->now(); // 记录上一帧模拟时间，用来看 fps
+
+        while(rclcpp::ok()) 
+        {
+            cap >> frame;
+            if(frame.empty()) 
+            {
+                RCLCPP_WARN(this->get_logger(), "视频播放结束，循环重播...");
+                cap.set(cv::CAP_PROP_POS_FRAMES, 0); // 跳回第一帧循环播放
+                base_time = virtual_time; // 重置基准时间为当前模拟时间，保证时间戳连续
+                continue;
+            }
+            
+            // 视频本身自带的图像时间戳 (ms)
+            double video_timestamp_ms = cap.get(cv::CAP_PROP_POS_MSEC);
+
+            // 得到当前帧的模拟图像时间戳 (s)
+            virtual_time = base_time + rclcpp::Duration::from_seconds(video_timestamp_ms / 1000.00); 
+
+            RCLCPP_INFO(this->get_logger(), "fps = %.2f", 1.0 / (virtual_time - last_virtual_time).seconds());
+
+
+            // 调用核心算法主逻辑, 使用 virtual_time 作为当前帧的时间戳
+            run_core_logic(frame, virtual_time);
+
+            // 手动控制视频播放速度
+            int key = cv::waitKey(200);
+
+            // 按 ESC 或 q 退出节点
+            if(key == 27 || key == 'q') 
+            { 
+                rclcpp::shutdown();
+                break;
+            } 
+            else if(key == ' ') 
+            {       
+                cv::waitKey(0); 
+            }
+
+            last_virtual_time = virtual_time; // 更新上一帧的模拟时间
+        }
+    }
+
+
+
+    // ================= 4. 修改：极简化的 ROS 回调函数 =================
     void process_callback(const sensor_msgs::msg::Image::SharedPtr msg)
     {
-        rclcpp::Time start = this->now();
+        cv::Mat frame = cv_bridge::toCvCopy(msg, "bgr8")->image; // 需要 SharedPtr 作为参数
+        run_core_logic(frame, msg->header.stamp);
+    }
+
+
+
+    // ================= 5. 修改：抽离出的独立主逻辑 =================
+    void run_core_logic(cv::Mat& frame, rclcpp::Time current_image_time)
+    {
+        rclcpp::Time calculate_start = this->now(); // 以当前真实时间作为计时器开始，所有的 dt 都基于这个来算
     
-        // 1. 接收图像 并 记录时间和更新 dt，dt 是整个的基准！！
-        this->img = cv_bridge::toCvCopy(msg, "bgr8")->image; // 需要 SharedPtr 作为参数
+
+        // 1. 设置图像 并 记录时间和更新 dt，dt 是整个的基准！！
+        this->img = frame.clone();
         this->img_show = this->img.clone(); // 复制一份用来显示信息
         
-        rclcpp::Time current_image_time = msg->header.stamp; // 从消息头获取图像的时间戳
         double dt = (current_image_time - this->last_image_time).seconds(); // 计算与上一次图像的时间间隔，注意sec已经是精确时间！ 
         this->last_image_time = current_image_time; // 更新上一次图像的时间戳
 
@@ -164,20 +281,17 @@ private:
         // 3. 解算 pnp
         if(this->armorplate.size() > 0) // 存在装甲板
         {
-            this->armorplate[0].setImgShow(this->img_show); // 设置 img_show
             this->armorplate[0].perspectiveNPoint(); // 解算 pnp
 
             // 画出所有装甲板（按置信度排序的）并打印信息
             for(int i = 0; i < this->armorplate.size(); i++) 
-            {
-                // 画所有的装甲板，并打印综合置信度（考虑与上一帧追踪装甲板的距离）最高的装甲板的 pnp 信息
-                this->armorplate[i].drawArmorPlateAndPrintPNPInfo(this->CHOSEN_COLOR, i); 
+            { 
+                // 画所有的装甲板，并打印综合置信度（考虑与上一帧追踪装甲板的距离）最高的装甲板也就是 0号 的 pnp 信息
+                this->armorplate[i].drawArmorPlateAndPrintPNPInfo(this->img_show, this->CHOSEN_COLOR, i); 
             }
-            
-            this->img_show = this->armorplate[0].getImgShow(); // 获取带有装甲板信息的 img_show
         }
 
-        // ... 步骤3 pnp结算完成时间戳
+        // ... 步骤3 pnp解算完成时间戳
         rclcpp::Time t3 = this->now();
 
 
@@ -265,13 +379,13 @@ private:
 
 
             // 发送【相机坐标系】->【装甲板坐标系】的 tf，仅仅是可视化使用，不可能刚发就查毕竟查不到喵，会有延迟
-            this->tf->updateCameraToArmorplate(this->armorplate[0].R, this->armorplate[0].t_vec, msg->header.stamp);
+            this->tf->updateCameraToArmorplate(this->armorplate[0].R, this->armorplate[0].t_vec, current_image_time);
         
             // 查找【父坐标系】->【装甲板坐标系】变换，也就是实时值
             // 单机模式下是【相机坐标系】->【装甲板坐标系】，联调模式下是【世界坐标系】->【装甲板坐标系】
 
             // 用实时点的位置和姿态变量去接收
-            flag = this->tf->getFatherToArmorplateTransform(this->armorplate[0].R, this->armorplate[0].t_vec, armorplate_center_now, yaw_armorplate_now, msg->header.stamp); // 获取父坐标系到装甲板坐标系的变换，单机模式下父坐标系是相机坐标系，联调模式下父坐标系是世界坐标系。返回值表示是否成功获取变换
+            flag = this->tf->getFatherToArmorplateTransform(this->armorplate[0].R, this->armorplate[0].t_vec, armorplate_center_now, yaw_armorplate_now, current_image_time); // 获取父坐标系到装甲板坐标系的变换，单机模式下父坐标系是相机坐标系，联调模式下父坐标系是世界坐标系。返回值表示是否成功获取变换
 
             // 如果查到了变换，就开始滤波
             if(flag)
@@ -323,7 +437,7 @@ private:
             else // 丢失方法2：没查到变换
             {
                 ++this->lost_count; // 连续丢失计数器 + 1
-                if(this->IS_STANDALONE) RCLCPP_WARN(this->get_logger(), "未查到【相机坐标系】->【装甲板坐标系】变换");
+                if(this->IS_STANDALONE_MODE) RCLCPP_WARN(this->get_logger(), "未查到【相机坐标系】->【装甲板坐标系】变换");
                 else RCLCPP_WARN(this->get_logger(), "未查到【世界坐标系】->【装甲板坐标系】变换");
 
                 if(this->ekf_ready && this->lost_count <= this-> MAX_LOST_COUNT)
@@ -406,7 +520,7 @@ private:
             {
                 // 再查询 camera → 父坐标系 的 TF，因为要转到相机下投影！
                 tf2::Transform T_world_cam;
-                if (this->tf->getCameraToWorldTransform(T_world_cam, msg->header.stamp)) 
+                if (this->tf->getCameraToWorldTransform(T_world_cam, current_image_time)) 
                 {
                     // 对每个装甲板 ID 进行重投影（用不同颜色区分）（实时滤波位置）
                     std::vector<cv::Scalar> colors = 
@@ -448,11 +562,11 @@ private:
 
 
         // 7. 联调模式下，在图上打印要发布的目标角度 和 电控发来的目前芯片姿态
-        if(!this->IS_STANDALONE)
+        if(!this->IS_STANDALONE_MODE)
         {
             double pitch_chip;
             double yaw_chip;
-            bool flag = this->tf->getWorldToChipTransform(pitch_chip, yaw_chip, msg->header.stamp); // 获取【世界坐标系】->【芯片坐标系的变换】
+            bool flag = this->tf->getWorldToChipTransform(pitch_chip, yaw_chip, current_image_time); // 获取【世界坐标系】->【芯片坐标系的变换】
             
             if(flag)
             {
@@ -485,7 +599,7 @@ private:
         // 8. 计算每个步骤的耗时，并打印
         if(this->SHOW_LOGGER_TIME && this->armorplate.size() > 0 && this->armorplate[0].is_success)
         {
-            double duration1 = (t1 - start).seconds() * 1000.0; // 转换为毫秒
+            double duration1 = (t1 - calculate_start).seconds() * 1000.0; // 转换为毫秒
             double duration1_1 = (t1_1 - t1).seconds() * 1000.0; // 转换为毫秒
             double duration1_2 = (t1_2 - t1_1).seconds() * 1000.0; // 转换为毫秒
             double duration1_3 = (t1_3- t1_2).seconds() * 1000.0; // 转换为毫秒
@@ -494,7 +608,7 @@ private:
             double duration3 = (t3 - t2).seconds() * 1000.0; // 转换为毫秒
             double duration4 = (t4 - t3).seconds() * 1000.0; // 转换为毫秒
             double duration5 = (t5 - t4).seconds() * 1000.0; // 转换为毫秒
-            double total_duration = (t5 - start).seconds() * 1000.0; // 转换为毫秒
+            double total_duration = (t5 - calculate_start).seconds() * 1000.0; // 转换为毫秒
             RCLCPP_INFO(this->get_logger(), "本帧处理耗时: 接受图像 = %.4f ms, 预处理 = %.4f ms, pnp 解算 = %.4f ms, tf 变换 + 滤波 = %.4f ms, 重投影 + 发布消息 = %.4f ms. 总耗时 = %.4f ms, t1_1 = %.4f ms, t1_2 = %.4f ms, t1_3 = %.4f ms, t1_4 = %.4f ms", duration1, duration2, duration3, duration4, duration5, total_duration, duration1_1, duration1_2, duration1_3, duration1_4);
         }
         
@@ -706,10 +820,10 @@ private:
                 this->tf->updateParamsFromServer();  // 通知 TF 刷新
             }
 
-            else if(name == "is_standalone")
+            else if(name == "is_standalone_mode")
             {
-                this->IS_STANDALONE = p.as_bool();
-                if(this->IS_STANDALONE) RCLCPP_INFO(this->get_logger(), "已切换到单机模式! 父坐标系是 camera_frame");
+                this->IS_STANDALONE_MODE = p.as_bool();
+                if(this->IS_STANDALONE_MODE) RCLCPP_INFO(this->get_logger(), "已切换到单机模式! 父坐标系是 camera_frame");
                 else RCLCPP_INFO(this->get_logger(), "已切换到联调模式! 父坐标系是 world_frame");
                 this->tf->updateParamsFromServer();  // 通知 TF 刷新
                 this->ekf_->updateParamsFromServer();  // 通知 EKF 刷新坐标系
@@ -765,7 +879,8 @@ private:
     bool SHOW_IMG_SHOW; // 是否显示 img_show 窗口
 
     // 单机模式 / 联调模式的切换，决定了父坐标系是谁（主要是为了调试时不依赖电控的 TF 发布）
-    bool IS_STANDALONE; // true 就是单机模式，父坐标系是 camera_frame；false 就是联调模式，父坐标系是 world// 单机模式 / 联调模式的切换，决定了父坐标系是谁（主要是为了调试时不依赖电控的 TF 发布）
+    bool IS_STANDALONE_MODE; // true 就是单机模式，父坐标系是 camera_frame；false 就是联调模式，父坐标系是 world
+                             // 单机模式 / 联调模式的切换，决定了父坐标系是谁（主要是为了调试时不依赖电控的 TF 发布）
 
     bool SHOW_LOGGER_PREPARE; // 是否显示 prepare 中的日志
     std::string CHOSEN_COLOR; // 选择检测的颜色 red / blue
@@ -809,6 +924,11 @@ private:
 
     // 是否画图
     bool SHOW_PLOT;
+
+
+    bool IS_VIDEO_MODE; // 是否本地视频模式。如果是，就从 VIDEO_PATH 读视频，否则就订阅话题收图
+    std::string VIDEO_PATH; // 本地视频路径，只有 IS_VIDEO_MODE = true 才有效
+    std::thread video_thread_; // 新开一个线程给视频读取用
 
 };
 

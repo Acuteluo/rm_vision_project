@@ -23,7 +23,7 @@ TF::TF(rclcpp::Node* node): node_(node)
     // 从参数服务器读取初始参数
     this->SHOW_LOGGER_ERROR = node_->get_parameter("tf.show_logger_error").as_bool();
     this->SHOW_RESULT = node_->get_parameter("tf.show_result").as_bool();
-    this->father_frame = node_->get_parameter("is_standalone").as_bool() ? "camera_frame" : "world_frame"; // 根据单机/联调模式设置父坐标系名字
+    this->father_frame = node_->get_parameter("is_standalone_mode").as_bool() ? "camera_frame" : "world_frame"; // 根据单机/联调模式设置父坐标系名字
 
     RCLCPP_INFO(node_->get_logger(), "TF 参数已加载: SHOW_LOGGER_ERROR=%d, SHOW_RESULT=%d, father_frame=%s", 
                 SHOW_LOGGER_ERROR, SHOW_RESULT, father_frame.c_str());
@@ -38,11 +38,11 @@ void TF::updateParamsFromServer()
     if (!node_) return;
     this->SHOW_LOGGER_ERROR = node_->get_parameter("tf.show_logger_error").as_bool();
     this->SHOW_RESULT = node_->get_parameter("tf.show_result").as_bool();
-    this->father_frame = node_->get_parameter("is_standalone").as_bool() ? "camera_frame" : "world_frame"; // 根据单机/联调模式设置父坐标系名字
+    this->father_frame = node_->get_parameter("is_standalone_mode").as_bool() ? "camera_frame" : "world_frame"; // 根据单机/联调模式设置父坐标系名字
 }
+ 
 
-
-
+ 
 
 // 02【芯片坐标系】->【相机坐标系】当前相机位姿的坐标系 -> 静态，和芯片坐标系可以视为刚体，用 t 向量
 // 但是，由于姿态是姿态，可以平移，和位置无关，所以直接把相机当做在轴上转，直接拿 imu 的数据 作为姿态喵

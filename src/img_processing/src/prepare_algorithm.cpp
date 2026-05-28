@@ -54,25 +54,8 @@ std::vector<ArmorPlate> Prepare::pairStrip()
 
 
 
-    // ------- 0. 合理性评判参数设置 -------
-
-	double MAX_ANGLE = 25.00; // 两个灯条最大差角 -> [两个灯条是否平行]
-
-    // 两个灯条构成的装甲板 宽高比例是否合理 - > [灯条间距离是否合理] 容许的最大比例系数 1.5
-    double ARMORPLATE_RATIO_THRESHOLD_MAX = 1.75;
-    double ARMORPLATE_RATIO_THRESHOLD_MIN = 0.5;
-	double MAX_HERO_ARMORPLATE_RATIO = (225.00 / 55.00) * ARMORPLATE_RATIO_THRESHOLD_MAX; // 英雄
-    double MAX_NORMAL_ARMORPLATE_RATIO = (135.00 / 55.00) * ARMORPLATE_RATIO_THRESHOLD_MAX; // 步兵
-
-	double MIN_TWO_STRIP_RATIO = 0.3 / 1; // 两个灯条 短:长 的比值不能太小 -> [灯条间的选取是否合理]
-
-    double MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE = 30.00; // 连接线和灯条的角度差不能太大 -> [避免选到共线的灯条]
-
-
-
     // ------- 1. 灯条从左到右排序 -------  
 	std::sort(strip.begin(), strip.end(), sortStripByX); // 从左到右排序
-
 
 
 	// ------- 2. 灯条遍历，两两配对，计算合理性 moderation -------
@@ -82,16 +65,24 @@ std::vector<ArmorPlate> Prepare::pairStrip()
 		{
 			if (i == j || moderation[j][i] != 0) continue; // 跳过自己 和 i -> j = j -> i
 
+
+            ///////////// 合理性评判条件 /////////////
+
 			bool angle_moderation = true; // [两个灯条是否平行]
-			bool distance_long_moderation = true; // [灯条间距离是否合理，不能太长]
+			bool distance_long_moderation = true; // [灯条间距离是否合理，不能太长]（必要）
             bool distance_short_moderation = true; // [灯条间距离是否合理，不能太短]（必要）
             bool length_moderation = true; // [灯条间的选取是否合理]
             bool connecting_line_moderation = true; // [避免选到共线的灯条]（必要）
+            bool no_inner_strip_moderation = true; // [两个灯条构成的装甲板内，不应该有其他灯条]（必要）
 
 			double temp_moderation = 0.00; // 当前灯条 i 与 灯条 j 间的合理性
 
 
+
 			// 2.1. 两个灯条是否平行
+
+            const double MAX_ANGLE = 25.00; // 两个灯条最大差角 -> [两个灯条是否平行]
+
             double angle_diff = std::fabs(strip[i].angle - strip[j].angle); // 两个灯条的角度差
 			if (angle_diff > MAX_ANGLE)
 			{
@@ -105,90 +96,83 @@ std::vector<ArmorPlate> Prepare::pairStrip()
 				// 平行
                 RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d      平行, angle_diff = %.2f < %.2f", i, j, angle_diff,  MAX_ANGLE);
 				
-                double score0 = (MAX_ANGLE - angle_diff) / MAX_ANGLE * 25.00; // 和最优的差距，最优时差距为0，得分为25
-                temp_moderation += score0;
+                double score1 = (MAX_ANGLE - angle_diff) / MAX_ANGLE * 25.00; // 和最优的差距，最优时差距为0，得分为25
+                temp_moderation += score1;
 
-                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 角度差得分, = %.2f", i, j, score0);
+                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 角度差得分, = %.2f", i, j, score1);
             }   
 
 
 
-            // 2.2.1 & 2.2.2 两个灯条构成的装甲板 宽高比例是否合理
+
+            // 2.2 两个灯条构成的装甲板 宽高比例是否合理
 
             double dx = strip[i].center.x - strip[j].center.x;
             double dy = strip[i].center.y - strip[j].center.y;
-            double distance = std::sqrt(dx * dx + dy * dy); // 两个灯条中心点距离
+            double distance = std::sqrt(dx * dx + dy * dy); // 两个灯条中心点距离（装甲板长边）
 
             double strip_longest = std::max(strip[i].height, strip[j].height); // 两个灯条里长度 长 的那个
             double strip_shortest = std::min(strip[i].height, strip[j].height); // 两个灯条里长度 短 的那个
-            double strip_average = (strip_longest + strip_shortest) / 2.00; // 两个灯条长度的平均值
+            double strip_average = (strip_longest + strip_shortest) / 2.00; // 两个灯条长度的平均值（装甲板短边）
 
-            double armorplate_ratio = distance / strip_average; // 灯条间距离和灯条长度的比值
+            double armorplate_ratio = distance / strip_average; // 实际测量的装甲板比例
 			
-            // 对于英雄装甲板
-            if(this->ARMOR_TYPE == "hero")
-            {
-                if(armorplate_ratio < MAX_HERO_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD_MAX * ARMORPLATE_RATIO_THRESHOLD_MIN)
-                {
-                    // 距离太近，构成的装甲板的比值不合理
-                    RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f < %.2f", i, j, armorplate_ratio, MAX_HERO_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD_MAX * ARMORPLATE_RATIO_THRESHOLD_MIN);
-                    
-                    distance_short_moderation = false;
-                }
 
-                if(armorplate_ratio > MAX_HERO_ARMORPLATE_RATIO)
+            // 定义物理标准比例与容忍度 
+            const double IDEAL_NORMAL_RATIO = 135.0 / 55.0; // 步兵理想比例 约 2.45
+            const double IDEAL_HERO_RATIO = 230.0 / 55.0;   // 英雄理想比例 约 4.18
+            const double MAX_DEVIATION_LONG = 0.30;         //（长装甲板）最大允许偏差 30% (最多1.3倍，再长则为0分)
+            const double MIN_DEVIATION_SHORT = -0.85;       //（短装甲板）最大允许偏差 85% (最多0.15倍，再短则为0分)
+
+            // 根据类型获取当前目标的理想比例
+            double ideal_ratio = (this->ARMOR_TYPE == "hero") ? IDEAL_HERO_RATIO : IDEAL_NORMAL_RATIO;
+
+            // 计算相对偏差: (实际 - 理想) / 理想，包括正负号
+            double relative_deviation = (armorplate_ratio - ideal_ratio) / ideal_ratio;
+
+            // 判断与打分
+            // 偏差超出最大极限
+            if (relative_deviation > MAX_DEVIATION_LONG || relative_deviation < MIN_DEVIATION_SHORT)
+            {
+                // 看看宽高比是太大（隔得太远）还是太小（隔得非常近）
+                if (armorplate_ratio < ideal_ratio) 
                 {
-                    // 距离太远，构成的装甲板的比值不合理
-                    RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f > %.2f", i, j, armorplate_ratio, MAX_HERO_ARMORPLATE_RATIO);
-                    
-                    distance_long_moderation = false;
+                    RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和 %d 比例异常(太窄): 实际 %.2f, 理想 %.2f, 偏差 %.0f%%", i, j, armorplate_ratio, ideal_ratio, relative_deviation * 100);
+                    distance_short_moderation = false;
                 }
                 else 
                 {
-                    // 比值合理
-                    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比     合理, = %.2f < %.2f", i, j, armorplate_ratio, MAX_NORMAL_ARMORPLATE_RATIO);
-                    
-                    double score1 = (MAX_HERO_ARMORPLATE_RATIO - armorplate_ratio) / (MAX_HERO_ARMORPLATE_RATIO - MAX_HERO_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD_MAX) * 25.00; // 和英雄最优的差距（倍数），0.8倍和1.2倍得分一致
-                    temp_moderation += score1; 
-                    
-                    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比得分, score1 = %.2f", i, j, score1);
+                    RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和 %d 比例异常(太宽): 实际 %.2f, 理想 %.2f, 偏差 %.0f%%", i, j, armorplate_ratio, ideal_ratio, relative_deviation * 100);
+                    distance_long_moderation = false;
                 }
             }
-
-            // 对于步兵装甲板
             else
             {
-                if(armorplate_ratio < MAX_NORMAL_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD_MAX * ARMORPLATE_RATIO_THRESHOLD_MIN)
+                // 比例在合理范围内，计算这 25 分的得分
+                // 偏差越小得分越高：0 偏差 = 25分，MAX_DEVIATION 偏差 = 0分
+                // 由于非对称，所以得分情况讨论
+                double score2 = 0.00;
+                if(armorplate_ratio < ideal_ratio)
                 {
-                    // 距离太近，构成的装甲板的比值不合理
-                    RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f < %.2f", i, j, armorplate_ratio, MAX_NORMAL_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD_MAX * ARMORPLATE_RATIO_THRESHOLD_MIN);
-                    
-                    distance_short_moderation = false;
+                    // 两个都是负数，不用加 abs
+                    score2 = (1.00 - (relative_deviation / MIN_DEVIATION_SHORT)) * 25.00;
                 }
+                else
+                {
+                    score2 = (1.00 - (relative_deviation / MAX_DEVIATION_LONG)) * 25.00;
+                }
+                
+                temp_moderation += score2;
 
-                if(armorplate_ratio > MAX_NORMAL_ARMORPLATE_RATIO)
-                {
-                    // 距离太远，构成的装甲板的比值不合理
-                    RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比【不】合理, = %.2f > %.2f", i, j, armorplate_ratio, MAX_NORMAL_ARMORPLATE_RATIO);
-                    
-                    distance_long_moderation = false;
-                }
-                else 
-                {
-                    // 比值合理
-                    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比     合理, = %.2f < %.2f", i, j, armorplate_ratio, MAX_NORMAL_ARMORPLATE_RATIO);
-                    
-                    double score2 = (MAX_NORMAL_ARMORPLATE_RATIO - armorplate_ratio) / (MAX_NORMAL_ARMORPLATE_RATIO - MAX_NORMAL_ARMORPLATE_RATIO / ARMORPLATE_RATIO_THRESHOLD_MAX) * 25.00; // 和步兵最优的差距（倍数），0.8倍和1.2倍得分一致
-                    temp_moderation += score2; 
-
-                    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 旋转矩形的宽高比得分, score2 = %.2f", i, j, score2);
-                }
+                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和 %d 比例合理: 实际 %.2f, 理想 %.2f, 获得分数: %.2f / 25.00", i, j, armorplate_ratio, ideal_ratio, score2);
             }
 
 
 
 
 			// 2.3. 两个灯条 短:长 的比值不能太小
+
+            const double MIN_TWO_STRIP_RATIO = 0.5 / 1; // 两个灯条 短:长 的比值不能太小 -> [灯条间的选取是否合理]
 
             double two_strip_ratio = strip_shortest / strip_longest;
             if(two_strip_ratio < MIN_TWO_STRIP_RATIO)
@@ -203,15 +187,18 @@ std::vector<ArmorPlate> Prepare::pairStrip()
                 // 比值合理
                 RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 短:长 的比     合理, = %.2f > %.2f", i, j, two_strip_ratio, MIN_TWO_STRIP_RATIO);
 				
-                temp_moderation += two_strip_ratio * 25; // 和最优的差距，最优时 比例接近 1
+                double score3 = ((two_strip_ratio - MIN_TWO_STRIP_RATIO) / (1.00 - MIN_TWO_STRIP_RATIO)) * 25.00; // 和最优的差距，最优时 比例接近 1
+                temp_moderation += score3; 
                 
-                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 短:长 的比得分, = %.2f", i, j, two_strip_ratio * 25);
+                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 短:长 的比得分, = %.2f", i, j, score3);
 			}
 			
 
 
 
             // 2.4. 两个灯条的连接线角度和灯条平均角度应接近垂直（不能太小），避免选到共线的灯条
+
+            const double MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE = 55.00; // 连接线和灯条的角度差不能太小 -> [避免选到共线的灯条]
 
             // 已知：dir1, dir2（cv::Point2f，方向从顶端到底端，dy>0），p1, p2（左、右灯条中心点）
             cv::Point2f dir1 = strip[i].lower - strip[i].upper; // 灯条 i 的方向向量
@@ -235,7 +222,7 @@ std::vector<ArmorPlate> Prepare::pairStrip()
             if (angle_deg < MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE)
             {
                 // 连接线和灯条的角度差太小，可能共线了
-                RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 连接线和灯条的角度差【不】合理, = %.2f < %.2f", i, j, angle_deg, MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE);
+                RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 连接线和灯条的角度差【不】合理 可能共线, = %.2f < %.2f", i, j, angle_deg, MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE);
                 
                 connecting_line_moderation = false;
             }
@@ -244,21 +231,42 @@ std::vector<ArmorPlate> Prepare::pairStrip()
                 // 连接线和灯条的角度差合理
                 RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 连接线和灯条的角度差     合理, = %.2f > %.2f", i, j, angle_deg, MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE);
                 
-                double score3 = ((angle_deg -  MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE) / (90.00 - MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE)) * 25; 
-                temp_moderation += score3;
+                double score4 = ((angle_deg -  MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE) / (90.00 - MIN_CONNECTING_LINE_COMPARE_STRIP_ANGLE)) * 25; 
+                temp_moderation += score4;
 
-                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 连接线和灯条的角度差得分, = %.2f", i, j, score3);
+                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 连接线和灯条的角度差得分, = %.2f", i, j, score4);
             }
 
 
 
-			// 2.5. 评判：如果 2.2.short 和 2.4 满足，且 2.1-2.3 三个条件里 至少有 两个条件满足
-            int conditions_met = angle_moderation + distance_long_moderation + length_moderation;
-			if (conditions_met >= 2 && connecting_line_moderation && distance_short_moderation) // 连接线合理、距离不能太短是必须的
+            // 2.5. 两个灯条构成的装甲板内不应该有其他灯条（必要条件）
+
+            for(int k = i + 1; k < j; k++) 
+            {
+                // 判断灯条 k 的中心点是否在灯条 i 和 j 构成的矩形区域内
+                // 这里简化为判断是否在以 i 和 j 的中心点为对角线的矩形内（只看高低就好）
+                double min_y = std::min(strip[i].center.y, strip[j].center.y);
+                double max_y = std::max(strip[i].center.y, strip[j].center.y);
+
+                if (strip[k].center.y > min_y && strip[k].center.y < max_y)
+                {
+                    // 灯条 k 的中心点在 i 和 j 构成的矩形内，说明有内灯条，不合理
+                    RCLCPP_ERROR_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 和灯条 %d 构成的装甲板内有其他灯条 %d, 绝对不合理！", i, j, k);
+                    
+                    no_inner_strip_moderation = false;
+                    break; // 只要找到一个就够了，不需要继续检查了
+                }
+            }
+
+
+			// 2.6. 评判
+            int conditions_met = angle_moderation + length_moderation;
+            bool necessary_conditions_met = no_inner_strip_moderation && connecting_line_moderation && distance_short_moderation && distance_long_moderation; // 中间不能有灯条，连接线合理、距离不能太短和太长 是必须的
+			if (conditions_met >= 1 && necessary_conditions_met) 
 			{
-                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "除必要的两个条件外，条件满足数: %d / 3", conditions_met);
+                RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "除必要的四个条件外，条件满足数: %d / 2", conditions_met);
 				
-                //更新 i 对 j 的最大合理性
+                // 更新 i 对 j 的最大合理性
 				moderation[i][j] = std::max(temp_moderation, moderation[i][j]);
                 moderation[j][i] = moderation[i][j]; // i -> j 的合理性 和 j -> i 的合理性 是一样的
 			}
@@ -276,7 +284,7 @@ std::vector<ArmorPlate> Prepare::pairStrip()
 		double max_moderation = 0.00; // 对于当前灯条，最大合理性
 		int number = -1; // 对于当前灯条，最合理的是谁
 
-		for (int j = 0; j < strip.size(); j++)
+		for (int j = 0; j < strip.size(); j++) 
 		{
 			if (i == j) continue; // 跳过 自己
 
@@ -287,7 +295,7 @@ std::vector<ArmorPlate> Prepare::pairStrip()
             double dy = center_y - this->last_best_center.y;
             double distance_to_last_best = std::sqrt(dx * dx + dy * dy);
 
-
+ 
             // 根据上一次最佳装甲板中心位置确定合理性阈值，去掉合理性不高的
             // 如果上一帧有装甲板而且在附近，那就跟着就好了
             if(this->last_best_center != cv::Point2f(-1.00, -1.00) && distance_to_last_best <= MAX_DISTANCE)
@@ -361,12 +369,14 @@ std::vector<ArmorPlate> Prepare::pairStrip()
         
         // 算 A 的距离惩罚
         double dist_A = cv::norm(a.center - this->last_best_center);
-        // 距离越远，扣分越多。惩罚系数可以调，比如 0.1 意味着每偏离 10 像素扣 1 分
-        double score_A = a.moderation - (dist_A * 0.1); 
+        // 距离越远，扣分越多，控制最多扣 15 分。惩罚系数可以调，比如 0.1 意味着每偏离 10 像素扣 1 分
+        double penalty_A = std::min(dist_A * 0.1, 15.0);
+        double score_A = a.moderation - penalty_A; 
 
         // 算 B 的距离惩罚
         double dist_B = cv::norm(b.center - this->last_best_center);
-        double score_B = b.moderation - (dist_B * 0.1); 
+        double penalty_B = std::min(dist_B * 0.1, 15.0);
+        double score_B = b.moderation - penalty_B; 
 
         // 【可选：锁定奖励】如果你想极其死板地咬住老目标，甚至可以给距离近的额外加分
         // if (dist_A < 100) score_A += 20.0;
@@ -408,14 +418,12 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 
 	std::vector<Strip> strip; // 灯条集合
 
-	int sum = 0; // 目前检测到的候选灯带数量 Strip Count（需要吗？）
-    int corners_num = 0; // 当前灯条角点数
+    int sum = 0; // 目前检测到的候选灯带数量
 
 	for (int i = 0; i < contours.size(); i++)
 	{
-        corners_num = 0;
 		int area = cv::contourArea(contours[i]);
-		if (area > 0) // 面积去除噪点（目前暂时不以面积作为筛选，因为只要够远，面积会非常小，但是饱和度可以保证）
+		if (area > 15) // 面积去除噪点
 		{
 			/*
 				所以旋转矩形的angle和width height是这样定义的
@@ -424,8 +432,6 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 				当然，归一化到(0, 90]
 				但是0度 和 90度没法区分倒是
 			*/
-
-
 
             // ------- 1. 获取参数 + 亚像素优化-------
 
@@ -438,14 +444,13 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
             // 将顶点放入 vector 以便 cornerSubPix 处理
             std::vector<cv::Point2f> vec_vertices(vertices, vertices + 4);
 
-
 			double angle = temp_rotatedRect.angle; // 获取角度
 
 			cv::Size2d size = temp_rotatedRect.size;  // 尺寸
 			double width = size.width; // 宽
 			double height = size.height; // 高
 
-            corners_num = contours[i].size(); // 角点数量
+            int corners_num = contours[i].size(); // 当前灯条角点数
 
 
 
@@ -463,10 +468,9 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 
             // ------- 3. 高宽比处理 -------
 
-			double ratio = height / width; // 面积大的时候[高宽比]不能太小，确保像灯带
-
-            if (area > 300 && ratio < 2.50) continue; // 面积不小，高宽比又不小，不是灯条，不要
-
+			double ratio = height / width; 
+            
+            if (ratio < 1.50) continue; 
             
             // 统计：灯条 + 1
             ++sum;
@@ -475,183 +479,96 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 
             // ------- 4.1 区分颜色之边缘部分，计算边缘 BGR 和 saturation --------
 
-
-            // 生成一个只有当前灯条边缘及其内部是 255 的掩码图
-            cv::Mat strip_mask = cv::Mat::zeros(this->mask.size(), CV_8UC1);
-            cv::drawContours(strip_mask, std::vector<std::vector<cv::Point>>{contours[i]}, 0, 255, -1);
-
             int saturation_edge_total = 0; //  总边缘饱和度
             int blue_edge_total = 0; //  总边缘蓝值
             int green_edge_total = 0; //  总边缘绿值
             int red_edge_total = 0; //  总边缘红值
-
-            double blue_edge_average = 0.00; // 边缘平均蓝值
-            double green_edge_average = 0.00; // 边缘平均绿值
-            double red_edge_average = 0.00; // 边缘平均红值
-            double saturation_edge_average = 0.00; // 边缘平均饱和度
 
             for(int j = 0; j < corners_num; j++)
             {
                 // 注意行在前，列在后
                 if (contours[i][j].x >= 0 && contours[i][j].x < img.cols && contours[i][j].y >= 0 && contours[i][j].y < img.rows)
                 {
-                    // 在该点的 strip_mask 值
-                    uchar mask_value = strip_mask.at<uchar>(contours[i][j].y, contours[i][j].x);
+                    // bgr
+                    cv::Vec3b bgr_value = this->img.at<cv::Vec3b>(contours[i][j].y, contours[i][j].x);  
+                    blue_edge_total += bgr_value[0];
+                    green_edge_total += bgr_value[1];
+                    red_edge_total += bgr_value[2];
 
-                    // 掩码图上是有这个点的 -> 这个点是这个灯条上的 -> bgr和hsv有效
-                    if(mask_value) 
-                    {
-                        // bgr
-                        cv::Vec3b bgr_value = img.at<cv::Vec3b>(contours[i][j].y, contours[i][j].x);  
-                        uchar blue = bgr_value[0];
-                        uchar green = bgr_value[1];   
-                        uchar red = bgr_value[2];
-                        blue_edge_total += blue;
-                        green_edge_total += green;
-                        red_edge_total += red;
-
-                        // saturation
-                        cv::Vec3b hsv_value = this->img_hsv.at<cv::Vec3b>(contours[i][j].y, contours[i][j].x);
-                        uchar saturation = hsv_value[1]; // S 范围 0~255
-                        saturation_edge_total += saturation;
-                
-                    }
+                    // saturation
+                    cv::Vec3b hsv_value = this->img_hsv.at<cv::Vec3b>(contours[i][j].y, contours[i][j].x);
+                    saturation_edge_total += hsv_value[1];
                 }
             }
             
-            blue_edge_average = blue_edge_total / corners_num; // 边缘平均蓝值
-            green_edge_average = green_edge_total / corners_num; // 边缘平均绿值
-            red_edge_average = red_edge_total / corners_num; // 边缘平均红值
-            saturation_edge_average = saturation_edge_total / corners_num; // 边缘平均饱和度
+            double blue_edge_average = blue_edge_total / corners_num; // 边缘平均蓝值
+            double green_edge_average = green_edge_total / corners_num; // 边缘平均绿值
+            double red_edge_average = red_edge_total / corners_num; // 边缘平均红值
+            double saturation_edge_average = saturation_edge_total / corners_num; // 边缘平均饱和度
             
 
+            // ------- 4.3 区分灯条与判断颜色-------
+            // 不如大道至简：边缘饱和度高 红蓝有一定差值
 
-
-            // ------- 4.2 区分颜色 之 总体部分 注意是针对 strip_mask，与 contours 无关！ -------
-
-            cv::Rect strip_rec = cv::boundingRect(contours[i]);  // 获取外接矩形
-
-            int saturation_total = 0; //  总饱和度
-            double saturation_average = 0.00; // 平均饱和度
-            int pixels_num = 0; // 灯条像素点总数
-
-            for(int j = strip_rec.y; j < strip_rec.y + strip_rec.height; j++) // 行y
-            {
-                for(int k = strip_rec.x; k < strip_rec.x + strip_rec.width; k++) // 列x
-                {
-                    if (k < 0 || k >= strip_mask.cols || j < 0 || j >= strip_mask.rows) continue;
-
-                    // 在该点的 strip_mask 值
-                    uchar mask_value = strip_mask.at<uchar>(j, k);
-                    if(mask_value) 
-                    {
-                        cv::Vec3b hsv_value = this->img_hsv.at<cv::Vec3b>(j, k);
-                        uchar saturation = hsv_value[1]; // S 范围 0~255
-                        saturation_total += saturation;
-
-                        ++pixels_num;
-                    }
-                }
-            }
-
-            saturation_average = saturation_total / pixels_num; // 总体平均饱和度
-            
-            
-
-            // ------- 4.3 区分灯条与判断颜色（还需完善）-------
-            // 不如大道至简：红蓝相差倍数优先 总体饱和度高优先 边缘饱和度作为辅助
             std::string color;
-            double times; // 红蓝值相差倍数
-            if(red_edge_average < 5 && blue_edge_average < 5) // 两个都小直接不要了
-            {
-                times = 0;
-            }
-            if(std::min(red_edge_average, blue_edge_average) < 1e-2) // 除数太小直接认为有效，万一除以 0 崩溃就老实了
-            {
-                times = 1000;
-            }
-            else times = std::max((double)red_edge_average / (double)blue_edge_average, (double)blue_edge_average / (double)red_edge_average); 
             
-
-            int TIMES_THRESHOLD = 3; // 红蓝值相差倍数阈值，至少要 3 以上才比较合理
-
-            if(times > TIMES_THRESHOLD)
-            {
-                if(red_edge_average > blue_edge_average) // 红值偏高，一般都会相差 100 以上的
-                {
-                    color = "red"; // red
-                }
-                
-                else 
-                {
-                    color = "blue"; // blue
-                }
-            }
-
-            // 红蓝值至少有一个高，另一个低，且相差大，说明是灯条
-            else if(std::max(red_edge_average, blue_edge_average) > 200.00 && std::min(red_edge_average, blue_edge_average) < 100.00)
-            {
-                if(red_edge_average > blue_edge_average) // 红值偏高，一般都会相差 100 以上的
-                {
-                    color = "red"; // red
-                }
-                
-                else 
-                {
-                    color = "blue"; // blue
-                }
-            }
-
+            const double COLOR_DIFF_THRESHOLD = 50.00; // 红蓝值相减阈值
+            const double SATURATION_EDGE_THRESHOLD = 50.00; // 边缘饱和度阈值
+            
             // 边缘饱和度高，一定是灯条
-            else if(saturation_average > 175.00 || saturation_edge_average > 175.00)
+            if(std::abs(red_edge_average - blue_edge_average) > COLOR_DIFF_THRESHOLD && saturation_edge_average > SATURATION_EDGE_THRESHOLD)
             {
-                if(red_edge_average > blue_edge_average) // 红值偏高，一般都会相差 100 以上的
+                if(red_edge_average > blue_edge_average) 
                 {
                     color = "red"; // red
                 }
-                
                 else 
                 {
                     color = "blue"; // blue
                 }
             }
 
-            else if(red_edge_average > 180.00 && blue_edge_average > 180.00) // 红蓝值都高，一定是白炽灯
+            else // 边缘饱和度低，或者红蓝相差太小，说明是白炽灯
             {
-                color = "white";
-            }
-
-            else if(saturation_average < 75.00) // 总体饱和度低，一定是白炽灯
-            {
-                color = "white";
-            }
-
-            else // 总体饱和度低，边缘饱和度也低，说明是白炽灯
-            {
-                color = "white";
+                // 万一边缘饱和度低，但是红蓝差值很大，就当做灯条
+                if(std::abs(red_edge_average - blue_edge_average) > COLOR_DIFF_THRESHOLD * 2.5)
+                {
+                    if(red_edge_average > blue_edge_average) 
+                    {
+                        color = "red"; // red
+                    }
+                    else 
+                    {
+                        color = "blue"; // blue
+                    }
+                }
+                else
+                {
+                    color = "white";
+                }
             }
 
 
             // ------- 4,4 画画部分 -------
 
-            // 信息
-            if (this->SHOW_LOGGER)
+            // 展示不是白色灯条的信息
+            if (this->SHOW_LOGGER && color != "white")
             {
                 cv::putText(
                 img_show, 
                 "strip " + std::to_string((int)sum) + 
                 " corners = " + std::to_string((int)corners_num) + 
+                " ratio = " + std::to_string((double)ratio).substr(0, 4) +
                 " b = " + std::to_string((int)blue_edge_average) + 
                 " g = " + std::to_string((int)green_edge_average) + 
                 " r = " + std::to_string((int)red_edge_average) + 
                 " s_edge = " + std::to_string((int)saturation_edge_average) + 
-                " s_total = " + std::to_string((int)saturation_average) +
                 " area = " + std::to_string((int)area) +
                 " color = " + color,
-                cv::Point2f(0, sum * 50), cv::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(255, 255, 255), 2);
+                cv::Point2f(0, sum * 50), cv::FONT_HERSHEY_PLAIN, 1.5, cv::Scalar(230, 255, 0), 1);
             
                 // 灯条编号
-                cv::putText(img_show, "L" + std::to_string((int)sum), cv::Point2f(temp_rotatedRect.center.x, temp_rotatedRect.center.y), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 180, 255), 1.25);
+                cv::putText(img_show, "L" + std::to_string((int)sum), cv::Point2f(temp_rotatedRect.center.x, temp_rotatedRect.center.y), cv::FONT_HERSHEY_PLAIN, 3, cv::Scalar(0, 180, 255), 1);
 
                 // 获取角点，根据color画出不同颜色的旋转矩形
                 cv::Scalar color_scalar; // 临时标注灯条边框的颜色
@@ -664,7 +581,7 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 
                 for (int j = 0; j < 4; j++)
                 {
-                    cv::putText(img_show, "[" + std::to_string((int)j + 1) + "][" + std::to_string((int)corners[j].x) + ", " + std::to_string((int)corners[j].y) + "]", cv::Point2f(corners[j].x, corners[j].y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 255, 255), 0.65);
+                    cv::putText(img_show, "[" + std::to_string((int)j + 1) + "][" + std::to_string((int)corners[j].x) + ", " + std::to_string((int)corners[j].y) + "]", cv::Point2f(corners[j].x, corners[j].y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.3, cv::Scalar(255, 255, 255), 0.5);
                     cv::line(img_show, corners[j], corners[(j + 1) % 4], color_scalar, 3); //画线
                 }
 
@@ -768,193 +685,79 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 void Prepare::preProcessing(cv::Mat& img)
 {   
 
-    if(this->CAMERA_NAME == "mind_vision")
+    const int COLOR_HIGH_THERESHOLD_VALUE = 180; // 灯条颜色的二值化阈值
+    const int COLOR_DIFF_VALUE = 50; // 红蓝差值阈值
+
+    std::vector<cv::Mat> channels_bgr;
+    std::vector<cv::Mat> channels_hsv;
+    cv::Mat B, G, R; // bgr三通道值
+    cv::Mat high_color_binary; // 选择的颜色的灯条的高阈值二值化图
+    cv::Mat color_diff; // 红蓝差值图
+    cv::Mat color_diff_binary; // 红蓝差值二值化图
+    cv::Mat img_hsv; // hsv
+    cv::Mat img_gray; // 灰度图
+
+    this->img_show = img.clone(); // 复制得到绘图图像，对 img_show 的操作直接在 findcontours 等等函数里
+
+    // // 1. 亮度调整 同时调整对比度和亮度，但目前不是必须
+    // cv::Mat bright;
+    // img.convertTo(bright, -1, 1.2, 30);
+
+    // 2. 得到 hsv，尝试区分灯条和白炽灯。得到 img_gray，用于亚像素优化
+    cv::cvtColor(img, img_hsv, cv::COLOR_BGR2HSV);
+    cv::cvtColor(img, img_gray, cv::COLOR_BGR2GRAY);
+
+    // 3. 分离bgr三通道的值
+    split(img, channels_bgr);
+
+    B = channels_bgr[0];
+    G = channels_bgr[1];
+    R = channels_bgr[2];
+
+    // 根据颜色只计算一个种类的图
+    if(this->CHOSEN_COLOR == "red")
     {
-        int THERESHOLD_VALUE = 220; // 二值化阈值
+        // 4. 高阈值二值化    红图: 红色灯条 + 白炽灯灯条 
+        cv::threshold(R, high_color_binary, COLOR_HIGH_THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
 
+        // 5. 差分二值化    红减蓝：只剩下红色的边缘光晕
+        cv::subtract(R, B, color_diff);
 
-        std::vector<cv::Mat> channels_bgr;
-        std::vector<cv::Mat> channels_hsv;
-        cv::Mat B, G, R; // bgr三通道值
-        cv::Mat red_differ, blue_differ, mask; // 红色和蓝色灯条 BGR最高最低相差值掩码（需要吗？）
-        cv::Mat img_red, img_blue;
-        cv::Mat high_red, high_blue;
-        cv::Mat img_hsv; // hsv
-        cv::Mat img_gray; // 灰度图
+        cv::threshold(color_diff, color_diff_binary, COLOR_DIFF_VALUE, 255, cv::THRESH_BINARY);
 
-        this->img_show = img.clone(); // 复制得到绘图图像，对 img_show 的操作直接在 findcontours 等等函数里
-
-        // // 1. 亮度调整 同时调整对比度和亮度，但目前不是必须
-        // cv::Mat bright;
-        // img.convertTo(bright, -1, 1.2, 30);
-
-        // 2. 得到 hsv，尝试区分灯条和白炽灯。得到 img_gray，用于亚像素优化
-        cv::cvtColor(img, img_hsv, cv::COLOR_BGR2HSV);
-        cv::cvtColor(img, img_gray, cv::COLOR_BGR2GRAY);
-
-        // 3. 分离bgr三通道的值
-        split(img, channels_bgr);
-
-        B = channels_bgr[0];
-        G = channels_bgr[1];
-        R = channels_bgr[2];
-
-        // 4. 高阈值二值化   红图: 红色灯条 + 白炽灯灯条  蓝图: 蓝色灯条 + 白炽灯灯条
-        cv::threshold(R, high_red, THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
-        cv::threshold(B, high_blue, THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
-
-        // // 5. 垂直方向模糊 重新变为二值化
-        /*
-            但实际效果需要验证
-
-            建议你用实际图像测试一下，观察二值化后的灯条掩码是否有以下情况：
-
-            断裂：如果灯条中心仍有空洞，导致掩码分成上下两段，则需要垂直模糊来连接。
-            小缺口：边缘有小缺口，但整体连通，可以不处理。
-            横向散光：如果仍有轻微横向扩散，垂直模糊也能帮助抑制（因为它只在垂直方向平滑）。
-        */
-        // cv::blur(high_red, high_red, cv::Size(1, 3));
-        // cv::blur(high_blue, high_blue, cv::Size(1, 3));
-        // cv::threshold(high_red, high_red, 1, 255, cv::THRESH_BINARY);
-        // cv::threshold(high_blue, high_blue, 1, 255, cv::THRESH_BINARY);  
-        
-
-        // 根据要求的颜色选择最终的掩码图
-        if(this->CHOSEN_COLOR == "red") this->mask = high_red; // 最终掩码图
-        else this->mask = high_blue; 
-
-
-        this->img = img; // 原图
-        this->img_hsv = img_hsv; // hsv图
-        this->img_gray = img_gray; // 灰度图
-
-
-        //cv::imshow("high_blue", high_blue);
-        //cv::imshow("high_red", high_red);
     }
-    
-
     else
     {
-        int THERESHOLD_VALUE = 220; // 二值化阈值
+        // 4. 高阈值二值化    蓝图: 蓝色灯条 + 白炽灯灯条
+        cv::threshold(B, high_color_binary, COLOR_HIGH_THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
 
+        // 5. 差分二值化    蓝减红：只剩下蓝色的边缘光晕
+        cv::subtract(B, R, color_diff);
 
-        std::vector<cv::Mat> channels_bgr;
-        std::vector<cv::Mat> channels_hsv;
-        cv::Mat B, G, R; // bgr三通道值
-        cv::Mat red_differ, blue_differ, mask; // 红色和蓝色灯条 BGR最高最低相差值掩码（需要吗？）
-        cv::Mat img_red, img_blue;
-        cv::Mat high_red, high_blue;
-        cv::Mat img_hsv; // hsv
-        cv::Mat img_gray; // 灰度图
+        cv::threshold(color_diff, color_diff_binary, COLOR_DIFF_VALUE, 255, cv::THRESH_BINARY);
 
-        this->img_show = img.clone(); // 复制得到绘图图像，对 img_show 的操作直接在 findcontours 等等函数里
-
-        // // 1. 亮度调整 同时调整对比度和亮度，但目前不是必须
-        // cv::Mat bright;
-        // img.convertTo(bright, -1, 1.2, 30);
-
-        // 2. 得到 hsv，尝试区分灯条和白炽灯。得到 img_gray，用于亚像素优化
-        cv::cvtColor(img, img_hsv, cv::COLOR_BGR2HSV);
-        cv::cvtColor(img, img_gray, cv::COLOR_BGR2GRAY);
-
-        // 3. 分离bgr三通道的值
-        split(img, channels_bgr);
-
-        B = channels_bgr[0];
-        G = channels_bgr[1];
-        R = channels_bgr[2];
-
-        // 4. 高阈值二值化   红图: 红色灯条 + 白炽灯灯条  蓝图: 蓝色灯条 + 白炽灯灯条
-        cv::threshold(R, high_red, THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
-        cv::threshold(B, high_blue, THERESHOLD_VALUE, 255, cv::THRESH_BINARY);
-
-        // // 5. 垂直方向模糊 重新变为二值化
-        /*
-            但实际效果需要验证
-
-            建议你用实际图像测试一下，观察二值化后的灯条掩码是否有以下情况：
-
-            断裂：如果灯条中心仍有空洞，导致掩码分成上下两段，则需要垂直模糊来连接。
-            小缺口：边缘有小缺口，但整体连通，可以不处理。
-            横向散光：如果仍有轻微横向扩散，垂直模糊也能帮助抑制（因为它只在垂直方向平滑）。
-        */
-        // cv::blur(high_red, high_red, cv::Size(1, 3));
-        // cv::blur(high_blue, high_blue, cv::Size(1, 3));
-        // cv::threshold(high_red, high_red, 1, 255, cv::THRESH_BINARY);
-        // cv::threshold(high_blue, high_blue, 1, 255, cv::THRESH_BINARY);  
-        
-
-        // 根据要求的颜色选择最终的掩码图
-        if(this->CHOSEN_COLOR == "red") this->mask = high_red; // 最终掩码图
-        else this->mask = high_blue; 
-
-
-        this->img = img; // 原图
-        this->img_hsv = img_hsv; // hsv图
-        this->img_gray = img_gray; // 灰度图
-
-
-        // cv::imshow("high_blue", high_blue);
-        // cv::imshow("high_red", high_red);
     }
 
-    //cv::imshow("img_mask", this->mask);
+    // 6. 填补差分图中间的空缺
+    cv::Mat kernel_fill = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
+    cv::dilate(color_diff_binary, color_diff_binary, kernel_fill);
 
-    // const int IMAGE_BRIGHT = 30;       // 全局亮度增益（过暗就加大）
-    // const int THRESHOLD_VALUE = 220;   // 二值化阈值（噪点多就加大）
-    // //const int KERNEL_SIZE = 2;       // 核大小
-
-    // cv::Mat dst_BR;
-    // cv::Mat dst_blue; // 最终的蓝色灯条掩码
-    // cv::Mat dst_red; // 最终的红色灯条掩码
-
-    // std::vector<cv::Mat> channels;
-
-    // // 全局亮度调整
-    // {
-    //     cv::Mat BrightnessLut(1, 256, CV_8UC1); 
-    //     for (int i = 0; i < 256; i++) {
-    //         BrightnessLut.at<uchar>(i) = cv::saturate_cast<uchar>(i + IMAGE_BRIGHT);
-    //     }
-    //     cv::LUT(img, BrightnessLut, dst_BR);
-    // }
-
-    // this->img_show = dst_BR.clone(); // 复制得到绘图图像，对 img_show 的操作直接在 findcontours 等等函数里
-    // cv::Mat img_hsv; // hsv
-    // cv::cvtColor(dst_BR, img_hsv, cv::COLOR_BGR2HSV);
-
-    // // 颜色通道差分
-    // cv::split(dst_BR, channels);
-
-    // // 二值化
-    // cv::threshold(channels[0], dst_blue, THRESHOLD_VALUE, 255, cv::THRESH_BINARY);
-    // cv::threshold(channels[2], dst_red, THRESHOLD_VALUE, 255, cv::THRESH_BINARY);
-
-    // // 垂直方向模糊
-    // cv::blur(dst_blue, dst_blue, cv::Size(1, 3)); // 只模糊垂直方向，保留灯条形状
-    // cv::blur(dst_red, dst_red, cv::Size(1, 3)); // 只模糊垂直方向，保留灯条形状
+    // 7. AND 一下
+    cv::bitwise_and(high_color_binary, color_diff_binary, this->mask);
 
 
-    // // 形态学膨胀
-    // // cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(KERNEL_SIZE, KERNEL_SIZE));
-    // // cv::dilate(dst, dst, kernel, cv::Point(-1, -1), 1);
-    // //cv::erode(dst, dst, kernel, cv::Point(-1, -1), 1);
-    // //cv::morphologyEx(mask, mask, cv::MORPH_OPEN, kernel);
+    // 8. 解决“物理断裂”：形态学闭运算 (Closing = 先膨胀再腐蚀)
+    // 【极其关键】：因为灯条是竖直生长的，我们绝对不能用正方形的核，那样会让灯条变宽，导致 PnP 距离测不准！
+    // 我们定义一个【宽 3，高 7】或者【宽 1，高 9】的“竖直核”。
+    // 它只在上下方向进行桥接缝合，绝不改变灯条的真实物理宽度。
+    cv::Mat kernel_close = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(5, 11));
+    cv::morphologyEx(this->mask, this->mask, cv::MORPH_CLOSE, kernel_close);
 
-    // //调试显示（
-    // cv::imshow("最终掩码 blue", dst_blue);
-    // //cv::imshow("最终掩码 red", dst_red);
-        
 
-    // this->CHOSEN_COLOR = "blue"; // 选择检测的颜色 red / blue
+    this->img = img; // 原图
+    this->img_hsv = img_hsv; // hsv图
+    this->img_gray = img_gray; // 灰度图
 
-    // if(this->CHOSEN_COLOR == "red") this->mask = dst_red; // 最终掩码图
-    // else this->mask = dst_blue; 
-
-    // this->img = img; // 原图
-    // this->img_hsv = img_hsv; // hsv图
-    
-    // cv::imshow("mask", this->mask);
+    cv::imshow("img_mask", this->mask);
 
 }

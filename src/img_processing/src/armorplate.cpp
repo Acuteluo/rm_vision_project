@@ -93,21 +93,7 @@ void ArmorPlate::setParam()
 
 }
 
-
-// 传入 img_show
-void ArmorPlate::setImgShow(cv::Mat& img_show)
-{
-    this->img_show = img_show;
-}
-
-
-// 获取 img_show
-cv::Mat ArmorPlate::getImgShow()
-{
-    return this->img_show;
-}
-
-
+ 
 
 // 有参构造，放入两个灯带 + 置信度 + 相机名称 + 装甲板类型，构造装甲板
 ArmorPlate::ArmorPlate(Strip a, Strip b, double moderation, std::string camera_name, std::string armor_type)
@@ -185,7 +171,7 @@ ArmorPlate::ArmorPlate(Strip a, Strip b, double moderation, std::string camera_n
 * @brief	画出装甲板并标点，打印 pnp 信息
 * @return   无返回值，直接画图
 */
-void ArmorPlate::drawArmorPlateAndPrintPNPInfo(std::string CHOSEN_COLOR, int sum)
+void ArmorPlate::drawArmorPlateAndPrintPNPInfo(cv::Mat& img_show, std::string CHOSEN_COLOR, int sum)
 {
     cv::Scalar color;
     if(CHOSEN_COLOR == "red") color = cv::Scalar(0, 255, 255); // 红色装甲板 -> 黄色
@@ -194,19 +180,19 @@ void ArmorPlate::drawArmorPlateAndPrintPNPInfo(std::string CHOSEN_COLOR, int sum
     // 画出装甲板的四个角点、中心点和边框
     for (int i = 0; i < 4; i++)
     {
-        cv::putText(this->img_show, "[" + std::to_string((int)i + 1) + "] [" + std::to_string((int)vertice_pixel[i].x) + ", " + std::to_string((int)vertice_pixel[i].y) + "]", cv::Point2f(vertice_pixel[i].x, vertice_pixel[i].y - 5), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 128, 255), 0.65);
-        cv::line(this->img_show, vertice_pixel[i], vertice_pixel[(i + 1) % 4], color, 2); // 画线
+        cv::putText(img_show, "[" + std::to_string((int)i + 1) + "] [" + std::to_string((int)vertice_pixel[i].x) + ", " + std::to_string((int)vertice_pixel[i].y) + "]", cv::Point2f(vertice_pixel[i].x, vertice_pixel[i].y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(0, 128, 255), 0.65);
+        cv::line(img_show, vertice_pixel[i], vertice_pixel[(i + 1) % 4], color, 2); // 画线
     }
-    cv::circle(this->img_show, this->center, 3, color, cv::FILLED); // 中心点
+    cv::circle(img_show, this->center, 3, color, cv::FILLED); // 中心点
 
     // 只打印综合置信度（考虑与上一帧追踪装甲板的距离）最高的装甲板的信息，也就是现在跟踪的装甲板的信息
     if(sum == 0)
     {
-         // 打印 置信度 和 pnp 信息
-        cv::putText(this->img_show, "moderation = " + std::to_string((double)this->moderation), cv::Point2f(0, 450), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-	    cv::putText(this->img_show, "t_pitch = " + std::to_string((double)this->t_pitch), cv::Point2f(0, 500), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-        cv::putText(this->img_show, "t_yaw = " + std::to_string((double)this->t_yaw), cv::Point2f(0, 550), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-	    cv::putText(this->img_show, "t_distance = " + std::to_string((double)this->t_distance) + "m", cv::Point2f(0, 600), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+        // 打印 置信度 和 pnp 信息
+        cv::putText(img_show, "moderation = " + std::to_string((double)this->moderation), cv::Point2f(0, 450), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+	    cv::putText(img_show, "t_pitch = " + std::to_string((double)this->t_pitch), cv::Point2f(0, 500), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+        cv::putText(img_show, "t_yaw = " + std::to_string((double)this->t_yaw), cv::Point2f(0, 550), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+	    cv::putText(img_show, "t_distance = " + std::to_string((double)this->t_distance) + "m", cv::Point2f(0, 600), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
     }
    
 }

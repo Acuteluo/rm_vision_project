@@ -1,0 +1,334 @@
+[INFO] [launch]: All log files can be found below /home/cly/.ros/log/2026-04-28-22-45-29-893352-acuteluo-1008001
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [galaxy_camera_node-1]: process started with pid [1008003]
+[INFO] [core_node-2]: process started with pid [1008005]
+[INFO] [rm_serial_driver_node-3]: process started with pid [1008007]
+[rm_serial_driver_node-3] [INFO] [1777387529.943881392] [IoContext::IoContext]: Thread(s) Created: 2
+[rm_serial_driver_node-3] [INFO] [1777387529.944040290] [serial_driver]: SerialDriver 构造函数启动!
+[rm_serial_driver_node-3] [INFO] [1777387529.944077048] [serial_driver]: Step 1/7: 函数注册信号处理器 创建完成
+[rm_serial_driver_node-3] [INFO] [1777387529.944229100] [serial_driver]: Step 2/7: 串口节点动态参数已初始化: SHOW_LOGGER_RECEIVE=0, SHOW_LOGGER_TRY_AND_SEND=0
+[rm_serial_driver_node-3] [INFO] [1777387529.944282293] [serial_driver]: RMSerialDriver 节点参数更新! 
+[rm_serial_driver_node-3] [INFO] [1777387529.944310138] [serial_driver]: RMSerialDriver 节点参数更新! 
+[rm_serial_driver_node-3] [INFO] [1777387529.944323673] [serial_driver]: RMSerialDriver 节点参数更新! 
+[rm_serial_driver_node-3] [INFO] [1777387529.944335267] [serial_driver]: flow_control string = 'none'
+[rm_serial_driver_node-3] [INFO] [1777387529.944342692] [serial_driver]: RMSerialDriver 节点参数更新! 
+[rm_serial_driver_node-3] [INFO] [1777387529.944353944] [serial_driver]: RMSerialDriver 节点参数更新! 
+[rm_serial_driver_node-3] [INFO] [1777387529.944407930] [serial_driver]: Step 3/7: 已经从 config 文件读取参数, device_name=/dev/ttyACM0
+[galaxy_camera_node-1] [INFO] [1777387529.945694997] [galaxy_camera]: Starting GalaxyCameraNode!
+[rm_serial_driver_node-3] [INFO] [1777387529.946378202] [serial_driver]: Step 4/7: 成功创建 /serial_driver 话题订阅者
+[rm_serial_driver_node-3] [INFO] [1777387529.946532749] [serial_driver]: RMSerialDriver 节点参数更新! 
+[rm_serial_driver_node-3] [INFO] [1777387529.946703348] [serial_driver]: RMSerialDriver 节点参数更新! 
+[rm_serial_driver_node-3] [INFO] [1777387529.946743247] [serial_driver]: RMSerialDriver 节点参数更新! 
+[rm_serial_driver_node-3] [INFO] [1777387529.946775636] [serial_driver]: RMSerialDriver 节点参数更新! 
+[rm_serial_driver_node-3] [INFO] [1777387529.948015097] [serial_driver]: Step 5/7: 初始化串口 成功
+[rm_serial_driver_node-3] [INFO] [1777387529.948357556] [serial_driver]: Step 6/7: 未打开串口，现在串口已经打开成功
+[rm_serial_driver_node-3] [INFO] [1777387529.948538049] [serial_driver]: Step 7/7: 启动接收线程 成功
+[rm_serial_driver_node-3] [INFO] [1777387529.948559892] [serial_driver]: >>>>>>>>>>>>>>> 串口构造函数已经初始化完成。
+[rm_serial_driver_node-3] [INFO] [1777387529.948701094] [serial_driver]: 成功接收到电控数据，正在处理...
+[core_node-2] [INFO] [1777387530.001221804] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777387530.003874163] [core_node]: CoreNode 节点创建成功! 
+[core_node-2] [INFO] [1777387530.003944716] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777387530.003997185] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777387530.004027297] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777387530.004053473] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777387530.006091573] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777387530.006153649] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777387530.006176499] [core_node]: 修改参数的回调函数已被调用! 
+[core_node-2] [INFO] [1777387530.006502424] [core_node]: 已发布静态变换【芯片坐标系 -> 相机坐标系】，平移: x=0.000 m, y=0.000 m, z=0.000 m
+[core_node-2] [INFO] [1777387530.006533156] [core_node]: TF 参数已加载: SHOW_LOGGER_ERROR=0, SHOW_RESULT=0, father_frame=world_frame
+[galaxy_camera_node-1] [INFO] [1777387530.208737536] [galaxy_camera]: Exposure time: 5000.000000
+[galaxy_camera_node-1] [INFO] [1777387530.218698379] [galaxy_camera]: Gain: 2.000000
+[galaxy_camera_node-1] [INFO] [1777387530.244050368] [galaxy_camera]: camera calibration URL: package://galaxy_camera/config/camera_info.yaml
+[galaxy_camera_node-1] [INFO] [1777387530.244690422] [galaxy_camera]: GalaxyCamera initialized
+[galaxy_camera_node-1] [INFO] [1777387530.244939083] [galaxy_camera]: 大恒相机节点发布! Publishing image!
+[core_node-2] [WARN] [1777387530.281557955] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387530.781920334] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387530.946968343] [serial_driver]: 电控消息 发布频率: 999.44 Hz
+[core_node-2] [WARN] [1777387531.287091778] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387531.795824085] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387531.947023580] [serial_driver]: 电控消息 发布频率: 999.95 Hz
+[core_node-2] [WARN] [1777387532.298299057] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387532.800926845] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387532.947096881] [serial_driver]: 电控消息 发布频率: 999.93 Hz
+[core_node-2] [WARN] [1777387533.306750456] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387533.808916288] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387533.947145911] [serial_driver]: 电控消息 发布频率: 999.95 Hz
+[core_node-2] [WARN] [1777387534.310305300] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387534.813914409] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387534.947186123] [serial_driver]: 电控消息 发布频率: 999.96 Hz
+[core_node-2] [WARN] [1777387535.314538599] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387535.816910687] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387535.942851916] [core_node]: 【重度丢失】666 帧后找回，全部作废重来
+[rm_serial_driver_node-3] [INFO] [1777387535.947249417] [serial_driver]: 电控消息 发布频率: 999.94 Hz
+[core_node-2] [INFO] [1777387535.963342813] [core_node]: coreNode 正在发布...
+[rm_serial_driver_node-3] [INFO] [1777387536.947312723] [serial_driver]: 电控消息 发布频率: 999.94 Hz
+[rm_serial_driver_node-3] [INFO] [1777387536.962174031] [serial_driver]: 串口实际发送帧率:--------------------->【 110.77 Hz】
+[core_node-2] [WARN] [1777387537.285437865] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387537.342348914] [core_node]: 【轻度丢失】6 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387537.920344755] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387537.947345144] [serial_driver]: 电控消息 发布频率: 999.97 Hz
+[rm_serial_driver_node-3] [INFO] [1777387537.964160815] [serial_driver]: 串口实际发送帧率:--------------------->【 58.88 Hz】
+[core_node-2] [WARN] [1777387538.426750571] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387538.932543919] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387538.947417500] [serial_driver]: 电控消息 发布频率: 999.93 Hz
+[core_node-2] [WARN] [1777387539.214219085] [core_node]: 【重度丢失】145 帧后找回，全部作废重来
+[rm_serial_driver_node-3] [INFO] [1777387539.232819435] [serial_driver]: 串口实际发送帧率:--------------------->【 43.35 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387539.947457052] [serial_driver]: 电控消息 发布频率: 999.96 Hz
+[rm_serial_driver_node-3] [INFO] [1777387540.243089386] [serial_driver]: 串口实际发送帧率:--------------------->【 104.92 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387540.947496662] [serial_driver]: 电控消息 发布频率: 999.96 Hz
+[rm_serial_driver_node-3] [INFO] [1777387541.244411386] [serial_driver]: 串口实际发送帧率:--------------------->【 106.86 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387541.947539059] [serial_driver]: 电控消息 发布频率: 999.96 Hz
+[rm_serial_driver_node-3] [INFO] [1777387542.249543793] [serial_driver]: 串口实际发送帧率:--------------------->【 104.46 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387542.947598562] [serial_driver]: 电控消息 发布频率: 999.94 Hz
+[rm_serial_driver_node-3] [INFO] [1777387543.258450949] [serial_driver]: 串口实际发送帧率:--------------------->【 103.08 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387543.947689898] [serial_driver]: 电控消息 发布频率: 999.91 Hz
+[rm_serial_driver_node-3] [INFO] [1777387544.260473215] [serial_driver]: 串口实际发送帧率:--------------------->【 104.79 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387544.947954020] [serial_driver]: 电控消息 发布频率: 999.74 Hz
+[rm_serial_driver_node-3] [INFO] [1777387545.268547734] [serial_driver]: 串口实际发送帧率:--------------------->【 100.19 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387545.948778400] [serial_driver]: 电控消息 发布频率: 1000.17 Hz
+[rm_serial_driver_node-3] [INFO] [1777387546.276037590] [serial_driver]: 串口实际发送帧率:--------------------->【 102.23 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387546.948809470] [serial_driver]: 电控消息 发布频率: 999.97 Hz
+[rm_serial_driver_node-3] [INFO] [1777387547.279635324] [serial_driver]: 串口实际发送帧率:--------------------->【 100.64 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387547.948848574] [serial_driver]: 电控消息 发布频率: 999.96 Hz
+[rm_serial_driver_node-3] [INFO] [1777387548.283298589] [serial_driver]: 串口实际发送帧率:--------------------->【 100.63 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387548.948925775] [serial_driver]: 电控消息 发布频率: 999.92 Hz
+[rm_serial_driver_node-3] [INFO] [1777387549.286518928] [serial_driver]: 串口实际发送帧率:--------------------->【 99.68 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387549.948953053] [serial_driver]: 电控消息 发布频率: 999.97 Hz
+[rm_serial_driver_node-3] [INFO] [1777387550.296488611] [serial_driver]: 串口实际发送帧率:--------------------->【 96.04 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387550.949011100] [serial_driver]: 电控消息 发布频率: 999.94 Hz
+[rm_serial_driver_node-3] [INFO] [1777387551.302748980] [serial_driver]: 串口实际发送帧率:--------------------->【 93.42 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387551.949101009] [serial_driver]: 电控消息 发布频率: 999.91 Hz
+[rm_serial_driver_node-3] [INFO] [1777387552.307128558] [serial_driver]: 串口实际发送帧率:--------------------->【 96.58 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387552.949311536] [serial_driver]: 电控消息 发布频率: 999.79 Hz
+[rm_serial_driver_node-3] [INFO] [1777387553.311468135] [serial_driver]: 串口实际发送帧率:--------------------->【 97.58 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387553.950274473] [serial_driver]: 电控消息 发布频率: 1000.04 Hz
+[rm_serial_driver_node-3] [INFO] [1777387554.316461439] [serial_driver]: 串口实际发送帧率:--------------------->【 96.52 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387554.950363438] [serial_driver]: 电控消息 发布频率: 999.91 Hz
+[rm_serial_driver_node-3] [INFO] [1777387555.323039539] [serial_driver]: 串口实际发送帧率:--------------------->【 96.37 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387555.950499546] [serial_driver]: 电控消息 发布频率: 999.86 Hz
+[rm_serial_driver_node-3] [INFO] [1777387556.329743363] [serial_driver]: 串口实际发送帧率:--------------------->【 97.35 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387556.950716493] [serial_driver]: 电控消息 发布频率: 999.79 Hz
+[rm_serial_driver_node-3] [INFO] [1777387557.331896557] [serial_driver]: 串口实际发送帧率:--------------------->【 95.79 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387557.950747300] [serial_driver]: 电控消息 发布频率: 999.96 Hz
+[rm_serial_driver_node-3] [INFO] [1777387558.344435195] [serial_driver]: 串口实际发送帧率:--------------------->【 93.82 Hz】
+[core_node-2] [WARN] [1777387558.712193462] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387558.848065083] [core_node]: 【中度丢失】13 帧后找回，仅仅重置滤波器！
+[rm_serial_driver_node-3] [INFO] [1777387558.950850892] [serial_driver]: 电控消息 发布频率: 999.90 Hz
+[rm_serial_driver_node-3] [INFO] [1777387559.353448593] [serial_driver]: 串口实际发送帧率:--------------------->【 98.12 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387559.950925594] [serial_driver]: 电控消息 发布频率: 999.93 Hz
+[core_node-2] [WARN] [1777387560.166014091] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387560.223822924] [core_node]: 【轻度丢失】6 帧后找回, 啥也不动, 相信 ekf
+[rm_serial_driver_node-3] [INFO] [1777387560.358877219] [serial_driver]: 串口实际发送帧率:--------------------->【 99.46 Hz】
+[core_node-2] [WARN] [1777387560.668499020] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387560.951038434] [serial_driver]: 电控消息 发布频率: 999.89 Hz
+[core_node-2] [WARN] [1777387561.168710335] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387561.658659259] [core_node]: 【重度丢失】144 帧后找回，全部作废重来
+[rm_serial_driver_node-3] [INFO] [1777387561.678535204] [serial_driver]: 串口实际发送帧率:--------------------->【 40.16 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387561.951176923] [serial_driver]: 电控消息 发布频率: 999.86 Hz
+[rm_serial_driver_node-3] [INFO] [1777387562.687851658] [serial_driver]: 串口实际发送帧率:--------------------->【 89.17 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387562.951262116] [serial_driver]: 电控消息 发布频率: 999.92 Hz
+[rm_serial_driver_node-3] [INFO] [1777387563.689620759] [serial_driver]: 串口实际发送帧率:--------------------->【 89.84 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387563.951384175] [serial_driver]: 电控消息 发布频率: 999.88 Hz
+[rm_serial_driver_node-3] [INFO] [1777387564.692338439] [serial_driver]: 串口实际发送帧率:--------------------->【 84.77 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387564.951635383] [serial_driver]: 电控消息 发布频率: 999.76 Hz
+[core_node-2] [WARN] [1777387565.460956742] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387565.526827962] [core_node]: 【轻度丢失】6 帧后找回, 啥也不动, 相信 ekf
+[rm_serial_driver_node-3] [INFO] [1777387565.698882361] [serial_driver]: 串口实际发送帧率:--------------------->【 85.44 Hz】
+[core_node-2] [WARN] [1777387565.828099116] [core_node]: 【轻度丢失】3 帧后找回, 啥也不动, 相信 ekf
+[rm_serial_driver_node-3] [INFO] [1777387565.952625867] [serial_driver]: 电控消息 发布频率: 1000.00 Hz
+[core_node-2] [WARN] [1777387566.520412265] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387566.534433588] [core_node]: 【轻度丢失】1 帧后找回, 啥也不动, 相信 ekf
+[rm_serial_driver_node-3] [INFO] [1777387566.705165191] [serial_driver]: 串口实际发送帧率:--------------------->【 85.46 Hz】
+[core_node-2] [WARN] [1777387566.886755958] [core_node]: 【轻度丢失】1 帧后找回, 啥也不动, 相信 ekf
+[rm_serial_driver_node-3] [INFO] [1777387566.952684795] [serial_driver]: 电控消息 发布频率: 999.94 Hz
+[rm_serial_driver_node-3] [INFO] [1777387567.715965666] [serial_driver]: 串口实际发送帧率:--------------------->【 91.02 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387567.952804609] [serial_driver]: 电控消息 发布频率: 999.88 Hz
+[rm_serial_driver_node-3] [INFO] [1777387568.725065953] [serial_driver]: 串口实际发送帧率:--------------------->【 96.13 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387568.952926540] [serial_driver]: 电控消息 发布频率: 999.88 Hz
+[rm_serial_driver_node-3] [INFO] [1777387569.735266229] [serial_driver]: 串口实际发送帧率:--------------------->【 93.05 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387569.953023977] [serial_driver]: 电控消息 发布频率: 999.90 Hz
+[rm_serial_driver_node-3] [INFO] [1777387570.741435675] [serial_driver]: 串口实际发送帧率:--------------------->【 93.42 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387570.953123959] [serial_driver]: 电控消息 发布频率: 999.90 Hz
+[rm_serial_driver_node-3] [INFO] [1777387571.741893103] [serial_driver]: 串口实际发送帧率:--------------------->【 91.96 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387571.953238622] [serial_driver]: 电控消息 发布频率: 999.89 Hz
+[rm_serial_driver_node-3] [INFO] [1777387572.746427816] [serial_driver]: 串口实际发送帧率:--------------------->【 92.58 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387572.953357014] [serial_driver]: 电控消息 发布频率: 999.88 Hz
+[rm_serial_driver_node-3] [INFO] [1777387573.748847088] [serial_driver]: 串口实际发送帧率:--------------------->【 92.78 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387573.953802913] [serial_driver]: 电控消息 发布频率: 999.55 Hz
+[rm_serial_driver_node-3] [INFO] [1777387574.750486712] [serial_driver]: 串口实际发送帧率:--------------------->【 93.85 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387574.954612540] [serial_driver]: 电控消息 发布频率: 1000.19 Hz
+[core_node-2] [WARN] [1777387575.263951128] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387575.275671131] [core_node]: 【轻度丢失】1 帧后找回, 啥也不动, 相信 ekf
+[rm_serial_driver_node-3] [INFO] [1777387575.758052336] [serial_driver]: 串口实际发送帧率:--------------------->【 91.31 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387575.954962931] [serial_driver]: 电控消息 发布频率: 999.65 Hz
+[rm_serial_driver_node-3] [INFO] [1777387576.772696484] [serial_driver]: 串口实际发送帧率:--------------------->【 87.72 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387576.955811971] [serial_driver]: 电控消息 发布频率: 1000.15 Hz
+[core_node-2] [WARN] [1777387577.677796036] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387577.773002806] [serial_driver]: 串口实际发送帧率:--------------------->【 93.97 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387577.955956223] [serial_driver]: 电控消息 发布频率: 999.86 Hz
+[core_node-2] [WARN] [1777387578.183467834] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387578.690773731] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387578.956011256] [serial_driver]: 电控消息 发布频率: 999.95 Hz
+[core_node-2] [WARN] [1777387579.041525395] [core_node]: 【重度丢失】138 帧后找回，全部作废重来
+[rm_serial_driver_node-3] [INFO] [1777387579.062376744] [serial_driver]: 串口实际发送帧率:--------------------->【 38.78 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387579.956119694] [serial_driver]: 电控消息 发布频率: 999.89 Hz
+[rm_serial_driver_node-3] [INFO] [1777387580.062391803] [serial_driver]: 串口实际发送帧率:--------------------->【 78.00 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387580.956271061] [serial_driver]: 电控消息 发布频率: 999.85 Hz
+[rm_serial_driver_node-3] [INFO] [1777387581.073872082] [serial_driver]: 串口实际发送帧率:--------------------->【 74.15 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387581.956504046] [serial_driver]: 电控消息 发布频率: 999.77 Hz
+[rm_serial_driver_node-3] [INFO] [1777387582.073925470] [serial_driver]: 串口实际发送帧率:--------------------->【 74.00 Hz】
+[core_node-2] [WARN] [1777387582.494772441] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387582.710130402] [core_node]: 【中度丢失】20 帧后找回，仅仅重置滤波器！
+[core_node-2] [WARN] [1777387582.789543110] [core_node]: 【轻度丢失】2 帧后找回, 啥也不动, 相信 ekf
+[rm_serial_driver_node-3] [INFO] [1777387582.957458896] [serial_driver]: 电控消息 发布频率: 1000.05 Hz
+[core_node-2] [WARN] [1777387583.007421225] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387583.082488127] [serial_driver]: 串口实际发送帧率:--------------------->【 84.28 Hz】
+[core_node-2] [WARN] [1777387583.513938741] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387583.957577702] [serial_driver]: 电控消息 发布频率: 999.88 Hz
+[core_node-2] [WARN] [1777387584.014756641] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387584.384210605] [core_node]: 【重度丢失】143 帧后找回，全部作废重来
+[core_node-2] [WARN] [1777387584.410054807] [core_node]: 【轻度丢失】2 帧后找回, 啥也不动, 相信 ekf
+[rm_serial_driver_node-3] [INFO] [1777387584.430880889] [serial_driver]: 串口实际发送帧率:--------------------->【 38.56 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387584.957672622] [serial_driver]: 电控消息 发布频率: 999.91 Hz
+[rm_serial_driver_node-3] [INFO] [1777387585.433233847] [serial_driver]: 串口实际发送帧率:--------------------->【 73.83 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387585.957796546] [serial_driver]: 电控消息 发布频率: 999.88 Hz
+[rm_serial_driver_node-3] [INFO] [1777387586.433647457] [serial_driver]: 串口实际发送帧率:--------------------->【 73.97 Hz】
+[core_node-2] [WARN] [1777387586.588886751] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387586.957900872] [serial_driver]: 电控消息 发布频率: 999.90 Hz
+[core_node-2] [WARN] [1777387587.094663675] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387587.601790313] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387587.958012881] [serial_driver]: 电控消息 发布频率: 999.89 Hz
+[core_node-2] [WARN] [1777387587.979572874] [core_node]: 【重度丢失】145 帧后找回，全部作废重来
+[rm_serial_driver_node-3] [INFO] [1777387588.000608744] [serial_driver]: 串口实际发送帧率:--------------------->【 45.95 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387588.958086440] [serial_driver]: 电控消息 发布频率: 999.93 Hz
+[rm_serial_driver_node-3] [INFO] [1777387589.008429447] [serial_driver]: 串口实际发送帧率:--------------------->【 80.37 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387589.958217320] [serial_driver]: 电控消息 发布频率: 999.87 Hz
+[rm_serial_driver_node-3] [INFO] [1777387590.011666747] [serial_driver]: 串口实际发送帧率:--------------------->【 76.75 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387590.958321939] [serial_driver]: 电控消息 发布频率: 999.90 Hz
+[rm_serial_driver_node-3] [INFO] [1777387591.958423278] [serial_driver]: 电控消息 发布频率: 999.90 Hz
+[rm_serial_driver_node-3] [INFO] [1777387592.482922332] [serial_driver]: 串口实际发送帧率:--------------------->【 15.78 Hz】
+[core_node-2] [WARN] [1777387592.492944977] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387592.958571573] [serial_driver]: 电控消息 发布频率: 999.85 Hz
+[core_node-2] [WARN] [1777387592.998040485] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387593.505111365] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387593.832043914] [core_node]: 【重度丢失】148 帧后找回，全部作废重来
+[rm_serial_driver_node-3] [INFO] [1777387593.853527625] [serial_driver]: 串口实际发送帧率:--------------------->【 44.51 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387593.958702598] [serial_driver]: 电控消息 发布频率: 999.87 Hz
+[rm_serial_driver_node-3] [INFO] [1777387594.858876982] [serial_driver]: 串口实际发送帧率:--------------------->【 98.47 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387594.958777818] [serial_driver]: 电控消息 发布频率: 999.93 Hz
+[rm_serial_driver_node-3] [INFO] [1777387595.861388165] [serial_driver]: 串口实际发送帧率:--------------------->【 96.76 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387595.958860901] [serial_driver]: 电控消息 发布频率: 999.92 Hz
+[rm_serial_driver_node-3] [INFO] [1777387596.863373493] [serial_driver]: 串口实际发送帧率:--------------------->【 99.80 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387596.958965542] [serial_driver]: 电控消息 发布频率: 999.89 Hz
+[rm_serial_driver_node-3] [INFO] [1777387597.870987113] [serial_driver]: 串口实际发送帧率:--------------------->【 97.26 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387597.959065259] [serial_driver]: 电控消息 发布频率: 999.90 Hz
+[rm_serial_driver_node-3] [INFO] [1777387598.879384848] [serial_driver]: 串口实际发送帧率:--------------------->【 99.17 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387598.959179604] [serial_driver]: 电控消息 发布频率: 999.89 Hz
+[core_node-2] [WARN] [1777387599.381453055] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387599.886360994] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387599.886803879] [serial_driver]: 串口实际发送帧率:--------------------->【 98.27 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387599.959346765] [serial_driver]: 电控消息 发布频率: 999.83 Hz
+[core_node-2] [WARN] [1777387600.386805402] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387600.757284468] [core_node]: 【重度丢失】141 帧后找回，全部作废重来
+[rm_serial_driver_node-3] [INFO] [1777387600.898291440] [serial_driver]: 串口实际发送帧率:--------------------->【 20.76 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387600.959404217] [serial_driver]: 电控消息 发布频率: 999.94 Hz
+[core_node-2] [WARN] [1777387601.124869425] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387601.135691298] [core_node]: 【轻度丢失】1 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387601.158742725] [core_node]: 【轻度丢失】1 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387601.630479608] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387601.718774585] [core_node]: 【重度丢失】52 帧后找回，全部作废重来
+[core_node-2] [WARN] [1777387601.763042872] [core_node]: 【轻度丢失】3 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387601.884002051] [core_node]: 【中度丢失】8 帧后找回，仅仅重置滤波器！
+[rm_serial_driver_node-3] [INFO] [1777387601.906600710] [serial_driver]: 串口实际发送帧率:--------------------->【 76.37 Hz】
+[core_node-2] [WARN] [1777387601.926401644] [core_node]: 【轻度丢失】1 帧后找回, 啥也不动, 相信 ekf
+[rm_serial_driver_node-3] [INFO] [1777387601.959505840] [serial_driver]: 电控消息 发布频率: 999.90 Hz
+[core_node-2] [WARN] [1777387601.986305833] [core_node]: 【轻度丢失】4 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.006299787] [core_node]: 【轻度丢失】1 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.057452114] [core_node]: 【轻度丢失】4 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.085485433] [core_node]: 【轻度丢失】2 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.124969547] [core_node]: 【轻度丢失】3 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.187326922] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387602.225991876] [core_node]: 【轻度丢失】4 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.262987434] [core_node]: 【轻度丢失】3 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.283396725] [core_node]: 【轻度丢失】1 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.321060150] [core_node]: 【轻度丢失】1 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.341302167] [core_node]: 【轻度丢失】1 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.376326609] [core_node]: 【轻度丢失】2 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.393936294] [core_node]: 【轻度丢失】1 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.423343516] [core_node]: 【轻度丢失】2 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.450154419] [core_node]: 【轻度丢失】1 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.491847246] [core_node]: 【轻度丢失】3 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.627672223] [core_node]: 【中度丢失】11 帧后找回，仅仅重置滤波器！
+[core_node-2] [WARN] [1777387602.662754753] [core_node]: 【轻度丢失】2 帧后找回, 啥也不动, 相信 ekf
+[rm_serial_driver_node-3] [WARN] [1777387602.663476184] [serial_driver]: 之前准备发送给串口的数据和上一次完全相同，累计相同 2 帧。该帧不同
+[core_node-2] [WARN] [1777387602.697332618] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387602.731475735] [core_node]: 【轻度丢失】4 帧后找回, 啥也不动, 相信 ekf
+[core_node-2] [WARN] [1777387602.819411453] [core_node]: 【轻度丢失】3 帧后找回, 啥也不动, 相信 ekf
+[rm_serial_driver_node-3] [INFO] [1777387602.910018496] [serial_driver]: 串口实际发送帧率:--------------------->【 71.75 Hz】
+[rm_serial_driver_node-3] [INFO] [1777387602.959592884] [serial_driver]: 电控消息 发布频率: 999.91 Hz
+[core_node-2] [WARN] [1777387603.203353648] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387603.706420200] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387603.959695909] [serial_driver]: 电控消息 发布频率: 999.90 Hz
+[core_node-2] [WARN] [1777387604.206477619] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387604.294258621] [core_node]: 【重度丢失】150 帧后找回，全部作废重来
+[core_node-2] [WARN] [1777387604.327005339] [core_node]: 【轻度丢失】2 帧后找回, 啥也不动, 相信 ekf
+[rm_serial_driver_node-3] [INFO] [1777387604.346898884] [serial_driver]: 串口实际发送帧率:--------------------->【 36.19 Hz】
+[core_node-2] [WARN] [1777387604.711910034] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387604.960162857] [serial_driver]: 电控消息 发布频率: 999.54 Hz
+[core_node-2] [WARN] [1777387605.218147820] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387605.722229463] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387605.960926921] [serial_driver]: 电控消息 发布频率: 1000.23 Hz
+[core_node-2] [WARN] [1777387606.226273654] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387606.732273227] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387606.961160429] [serial_driver]: 电控消息 发布频率: 999.77 Hz
+[core_node-2] [WARN] [1777387607.235669044] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387607.741231903] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387607.961314590] [serial_driver]: 电控消息 发布频率: 999.85 Hz
+[core_node-2] [WARN] [1777387608.243010735] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387608.750343415] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387608.962263922] [serial_driver]: 电控消息 发布频率: 1000.05 Hz
+[core_node-2] [WARN] [1777387609.252672463] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387609.757327235] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387609.962370598] [serial_driver]: 电控消息 发布频率: 999.89 Hz
+[core_node-2] [WARN] [1777387610.267798175] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387610.776541387] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387610.962434340] [serial_driver]: 电控消息 发布频率: 999.94 Hz
+[core_node-2] [WARN] [1777387611.276661389] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387611.780374250] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387611.962563700] [serial_driver]: 电控消息 发布频率: 999.87 Hz
+[core_node-2] [WARN] [1777387612.288677033] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387612.793827504] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387612.962678877] [serial_driver]: 电控消息 发布频率: 999.89 Hz
+[core_node-2] [WARN] [1777387613.296346610] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387613.801661483] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387613.962763761] [serial_driver]: 电控消息 发布频率: 999.91 Hz
+[core_node-2] [WARN] [1777387614.301733707] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387614.804641124] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387614.962908809] [serial_driver]: 电控消息 发布频率: 999.85 Hz
+[core_node-2] [WARN] [1777387615.309083588] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387615.817439156] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387615.962993750] [serial_driver]: 电控消息 发布频率: 999.92 Hz
+[core_node-2] [WARN] [1777387616.321820565] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387616.825269783] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387616.963178563] [serial_driver]: 电控消息 发布频率: 999.81 Hz
+[core_node-2] [WARN] [1777387617.332759062] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387617.835984887] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387617.963193506] [serial_driver]: 电控消息 发布频率: 999.99 Hz
+[core_node-2] [WARN] [1777387618.337530405] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387618.840514253] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387618.963329882] [serial_driver]: 电控消息 发布频率: 999.86 Hz
+[core_node-2] [WARN] [1777387619.347238529] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387619.853549132] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387619.963422691] [serial_driver]: 电控消息 发布频率: 999.91 Hz
+[core_node-2] [WARN] [1777387620.360543569] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387620.871147636] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387620.963479271] [serial_driver]: 电控消息 发布频率: 999.94 Hz
+[core_node-2] [WARN] [1777387621.377373552] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387621.882103483] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387621.963705737] [serial_driver]: 电控消息 发布频率: 999.77 Hz
+[core_node-2] [WARN] [1777387622.382515519] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387622.884176079] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387622.963714656] [serial_driver]: 电控消息 发布频率: 999.99 Hz
+[core_node-2] [WARN] [1777387623.386110687] [core_node]: 未检测到装甲板
+[core_node-2] [WARN] [1777387623.891551347] [core_node]: 未检测到装甲板
+[rm_serial_driver_node-3] [INFO] [1777387623.963860769] [serial_driver]: 电控消息 发布频率: 999.85 Hz

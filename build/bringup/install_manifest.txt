@@ -1,3 +1,4 @@
+/home/cly/project/install/bringup/share/bringup/launch/offline_video_launch.py
 /home/cly/project/install/bringup/share/bringup/launch/new_launch.py
 /home/cly/project/install/bringup/share/bringup/launch/total_launch_mind_vision.py
 /home/cly/project/install/bringup/share/bringup/launch/total_launch_galaxy.py
