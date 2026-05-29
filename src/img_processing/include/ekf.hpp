@@ -61,10 +61,8 @@ public:
     // 从参数服务器更新（运行时调用）
     void updateParamsFromServer();
 
-
-
 	// 初始化  状态转移矩阵F  协方差矩阵P  预测过程噪声Q  观测矩阵H  测量过程噪声R
-	void Initialized();
+	void Initialized(const Eigen::Vector3d& armorplate_center, const double& yaw_armor);
 
     // 设置装甲板的 width 和 height
     void setParam(std::string ARMOR_TYPE);
@@ -78,6 +76,10 @@ public:
 	// 更新参数
 	void CalculateParameter(double dt);
 	
+
+
+    // 归一化
+    void normalizeAngle(double& angle);
 
 
 	// 状态预测 X_hat_k_est = F * X_hat_k-1
@@ -153,8 +155,27 @@ private:
     // 计算观测雅可比矩阵 H = ∂h/∂x，在预测状态 X_est 处线性化
     Eigen::Matrix<double, 4, 9> computeH(const Eigen::Matrix<double, 9, 1>& x);
 
+
+    // 【新增 1】：用于计算 YPD 预测值的非线性函数
+    Eigen::Matrix<double, 4, 1> h_ypd(const Eigen::Matrix<double, 9, 1>& X_in);
+
+    // 【新增 2】：用于计算 YPD 观测空间雅可比矩阵的函数 (链式法则)
+    Eigen::Matrix<double, 4, 9> computeH_YPD(const Eigen::Matrix<double, 9, 1>& X_in);
+
+
+
     // 根据装甲板 ID 获取车体系下偏移量 (dx, dy) 和偏航角差 θ_offset
     void getArmorParams(double& dx, double& dy, double& theta_offset);
+
+
+    // 【新增 1】：YPD 观测的 R 矩阵和参数
+    Eigen::Matrix3d R_ypd;
+    double r_yaw;      // 角度观测噪声 (极小)
+    double r_pitch;    // 角度观测噪声 (极小)
+    double r_distance; // 距离观测噪声 (极大)
+
+    // 【新增 2】：新增一个 YPD 更新函数的声明
+    void updateYPD(const Eigen::Vector3d& obs_xyz);
 
 
     double radius = 0.25; // 整车旋转半径 m
@@ -188,10 +209,12 @@ private:
 	// 测量过程噪声 
 	Eigen::Matrix<double, 4, 4> R;
 
-    double r_x_;
-    double r_y_;
-    double r_z_;
-    double r_yaw_;
+    double r_euler_yaw_;
+
+    // YPD 球面坐标系观测参数
+    double r_los_yaw_;
+    double r_los_pitch_;
+    double r_distance_;
 
 	// 测量矩阵 测量 xyz
 	Eigen::Matrix<double, 4, 1> Z;

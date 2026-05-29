@@ -23,7 +23,7 @@ TF::TF(rclcpp::Node* node): node_(node)
     // 从参数服务器读取初始参数
     this->SHOW_LOGGER_ERROR = node_->get_parameter("tf.show_logger_error").as_bool();
     this->SHOW_RESULT = node_->get_parameter("tf.show_result").as_bool();
-    this->father_frame = node_->get_parameter("is_standalone_mode").as_bool() ? "camera_frame" : "world_frame"; // 根据单机/联调模式设置父坐标系名字
+    this->father_frame = node_->get_parameter("core.mode.is_standalone_mode").as_bool() ? "camera_frame" : "world_frame"; // 根据单机/联调模式设置父坐标系名字
 
     RCLCPP_INFO(node_->get_logger(), "TF 参数已加载: SHOW_LOGGER_ERROR=%d, SHOW_RESULT=%d, father_frame=%s", 
                 SHOW_LOGGER_ERROR, SHOW_RESULT, father_frame.c_str());
@@ -38,7 +38,7 @@ void TF::updateParamsFromServer()
     if (!node_) return;
     this->SHOW_LOGGER_ERROR = node_->get_parameter("tf.show_logger_error").as_bool();
     this->SHOW_RESULT = node_->get_parameter("tf.show_result").as_bool();
-    this->father_frame = node_->get_parameter("is_standalone_mode").as_bool() ? "camera_frame" : "world_frame"; // 根据单机/联调模式设置父坐标系名字
+    this->father_frame = node_->get_parameter("core.mode.is_standalone_mode").as_bool() ? "camera_frame" : "world_frame"; // 根据单机/联调模式设置父坐标系名字
 }
  
 
@@ -166,59 +166,6 @@ bool TF::getWorldToChipTransform(double& pitch_chip, double& yaw_chip, rclcpp::T
 }
 
 
-// // 查询【父坐标系】->【装甲板坐标系】是否可以变换
-// // 单机模式时父坐标系是 camera_frame，联调模式时父坐标系是 world_frame
-// // 通过引用回传滤波后的最终结果，返回1或者0表示是否有效
-// // 最后一个参数是查询时间戳，保证和图像时间戳对齐
-// bool TF::getFatherToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp)
-// {
-//     geometry_msgs::msg::TransformStamped transform_world_armorplate; // 世界 -> 装甲板
-//     try 
-//     {
-//         // transform_world_armorplate = tf_buffer_->lookupTransform(this->father_frame, "armorplate_frame", tf2::TimePointZero);
-//         transform_world_armorplate = tf_buffer_->lookupTransform(this->father_frame, "armorplate_frame", tf2::TimePointZero);
-//     } 
-//     catch (tf2::TransformException &ex) 
-//     {
-//         RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【%s -> 装甲板 坐标系】TF lookup failed: %s", this->father_frame, ex.what());
-//         return false; 
-//     }
-
-
-//     ///////////////////////////////////// 世界 -> 装甲板 的 位置 ////////////////////////////////////////
-
-
-//     // 获得 世界 -> 装甲板 的平移向量 
-//     armorplate_center[0] = transform_world_armorplate.transform.translation.x;
-//     armorplate_center[1] = transform_world_armorplate.transform.translation.y;
-//     armorplate_center[2] = transform_world_armorplate.transform.translation.z;
-
-//     RCLCPP_INFO_EXPRESSION(node_->get_logger(), this->SHOW_RESULT, "查询到【世界坐标系 -> 装甲板坐标系】的平移向量: X=%.7f m, Y=%.7f m, Z=%.7f m", armorplate_center[0], armorplate_center[1], armorplate_center[2]);
-
-//     // 旋转矩阵
-//     tf2::Quaternion q(
-//             transform_world_armorplate.transform.rotation.x,
-//             transform_world_armorplate.transform.rotation.y,
-//             transform_world_armorplate.transform.rotation.z,
-//             transform_world_armorplate.transform.rotation.w);
-
-//     // double roll_armor, pitch_armor;
-//     // tf2::Matrix3x3(q).getRPY(roll_armor, pitch_armor, yaw_armor);
-
-//     // 1. 转成矩阵
-//     tf2::Matrix3x3 mat(q);
-
-//     // 2. 提取第一列的前两个元素 (世界坐标系下的 X 和 Y 投影) 注意这里是 R 矩阵！
-//     double vec_x = mat[0][0]; 
-//     double vec_y = mat[1][0]; 
-
-//     // 3. 直接用 atan2 算出偏航角
-//     yaw_armor = std::atan2(vec_y, vec_x);
-
-//     return true;
-// }
-
-
 
 bool TF::getFatherToArmorplateTransform(const Eigen::Matrix3d& R, const Eigen::Vector3d& t, Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp)
 {
@@ -277,4 +224,73 @@ bool TF::getFatherToArmorplateTransform(const Eigen::Matrix3d& R, const Eigen::V
         return true;
     }
     
+}
+
+
+
+/**
+ * @brief 将世界坐标系下的点投影到图像平面并绘制
+ * @param img_show     要绘制的图像
+ * @param world_points 世界坐标系下的三维点
+ * @param K            相机内参矩阵 (3x3)
+ * @param D            畸变系数 (1x5)
+ * @param T_world_cam  世界到相机的变换
+ * @param color        绘制颜色
+ */
+void TF::ProjectAndDraw(cv::Mat& img_show, const std::vector<Eigen::Vector3d>& world_points,
+                    const cv::Mat& K, const cv::Mat& D,
+                    const tf2::Transform& T_world_cam,
+                    const cv::Scalar& color)
+{
+    if (world_points.empty()) return;
+
+    // P: FLU -> OpenCV 相机系
+    Eigen::Matrix3d P_flu2cv;
+    P_flu2cv << 0, -1,  0,
+                0,  0, -1,
+                1,  0,  0;
+
+    std::vector<cv::Point3f> cam_points;
+    cam_points.reserve(world_points.size());
+    
+    for (const auto& wp : world_points) 
+    {
+        // 1. 【空间刚体变换】：World -> Camera (此时坐标系依然是 FLU)
+        tf2::Vector3 p_world(wp.x(), wp.y(), wp.z());
+        tf2::Vector3 p_cam_tf = T_world_cam * p_world;   
+        
+        // 转换为 Eigen 向量
+        Eigen::Vector3d p_cam_flu(p_cam_tf.x(), p_cam_tf.y(), p_cam_tf.z());
+        
+        // 2. 【纯粹的数学基变换】：利用矩阵乘法，将 FLU 坐标系切换为 OpenCV 坐标系
+        Eigen::Vector3d p_cam_cv = P_flu2cv * p_cam_flu;
+        
+        // 存入 OpenCV 容器
+        cam_points.emplace_back(p_cam_cv.x(), p_cam_cv.y(), p_cam_cv.z()); 
+    }
+
+    // ================= 投影到像素平面 =================
+    std::vector<cv::Point2f> img_points;
+    // 因为我们已经把点转换到了相机的真实物理位置，所以 rvec 和 tvec 必须为 0
+    cv::Mat rvec = cv::Mat::zeros(3, 1, CV_64F);
+    cv::Mat tvec = cv::Mat::zeros(3, 1, CV_64F);
+    cv::projectPoints(cam_points, rvec, tvec, K, D, img_points);
+
+    // ================= 绘制部分 =================
+    // 绘制：假设传入的是四个角点（左上、右上、右下、左下），连成矩形
+    if (img_points.size() == 4) 
+    {
+        for (int i = 0; i < 4; ++i) 
+        {
+            cv::line(img_show, img_points[i], img_points[(i + 1) % 4], color, 2);
+        }
+
+        // 绘制装甲板中心点
+        cv::Point2f center = (img_points[0] + img_points[1] + img_points[2] + img_points[3]) / 4.0f;
+        cv::circle(img_show, center, 2.5, color, -1);
+    }
+    else // 否则就是投影整车中心点
+    {
+        cv::circle(img_show, img_points[0], 5, color, -1);
+    }
 }

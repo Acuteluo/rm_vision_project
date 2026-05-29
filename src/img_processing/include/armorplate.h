@@ -59,7 +59,13 @@ public:
     Eigen::Vector3d t_vec; // 右手系 平移向量
     Eigen::Matrix3d R; // 右手系 旋转矩阵
 
+    // 【新增】：使用黄金分割法优化自身的 欧拉角 Yaw，并覆盖内部的旋转矩阵 R
+    void OptimizeEulerYaw(cv::Mat& img_show);
+
 private:
+
+    // 【新增】：计算给定欧拉角 Yaw 下的重投影像素误差
+    double CalculateReprojectionError(double test_yaw);
 
     // pnp 要求：
 	std::vector<cv::Point2f> vertice_pixel; // [像素坐标系]装甲板四个角点，[顺序：左上，左下，右下，右上]

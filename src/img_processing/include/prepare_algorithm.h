@@ -11,33 +11,33 @@ public:
 	* @param	cv::Mat& img 要处理的图
 	* @return   无返回值
 	*/
-	void preProcessing(cv::Mat& img);
+	void PreProcessing(cv::Mat& img);
 	
 
     /////// 设置 config.txt 对应的参数 ///////
-    void setParam(bool show_logger, std::string chosen_color, std::string camera_name, std::string armor_type);
+    void SetParam(bool show_logger, std::string chosen_color, std::string camera_name, std::string armor_type);
 
 
     /// 设置 img_show
-    void setImgShow(cv::Mat& img_show);
+    void SetImgShow(cv::Mat& img_show);
 
 
     /// 获取 img_show
-    cv::Mat getImgShow();
+    cv::Mat GetImgShow();
     
 
 	/**
 	* @brief	寻找 + 判断灯带的颜色
 	* @return   std::vector<Strip> 返回灯条集合
 	*/
-	std::vector<Strip> findAndJudgeLightStrip();
+	std::vector<Strip> FindAndJudgeLightStrip();
 	
 
 	/**
     * @brief	灯带配对
     * @return   std::vector<ArmorPlate> 【修改】返回按置信度排序后的装甲板集合
     */
-    std::vector<ArmorPlate> pairStrip();
+    std::vector<ArmorPlate> PairStrip();
 	
 
 
@@ -48,7 +48,7 @@ private:
 	* @param	const Strip& a, const Strip& b
 	* @return   0 1
 	*/
-	static bool sortStripByX(const Strip& a, const Strip& b);
+	static bool SortStripByX(const Strip& a, const Strip& b);
 
 
     /////// 图像相关 ///////

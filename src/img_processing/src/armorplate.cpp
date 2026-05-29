@@ -323,3 +323,157 @@ void ArmorPlate::perspectiveNPoint()
 
 }
 
+
+
+
+
+// ==================== 1. 计算给定 Euler Yaw 的重投影误差 ====================
+double ArmorPlate::CalculateReprojectionError(double test_euler_yaw)
+{
+    // 1. FLU -> OpenCV 基变换
+    Eigen::Matrix3d P_flu2cv;
+    P_flu2cv << 0, -1,  0,
+                0,  0, -1,
+                1,  0,  0;
+
+    std::vector<cv::Point3f> vertice_cv;
+    for (const auto& pt : this->vertice_world) 
+    {
+        Eigen::Vector3d pt_flu(pt.x, pt.y, pt.z);
+        Eigen::Vector3d pt_cv = P_flu2cv * pt_flu;
+        vertice_cv.push_back(cv::Point3f(pt_cv(0), pt_cv(1), pt_cv(2)));
+    }
+
+    // 2. 构造测试姿态的旋转矩阵 R_cv
+    // 【修正】：在你的 FLU 右手系下，顶部向车内前倾 15 度，是绕 Y 轴的 正向 旋转！
+    double fixed_pitch = +15.0 * CV_PI / 180.0; 
+    
+    Eigen::AngleAxisd yawAngle(test_euler_yaw, Eigen::Vector3d::UnitZ());
+    Eigen::AngleAxisd pitchAngle(fixed_pitch, Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd rollAngle(0.0, Eigen::Vector3d::UnitX());
+    
+    // FLU 系下的测试姿态
+    Eigen::Matrix3d R_flu_test = (yawAngle * pitchAngle * rollAngle).toRotationMatrix();
+    Eigen::Matrix3d R_cv_eigen = P_flu2cv * R_flu_test * P_flu2cv.transpose();
+
+    cv::Mat R_cv(3, 3, CV_64F);
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            R_cv.at<double>(i, j) = R_cv_eigen(i, j);
+
+    cv::Mat rvec_test;
+    cv::Rodrigues(R_cv, rvec_test);
+
+    // 3. 将 3D 模型点重投影到 2D
+    std::vector<cv::Point2f> projected_points;
+    cv::projectPoints(vertice_cv, rvec_test, this->t, this->K, this->D, projected_points);
+
+    // =========================================================================
+    // 4. 【核心黑魔法】：计算尺度无关的透视畸变误差！彻底消除 W 型双极小值陷阱！
+    // =========================================================================
+    
+    // (A) 提取实际像素点中的左/右灯条长度，以及高度畸变率
+    double L_pixel = cv::norm(this->vertice_pixel[0] - this->vertice_pixel[1]);
+    double R_pixel = cv::norm(this->vertice_pixel[3] - this->vertice_pixel[2]);
+    double h_diff_pixel = (L_pixel - R_pixel) / (L_pixel + R_pixel); // 取值范围 [-1, 1]
+    
+    // (B) 提取实际像素点中的左右 Y 轴中心偏移率 (反应透视梯形变斜)
+    double y_center_L_pixel = (this->vertice_pixel[0].y + this->vertice_pixel[1].y) / 2.0;
+    double y_center_R_pixel = (this->vertice_pixel[3].y + this->vertice_pixel[2].y) / 2.0;
+    double y_diff_pixel = (y_center_R_pixel - y_center_L_pixel) / (L_pixel + R_pixel);
+
+    // (C) 提取投影点中的左/右灯条长度，以及高度畸变率
+    double L_proj = cv::norm(projected_points[0] - projected_points[1]);
+    double R_proj = cv::norm(projected_points[3] - projected_points[2]);
+    double h_diff_proj = (L_proj - R_proj) / (L_proj + R_proj);
+
+    // (D) 提取投影点中的左右 Y 轴中心偏移率
+    double y_center_L_proj = (projected_points[0].y + projected_points[1].y) / 2.0;
+    double y_center_R_proj = (projected_points[3].y + projected_points[2].y) / 2.0;
+    double y_diff_proj = (y_center_R_proj - y_center_L_proj) / (L_proj + R_proj);
+
+    // 终极误差 = 左右长度比例误差 + Y中心倾斜误差
+    // 这个误差函数是一个完美的 V 型凸函数，具有唯一的极小值，且完全不受 t_z 深度的影响！
+    double error = std::abs(h_diff_proj - h_diff_pixel) + std::abs(y_diff_proj - y_diff_pixel);
+
+    return error;
+}
+
+
+
+// ==================== 2. 黄金分割法 (Phi优选 欧拉角) ====================
+void ArmorPlate::OptimizeEulerYaw(cv::Mat& img_show)
+{
+    if (!this->is_success) return;
+
+    // 1. 获取 PnP 粗略算出的 欧拉角 Yaw，作为搜索的基准中心
+    // 你的 this->R 已经是 FLU 坐标系下的旋转矩阵了，提取欧拉 Yaw (绕 Z 轴)
+    double pnp_euler_yaw = std::atan2(this->R(1, 0), this->R(0, 0));
+
+    // 2. 确定搜索区间：既然 PnP 大体是对的，我们就在 PnP_Yaw 左右各扩展 60 度进行精搜
+    double search_radius = 60.0 * CV_PI / 180.0;
+    double a = pnp_euler_yaw - search_radius;
+    double b = pnp_euler_yaw + search_radius;
+    
+    const double PHI = 0.618033988749895; // 黄金分割率
+
+    // 3. 初始化探测点
+    double c = b - PHI * (b - a);
+    double d = a + PHI * (b - a);
+
+    double error_c = CalculateReprojectionError(c);
+    double error_d = CalculateReprojectionError(d);
+
+    // 4. 迭代逼近极小值 (25 次迭代)
+    int iterations = 25;
+    for (int i = 0; i < iterations; i++)
+    {
+        if (error_c < error_d) 
+        {
+            b = d;
+            d = c;
+            error_d = error_c; // 白嫖上次算过的值！极大节省 CPU
+            c = b - PHI * (b - a);
+            error_c = CalculateReprojectionError(c);
+        } 
+        else 
+        {
+            a = c;
+            c = d;
+            error_c = error_d; // 白嫖！
+            d = a + PHI * (b - a);
+            error_d = CalculateReprojectionError(d);
+        }
+    }
+
+    // 5. 收敛得到极致精准的 欧拉角 Yaw
+    double best_euler_yaw = (a + b) / 2.0;
+    double best_euler_yaw_angle = best_euler_yaw * 180.0 / CV_PI;
+    cv::putText(img_show, "best_euler_yaw = " + std::to_string((double)best_euler_yaw_angle), cv::Point2f(0, 650), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+
+    // ==========================================================
+    // 6. 终极替换：用最优 Yaw 重新生成旋转矩阵，覆盖 PnP 的垃圾矩阵！
+    // ==========================================================
+    double fixed_pitch = +15.0 * CV_PI / 180.0; 
+    Eigen::AngleAxisd yawAngle(best_euler_yaw, Eigen::Vector3d::UnitZ());
+    Eigen::AngleAxisd pitchAngle(fixed_pitch, Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd rollAngle(0.0, Eigen::Vector3d::UnitX());
+    
+    // 覆盖 Eigen 的旋转矩阵 (FLU 坐标系)
+    this->R = (yawAngle * pitchAngle * rollAngle).toRotationMatrix(); 
+
+    // 同步覆盖 OpenCV 的旋转向量 (为了画重投影框用)
+    Eigen::Matrix3d P;
+    P << 0, -1, 0, 
+         0,  0, -1, 
+         1,  0, 0;
+    Eigen::Matrix3d R_cv_eigen = P * this->R * P.transpose();
+    
+    cv::Mat R_cv(3, 3, CV_64F);
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            R_cv.at<double>(i, j) = R_cv_eigen(i, j);
+            
+    cv::Rodrigues(R_cv, this->r); 
+}
+

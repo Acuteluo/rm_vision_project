@@ -1,4 +1,4 @@
-# pragma once
+#pragma once
 
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
@@ -7,6 +7,7 @@
 #include <tf2_ros/transform_listener.h>
 #include <tf2_ros/buffer.h>
 #include <geometry_msgs/msg/transform_stamped.hpp>
+#include <opencv2/opencv.hpp>
 #include<Eigen/Dense>
 #include<Eigen/QR>
 #include<Eigen/Core>
@@ -23,6 +24,7 @@
 class TF
 {
 public:
+
     // 构造函数拿到 Node 指针以创建 ROS2 相关的对象
     explicit TF(rclcpp::Node* node); 
 
@@ -44,6 +46,7 @@ public:
     //bool getFatherToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp);
     bool getFatherToArmorplateTransform(const Eigen::Matrix3d& R, const Eigen::Vector3d& t, Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp);
 
+
     // 查询【相机坐标系】->【世界坐标系】是否可以变换
     // time_stamp 查询时间戳，保证和图像时间戳对齐
     bool getCameraToWorldTransform(tf2::Transform& T_world_cam, rclcpp::Time time_stamp);
@@ -54,10 +57,26 @@ public:
 
 
     /**
-     * @brief 直接发布 camera_frame -> armorplate_frame 的变换
+     * @brief 根据 pnp 直接发布 camera_frame -> armorplate_frame 的变换
      * @param 
      */
     void updateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t, rclcpp::Time time_stamp);
+
+
+    /**
+     * @brief 将世界坐标系下的点投影到图像平面并绘制
+     * @param img_show     要绘制的图像 
+     * @param world_points 世界坐标系下的三维点
+     * @param K            相机内参矩阵 (3x3)
+     * @param D            畸变系数 (1x5)
+     * @param T_world_cam  世界到相机的变换
+     * @param color        绘制颜色
+     */
+    void ProjectAndDraw(cv::Mat& img_show, const std::vector<Eigen::Vector3d>& world_points,
+                        const cv::Mat& K, const cv::Mat& D,
+                        const tf2::Transform& T_world_cam,
+                        const cv::Scalar& color);
+
 
 
 private:
@@ -68,14 +87,7 @@ private:
      */
     void publishStaticCameraTransform();  // 实际发布静态变换的回调
 
-
-
     rclcpp::Node* node_;  // 拿到 ros2 的节点指针
-
-    // // KF 类对象指针
-    // std::unique_ptr<KalmanFilter> kf_position_;
-    // std::unique_ptr<KF> kf_data_;
-
 
     // TF 广播器、缓存、监听器
     std::unique_ptr<tf2_ros::TransformBroadcaster> armorplate_broadcaster_;    // 发布 armorplate_frame TF

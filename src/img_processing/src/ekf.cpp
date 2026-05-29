@@ -33,16 +33,16 @@ void EKF::updateParamsFromServer()
     this->q_a_omega_ = node_->get_parameter("ekf.q_a_omega").as_double();
 
     // 观测矩阵 r
-    this->r_x_ = node_->get_parameter("ekf.r_x").as_double();
-    this->r_y_ = node_->get_parameter("ekf.r_y").as_double();
-    this->r_z_ = node_->get_parameter("ekf.r_z").as_double();
-    this->r_yaw_ = node_->get_parameter("ekf.r_yaw").as_double();
+    this->r_los_yaw_ = node_->get_parameter("ekf.r_los_yaw").as_double();
+    this->r_los_pitch_ = node_->get_parameter("ekf.r_los_pitch").as_double();
+    this->r_distance_ = node_->get_parameter("ekf.r_distance").as_double();
+    this->r_euler_yaw_ = node_->get_parameter("ekf.r_euler_yaw").as_double();
 
     // 整车半径
     this->radius = node_->get_parameter("ekf.radius").as_double(); 
 
     // 父坐标系名称，即发布谁到整车中心的变换。单机模式下是 camera_frame，联调模式下是 world_frame
-    this->father_frame = node_->get_parameter("is_standalone_mode").as_bool() ? "camera_frame" : "world_frame";
+    this->father_frame = node_->get_parameter("core.mode.is_standalone_mode").as_bool() ? "camera_frame" : "world_frame";
 
     // 是否打印调参日志
     this->SHOW_LOGGER_DEBUG = node_->get_parameter("ekf.show_logger_debug").as_bool();
@@ -285,7 +285,7 @@ void EKF::getArmorFourCorners(std::vector<Eigen::Vector3d>& corners, int armor_i
 }
 
 
-// 非线性观测方程 
+// 非线性观测方程 h(x, armor_id)：将 整车预测的状态量XYZ 映射到 装甲板观测空间XYZ
 Eigen::Matrix<double, 4, 1> EKF::h(const Eigen::Matrix<double, 9, 1>& X_in)
 {
     double x_c = X_in(0), y_c = X_in(1), z_c = X_in(2);
@@ -339,6 +339,86 @@ Eigen::Matrix<double, 4, 9> EKF::computeH(const Eigen::Matrix<double, 9, 1>& X_i
 
 
 
+///////////////////////////// YPD 相关函数的实现 ///////////////////////////////////
+
+// 【新增】：将状态量直接映射为 YPD 观测量的非线性函数
+// 用当前预测的整车状态 X_est​ (XYZ) 反推出来的预测值 YPD
+Eigen::Matrix<double, 4, 1> EKF::h_ypd(const Eigen::Matrix<double, 9, 1>& X_in)
+{
+    // 1. 先调用原来的 h() 函数，得到相机系下的 XYZ 预测 和 Yaw_armor 预测
+    Eigen::Matrix<double, 4, 1> z_xyz = this->h(X_in); 
+    double pred_x = z_xyz(0);
+    double pred_y = z_xyz(1);
+    double pred_z = z_xyz(2);
+    double pred_yaw_armor = z_xyz(3);
+
+    // 2. 将 XYZ 转换为 YPD 球面坐标系 (FLU 右手系和 armorplate.cpp 的公式)
+    double r2 = pred_x * pred_x + pred_y * pred_y;
+    double d = std::sqrt(r2 + pred_z * pred_z);
+
+    Eigen::Matrix<double, 4, 1> z_ypd;
+    z_ypd(0) = std::atan2(pred_y, pred_x);              // los_yaw
+    z_ypd(1) = -std::atan2(pred_z, std::sqrt(r2));      // los_pitch
+    z_ypd(2) = d;                                       // distance
+    z_ypd(3) = pred_yaw_armor;                          // 装甲板自身 yaw 不变
+
+    return z_ypd;
+}
+
+
+// 【新增】：利用链式求导法则，算出 YPD 坐标系下的 4x9 雅可比矩阵
+Eigen::Matrix<double, 4, 9> EKF::computeH_YPD(const Eigen::Matrix<double, 9, 1>& X_in)
+{
+    // 1. 先复用你原来写好的 XYZ 雅可比矩阵 H_xyz (4x9)
+    Eigen::Matrix<double, 4, 9> H_xyz = this->computeH(X_in);
+
+    // 2. 获取预测的 XYZ
+    Eigen::Matrix<double, 4, 1> z_xyz = this->h(X_in);
+    double x = z_xyz(0), y = z_xyz(1), z = z_xyz(2);
+
+    double r2 = x * x + y * y;
+    double r = std::sqrt(r2);
+    double d2 = r2 + z * z;
+    double d = std::sqrt(d2);
+
+    // 3. 构建 YPD 对 XYZ 的 3x3 微分矩阵 J_ypd
+    Eigen::Matrix3d J_ypd = Eigen::Matrix3d::Zero();
+    
+    // 防止除零导致矩阵爆炸
+    if (r2 > 1e-6 && d2 > 1e-6) 
+    {
+        // ∂yaw_cam / ∂(x,y,z)
+        J_ypd(0, 0) = -y / r2;
+        J_ypd(0, 1) =  x / r2;
+        J_ypd(0, 2) =  0.0;
+
+        // ∂pitch_cam / ∂(x,y,z) (严格求导结果)
+        J_ypd(1, 0) = (z * x) / (d2 * r);
+        J_ypd(1, 1) = (z * y) / (d2 * r);
+        J_ypd(1, 2) = -r / d2;
+
+        // ∂distance / ∂(x,y,z)
+        J_ypd(2, 0) = x / d;
+        J_ypd(2, 1) = y / d;
+        J_ypd(2, 2) = z / d;
+    }
+
+    // 4. 链式法则魔法：H_new_top3 = J_ypd * H_xyz_top3
+    Eigen::Matrix<double, 4, 9> H_new = Eigen::Matrix<double, 4, 9>::Zero();
+    H_new.block<3, 9>(0, 0) = J_ypd * H_xyz.block<3, 9>(0, 0); 
+    H_new.row(3) = H_xyz.row(3); // 第 4 行 (装甲板yaw的导数) 保持不变
+
+    return H_new;
+}
+
+
+void EKF::normalizeAngle(double& angle)
+{
+    angle = std::atan2(std::sin(angle), std::cos(angle));
+}
+
+
+
 // 发布整车的 tf 动态变换，拿到整车中心作为观测数据，进行预测
 void EKF::getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int armor_id, double dt)
 {
@@ -349,29 +429,25 @@ void EKF::getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int arm
 	{
         updateParamsFromServer();  // 确保读取有效值
 
-		Initialized();
+		Initialized(armorplate_center, yaw_armor);
         
-        // 根据第一次观测反算一个粗略的中心初始状态
-        double dx, dy, theta_offset;
-        getArmorParams(dx, dy, theta_offset);
-        double init_yaw = yaw_armor - theta_offset;   // 粗略的中心偏航角
-
-        // 反推中心位置
-        double cos_yaw = cos(init_yaw), sin_yaw = sin(init_yaw);
-        double init_x = armorplate_center[0] - (cos_yaw * dx - sin_yaw * dy);
-        double init_y = armorplate_center[1] - (sin_yaw * dx + cos_yaw * dy);
-        double init_z = armorplate_center[2];
-
-        X_prev << init_x, init_y, init_z, 0.0, 0.0, 0.0, init_yaw, 0.0, 0.0;
-        X = X_prev;
-    
         return; // 第一帧不输出结果
 	}
 
 	// 根据dt更新参数
 	CalculateParameter(dt); 
 
-    Z << armorplate_center[0], armorplate_center[1], armorplate_center[2], yaw_armor; // 写入原始观测值
+    // 【修改】：把你的 Z 赋值改为存入 YPD！
+    double obs_x = armorplate_center[0];
+    double obs_y = armorplate_center[1];
+    double obs_z = armorplate_center[2];
+
+    double obs_los_yaw = std::atan2(obs_y, obs_x);
+    double obs_los_pitch = -std::atan2(obs_z, std::sqrt(obs_x * obs_x + obs_y * obs_y));
+    double obs_d = std::sqrt(obs_x * obs_x + obs_y * obs_y + obs_z * obs_z);
+
+    // 顺序必须是：[yaw_cam, pitch_cam, distance, yaw_armor]
+    Z << obs_los_yaw, obs_los_pitch, obs_d, yaw_armor;
 
 	///////////////////////////////////// 卡尔曼五步 //////////////////////////////////////
 
@@ -379,8 +455,8 @@ void EKF::getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int arm
 
 	UncertaintyPredict(); // 不确定性预测
 
-    // 计算当前原始观测值的 雅可比矩阵（偏导数矩阵），在 X_est 处求值
-    H = computeH(X_est);
+    // 计算当前原始观测值的 雅可比矩阵（偏导数矩阵），在 X_est 处求值，再转换到 YPD 球面坐标系下
+    H = computeH_YPD(X_est);
 
 	CalculateKalmanGain(); // 计算卡尔曼增益
 
@@ -390,7 +466,7 @@ void EKF::getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int arm
 	UpdateUncertainty(); // 更新不确定性
 
     // 偏航角归一化到 [-π, π]
-    X(6) = std::atan2(std::sin(X(6)), std::cos(X(6)));
+    normalizeAngle(X(6));
 
 	UpdateHistoricalData(); // 更新历史数据
 
@@ -402,19 +478,32 @@ void EKF::getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int arm
 
 
 // 初始化  状态转移矩阵F  协方差矩阵P  预测过程噪声Q  观测矩阵H  测量过程噪声R
-void EKF::Initialized()
+void EKF::Initialized(const Eigen::Vector3d& armorplate_center, const double& yaw_armor)
 {
-
 	// 协方差矩阵
 	P_prev = 0.1 * I;
 
-
-	// 测量过程噪声 x y z yaw
+    // 换成 YPD 球面坐标系 
+	// 测量过程噪声矩阵
     // 单位m rad
-	R << this->r_x_, 0, 0, 0,
-        0, this->r_y_, 0, 0,
-        0, 0, this->r_z_, 0,
-        0, 0, 0, this->r_yaw_;
+	R << this->r_los_yaw_, 0, 0, 0,
+        0, this->r_los_pitch_, 0, 0,
+        0, 0, this->r_distance_, 0,
+        0, 0, 0, this->r_euler_yaw_;
+
+    // 根据第一次观测反算一个粗略的中心初始状态
+    double dx, dy, theta_offset;
+    getArmorParams(dx, dy, theta_offset);
+    double init_yaw = yaw_armor - theta_offset;   // 粗略的中心偏航角
+
+    // 反推中心位置
+    double cos_yaw = cos(init_yaw), sin_yaw = sin(init_yaw);
+    double init_x = armorplate_center[0] - (cos_yaw * dx - sin_yaw * dy);
+    double init_y = armorplate_center[1] - (sin_yaw * dx + cos_yaw * dy);
+    double init_z = armorplate_center[2];
+
+    X_prev << init_x, init_y, init_z, 0.0, 0.0, 0.0, init_yaw, 0.0, 0.0;
+    X = X_prev;
 
 	this->is_initialized = true;
 }
@@ -464,10 +553,10 @@ void EKF::CalculateParameter(double dt)
 
 
     // 同时更新 R 矩阵（因为参数可能已改变）
-    R << this->r_x_, 0, 0, 0,
-        0, this->r_y_, 0, 0,
-        0, 0, this->r_z_, 0,
-        0, 0, 0, this->r_yaw_;
+    R << this->r_los_yaw_, 0, 0, 0,
+        0, this->r_los_pitch_, 0, 0,
+        0, 0, this->r_distance_, 0,
+        0, 0, 0, this->r_euler_yaw_;
 
 }
 
@@ -497,27 +586,22 @@ void EKF::CalculateKalmanGain()
 // H * X_k_est 选出有效的量，但是 ekf 非线性，需要写一个函数 h 实现，只是把 X_k_est 换成了 h(X_est)
 void EKF::UpdateStatus()
 {
-	// 计算新息
-    Eigen::Matrix<double, 4, 1> innovation = Z - h(X_est);
+    // 计算新息
+    // h_ypd(X_est) 是用你当前预测的整车状态 X_est​ (XYZ) 反推出来的预测值 YPD (视线角和距离)，而 Z 是你实际测量到的 YPD 观测值，所以两者都是在 YPD 坐标系下的量，直接相减就对了！不需要再转换回 XYZ 坐标系了！
+    Eigen::Matrix<double, 4, 1> innovation = Z - h_ypd(X_est);
     
-    // 将角度差 (yaw偏差) 限制在 [-π, π] 的最短路径上！
+    // 将视线角 (los_yaw, los_pitch) 和目前姿态 (yaw_armor) 全部做归一化！
     // 否则比如 从 +179 到 -179，就会跳 358 度！但是用 sin 和 cos 就可以归一化到 -PI 到 PI 内，再 atan2 反求角度
-    innovation(3) = std::atan2(std::sin(innovation(3)), std::cos(innovation(3)));
+    normalizeAngle(innovation(0)); // los_yaw 归一化
+    normalizeAngle(innovation(1)); // los_pitch 归一化
+    normalizeAngle(innovation(3)); // yaw_armor 归一化
 
-
-    // // 3. 【新增】角度跳变门控防爆机制
-    // // 如果观测角度与预测角度偏差大于 35度 (约 0.6 rad)，说明 PnP 肯定算错了
-    // // 只要滤波器已经初始化，我们绝对不相信这个离谱的观测，强行将其拉回 0
-    // if (std::abs(innovation(3)) > 0.6 && this->is_initialized) 
-    // {
-    //     innovation(3) = 0.0; // 离谱的角度观测我不听，用 EKF 自己的预测！
-    // }
 
     // 再用处理后的新息进行状态更新
     X = X_est + K * innovation;
 
-    // 再归一化
-    X(6) = std::atan2(std::sin(X(6)), std::cos(X(6))); 
+    // 整车角度 yaw 归一化
+    normalizeAngle(X(6)); 
 
     if(this->SHOW_LOGGER_DEBUG)
     {
@@ -546,7 +630,8 @@ void EKF::UpdateStatus()
 // 更新协方差，不确定性 P_k = (I - K_k * H) * P_k_est
 void EKF::UpdateUncertainty()
 {
-	P = (I - K * H) * P_est;
+	// P = (I - K * H) * P_est;
+    P = (I - K * H) * P * (I - K * H).transpose() + K * R * K.transpose(); // Joseph form 形式更新协方差矩阵，数值更稳定，防止 P 变成非正定矩阵
 }
 
 
@@ -604,7 +689,8 @@ void EKF::predictOnly(double dt)
     X = X_est; // 将预测状态作为当前状态
     P = P_est;
 
-    X(6) = std::atan2(std::sin(X(6)), std::cos(X(6)));
+    // 偏航角归一化到 [-π, π]
+    normalizeAngle(X(6));
 
     X_prev = X;
     P_prev = P;

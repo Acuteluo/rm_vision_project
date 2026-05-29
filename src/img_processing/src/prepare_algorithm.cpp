@@ -6,7 +6,7 @@
 * @param	const Strip& a, const Strip& b
 * @return   0 1
 */
-bool Prepare::sortStripByX(const Strip& a, const Strip& b)
+bool Prepare::SortStripByX(const Strip& a, const Strip& b)
 {
 	return a.center.x < b.center.x;
 }
@@ -16,7 +16,7 @@ bool Prepare::sortStripByX(const Strip& a, const Strip& b)
 
 ////////////////////////////////////  存储 config 读取的参数  //////////////////////////////////////
 
-void Prepare::setParam(bool show_logger, std::string chosen_color, std::string camera_name, std::string armor_type)
+void Prepare::SetParam(bool show_logger, std::string chosen_color, std::string camera_name, std::string armor_type)
 {
     this->SHOW_LOGGER = show_logger;
     this->CHOSEN_COLOR = chosen_color;
@@ -26,13 +26,13 @@ void Prepare::setParam(bool show_logger, std::string chosen_color, std::string c
 
 //////////////////////////////////   设置 和 获取 img_show   //////////////////////////////////
 
-void Prepare::setImgShow(cv::Mat& img_show)
+void Prepare::SetImgShow(cv::Mat& img_show)
 {
     this->img_show = img_show; 
 }
 
 
-cv::Mat Prepare::getImgShow()
+cv::Mat Prepare::GetImgShow()
 {
     return this->img_show;
 }
@@ -46,7 +46,7 @@ cv::Mat Prepare::getImgShow()
 * @brief	灯带配对
 * @return   std::vector<ArmorPlate> 【修改】返回按置信度排序后的装甲板集合
 */
-std::vector<ArmorPlate> Prepare::pairStrip()
+std::vector<ArmorPlate> Prepare::PairStrip()
 {
 	std::vector<ArmorPlate> armorplate; // 装甲板集合
 	std::vector<std::vector<double>> moderation(strip.size(), std::vector<double>(strip.size(), 0.00)); // [编号][编号]，合理性
@@ -55,7 +55,7 @@ std::vector<ArmorPlate> Prepare::pairStrip()
 
 
     // ------- 1. 灯条从左到右排序 -------  
-	std::sort(strip.begin(), strip.end(), sortStripByX); // 从左到右排序
+	std::sort(strip.begin(), strip.end(), SortStripByX); // 从左到右排序
 
 
 	// ------- 2. 灯条遍历，两两配对，计算合理性 moderation -------
@@ -410,7 +410,7 @@ std::vector<ArmorPlate> Prepare::pairStrip()
 * @brief	寻找灯带 + 判断灯带颜色 + 存储灯带
 * @return   std::vector<Strip> 返回灯条集合
 */
-std::vector<Strip> Prepare::findAndJudgeLightStrip()
+std::vector<Strip> Prepare::FindAndJudgeLightStrip()
 {
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
@@ -682,7 +682,7 @@ std::vector<Strip> Prepare::findAndJudgeLightStrip()
 * @param	cv::Mat& img 要处理的图
 * @return   无返回值
 */
-void Prepare::preProcessing(cv::Mat& img)
+void Prepare::PreProcessing(cv::Mat& img)
 {   
 
     const int COLOR_HIGH_THERESHOLD_VALUE = 180; // 灯条颜色的二值化阈值

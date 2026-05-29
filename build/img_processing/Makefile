@@ -282,54 +282,6 @@ src/ekf.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/ekf.cpp.s
 .PHONY : src/ekf.cpp.s
 
-src/kf_data.o: src/kf_data.cpp.o
-.PHONY : src/kf_data.o
-
-# target to build an object file
-src/kf_data.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/kf_data.cpp.o
-.PHONY : src/kf_data.cpp.o
-
-src/kf_data.i: src/kf_data.cpp.i
-.PHONY : src/kf_data.i
-
-# target to preprocess a source file
-src/kf_data.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/kf_data.cpp.i
-.PHONY : src/kf_data.cpp.i
-
-src/kf_data.s: src/kf_data.cpp.s
-.PHONY : src/kf_data.s
-
-# target to generate assembly for a file
-src/kf_data.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/kf_data.cpp.s
-.PHONY : src/kf_data.cpp.s
-
-src/kf_position.o: src/kf_position.cpp.o
-.PHONY : src/kf_position.o
-
-# target to build an object file
-src/kf_position.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/kf_position.cpp.o
-.PHONY : src/kf_position.cpp.o
-
-src/kf_position.i: src/kf_position.cpp.i
-.PHONY : src/kf_position.i
-
-# target to preprocess a source file
-src/kf_position.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/kf_position.cpp.i
-.PHONY : src/kf_position.cpp.i
-
-src/kf_position.s: src/kf_position.cpp.s
-.PHONY : src/kf_position.s
-
-# target to generate assembly for a file
-src/kf_position.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/kf_position.cpp.s
-.PHONY : src/kf_position.cpp.s
-
 src/plotter.o: src/plotter.cpp.o
 .PHONY : src/plotter.o
 
@@ -451,12 +403,6 @@ help:
 	@echo "... src/ekf.o"
 	@echo "... src/ekf.i"
 	@echo "... src/ekf.s"
-	@echo "... src/kf_data.o"
-	@echo "... src/kf_data.i"
-	@echo "... src/kf_data.s"
-	@echo "... src/kf_position.o"
-	@echo "... src/kf_position.i"
-	@echo "... src/kf_position.s"
 	@echo "... src/plotter.o"
 	@echo "... src/plotter.i"
 	@echo "... src/plotter.s"
