@@ -145,8 +145,8 @@ void CoreNode::InitROS2()
     // 初始化上一次收到图像的时间，一切的 dt 都依照这个来算
     last_image_time_ = this->now(); 
 
-    // 初始化动态示波器 (参数: 宽 1200, 高 800, 存最近 300 帧)
-    plotter_ = std::make_unique<Plotter>(1200, 800, 300);
+    // 初始化动态示波器 (参数: 宽 1200, 高 800, 存最近 200 帧)
+    plotter_ = std::make_unique<Plotter>(1200, 800, 200);
 
 
 
@@ -371,7 +371,7 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
         {
             // 再查询 camera → 父坐标系 的 TF，因为要转到相机下投影！
             tf2::Transform T_world_cam;
-            if (tf_->getCameraToWorldTransform(T_world_cam, current_image_time)) 
+            if (tf_->GetCameraToWorldTransform(T_world_cam, current_image_time)) 
             {
                 // 对每个装甲板 ID 进行重投影（0红, 1黄, 2蓝, 3绿）（实时滤波位置）
                 std::vector<cv::Scalar> colors = 
@@ -417,7 +417,7 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     {
         double pitch_chip;
         double yaw_chip;
-        bool flag = tf_->getWorldToChipTransform(pitch_chip, yaw_chip, current_image_time); // 获取【世界坐标系】->【芯片坐标系的变换】
+        bool flag = tf_->GetWorldToChipTransform(pitch_chip, yaw_chip, current_image_time); // 获取【世界坐标系】->【芯片坐标系的变换】
         
         if (flag)
         {
@@ -605,10 +605,10 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
     // ====== 场景 A：看到目标了 (处于 DETECTING 预热期 或 TRACKING 稳定期) ======
     if (tracker_state_ == TrackerState::DETECTING || tracker_state_ == TrackerState::TRACKING) 
     {
-        tf_->updateCameraToArmorplate(armorplates_[0].R, armorplates_[0].t_vec, current_image_time);
+        tf_->UpdateCameraToArmorplate(armorplates_[0].R, armorplates_[0].t_vec, current_image_time);
 
         // 用 armorplate_center_now 和 yaw_armorplate_now 接收 TF 查询的结果（如果成功的话）
-        bool tf_lookup_flag = tf_->getFatherToArmorplateTransform(armorplates_[0].R, armorplates_[0].t_vec, armorplate_center_now, yaw_armorplate_now, current_image_time);
+        bool tf_lookup_flag = tf_->GetFatherToArmorplateTransform(armorplates_[0].R, armorplates_[0].t_vec, armorplate_center_now, yaw_armorplate_now, current_image_time);
 
         if (tf_lookup_flag) 
         {
@@ -783,7 +783,7 @@ rcl_interfaces::msg::SetParametersResult CoreNode::OnParameterChange(const std::
         else if (name == "tf.show_logger_error" || name == "tf.show_result")
         {
             RCLCPP_INFO(this->get_logger(), "TF 节点参数已更新! ");
-            tf_->updateParamsFromServer();  // 通知 TF 刷新
+            tf_->UpdateParamsFromServer();  // 通知 TF 刷新
         }
 
         else if(name == "core.mode.is_standalone_mode")
@@ -791,7 +791,7 @@ rcl_interfaces::msg::SetParametersResult CoreNode::OnParameterChange(const std::
             is_standalone_mode_ = p.as_bool();
             if (is_standalone_mode_) RCLCPP_INFO(this->get_logger(), "已切换到单机模式! 父坐标系是 camera_frame");
             else RCLCPP_INFO(this->get_logger(), "已切换到联调模式! 父坐标系是 world_frame");
-            tf_->updateParamsFromServer();  // 通知 TF 刷新
+            tf_->UpdateParamsFromServer();  // 通知 TF 刷新
             ekf_->UpdateParamsFromServer();  // 通知 EKF 刷新坐标系
             ekf_->Reset(); // 必须重置一下滤波器，因为坐标系都变了，之前的数据都没用了
         }

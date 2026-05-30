@@ -30,7 +30,7 @@ public:
 
 
     // 从参数服务器更新内部开关（运行时调用）
-    void updateParamsFromServer();
+    void UpdateParamsFromServer();
 
 
     // ---------- 查询 TF ----------
@@ -44,23 +44,23 @@ public:
      * @return 1 可变换，0 变换失败（TF 树不完整）
      */
     //bool getFatherToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp);
-    bool getFatherToArmorplateTransform(const Eigen::Matrix3d& R, const Eigen::Vector3d& t, Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp);
+    bool GetFatherToArmorplateTransform(const Eigen::Matrix3d& R, const Eigen::Vector3d& t, Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp);
 
 
     // 查询【相机坐标系】->【世界坐标系】是否可以变换
     // time_stamp 查询时间戳，保证和图像时间戳对齐
-    bool getCameraToWorldTransform(tf2::Transform& T_world_cam, rclcpp::Time time_stamp);
+    bool GetCameraToWorldTransform(tf2::Transform& T_world_cam, rclcpp::Time time_stamp);
 
 
     // 查询【世界坐标系】->【芯片坐标系】，通过引用回传角度值，返回1或者0表示是否有效
-    bool getWorldToChipTransform(double& pitch_chip, double& yaw_chip, rclcpp::Time time_stamp);
+    bool GetWorldToChipTransform(double& pitch_chip, double& yaw_chip, rclcpp::Time time_stamp);
 
 
     /**
      * @brief 根据 pnp 直接发布 camera_frame -> armorplate_frame 的变换
      * @param 
      */
-    void updateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t, rclcpp::Time time_stamp);
+    void UpdateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t, rclcpp::Time time_stamp);
 
 
     /**
@@ -86,7 +86,7 @@ private:
     /**
      * @brief 启动静态变换发布，发布 chip_frame -> camera_frame 的变换
      */
-    void publishStaticCameraTransform();  // 实际发布静态变换的回调
+    void PublishStaticCameraTransform();  // 实际发布静态变换的回调
 
     rclcpp::Node* node_;  // 拿到 ros2 的节点指针
 

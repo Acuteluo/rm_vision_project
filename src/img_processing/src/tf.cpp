@@ -17,7 +17,7 @@ TF::TF(rclcpp::Node* node): node_(node)
 
     // 创建静态变换器并且发布一次【芯片坐标系】->【相机坐标系】的静态变换
     static_broadcaster_ = std::make_unique<tf2_ros::StaticTransformBroadcaster>(node_);
-    publishStaticCameraTransform();
+    PublishStaticCameraTransform();
 
 
     // 从参数服务器读取初始参数
@@ -33,7 +33,7 @@ TF::TF(rclcpp::Node* node): node_(node)
 
 
 // 在参数变化时立即刷新
-void TF::updateParamsFromServer()
+void TF::UpdateParamsFromServer()
 {
     if (!node_) return;
     this->SHOW_LOGGER_ERROR = node_->get_parameter("tf.show_logger_error").as_bool();
@@ -47,7 +47,7 @@ void TF::updateParamsFromServer()
 // 02【芯片坐标系】->【相机坐标系】当前相机位姿的坐标系 -> 静态，和芯片坐标系可以视为刚体，用 t 向量
 // 但是，由于姿态是姿态，可以平移，和位置无关，所以直接把相机当做在轴上转，直接拿 imu 的数据 作为姿态喵
 // 所以目前，这个直接没有任何作用
-void TF::publishStaticCameraTransform()
+void TF::PublishStaticCameraTransform()
 {
     geometry_msgs::msg::TransformStamped tf;
     tf.header.stamp = rclcpp::Time(0); // 帧头 -> 设置成 0, 表示无论什么时候查，这个矩阵都永远有效
@@ -75,7 +75,7 @@ void TF::publishStaticCameraTransform()
 
 // 03【相机坐标系 -> 装甲板坐标系】当前装甲板位姿的坐标系 -> 动态
 // 发布归发布，为的只是可视化！由于刚发完很快就要查根本来不及，我们直接在另一个tf函数里，用pnp得到的R|t直接查father->装甲板，保证能查到！
-void TF::updateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t, rclcpp::Time time_stamp)
+void TF::UpdateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t, rclcpp::Time time_stamp)
 {
     // 已经在 serial_driver 里判断过 PNP 是否和上次收到的完全相同了
 
@@ -109,7 +109,7 @@ void TF::updateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t, rclcpp::
 // 查询【相机坐标系】-> 【父坐标系】是否可以变换
 // 单机模式时父坐标系是 camera_frame，联调模式时父坐标系是 world_frame
 // 最后一个参数是查询时间戳，保证和图像时间戳对齐
-bool TF::getCameraToWorldTransform(tf2::Transform& T_world_to_cam_point, rclcpp::Time time_stamp)
+bool TF::GetCameraToWorldTransform(tf2::Transform& T_world_to_cam_point, rclcpp::Time time_stamp)
 {
     geometry_msgs::msg::TransformStamped transform;
     try 
@@ -131,7 +131,7 @@ bool TF::getCameraToWorldTransform(tf2::Transform& T_world_to_cam_point, rclcpp:
 
 
 // 查询【世界坐标系】->【芯片坐标系】，通过引用回传角度值，返回1或者0表示是否有效
-bool TF::getWorldToChipTransform(double& pitch_chip, double& yaw_chip, rclcpp::Time time_stamp)
+bool TF::GetWorldToChipTransform(double& pitch_chip, double& yaw_chip, rclcpp::Time time_stamp)
 {
     geometry_msgs::msg::TransformStamped tf_world_chip;
     try 
@@ -167,7 +167,7 @@ bool TF::getWorldToChipTransform(double& pitch_chip, double& yaw_chip, rclcpp::T
 
 
 
-bool TF::getFatherToArmorplateTransform(const Eigen::Matrix3d& R, const Eigen::Vector3d& t, Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp)
+bool TF::GetFatherToArmorplateTransform(const Eigen::Matrix3d& R, const Eigen::Vector3d& t, Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp)
 {
     // 1. 如果是单机模式，父坐标系就是 camera_frame，直接使用 PnP 的计算结果，0延迟！
     if (this->father_frame == "camera_frame")
@@ -183,7 +183,7 @@ bool TF::getFatherToArmorplateTransform(const Eigen::Matrix3d& R, const Eigen::V
         tf2::Transform T_world_to_cam; 
 
         // 调用我们已经写好的函数查 TF，如果查不到直接返回 false，报错日志在那个函数里已经打印了
-        if (!this->getCameraToWorldTransform(T_world_to_cam, time_stamp)) 
+        if (!this->GetCameraToWorldTransform(T_world_to_cam, time_stamp)) 
         {
             return false; 
         }

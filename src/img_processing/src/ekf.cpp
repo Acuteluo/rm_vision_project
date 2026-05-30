@@ -128,7 +128,7 @@ void EKF::UpdateCarCenterToArmorplates()
         double dy = -this->radius * std::sin(offset);
         
         std::string frame_name = "armor_" + std::to_string(i);
-        UpdateCarCenterToArmorplate(frame_name, dx, dy, 0.0, 0.0, 0.0, offset);
+        UpdateCarCenterToArmorplate(frame_name, dx, dy, 0.0, 0.0, 15.0 * M_PI / 180.0, offset);
     }
 }
 
@@ -171,6 +171,7 @@ void EKF::GetArmorplateParams(double& dx, double& dy, double& theta_offset)
 {
     // 严格按照你的 0123 体系：偏差角 = ID * (360 / 装甲板数量)
     theta_offset = this->armor_id * 2.0 * M_PI / armor_num_;
+    NormalizeAngle(theta_offset);
 
     // 装甲板的 +X 轴指向车心，所以它处于车心的反方向
     dx = -this->radius * std::cos(theta_offset);
@@ -185,38 +186,58 @@ void EKF::GetArmorplateFourCorners(std::vector<Eigen::Vector3d>& corners, int ar
     corners.resize(4);
     double x_c = this->X(0), y_c = this->X(1), z_c = this->X(2), yaw = this->X(6);
     this->armor_id = armor_id;
+    
     double dx, dy, theta_offset;
     GetArmorplateParams(dx, dy, theta_offset);
 
-    // 根据 ARMOR_TYPE 实际值，单位m
-    const double width = this->width;   
-    const double height = this->height;
+    // 算出装甲板物理中心 (必须乘上车体的 Yaw 旋转！)
 
-    double cos_yaw = cos(yaw), sin_yaw = sin(yaw);
-    double cx = x_c + cos_yaw * dx - sin_yaw * dy;
-    double cy = y_c + sin_yaw * dx + cos_yaw * dy;
-    double cz = z_c;
+    Eigen::AngleAxisd car_yaw_rot(yaw, Eigen::Vector3d::UnitZ());
+    Eigen::Vector3d offset_local(dx, dy, 0.0);
+    
+    // 装甲板世界绝对中心 = 整车世界绝对中心 + (车体旋转矩阵 × 装甲板相对车心的偏移)
+    Eigen::Vector3d car_center = Eigen::Vector3d(x_c, y_c, z_c);
+    Eigen::Vector3d armor_center = car_center + car_yaw_rot * offset_local;
+
+    // =========================================================
+    // 2. 装甲板绝对姿态：车体Yaw + 相对偏移角
+    // =========================================================
     double armor_yaw = yaw + theta_offset;
+    
+    // 你可以先把它改成 0.0 看看 0 度的效果，确认框能跟着车转了：
+    // double armor_pitch = 0.0;
+    
+    // 【完美契合你的右手系法则】：15度物理倾角
+    double armor_pitch = 15.0 * M_PI / 180.0; 
 
-    double half_w = width / 2.0, half_h = height / 2.0;
-    double cos_ay = cos(armor_yaw), sin_ay = sin(armor_yaw);
+    // 构建装甲板在世界坐标系下的绝对旋转矩阵 R (先 Pitch 后 Yaw)
+    Eigen::AngleAxisd yawAngle(armor_yaw, Eigen::Vector3d::UnitZ());
+    Eigen::AngleAxisd pitchAngle(armor_pitch, Eigen::Vector3d::UnitY());
+    Eigen::Matrix3d R_armor = (yawAngle * pitchAngle).toRotationMatrix();
 
-    // 局部坐标 (y, z) 偏移 (法向为 x，所以角点在 x=0 平面上)
-    std::pair<double, double> offsets[4] = {
-        {-half_w,  half_h},  // 左上
-        { half_w,  half_h},  // 右上
-        { half_w, -half_h},  // 右下
-        {-half_w, -half_h}   // 左下
+    // =========================================================
+    // 3. 定义本地四角点坐标 
+    // 严格按照 armorplate.cpp 的定义顺序：左上、左下、右下、右上
+    // 在装甲板本地系中，+X向内(车心)，+Y向左，+Z向上
+    // =========================================================
+    double half_w = this->width / 2.0;
+    double half_h = this->height / 2.0;
+
+    std::vector<Eigen::Vector3d> local_corners = 
+    {
+        Eigen::Vector3d(0.0,  half_w,  half_h), // 左上
+        Eigen::Vector3d(0.0,  half_w, -half_h), // 左下
+        Eigen::Vector3d(0.0, -half_w, -half_h), // 右下
+        Eigen::Vector3d(0.0, -half_w,  half_h)  // 右上
     };
 
+    // =========================================================
+    // 4. 将本地点映射到世界系
+    // =========================================================
     for (int i = 0; i < 4; ++i) 
     {
-        double local_y = offsets[i].first;
-        double local_z = offsets[i].second;
-        double wx = cx + cos_ay * 0 - sin_ay * local_y;
-        double wy = cy + sin_ay * 0 + cos_ay * local_y;
-        double wz = cz + local_z;
-        corners[i] = Eigen::Vector3d(wx, wy, wz);
+        // 角点世界坐标 = 装甲板世界绝对中心 + (装甲板绝对旋转矩阵 × 角点相对装甲板中心的偏移)
+        corners[i] = armor_center + R_armor * local_corners[i];
     }
 }
 
