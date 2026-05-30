@@ -1,0 +1,1321 @@
+[INFO] [launch]: All log files can be found below /home/cly/.ros/log/2026-05-31-05-39-23-321323-acuteluo-157945
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [core_node-1]: process started with pid [157955]
+[core_node-1] [INFO] [1780177163.453379244] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780177163.453505057] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780177163.453522050] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780177163.453535229] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780177163.455906472] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780177163.455950752] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780177163.455966892] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780177163.456158462] [core_node_offline]: 已发布静态变换【芯片坐标系 -> 相机坐标系】，平移: x=0.000 m, y=0.000 m, z=0.000 m
+[core_node-1] [INFO] [1780177163.456182161] [core_node_offline]: TF 参数已加载: SHOW_LOGGER_ERROR=0, SHOW_RESULT=0, father_frame=camera_frame
+[core_node-1] [INFO] [1780177163.457540089] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780177163.457571315] [core_node_offline]: 【本地视频模式】将读取本地视频: /home/cly/下载/rm_test_videos/20260501_160636__camera_0_rgb_output.mp4
+[core_node-1] [INFO] [1780177163.457624822] [core_node_offline]: CoreNode 节点创建成功! 
+[core_node-1] [INFO] [1780177163.584449764] [core_node_offline]: coreNode 正在发布...
+[core_node-1] [INFO] [1780177163.818401371] [ekf_debug]: Innovation: los_yaw=-0.0066, los_pitch=0.0005, los_distance=-0.0006, yaw=0.0668
+[core_node-1] [INFO] [1780177163.818462410] [ekf_debug]: State: x=2.300, y=-0.047, z=-0.171, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.864, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177163.818490140] [ekf_debug]: P_diag: px=0.0000, py=0.0000, pz=0.0000, pyaw=0.0000
+[core_node-1] [INFO] [1780177163.818498116] [ekf_debug]: K_gain: Kx=0.6819, Ky=1.8792, Kz=-1.9789, Kyaw=0.7389
+[core_node-1] [INFO] [1780177164.132362944] [ekf_debug]: Innovation: los_yaw=-0.0071, los_pitch=0.0004, los_distance=-0.0000, yaw=0.0774
+[core_node-1] [INFO] [1780177164.132417657] [ekf_debug]: State: x=2.305, y=-0.052, z=-0.172, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.817, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177164.132431696] [ekf_debug]: P_diag: px=0.0238, py=0.0078, pz=0.0080, pyaw=0.0274
+[core_node-1] [INFO] [1780177164.132439004] [ekf_debug]: K_gain: Kx=0.4600, Ky=1.5642, Kz=-1.4115, Kyaw=0.5966
+[core_node-1] [INFO] [1780177164.352949286] [ekf_debug]: Innovation: los_yaw=-0.0064, los_pitch=0.0000, los_distance=-0.0436, yaw=0.2323
+[core_node-1] [INFO] [1780177164.352985010] [ekf_debug]: State: x=2.300, y=-0.045, z=-0.170, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.679, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177164.352991252] [ekf_debug]: P_diag: px=0.0175, py=0.0059, pz=0.0050, pyaw=0.0224
+[core_node-1] [INFO] [1780177164.352994764] [ekf_debug]: K_gain: Kx=0.4219, Ky=1.5375, Kz=-1.3214, Kyaw=0.5790
+[core_node-1] [INFO] [1780177164.570304221] [ekf_debug]: Innovation: los_yaw=-0.0059, los_pitch=0.0000, los_distance=-0.0406, yaw=0.1257
+[core_node-1] [INFO] [1780177164.570334383] [ekf_debug]: State: x=2.290, y=-0.044, z=-0.169, vx=0.000, vy=0.000, vz=0.000, yaw=-0.603, omega=0.001, r1=0.250, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177164.570340371] [ekf_debug]: P_diag: px=0.0147, py=0.0056, pz=0.0043, pyaw=0.0209
+[core_node-1] [INFO] [1780177164.570343963] [ekf_debug]: K_gain: Kx=0.4048, Ky=1.5173, Kz=-1.2929, Kyaw=0.5713
+[core_node-1] [INFO] [1780177164.787961662] [ekf_debug]: Innovation: los_yaw=-0.0084, los_pitch=0.0001, los_distance=0.0347, yaw=0.0929
+[core_node-1] [INFO] [1780177164.788007511] [ekf_debug]: State: x=2.308, y=-0.048, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.550, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177164.788018456] [ekf_debug]: P_diag: px=0.0134, py=0.0056, pz=0.0041, pyaw=0.0203
+[core_node-1] [INFO] [1780177164.788024903] [ekf_debug]: K_gain: Kx=0.3960, Ky=1.5052, Kz=-1.2813, Kyaw=0.5681
+[core_node-1] [INFO] [1780177165.008590062] [ekf_debug]: Innovation: los_yaw=-0.0080, los_pitch=0.0002, los_distance=-0.0307, yaw=0.1328
+[core_node-1] [INFO] [1780177165.008630063] [ekf_debug]: State: x=2.301, y=-0.048, z=-0.169, vx=0.000, vy=0.000, vz=0.000, yaw=-0.471, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177165.008636540] [ekf_debug]: P_diag: px=0.0127, py=0.0056, pz=0.0039, pyaw=0.0201
+[core_node-1] [INFO] [1780177165.008678357] [ekf_debug]: K_gain: Kx=0.3914, Ky=1.5061, Kz=-1.2792, Kyaw=0.5668
+[core_node-1] [INFO] [1780177165.223410525] [ekf_debug]: Innovation: los_yaw=-0.0099, los_pitch=0.0002, los_distance=0.0395, yaw=0.0717
+[core_node-1] [INFO] [1780177165.223443348] [ekf_debug]: State: x=2.319, y=-0.055, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.429, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177165.223449628] [ekf_debug]: P_diag: px=0.0124, py=0.0056, pz=0.0039, pyaw=0.0200
+[core_node-1] [INFO] [1780177165.223452973] [ekf_debug]: K_gain: Kx=0.3894, Ky=1.4965, Kz=-1.2762, Kyaw=0.5656
+[core_node-1] [INFO] [1780177165.439227368] [ekf_debug]: Innovation: los_yaw=-0.0101, los_pitch=0.0002, los_distance=0.0260, yaw=0.0940
+[core_node-1] [INFO] [1780177165.439256136] [ekf_debug]: State: x=2.332, y=-0.060, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.373, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177165.439262428] [ekf_debug]: P_diag: px=0.0122, py=0.0056, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177165.439265865] [ekf_debug]: K_gain: Kx=0.3883, Ky=1.4993, Kz=-1.2770, Kyaw=0.5651
+[core_node-1] [INFO] [1780177165.653870364] [ekf_debug]: Innovation: los_yaw=-0.0097, los_pitch=0.0003, los_distance=-0.0245, yaw=0.0890
+[core_node-1] [INFO] [1780177165.653899761] [ekf_debug]: State: x=2.325, y=-0.066, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.319, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177165.653905984] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177165.653909318] [ekf_debug]: K_gain: Kx=0.3880, Ky=1.5002, Kz=-1.2784, Kyaw=0.5646
+[core_node-1] [INFO] [1780177165.870812138] [ekf_debug]: Innovation: los_yaw=-0.0097, los_pitch=0.0001, los_distance=0.0165, yaw=0.1238
+[core_node-1] [INFO] [1780177165.870854341] [ekf_debug]: State: x=2.334, y=-0.067, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.246, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177165.870865207] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177165.870872362] [ekf_debug]: K_gain: Kx=0.3879, Ky=1.4942, Kz=-1.2771, Kyaw=0.5641
+[core_node-1] [INFO] [1780177166.086139107] [ekf_debug]: Innovation: los_yaw=-0.0083, los_pitch=-0.0000, los_distance=0.0186, yaw=0.0655
+[core_node-1] [INFO] [1780177166.086177183] [ekf_debug]: State: x=2.342, y=-0.073, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.207, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177166.086183773] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177166.086187241] [ekf_debug]: K_gain: Kx=0.3880, Ky=1.4930, Kz=-1.2773, Kyaw=0.5636
+[core_node-1] [INFO] [1780177166.307314541] [ekf_debug]: Innovation: los_yaw=-0.0108, los_pitch=0.0000, los_distance=-0.0134, yaw=0.1045
+[core_node-1] [INFO] [1780177166.307362623] [ekf_debug]: State: x=2.338, y=-0.077, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.144, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177166.307375077] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177166.307382079] [ekf_debug]: K_gain: Kx=0.3881, Ky=1.4945, Kz=-1.2782, Kyaw=0.5635
+[core_node-1] [INFO] [1780177166.525197378] [ekf_debug]: Innovation: los_yaw=-0.0107, los_pitch=-0.0001, los_distance=-0.0096, yaw=0.0698
+[core_node-1] [INFO] [1780177166.525226114] [ekf_debug]: State: x=2.335, y=-0.085, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.101, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177166.525232495] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177166.525235752] [ekf_debug]: K_gain: Kx=0.3882, Ky=1.4910, Kz=-1.2777, Kyaw=0.5632
+[core_node-1] [INFO] [1780177166.770519257] [ekf_debug]: Innovation: los_yaw=-0.0081, los_pitch=-0.0001, los_distance=-0.0463, yaw=0.0932
+[core_node-1] [INFO] [1780177166.770550902] [ekf_debug]: State: x=2.317, y=-0.087, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.045, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177166.770557230] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177166.770560679] [ekf_debug]: K_gain: Kx=0.3882, Ky=1.4885, Kz=-1.2769, Kyaw=0.5631
+[core_node-1] [INFO] [1780177167.093929880] [ekf_debug]: Innovation: los_yaw=-0.0107, los_pitch=-0.0004, los_distance=0.0237, yaw=0.1272
+[core_node-1] [INFO] [1780177167.093996039] [ekf_debug]: State: x=2.327, y=-0.089, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=0.030, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177167.094007457] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177167.094013165] [ekf_debug]: K_gain: Kx=0.3882, Ky=1.4810, Kz=-1.2740, Kyaw=0.5630
+[core_node-1] [INFO] [1780177167.315998140] [ekf_debug]: Innovation: los_yaw=-0.0086, los_pitch=-0.0002, los_distance=0.0141, yaw=0.1024
+[core_node-1] [INFO] [1780177167.316028922] [ekf_debug]: State: x=2.332, y=-0.090, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=0.091, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177167.316035381] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177167.316038832] [ekf_debug]: K_gain: Kx=0.3880, Ky=1.4837, Kz=-1.2746, Kyaw=0.5631
+[core_node-1] [INFO] [1780177167.532856593] [ekf_debug]: Innovation: los_yaw=-0.0082, los_pitch=-0.0002, los_distance=0.0286, yaw=0.0915
+[core_node-1] [INFO] [1780177167.532886638] [ekf_debug]: State: x=2.342, y=-0.093, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=0.145, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177167.532893253] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177167.532896700] [ekf_debug]: K_gain: Kx=0.3879, Ky=1.4867, Kz=-1.2758, Kyaw=0.5633
+[core_node-1] [INFO] [1780177167.752663436] [ekf_debug]: Innovation: los_yaw=-0.0079, los_pitch=-0.0004, los_distance=0.0234, yaw=0.1151
+[core_node-1] [INFO] [1780177167.752715189] [ekf_debug]: State: x=2.350, y=-0.093, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=0.213, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177167.752728323] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177167.752735524] [ekf_debug]: K_gain: Kx=0.3876, Ky=1.4922, Kz=-1.2779, Kyaw=0.5636
+[core_node-1] [INFO] [1780177167.972380731] [ekf_debug]: Innovation: los_yaw=-0.0066, los_pitch=-0.0002, los_distance=0.0340, yaw=0.1136
+[core_node-1] [INFO] [1780177167.972420656] [ekf_debug]: State: x=2.361, y=-0.091, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=0.280, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177167.972431175] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177167.972437412] [ekf_debug]: K_gain: Kx=0.3873, Ky=1.4982, Kz=-1.2803, Kyaw=0.5641
+[core_node-1] [INFO] [1780177168.195008397] [ekf_debug]: Innovation: los_yaw=-0.0076, los_pitch=-0.0006, los_distance=0.0114, yaw=0.0495
+[core_node-1] [INFO] [1780177168.195070602] [ekf_debug]: State: x=2.364, y=-0.098, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=0.311, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177168.195083133] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177168.195090167] [ekf_debug]: K_gain: Kx=0.3869, Ky=1.5063, Kz=-1.2833, Kyaw=0.5647
+[core_node-1] [INFO] [1780177168.442194952] [ekf_debug]: Innovation: los_yaw=-0.0067, los_pitch=-0.0002, los_distance=0.0453, yaw=0.0359
+[core_node-1] [INFO] [1780177168.442226899] [ekf_debug]: State: x=2.380, y=-0.105, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=0.335, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177168.442234071] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177168.442238028] [ekf_debug]: K_gain: Kx=0.3866, Ky=1.5095, Kz=-1.2852, Kyaw=0.5649
+[core_node-1] [INFO] [1780177168.664293754] [ekf_debug]: Innovation: los_yaw=-0.0065, los_pitch=-0.0004, los_distance=0.0397, yaw=0.1054
+[core_node-1] [INFO] [1780177168.664335386] [ekf_debug]: State: x=2.393, y=-0.105, z=-0.172, vx=0.000, vy=0.000, vz=-0.000, yaw=0.398, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177168.664347640] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177168.664354566] [ekf_debug]: K_gain: Kx=0.3864, Ky=1.5168, Kz=-1.2882, Kyaw=0.5652
+[core_node-1] [WARN] [1780177168.881134657] [core_node_offline]: 发生切板！切换至 3 号装甲板
+[core_node-1] [INFO] [1780177168.881324094] [ekf_debug]: Innovation: los_yaw=0.0082, los_pitch=0.0072, los_distance=-0.1560, yaw=0.3032
+[core_node-1] [INFO] [1780177168.881332388] [ekf_debug]: State: x=2.346, y=-0.081, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=0.583, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177168.881338377] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177168.881368807] [ekf_debug]: K_gain: Kx=0.3815, Ky=1.6173, Kz=-1.3021, Kyaw=0.5705
+[core_node-1] [INFO] [1780177169.101285366] [ekf_debug]: Innovation: los_yaw=-0.0019, los_pitch=0.0026, los_distance=-0.0742, yaw=0.2447
+[core_node-1] [INFO] [1780177169.101344323] [ekf_debug]: State: x=2.330, y=-0.071, z=-0.180, vx=0.000, vy=0.000, vz=-0.000, yaw=0.729, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177169.101357564] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0042, pyaw=0.0201
+[core_node-1] [INFO] [1780177169.101364656] [ekf_debug]: K_gain: Kx=0.3825, Ky=1.5792, Kz=-1.2992, Kyaw=0.5699
+[core_node-1] [INFO] [1780177169.319920606] [ekf_debug]: Innovation: los_yaw=-0.0057, los_pitch=0.0010, los_distance=-0.0103, yaw=0.1935
+[core_node-1] [INFO] [1780177169.319951467] [ekf_debug]: State: x=2.335, y=-0.066, z=-0.180, vx=0.000, vy=0.000, vz=-0.000, yaw=0.841, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177169.319957677] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0041, pyaw=0.0201
+[core_node-1] [INFO] [1780177169.319960977] [ekf_debug]: K_gain: Kx=0.3841, Ky=1.5514, Kz=-1.2911, Kyaw=0.5686
+[core_node-1] [INFO] [1780177169.536972966] [ekf_debug]: Innovation: los_yaw=-0.0063, los_pitch=0.0006, los_distance=0.0151, yaw=0.1356
+[core_node-1] [INFO] [1780177169.537004871] [ekf_debug]: State: x=2.347, y=-0.064, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=0.919, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177169.537010997] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177169.537014404] [ekf_debug]: K_gain: Kx=0.3855, Ky=1.5375, Kz=-1.2859, Kyaw=0.5676
+[core_node-1] [INFO] [1780177169.753758249] [ekf_debug]: Innovation: los_yaw=-0.0076, los_pitch=0.0003, los_distance=0.0073, yaw=0.1332
+[core_node-1] [INFO] [1780177169.753789345] [ekf_debug]: State: x=2.355, y=-0.064, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=0.996, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177169.753795892] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177169.753799419] [ekf_debug]: K_gain: Kx=0.3865, Ky=1.5325, Kz=-1.2838, Kyaw=0.5670
+[core_node-1] [INFO] [1780177169.969539619] [ekf_debug]: Innovation: los_yaw=-0.0077, los_pitch=0.0001, los_distance=0.0141, yaw=0.2211
+[core_node-1] [INFO] [1780177169.969570090] [ekf_debug]: State: x=2.369, y=-0.056, z=-0.182, vx=0.000, vy=0.000, vz=-0.000, yaw=1.123, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177169.969576654] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177169.969580005] [ekf_debug]: K_gain: Kx=0.3873, Ky=1.5274, Kz=-1.2827, Kyaw=0.5662
+[core_node-1] [INFO] [1780177170.183920498] [ekf_debug]: Innovation: los_yaw=-0.0059, los_pitch=0.0001, los_distance=-0.0267, yaw=0.0838
+[core_node-1] [INFO] [1780177170.183957765] [ekf_debug]: State: x=2.361, y=-0.057, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.173, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177170.183964217] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177170.183967711] [ekf_debug]: K_gain: Kx=0.3883, Ky=1.5198, Kz=-1.2820, Kyaw=0.5649
+[core_node-1] [INFO] [1780177170.401142813] [ekf_debug]: Innovation: los_yaw=-0.0106, los_pitch=0.0002, los_distance=-0.0527, yaw=0.0691
+[core_node-1] [INFO] [1780177170.401174067] [ekf_debug]: State: x=2.343, y=-0.066, z=-0.180, vx=0.000, vy=0.000, vz=-0.000, yaw=1.217, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177170.401180454] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177170.401183700] [ekf_debug]: K_gain: Kx=0.3886, Ky=1.5138, Kz=-1.2800, Kyaw=0.5646
+[core_node-1] [INFO] [1780177170.616964433] [ekf_debug]: Innovation: los_yaw=-0.0089, los_pitch=-0.0001, los_distance=0.0377, yaw=0.1323
+[core_node-1] [INFO] [1780177170.617001834] [ekf_debug]: State: x=2.361, y=-0.065, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.294, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177170.617011163] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177170.617016472] [ekf_debug]: K_gain: Kx=0.3888, Ky=1.5038, Kz=-1.2763, Kyaw=0.5642
+[core_node-1] [INFO] [1780177170.835777390] [ekf_debug]: Innovation: los_yaw=-0.0093, los_pitch=0.0002, los_distance=0.0263, yaw=0.0654
+[core_node-1] [INFO] [1780177170.835835344] [ekf_debug]: State: x=2.372, y=-0.072, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.333, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177170.835842388] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177170.835845854] [ekf_debug]: K_gain: Kx=0.3891, Ky=1.5042, Kz=-1.2765, Kyaw=0.5637
+[core_node-1] [INFO] [1780177171.049159683] [ekf_debug]: Innovation: los_yaw=-0.0093, los_pitch=0.0002, los_distance=0.0068, yaw=0.0748
+[core_node-1] [INFO] [1780177171.049199561] [ekf_debug]: State: x=2.376, y=-0.078, z=-0.182, vx=0.000, vy=0.000, vz=-0.000, yaw=1.378, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177171.049205784] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177171.049209094] [ekf_debug]: K_gain: Kx=0.3892, Ky=1.5068, Kz=-1.2779, Kyaw=0.5636
+[core_node-1] [INFO] [1780177171.264649072] [ekf_debug]: Innovation: los_yaw=-0.0101, los_pitch=-0.0001, los_distance=0.0370, yaw=0.1784
+[core_node-1] [INFO] [1780177171.264678722] [ekf_debug]: State: x=2.392, y=-0.074, z=-0.182, vx=0.000, vy=0.000, vz=-0.000, yaw=1.482, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177171.264684965] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177171.264688229] [ekf_debug]: K_gain: Kx=0.3893, Ky=1.5067, Kz=-1.2786, Kyaw=0.5634
+[core_node-1] [INFO] [1780177171.478644645] [ekf_debug]: Innovation: los_yaw=-0.0079, los_pitch=0.0000, los_distance=0.0218, yaw=0.0770
+[core_node-1] [INFO] [1780177171.478675314] [ekf_debug]: State: x=2.401, y=-0.078, z=-0.183, vx=0.000, vy=0.000, vz=-0.000, yaw=1.528, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177171.478681639] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177171.478684944] [ekf_debug]: K_gain: Kx=0.3894, Ky=1.5096, Kz=-1.2806, Kyaw=0.5632
+[core_node-1] [INFO] [1780177171.695361450] [ekf_debug]: Innovation: los_yaw=-0.0087, los_pitch=-0.0002, los_distance=0.0249, yaw=-0.0964
+[core_node-1] [INFO] [1780177171.695392197] [ekf_debug]: State: x=2.410, y=-0.102, z=-0.183, vx=0.000, vy=0.000, vz=-0.000, yaw=1.477, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177171.695398570] [ekf_debug]: P_diag: px=0.0121, py=0.0059, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177171.695401869] [ekf_debug]: K_gain: Kx=0.3894, Ky=1.5129, Kz=-1.2823, Kyaw=0.5632
+[core_node-1] [INFO] [1780177171.910543196] [ekf_debug]: Innovation: los_yaw=-0.0121, los_pitch=-0.0000, los_distance=0.0156, yaw=0.2554
+[core_node-1] [INFO] [1780177171.910574158] [ekf_debug]: State: x=2.417, y=-0.093, z=-0.183, vx=0.000, vy=0.000, vz=-0.000, yaw=1.625, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177171.910580368] [ekf_debug]: P_diag: px=0.0121, py=0.0059, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177171.910583699] [ekf_debug]: K_gain: Kx=0.3892, Ky=1.5169, Kz=-1.2842, Kyaw=0.5634
+[core_node-1] [INFO] [1780177172.126943059] [ekf_debug]: Innovation: los_yaw=-0.0079, los_pitch=-0.0002, los_distance=0.0187, yaw=0.0660
+[core_node-1] [INFO] [1780177172.126979027] [ekf_debug]: State: x=2.424, y=-0.098, z=-0.183, vx=0.000, vy=0.000, vz=-0.000, yaw=1.665, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177172.126985037] [ekf_debug]: P_diag: px=0.0121, py=0.0060, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177172.126988334] [ekf_debug]: K_gain: Kx=0.3890, Ky=1.5195, Kz=-1.2858, Kyaw=0.5635
+[core_node-1] [INFO] [1780177172.342679047] [ekf_debug]: Innovation: los_yaw=-0.0070, los_pitch=-0.0000, los_distance=-0.0084, yaw=0.1759
+[core_node-1] [INFO] [1780177172.342715521] [ekf_debug]: State: x=2.420, y=-0.089, z=-0.183, vx=0.000, vy=0.000, vz=-0.000, yaw=1.767, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177172.342721894] [ekf_debug]: P_diag: px=0.0120, py=0.0060, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177172.342725184] [ekf_debug]: K_gain: Kx=0.3888, Ky=1.5228, Kz=-1.2874, Kyaw=0.5637
+[core_node-1] [INFO] [1780177172.560352128] [ekf_debug]: Innovation: los_yaw=-0.0063, los_pitch=-0.0002, los_distance=0.0042, yaw=0.1781
+[core_node-1] [INFO] [1780177172.560388515] [ekf_debug]: State: x=2.419, y=-0.080, z=-0.183, vx=0.000, vy=0.000, vz=-0.000, yaw=1.869, omega=0.001, r1=0.249, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177172.560395244] [ekf_debug]: P_diag: px=0.0120, py=0.0060, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177172.560464889] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.5251, Kz=-1.2880, Kyaw=0.5641
+[core_node-1] [WARN] [1780177172.773744524] [core_node_offline]: 发生切板！切换至 2 号装甲板
+[core_node-1] [INFO] [1780177172.773932556] [ekf_debug]: Innovation: los_yaw=-0.1424, los_pitch=-0.0138, los_distance=-0.6298, yaw=-0.3180
+[core_node-1] [INFO] [1780177172.773940323] [ekf_debug]: State: x=2.186, y=-0.335, z=-0.150, vx=0.000, vy=0.000, vz=-0.000, yaw=1.743, omega=0.001, r1=0.248, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177172.773946037] [ekf_debug]: P_diag: px=0.0120, py=0.0060, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177172.773949296] [ekf_debug]: K_gain: Kx=0.3798, Ky=1.6356, Kz=-1.3070, Kyaw=0.5708
+[core_node-1] [WARN] [1780177173.048731225] [core_node_offline]: 发生切板！切换至 3 号装甲板
+[core_node-1] [INFO] [1780177173.049003323] [ekf_debug]: Innovation: los_yaw=0.1097, los_pitch=0.0093, los_distance=0.1859, yaw=0.2047
+[core_node-1] [INFO] [1780177173.049020288] [ekf_debug]: State: x=2.294, y=-0.169, z=-0.166, vx=0.000, vy=0.000, vz=-0.000, yaw=1.826, omega=0.001, r1=0.248, r2=0.250, dz=0.050
+[core_node-1] [INFO] [1780177173.049030090] [ekf_debug]: P_diag: px=0.0120, py=0.0060, pz=0.0043, pyaw=0.0201
+[core_node-1] [INFO] [1780177173.049036357] [ekf_debug]: K_gain: Kx=0.3807, Ky=1.4209, Kz=-1.2676, Kyaw=0.5596
+[core_node-1] [INFO] [1780177173.265087797] [ekf_debug]: Innovation: los_yaw=0.0250, los_pitch=0.0037, los_distance=0.1231, yaw=0.1462
+[core_node-1] [INFO] [1780177173.265119830] [ekf_debug]: State: x=2.344, y=-0.122, z=-0.173, vx=0.000, vy=0.000, vz=-0.000, yaw=1.904, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177173.265126231] [ekf_debug]: P_diag: px=0.0117, py=0.0055, pz=0.0038, pyaw=0.0195
+[core_node-1] [INFO] [1780177173.265129476] [ekf_debug]: K_gain: Kx=0.3850, Ky=1.4721, Kz=-1.2658, Kyaw=0.5620
+[core_node-1] [INFO] [1780177173.482981602] [ekf_debug]: Innovation: los_yaw=0.0045, los_pitch=0.0016, los_distance=0.1258, yaw=0.4029
+[core_node-1] [INFO] [1780177173.483020436] [ekf_debug]: State: x=2.387, y=-0.078, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=2.134, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177173.483030537] [ekf_debug]: P_diag: px=0.0118, py=0.0056, pz=0.0038, pyaw=0.0197
+[core_node-1] [INFO] [1780177173.483035105] [ekf_debug]: K_gain: Kx=0.3859, Ky=1.5000, Kz=-1.2732, Kyaw=0.5640
+[core_node-1] [INFO] [1780177173.698112181] [ekf_debug]: Innovation: los_yaw=0.0004, los_pitch=0.0012, los_distance=0.0743, yaw=0.2600
+[core_node-1] [INFO] [1780177173.698144034] [ekf_debug]: State: x=2.409, y=-0.056, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=2.286, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177173.698150704] [ekf_debug]: P_diag: px=0.0119, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177173.698153967] [ekf_debug]: K_gain: Kx=0.3848, Ky=1.5390, Kz=-1.2841, Kyaw=0.5672
+[core_node-1] [WARN] [1780177173.913933101] [core_node_offline]: 发生切板！切换至 2 号装甲板
+[core_node-1] [INFO] [1780177173.914119010] [ekf_debug]: Innovation: los_yaw=-0.0063, los_pitch=-0.0024, los_distance=-0.1611, yaw=0.4627
+[core_node-1] [INFO] [1780177173.914126935] [ekf_debug]: State: x=2.365, y=-0.035, z=-0.173, vx=0.000, vy=0.000, vz=-0.000, yaw=2.561, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177173.914132804] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177173.914136135] [ekf_debug]: K_gain: Kx=0.3819, Ky=1.5833, Kz=-1.2975, Kyaw=0.5689
+[core_node-1] [INFO] [1780177174.127896792] [ekf_debug]: Innovation: los_yaw=-0.0032, los_pitch=-0.0017, los_distance=-0.0109, yaw=0.1823
+[core_node-1] [INFO] [1780177174.127936701] [ekf_debug]: State: x=2.367, y=-0.024, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=2.666, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177174.127942952] [ekf_debug]: P_diag: px=0.0119, py=0.0059, pz=0.0041, pyaw=0.0200
+[core_node-1] [INFO] [1780177174.127946236] [ekf_debug]: K_gain: Kx=0.3846, Ky=1.5357, Kz=-1.2942, Kyaw=0.5658
+[core_node-1] [INFO] [1780177174.344665856] [ekf_debug]: Innovation: los_yaw=-0.0045, los_pitch=-0.0006, los_distance=-0.0703, yaw=0.1405
+[core_node-1] [INFO] [1780177174.344699507] [ekf_debug]: State: x=2.344, y=-0.018, z=-0.167, vx=0.000, vy=0.000, vz=-0.000, yaw=2.750, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177174.344707143] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0041, pyaw=0.0199
+[core_node-1] [INFO] [1780177174.344744855] [ekf_debug]: K_gain: Kx=0.3860, Ky=1.5241, Kz=-1.2907, Kyaw=0.5651
+[core_node-1] [INFO] [1780177174.559953112] [ekf_debug]: Innovation: los_yaw=-0.0075, los_pitch=-0.0005, los_distance=0.0255, yaw=0.2512
+[core_node-1] [INFO] [1780177174.559982312] [ekf_debug]: State: x=2.361, y=-0.004, z=-0.167, vx=0.000, vy=0.000, vz=-0.000, yaw=2.893, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177174.559988699] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177174.559992042] [ekf_debug]: K_gain: Kx=0.3870, Ky=1.5091, Kz=-1.2853, Kyaw=0.5646
+[core_node-1] [INFO] [1780177174.775085955] [ekf_debug]: Innovation: los_yaw=-0.0073, los_pitch=0.0003, los_distance=0.0064, yaw=0.0029
+[core_node-1] [INFO] [1780177174.775116412] [ekf_debug]: State: x=2.363, y=-0.014, z=-0.168, vx=0.000, vy=0.000, vz=-0.000, yaw=2.897, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177174.775122954] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177174.775126427] [ekf_debug]: K_gain: Kx=0.3880, Ky=1.5044, Kz=-1.2840, Kyaw=0.5638
+[core_node-1] [INFO] [1780177174.992674071] [ekf_debug]: Innovation: los_yaw=-0.0077, los_pitch=0.0001, los_distance=-0.0146, yaw=0.0649
+[core_node-1] [INFO] [1780177174.992716902] [ekf_debug]: State: x=2.359, y=-0.019, z=-0.167, vx=0.000, vy=0.000, vz=-0.000, yaw=2.936, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177174.992725965] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177174.992731280] [ekf_debug]: K_gain: Kx=0.3882, Ky=1.5063, Kz=-1.2840, Kyaw=0.5640
+[core_node-1] [INFO] [1780177175.210413611] [ekf_debug]: Innovation: los_yaw=-0.0096, los_pitch=0.0002, los_distance=-0.0050, yaw=0.0817
+[core_node-1] [INFO] [1780177175.210452801] [ekf_debug]: State: x=2.358, y=-0.024, z=-0.167, vx=0.000, vy=0.000, vz=-0.000, yaw=2.986, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177175.210459334] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177175.210462630] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.5031, Kz=-1.2831, Kyaw=0.5638
+[core_node-1] [INFO] [1780177175.425809740] [ekf_debug]: Innovation: los_yaw=-0.0112, los_pitch=0.0000, los_distance=-0.0527, yaw=0.1361
+[core_node-1] [INFO] [1780177175.425841040] [ekf_debug]: State: x=2.339, y=-0.026, z=-0.166, vx=0.000, vy=0.000, vz=-0.000, yaw=3.067, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177175.425847227] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177175.425850613] [ekf_debug]: K_gain: Kx=0.3886, Ky=1.5008, Kz=-1.2823, Kyaw=0.5636
+[core_node-1] [INFO] [1780177175.642522266] [ekf_debug]: Innovation: los_yaw=-0.0073, los_pitch=-0.0001, los_distance=0.0285, yaw=0.0616
+[core_node-1] [INFO] [1780177175.642552518] [ekf_debug]: State: x=2.351, y=-0.031, z=-0.166, vx=0.000, vy=0.000, vz=-0.000, yaw=3.104, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177175.642558951] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177175.642562208] [ekf_debug]: K_gain: Kx=0.3887, Ky=1.4919, Kz=-1.2792, Kyaw=0.5633
+[core_node-1] [INFO] [1780177175.857971681] [ekf_debug]: Innovation: los_yaw=-0.0109, los_pitch=0.0002, los_distance=0.0002, yaw=0.0525
+[core_node-1] [INFO] [1780177175.858004502] [ekf_debug]: State: x=2.351, y=-0.041, z=-0.167, vx=0.000, vy=0.000, vz=-0.000, yaw=3.138, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177175.858011579] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177175.858015432] [ekf_debug]: K_gain: Kx=0.3887, Ky=1.4949, Kz=-1.2796, Kyaw=0.5633
+[core_node-1] [INFO] [1780177176.075634982] [ekf_debug]: Innovation: los_yaw=-0.0100, los_pitch=-0.0001, los_distance=0.0324, yaw=0.1582
+[core_node-1] [INFO] [1780177176.075673183] [ekf_debug]: State: x=2.363, y=-0.039, z=-0.167, vx=0.000, vy=0.000, vz=-0.000, yaw=-3.053, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177176.075679607] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177176.075683016] [ekf_debug]: K_gain: Kx=0.3886, Ky=1.4951, Kz=-1.2798, Kyaw=0.5633
+[core_node-1] [INFO] [1780177176.290617690] [ekf_debug]: Innovation: los_yaw=-0.0085, los_pitch=-0.0000, los_distance=0.0352, yaw=0.1242
+[core_node-1] [INFO] [1780177176.290717626] [ekf_debug]: State: x=2.376, y=-0.038, z=-0.168, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.980, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177176.290726962] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177176.290731564] [ekf_debug]: K_gain: Kx=0.3885, Ky=1.5006, Kz=-1.2818, Kyaw=0.5636
+[core_node-1] [INFO] [1780177176.507460690] [ekf_debug]: Innovation: los_yaw=-0.0066, los_pitch=0.0002, los_distance=-0.0502, yaw=0.0874
+[core_node-1] [INFO] [1780177176.507492055] [ekf_debug]: State: x=2.356, y=-0.038, z=-0.167, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.929, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177176.507498426] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177176.507501822] [ekf_debug]: K_gain: Kx=0.3882, Ky=1.5078, Kz=-1.2845, Kyaw=0.5639
+[core_node-1] [INFO] [1780177176.722176002] [ekf_debug]: Innovation: los_yaw=-0.0097, los_pitch=-0.0003, los_distance=0.0524, yaw=0.1130
+[core_node-1] [INFO] [1780177176.722207907] [ekf_debug]: State: x=2.374, y=-0.041, z=-0.168, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.861, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177176.722214532] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177176.722217822] [ekf_debug]: K_gain: Kx=0.3880, Ky=1.5031, Kz=-1.2832, Kyaw=0.5641
+[core_node-1] [INFO] [1780177176.938401883] [ekf_debug]: Innovation: los_yaw=-0.0083, los_pitch=-0.0003, los_distance=-0.0335, yaw=0.1035
+[core_node-1] [INFO] [1780177176.938431645] [ekf_debug]: State: x=2.359, y=-0.042, z=-0.167, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.800, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177176.938438013] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177176.938441421] [ekf_debug]: K_gain: Kx=0.3876, Ky=1.5126, Kz=-1.2857, Kyaw=0.5647
+[core_node-1] [INFO] [1780177177.152467428] [ekf_debug]: Innovation: los_yaw=-0.0087, los_pitch=-0.0004, los_distance=-0.0196, yaw=-0.0054
+[core_node-1] [INFO] [1780177177.152503873] [ekf_debug]: State: x=2.351, y=-0.056, z=-0.166, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.801, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177177.152510279] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177177.152513665] [ekf_debug]: K_gain: Kx=0.3872, Ky=1.5117, Kz=-1.2854, Kyaw=0.5651
+[core_node-1] [INFO] [1780177177.368349313] [ekf_debug]: Innovation: los_yaw=-0.0078, los_pitch=-0.0003, los_distance=-0.0032, yaw=0.1886
+[core_node-1] [INFO] [1780177177.368381445] [ekf_debug]: State: x=2.345, y=-0.048, z=-0.166, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.692, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177177.368387659] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177177.368390965] [ekf_debug]: K_gain: Kx=0.3871, Ky=1.5078, Kz=-1.2843, Kyaw=0.5651
+[core_node-1] [INFO] [1780177177.582340260] [ekf_debug]: Innovation: los_yaw=-0.0055, los_pitch=-0.0003, los_distance=0.0650, yaw=0.1413
+[core_node-1] [INFO] [1780177177.582370904] [ekf_debug]: State: x=2.366, y=-0.044, z=-0.167, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.608, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177177.582376939] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177177.582380263] [ekf_debug]: K_gain: Kx=0.3863, Ky=1.5146, Kz=-1.2847, Kyaw=0.5662
+[core_node-1] [INFO] [1780177177.798730467] [ekf_debug]: Innovation: los_yaw=-0.0059, los_pitch=-0.0002, los_distance=0.0712, yaw=0.2190
+[core_node-1] [INFO] [1780177177.798762057] [ekf_debug]: State: x=2.387, y=-0.034, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.479, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177177.798768588] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177177.798771888] [ekf_debug]: K_gain: Kx=0.3856, Ky=1.5297, Kz=-1.2889, Kyaw=0.5672
+[core_node-1] [INFO] [1780177178.012560500] [ekf_debug]: Innovation: los_yaw=-0.0050, los_pitch=0.0000, los_distance=-0.0218, yaw=0.1138
+[core_node-1] [INFO] [1780177178.012596960] [ekf_debug]: State: x=2.374, y=-0.032, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.414, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177178.012603362] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177178.012637468] [ekf_debug]: K_gain: Kx=0.3845, Ky=1.5513, Kz=-1.2950, Kyaw=0.5687
+[core_node-1] [INFO] [1780177178.228376194] [ekf_debug]: Innovation: los_yaw=-0.0050, los_pitch=-0.0003, los_distance=0.0483, yaw=0.1263
+[core_node-1] [INFO] [1780177178.228407710] [ekf_debug]: State: x=2.387, y=-0.031, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.338, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177178.228413952] [ekf_debug]: P_diag: px=0.0121, py=0.0059, pz=0.0041, pyaw=0.0201
+[core_node-1] [INFO] [1780177178.228417281] [ekf_debug]: K_gain: Kx=0.3839, Ky=1.5551, Kz=-1.2973, Kyaw=0.5693
+[core_node-1] [WARN] [1780177178.442090405] [core_node_offline]: 发生切板！切换至 1 号装甲板
+[core_node-1] [INFO] [1780177178.442279298] [ekf_debug]: Innovation: los_yaw=-0.0064, los_pitch=0.0060, los_distance=-0.1246, yaw=0.0059
+[core_node-1] [INFO] [1780177178.442287253] [ekf_debug]: State: x=2.340, y=-0.042, z=-0.176, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.325, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177178.442293158] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0041, pyaw=0.0201
+[core_node-1] [INFO] [1780177178.442296517] [ekf_debug]: K_gain: Kx=0.3844, Ky=1.5645, Kz=-1.2971, Kyaw=0.5674
+[core_node-1] [INFO] [1780177178.659371894] [ekf_debug]: Innovation: los_yaw=-0.0088, los_pitch=0.0025, los_distance=-0.0865, yaw=0.0329
+[core_node-1] [INFO] [1780177178.659402619] [ekf_debug]: State: x=2.308, y=-0.054, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.298, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177178.659408779] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0041, pyaw=0.0200
+[core_node-1] [INFO] [1780177178.659412045] [ekf_debug]: K_gain: Kx=0.3843, Ky=1.5461, Kz=-1.2904, Kyaw=0.5676
+[core_node-1] [INFO] [1780177178.874079680] [ekf_debug]: Innovation: los_yaw=-0.0090, los_pitch=0.0010, los_distance=-0.0522, yaw=0.0229
+[core_node-1] [INFO] [1780177178.874112539] [ekf_debug]: State: x=2.290, y=-0.067, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.280, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177178.874118606] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177178.874121982] [ekf_debug]: K_gain: Kx=0.3850, Ky=1.5299, Kz=-1.2825, Kyaw=0.5677
+[core_node-1] [INFO] [1780177179.091394278] [ekf_debug]: Innovation: los_yaw=-0.0095, los_pitch=0.0005, los_distance=0.0078, yaw=0.1293
+[core_node-1] [INFO] [1780177179.091432541] [ekf_debug]: State: x=2.299, y=-0.070, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.205, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177179.091438470] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0200
+[core_node-1] [INFO] [1780177179.091441848] [ekf_debug]: K_gain: Kx=0.3855, Ky=1.5195, Kz=-1.2765, Kyaw=0.5677
+[core_node-1] [INFO] [1780177179.310319691] [ekf_debug]: Innovation: los_yaw=-0.0086, los_pitch=0.0002, los_distance=-0.0136, yaw=0.0650
+[core_node-1] [INFO] [1780177179.310349776] [ekf_debug]: State: x=2.296, y=-0.078, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.165, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177179.310356108] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0039, pyaw=0.0200
+[core_node-1] [INFO] [1780177179.310359487] [ekf_debug]: K_gain: Kx=0.3865, Ky=1.5124, Kz=-1.2739, Kyaw=0.5669
+[core_node-1] [INFO] [1780177179.528330980] [ekf_debug]: Innovation: los_yaw=-0.0091, los_pitch=0.0001, los_distance=-0.0186, yaw=0.1180
+[core_node-1] [INFO] [1780177179.528367004] [ekf_debug]: State: x=2.294, y=-0.081, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.094, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177179.528373560] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0039, pyaw=0.0200
+[core_node-1] [INFO] [1780177179.528376871] [ekf_debug]: K_gain: Kx=0.3870, Ky=1.5072, Kz=-1.2719, Kyaw=0.5665
+[core_node-1] [INFO] [1780177179.742808331] [ekf_debug]: Innovation: los_yaw=-0.0092, los_pitch=0.0001, los_distance=0.0168, yaw=0.1520
+[core_node-1] [INFO] [1780177179.742839818] [ekf_debug]: State: x=2.305, y=-0.080, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.006, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177179.742846424] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177179.742849907] [ekf_debug]: K_gain: Kx=0.3877, Ky=1.4985, Kz=-1.2694, Kyaw=0.5657
+[core_node-1] [INFO] [1780177179.960044388] [ekf_debug]: Innovation: los_yaw=-0.0097, los_pitch=0.0001, los_distance=-0.0046, yaw=0.1659
+[core_node-1] [INFO] [1780177179.960105796] [ekf_debug]: State: x=2.308, y=-0.078, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.909, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177179.960112187] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177179.960115585] [ekf_debug]: K_gain: Kx=0.3883, Ky=1.4941, Kz=-1.2688, Kyaw=0.5648
+[core_node-1] [INFO] [1780177180.174611622] [ekf_debug]: Innovation: los_yaw=-0.0072, los_pitch=0.0000, los_distance=0.0166, yaw=0.1168
+[core_node-1] [INFO] [1780177180.174651604] [ekf_debug]: State: x=2.317, y=-0.076, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.841, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177180.174658127] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177180.174661654] [ekf_debug]: K_gain: Kx=0.3889, Ky=1.4879, Kz=-1.2677, Kyaw=0.5640
+[core_node-1] [INFO] [1780177180.393491621] [ekf_debug]: Innovation: los_yaw=-0.0100, los_pitch=0.0000, los_distance=0.0266, yaw=0.2166
+[core_node-1] [INFO] [1780177180.393521694] [ekf_debug]: State: x=2.332, y=-0.068, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.717, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177180.393528167] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177180.393531446] [ekf_debug]: K_gain: Kx=0.3892, Ky=1.4872, Kz=-1.2679, Kyaw=0.5636
+[core_node-1] [INFO] [1780177180.609753232] [ekf_debug]: Innovation: los_yaw=-0.0077, los_pitch=0.0000, los_distance=0.0046, yaw=0.1425
+[core_node-1] [INFO] [1780177180.609790694] [ekf_debug]: State: x=2.335, y=-0.064, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.634, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177180.609799699] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177180.609805762] [ekf_debug]: K_gain: Kx=0.3895, Ky=1.4873, Kz=-1.2692, Kyaw=0.5631
+[core_node-1] [INFO] [1780177180.830885006] [ekf_debug]: Innovation: los_yaw=-0.0089, los_pitch=0.0001, los_distance=-0.0130, yaw=0.1167
+[core_node-1] [INFO] [1780177180.830922692] [ekf_debug]: State: x=2.330, y=-0.064, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.565, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177180.830931842] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177180.830937331] [ekf_debug]: K_gain: Kx=0.3895, Ky=1.4875, Kz=-1.2698, Kyaw=0.5630
+[core_node-1] [INFO] [1780177181.047374757] [ekf_debug]: Innovation: los_yaw=-0.0082, los_pitch=-0.0002, los_distance=-0.0040, yaw=0.1554
+[core_node-1] [INFO] [1780177181.047414097] [ekf_debug]: State: x=2.329, y=-0.059, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.475, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177181.047420615] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177181.047424099] [ekf_debug]: K_gain: Kx=0.3894, Ky=1.4858, Kz=-1.2693, Kyaw=0.5630
+[core_node-1] [INFO] [1780177181.264713378] [ekf_debug]: Innovation: los_yaw=-0.0075, los_pitch=-0.0001, los_distance=-0.0044, yaw=0.1143
+[core_node-1] [INFO] [1780177181.264745230] [ekf_debug]: State: x=2.326, y=-0.057, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.408, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177181.264751476] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177181.264754750] [ekf_debug]: K_gain: Kx=0.3891, Ky=1.4864, Kz=-1.2692, Kyaw=0.5633
+[core_node-1] [INFO] [1780177181.479413856] [ekf_debug]: Innovation: los_yaw=-0.0075, los_pitch=-0.0001, los_distance=0.0222, yaw=0.0320
+[core_node-1] [INFO] [1780177181.479444704] [ekf_debug]: State: x=2.334, y=-0.065, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.387, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177181.479450943] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177181.479454344] [ekf_debug]: K_gain: Kx=0.3888, Ky=1.4874, Kz=-1.2692, Kyaw=0.5636
+[core_node-1] [INFO] [1780177181.696865852] [ekf_debug]: Innovation: los_yaw=-0.0086, los_pitch=-0.0002, los_distance=-0.0205, yaw=0.0827
+[core_node-1] [INFO] [1780177181.696897559] [ekf_debug]: State: x=2.325, y=-0.069, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.337, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177181.696903790] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177181.696939000] [ekf_debug]: K_gain: Kx=0.3887, Ky=1.4909, Kz=-1.2705, Kyaw=0.5637
+[core_node-1] [INFO] [1780177181.912643107] [ekf_debug]: Innovation: los_yaw=-0.0078, los_pitch=-0.0002, los_distance=0.0059, yaw=0.1016
+[core_node-1] [INFO] [1780177181.912673399] [ekf_debug]: State: x=2.325, y=-0.069, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.277, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177181.912679632] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177181.912682871] [ekf_debug]: K_gain: Kx=0.3883, Ky=1.4900, Kz=-1.2702, Kyaw=0.5640
+[core_node-1] [INFO] [1780177182.129568088] [ekf_debug]: Innovation: los_yaw=-0.0073, los_pitch=-0.0003, los_distance=-0.0048, yaw=0.0626
+[core_node-1] [INFO] [1780177182.129605237] [ekf_debug]: State: x=2.322, y=-0.073, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.240, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177182.129611741] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177182.129615078] [ekf_debug]: K_gain: Kx=0.3879, Ky=1.4933, Kz=-1.2707, Kyaw=0.5645
+[core_node-1] [INFO] [1780177182.370941607] [ekf_debug]: Innovation: los_yaw=-0.0063, los_pitch=-0.0002, los_distance=-0.0050, yaw=0.1723
+[core_node-1] [INFO] [1780177182.370972958] [ekf_debug]: State: x=2.316, y=-0.065, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.141, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177182.370978937] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177182.370982178] [ekf_debug]: K_gain: Kx=0.3876, Ky=1.4943, Kz=-1.2710, Kyaw=0.5648
+[core_node-1] [INFO] [1780177182.590527760] [ekf_debug]: Innovation: los_yaw=-0.0053, los_pitch=-0.0001, los_distance=0.0253, yaw=0.2871
+[core_node-1] [INFO] [1780177182.590558763] [ekf_debug]: State: x=2.319, y=-0.045, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.976, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177182.590564906] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177182.590568206] [ekf_debug]: K_gain: Kx=0.3869, Ky=1.5003, Kz=-1.2717, Kyaw=0.5658
+[core_node-1] [INFO] [1780177182.805190943] [ekf_debug]: Innovation: los_yaw=-0.0037, los_pitch=0.0001, los_distance=0.0076, yaw=0.1954
+[core_node-1] [INFO] [1780177182.805223188] [ekf_debug]: State: x=2.315, y=-0.033, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.863, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177182.805231164] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177182.805235011] [ekf_debug]: K_gain: Kx=0.3855, Ky=1.5180, Kz=-1.2753, Kyaw=0.5677
+[core_node-1] [WARN] [1780177183.023605667] [core_node_offline]: 发生切板！切换至 0 号装甲板
+[core_node-1] [INFO] [1780177183.023803431] [ekf_debug]: Innovation: los_yaw=-0.0087, los_pitch=-0.0025, los_distance=-0.0582, yaw=0.1370
+[core_node-1] [INFO] [1780177183.023812260] [ekf_debug]: State: x=2.300, y=-0.038, z=-0.173, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.780, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177183.023818442] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0039, pyaw=0.0200
+[core_node-1] [INFO] [1780177183.023821729] [ekf_debug]: K_gain: Kx=0.3818, Ky=1.5498, Kz=-1.2843, Kyaw=0.5689
+[core_node-1] [INFO] [1780177183.237136072] [ekf_debug]: Innovation: los_yaw=-0.0082, los_pitch=-0.0009, los_distance=-0.0176, yaw=0.0598
+[core_node-1] [INFO] [1780177183.237165439] [ekf_debug]: State: x=2.297, y=-0.046, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.743, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177183.237171515] [ekf_debug]: P_diag: px=0.0119, py=0.0056, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177183.237174667] [ekf_debug]: K_gain: Kx=0.3827, Ky=1.5325, Kz=-1.2848, Kyaw=0.5682
+[core_node-1] [INFO] [1780177183.452723147] [ekf_debug]: Innovation: los_yaw=-0.0090, los_pitch=-0.0001, los_distance=0.0359, yaw=0.0562
+[core_node-1] [INFO] [1780177183.452753326] [ekf_debug]: State: x=2.314, y=-0.055, z=-0.172, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.711, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177183.452759906] [ekf_debug]: P_diag: px=0.0120, py=0.0056, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177183.452763189] [ekf_debug]: K_gain: Kx=0.3837, Ky=1.5259, Kz=-1.2833, Kyaw=0.5681
+[core_node-1] [INFO] [1780177183.667525984] [ekf_debug]: Innovation: los_yaw=-0.0081, los_pitch=0.0000, los_distance=-0.0627, yaw=0.2108
+[core_node-1] [INFO] [1780177183.667555728] [ekf_debug]: State: x=2.298, y=-0.051, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.585, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177183.667561933] [ekf_debug]: P_diag: px=0.0120, py=0.0055, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177183.667565292] [ekf_debug]: K_gain: Kx=0.3845, Ky=1.5279, Kz=-1.2841, Kyaw=0.5680
+[core_node-1] [INFO] [1780177183.883723711] [ekf_debug]: Innovation: los_yaw=-0.0070, los_pitch=-0.0001, los_distance=-0.0299, yaw=0.1305
+[core_node-1] [INFO] [1780177183.883752921] [ekf_debug]: State: x=2.292, y=-0.050, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.508, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177183.883759287] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177183.883762674] [ekf_debug]: K_gain: Kx=0.3859, Ky=1.5083, Kz=-1.2798, Kyaw=0.5665
+[core_node-1] [INFO] [1780177184.096986420] [ekf_debug]: Innovation: los_yaw=-0.0079, los_pitch=-0.0000, los_distance=0.0146, yaw=0.0837
+[core_node-1] [INFO] [1780177184.097023742] [ekf_debug]: State: x=2.300, y=-0.053, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.459, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177184.097030228] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177184.097033533] [ekf_debug]: K_gain: Kx=0.3867, Ky=1.4974, Kz=-1.2758, Kyaw=0.5657
+[core_node-1] [INFO] [1780177184.313311194] [ekf_debug]: Innovation: los_yaw=-0.0111, los_pitch=0.0002, los_distance=0.0318, yaw=0.0899
+[core_node-1] [INFO] [1780177184.313342584] [ekf_debug]: State: x=2.316, y=-0.061, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.406, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177184.313348994] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177184.313352433] [ekf_debug]: K_gain: Kx=0.3871, Ky=1.4958, Kz=-1.2749, Kyaw=0.5653
+[core_node-1] [INFO] [1780177184.528929667] [ekf_debug]: Innovation: los_yaw=-0.0111, los_pitch=0.0004, los_distance=-0.0070, yaw=0.1486
+[core_node-1] [INFO] [1780177184.528959756] [ekf_debug]: State: x=2.317, y=-0.062, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.318, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177184.528966031] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177184.528969352] [ekf_debug]: K_gain: Kx=0.3875, Ky=1.4971, Kz=-1.2760, Kyaw=0.5649
+[core_node-1] [INFO] [1780177184.744615493] [ekf_debug]: Innovation: los_yaw=-0.0089, los_pitch=0.0001, los_distance=0.0301, yaw=0.0831
+[core_node-1] [INFO] [1780177184.744646788] [ekf_debug]: State: x=2.331, y=-0.067, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.269, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177184.744652834] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177184.744656340] [ekf_debug]: K_gain: Kx=0.3880, Ky=1.4916, Kz=-1.2755, Kyaw=0.5642
+[core_node-1] [INFO] [1780177184.958204289] [ekf_debug]: Innovation: los_yaw=-0.0098, los_pitch=0.0001, los_distance=0.0138, yaw=0.0785
+[core_node-1] [INFO] [1780177184.958242297] [ekf_debug]: State: x=2.337, y=-0.073, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.221, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177184.958249892] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177184.958254050] [ekf_debug]: K_gain: Kx=0.3882, Ky=1.4937, Kz=-1.2766, Kyaw=0.5639
+[core_node-1] [INFO] [1780177185.176450652] [ekf_debug]: Innovation: los_yaw=-0.0099, los_pitch=0.0000, los_distance=0.0088, yaw=0.0871
+[core_node-1] [INFO] [1780177185.176488449] [ekf_debug]: State: x=2.342, y=-0.079, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.169, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177185.176494782] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177185.176498070] [ekf_debug]: K_gain: Kx=0.3883, Ky=1.4943, Kz=-1.2776, Kyaw=0.5637
+[core_node-1] [INFO] [1780177185.390400249] [ekf_debug]: Innovation: los_yaw=-0.0083, los_pitch=0.0000, los_distance=-0.0563, yaw=0.0615
+[core_node-1] [INFO] [1780177185.390432617] [ekf_debug]: State: x=2.321, y=-0.084, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.131, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177185.390472583] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177185.390476437] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.4941, Kz=-1.2783, Kyaw=0.5636
+[core_node-1] [INFO] [1780177185.608743976] [ekf_debug]: Innovation: los_yaw=-0.0102, los_pitch=-0.0002, los_distance=0.0088, yaw=0.1216
+[core_node-1] [INFO] [1780177185.608777457] [ekf_debug]: State: x=2.325, y=-0.086, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.059, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177185.608784316] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177185.608788210] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.4853, Kz=-1.2753, Kyaw=0.5634
+[core_node-1] [INFO] [1780177185.823195458] [ekf_debug]: Innovation: los_yaw=-0.0100, los_pitch=-0.0003, los_distance=0.0061, yaw=0.1007
+[core_node-1] [INFO] [1780177185.823228106] [ekf_debug]: State: x=2.328, y=-0.089, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=0.001, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177185.823234484] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177185.823237814] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.4846, Kz=-1.2748, Kyaw=0.5633
+[core_node-1] [INFO] [1780177186.038831955] [ekf_debug]: Innovation: los_yaw=-0.0089, los_pitch=-0.0003, los_distance=0.0066, yaw=0.1118
+[core_node-1] [INFO] [1780177186.038872199] [ekf_debug]: State: x=2.330, y=-0.090, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=0.067, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177186.038878386] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177186.038881751] [ekf_debug]: K_gain: Kx=0.3883, Ky=1.4852, Kz=-1.2751, Kyaw=0.5633
+[core_node-1] [INFO] [1780177186.252397891] [ekf_debug]: Innovation: los_yaw=-0.0084, los_pitch=-0.0003, los_distance=0.0153, yaw=0.1423
+[core_node-1] [INFO] [1780177186.252429744] [ekf_debug]: State: x=2.335, y=-0.087, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=0.150, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177186.252436122] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177186.252439495] [ekf_debug]: K_gain: Kx=0.3881, Ky=1.4868, Kz=-1.2757, Kyaw=0.5635
+[core_node-1] [INFO] [1780177186.469549627] [ekf_debug]: Innovation: los_yaw=-0.0077, los_pitch=-0.0003, los_distance=-0.0105, yaw=0.0143
+[core_node-1] [INFO] [1780177186.469582388] [ekf_debug]: State: x=2.330, y=-0.097, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=0.161, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177186.469588716] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177186.469591997] [ekf_debug]: K_gain: Kx=0.3878, Ky=1.4910, Kz=-1.2771, Kyaw=0.5639
+[core_node-1] [INFO] [1780177186.685008805] [ekf_debug]: Innovation: los_yaw=-0.0083, los_pitch=-0.0004, los_distance=0.0236, yaw=0.0713
+[core_node-1] [INFO] [1780177186.685046109] [ekf_debug]: State: x=2.338, y=-0.102, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=0.204, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177186.685053303] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177186.685057230] [ekf_debug]: K_gain: Kx=0.3876, Ky=1.4896, Kz=-1.2771, Kyaw=0.5639
+[core_node-1] [INFO] [1780177186.959934371] [ekf_debug]: Innovation: los_yaw=-0.0076, los_pitch=-0.0004, los_distance=0.0415, yaw=0.1138
+[core_node-1] [INFO] [1780177186.959966765] [ekf_debug]: State: x=2.352, y=-0.102, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=0.272, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177186.959974108] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177186.959978003] [ekf_debug]: K_gain: Kx=0.3873, Ky=1.4940, Kz=-1.2786, Kyaw=0.5642
+[core_node-1] [INFO] [1780177187.173996223] [ekf_debug]: Innovation: los_yaw=-0.0058, los_pitch=0.0000, los_distance=0.0521, yaw=0.1264
+[core_node-1] [INFO] [1780177187.174034265] [ekf_debug]: State: x=2.370, y=-0.099, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=0.347, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177187.174040613] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177187.174043897] [ekf_debug]: K_gain: Kx=0.3869, Ky=1.5030, Kz=-1.2817, Kyaw=0.5648
+[core_node-1] [INFO] [1780177187.390655006] [ekf_debug]: Innovation: los_yaw=-0.0061, los_pitch=-0.0005, los_distance=0.0402, yaw=0.1040
+[core_node-1] [INFO] [1780177187.390717170] [ekf_debug]: State: x=2.383, y=-0.099, z=-0.172, vx=0.000, vy=0.000, vz=-0.000, yaw=0.409, omega=0.001, r1=0.248, r2=0.249, dz=0.050
+[core_node-1] [INFO] [1780177187.390723976] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177187.390727602] [ekf_debug]: K_gain: Kx=0.3864, Ky=1.5148, Kz=-1.2860, Kyaw=0.5655
+[core_node-1] [WARN] [1780177187.608720858] [core_node_offline]: 发生切板！切换至 1 号装甲板
+[core_node-1] [INFO] [1780177187.609005634] [ekf_debug]: Innovation: los_yaw=0.1950, los_pitch=0.0147, los_distance=-0.7896, yaw=-0.2944
+[core_node-1] [INFO] [1780177187.609026834] [ekf_debug]: State: x=2.137, y=0.274, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=0.249, omega=0.001, r1=0.248, r2=0.247, dz=0.050
+[core_node-1] [INFO] [1780177187.609036199] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177187.609041765] [ekf_debug]: K_gain: Kx=0.3802, Ky=1.6446, Kz=-1.3128, Kyaw=0.5624
+[core_node-1] [WARN] [1780177187.828587814] [core_node_offline]: 发生切板！切换至 3 号装甲板
+[core_node-1] [INFO] [1780177187.828884466] [ekf_debug]: Innovation: los_yaw=-0.1855, los_pitch=0.0008, los_distance=0.0297, yaw=0.4777
+[core_node-1] [INFO] [1780177187.828906484] [ekf_debug]: State: x=2.254, y=-0.001, z=-0.179, vx=0.000, vy=0.000, vz=-0.000, yaw=0.519, omega=0.001, r1=0.248, r2=0.247, dz=0.050
+[core_node-1] [INFO] [1780177187.828916313] [ekf_debug]: P_diag: px=0.0121, py=0.0063, pz=0.0044, pyaw=0.0194
+[core_node-1] [INFO] [1780177187.828922261] [ekf_debug]: K_gain: Kx=0.3665, Ky=1.5276, Kz=-1.2972, Kyaw=0.5672
+[core_node-1] [INFO] [1780177188.044525754] [ekf_debug]: Innovation: los_yaw=-0.0493, los_pitch=0.0007, los_distance=0.0351, yaw=0.3839
+[core_node-1] [INFO] [1780177188.044566360] [ekf_debug]: State: x=2.294, y=-0.058, z=-0.180, vx=0.000, vy=0.000, vz=-0.000, yaw=0.743, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177188.044572665] [ekf_debug]: P_diag: px=0.0115, py=0.0056, pz=0.0041, pyaw=0.0198
+[core_node-1] [INFO] [1780177188.044576037] [ekf_debug]: K_gain: Kx=0.3777, Ky=1.5502, Kz=-1.2865, Kyaw=0.5680
+[core_node-1] [INFO] [1780177188.260347667] [ekf_debug]: Innovation: los_yaw=-0.0135, los_pitch=-0.0001, los_distance=-0.0212, yaw=0.2941
+[core_node-1] [INFO] [1780177188.260378305] [ekf_debug]: State: x=2.299, y=-0.059, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=0.915, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177188.260384415] [ekf_debug]: P_diag: px=0.0117, py=0.0055, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177188.260387684] [ekf_debug]: K_gain: Kx=0.3822, Ky=1.5341, Kz=-1.2815, Kyaw=0.5672
+[core_node-1] [INFO] [1780177188.474655680] [ekf_debug]: Innovation: los_yaw=-0.0077, los_pitch=0.0002, los_distance=0.0524, yaw=0.1403
+[core_node-1] [INFO] [1780177188.474684935] [ekf_debug]: State: x=2.325, y=-0.058, z=-0.180, vx=0.000, vy=0.000, vz=-0.000, yaw=0.994, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177188.474691282] [ekf_debug]: P_diag: px=0.0119, py=0.0055, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177188.474698772] [ekf_debug]: K_gain: Kx=0.3851, Ky=1.5157, Kz=-1.2766, Kyaw=0.5663
+[core_node-1] [INFO] [1780177188.691249368] [ekf_debug]: Innovation: los_yaw=-0.0091, los_pitch=0.0001, los_distance=0.0183, yaw=0.1592
+[core_node-1] [INFO] [1780177188.691280679] [ekf_debug]: State: x=2.338, y=-0.057, z=-0.180, vx=0.000, vy=0.000, vz=-0.000, yaw=1.086, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177188.691286963] [ekf_debug]: P_diag: px=0.0120, py=0.0055, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177188.691290236] [ekf_debug]: K_gain: Kx=0.3865, Ky=1.5170, Kz=-1.2768, Kyaw=0.5663
+[core_node-1] [INFO] [1780177188.907036790] [ekf_debug]: Innovation: los_yaw=-0.0059, los_pitch=0.0001, los_distance=0.0078, yaw=0.0939
+[core_node-1] [INFO] [1780177188.907068749] [ekf_debug]: State: x=2.344, y=-0.057, z=-0.180, vx=0.000, vy=0.000, vz=-0.000, yaw=1.141, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177188.907074975] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177188.907078272] [ekf_debug]: K_gain: Kx=0.3876, Ky=1.5139, Kz=-1.2770, Kyaw=0.5657
+[core_node-1] [INFO] [1780177189.124055745] [ekf_debug]: Innovation: los_yaw=-0.0096, los_pitch=0.0003, los_distance=0.0175, yaw=0.0520
+[core_node-1] [INFO] [1780177189.124091397] [ekf_debug]: State: x=2.353, y=-0.066, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.172, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177189.124127606] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177189.124131285] [ekf_debug]: K_gain: Kx=0.3882, Ky=1.5122, Kz=-1.2771, Kyaw=0.5654
+[core_node-1] [INFO] [1780177189.340794713] [ekf_debug]: Innovation: los_yaw=-0.0096, los_pitch=0.0001, los_distance=0.0106, yaw=0.1014
+[core_node-1] [INFO] [1780177189.340827276] [ekf_debug]: State: x=2.360, y=-0.071, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.233, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177189.340834639] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177189.340838569] [ekf_debug]: K_gain: Kx=0.3885, Ky=1.5132, Kz=-1.2777, Kyaw=0.5653
+[core_node-1] [INFO] [1780177189.557387541] [ekf_debug]: Innovation: los_yaw=-0.0100, los_pitch=-0.0000, los_distance=0.0128, yaw=0.1474
+[core_node-1] [INFO] [1780177189.557420551] [ekf_debug]: State: x=2.368, y=-0.071, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.319, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177189.557427998] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177189.557431802] [ekf_debug]: K_gain: Kx=0.3888, Ky=1.5115, Kz=-1.2782, Kyaw=0.5648
+[core_node-1] [INFO] [1780177189.771717962] [ekf_debug]: Innovation: los_yaw=-0.0083, los_pitch=-0.0000, los_distance=0.0206, yaw=0.0973
+[core_node-1] [INFO] [1780177189.771747776] [ekf_debug]: State: x=2.378, y=-0.073, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.376, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177189.771754028] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177189.771757350] [ekf_debug]: K_gain: Kx=0.3892, Ky=1.5094, Kz=-1.2786, Kyaw=0.5643
+[core_node-1] [INFO] [1780177189.989050870] [ekf_debug]: Innovation: los_yaw=-0.0088, los_pitch=0.0001, los_distance=-0.0062, yaw=0.1260
+[core_node-1] [INFO] [1780177189.989082209] [ekf_debug]: State: x=2.377, y=-0.073, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.450, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177189.989088399] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177189.989091790] [ekf_debug]: K_gain: Kx=0.3893, Ky=1.5107, Kz=-1.2796, Kyaw=0.5641
+[core_node-1] [INFO] [1780177190.203389942] [ekf_debug]: Innovation: los_yaw=-0.0094, los_pitch=-0.0000, los_distance=-0.0114, yaw=0.0648
+[core_node-1] [INFO] [1780177190.203429600] [ekf_debug]: State: x=2.373, y=-0.080, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.490, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177190.203436945] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177190.203440887] [ekf_debug]: K_gain: Kx=0.3894, Ky=1.5084, Kz=-1.2795, Kyaw=0.5639
+[core_node-1] [INFO] [1780177190.418991205] [ekf_debug]: Innovation: los_yaw=-0.0104, los_pitch=-0.0001, los_distance=0.0600, yaw=0.2007
+[core_node-1] [INFO] [1780177190.419022410] [ekf_debug]: State: x=2.397, y=-0.074, z=-0.182, vx=0.000, vy=0.000, vz=-0.000, yaw=1.607, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177190.419029364] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177190.419033281] [ekf_debug]: K_gain: Kx=0.3894, Ky=1.5062, Kz=-1.2788, Kyaw=0.5638
+[core_node-1] [INFO] [1780177190.634227506] [ekf_debug]: Innovation: los_yaw=-0.0064, los_pitch=0.0001, los_distance=-0.0658, yaw=0.0777
+[core_node-1] [INFO] [1780177190.634263272] [ekf_debug]: State: x=2.371, y=-0.075, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.652, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177190.634270467] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177190.634274321] [ekf_debug]: K_gain: Kx=0.3892, Ky=1.5142, Kz=-1.2817, Kyaw=0.5640
+[core_node-1] [INFO] [1780177190.851668848] [ekf_debug]: Innovation: los_yaw=-0.0097, los_pitch=-0.0003, los_distance=0.0611, yaw=0.1230
+[core_node-1] [INFO] [1780177190.851703455] [ekf_debug]: State: x=2.394, y=-0.077, z=-0.182, vx=0.000, vy=0.000, vz=-0.000, yaw=1.726, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177190.851711895] [ekf_debug]: P_diag: px=0.0121, py=0.0059, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177190.851715563] [ekf_debug]: K_gain: Kx=0.3891, Ky=1.5067, Kz=-1.2797, Kyaw=0.5640
+[core_node-1] [INFO] [1780177191.065429118] [ekf_debug]: Innovation: los_yaw=-0.0081, los_pitch=-0.0003, los_distance=-0.0323, yaw=-0.1612
+[core_node-1] [INFO] [1780177191.065469808] [ekf_debug]: State: x=2.382, y=-0.106, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.637, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177191.065476352] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177191.065479741] [ekf_debug]: K_gain: Kx=0.3888, Ky=1.5158, Kz=-1.2821, Kyaw=0.5644
+[core_node-1] [INFO] [1780177191.281934393] [ekf_debug]: Innovation: los_yaw=-0.0120, los_pitch=-0.0004, los_distance=-0.0082, yaw=0.1251
+[core_node-1] [INFO] [1780177191.281968683] [ekf_debug]: State: x=2.377, y=-0.110, z=-0.180, vx=0.000, vy=0.000, vz=-0.000, yaw=1.712, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177191.281975208] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177191.281978461] [ekf_debug]: K_gain: Kx=0.3888, Ky=1.5095, Kz=-1.2813, Kyaw=0.5640
+[core_node-1] [INFO] [1780177191.495065823] [ekf_debug]: Innovation: los_yaw=-0.0085, los_pitch=-0.0007, los_distance=0.0157, yaw=0.4404
+[core_node-1] [INFO] [1780177191.495095716] [ekf_debug]: State: x=2.380, y=-0.076, z=-0.180, vx=0.000, vy=0.000, vz=-0.000, yaw=1.963, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177191.495101907] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177191.495105219] [ekf_debug]: K_gain: Kx=0.3885, Ky=1.5094, Kz=-1.2808, Kyaw=0.5643
+[core_node-1] [INFO] [1780177191.712159847] [ekf_debug]: Innovation: los_yaw=-0.0014, los_pitch=0.0003, los_distance=0.0487, yaw=0.0568
+[core_node-1] [INFO] [1780177191.712190387] [ekf_debug]: State: x=2.398, y=-0.074, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.998, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177191.712196582] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177191.712200057] [ekf_debug]: K_gain: Kx=0.3872, Ky=1.5253, Kz=-1.2833, Kyaw=0.5662
+[core_node-1] [INFO] [1780177191.926831639] [ekf_debug]: Innovation: los_yaw=-0.0054, los_pitch=-0.0001, los_distance=0.0230, yaw=0.1519
+[core_node-1] [INFO] [1780177191.926863653] [ekf_debug]: State: x=2.403, y=-0.068, z=-0.182, vx=0.000, vy=0.000, vz=-0.000, yaw=2.086, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177191.926871298] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177191.926875081] [ekf_debug]: K_gain: Kx=0.3869, Ky=1.5337, Kz=-1.2868, Kyaw=0.5666
+[core_node-1] [INFO] [1780177192.144101520] [ekf_debug]: Innovation: los_yaw=-0.0048, los_pitch=-0.0000, los_distance=0.0182, yaw=0.1350
+[core_node-1] [INFO] [1780177192.144145798] [ekf_debug]: State: x=2.406, y=-0.063, z=-0.182, vx=0.000, vy=0.000, vz=-0.000, yaw=2.165, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177192.144153440] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177192.144157491] [ekf_debug]: K_gain: Kx=0.3862, Ky=1.5439, Kz=-1.2900, Kyaw=0.5675
+[core_node-1] [INFO] [1780177192.358787807] [ekf_debug]: Innovation: los_yaw=-0.0044, los_pitch=0.0000, los_distance=0.0603, yaw=0.1417
+[core_node-1] [INFO] [1780177192.358817057] [ekf_debug]: State: x=2.424, y=-0.059, z=-0.184, vx=0.000, vy=0.000, vz=-0.000, yaw=2.250, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177192.358823081] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177192.358826437] [ekf_debug]: K_gain: Kx=0.3855, Ky=1.5529, Kz=-1.2927, Kyaw=0.5683
+[core_node-1] [WARN] [1780177192.575565543] [core_node_offline]: 发生切板！切换至 2 号装甲板
+[core_node-1] [INFO] [1780177192.575754833] [ekf_debug]: Innovation: los_yaw=-0.0070, los_pitch=-0.0028, los_distance=-0.1236, yaw=0.3689
+[core_node-1] [INFO] [1780177192.575763256] [ekf_debug]: State: x=2.392, y=-0.047, z=-0.176, vx=0.000, vy=0.000, vz=-0.000, yaw=2.470, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177192.575769541] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177192.575772813] [ekf_debug]: K_gain: Kx=0.3823, Ky=1.5934, Kz=-1.3026, Kyaw=0.5691
+[core_node-1] [INFO] [1780177192.789152190] [ekf_debug]: Innovation: los_yaw=-0.0025, los_pitch=-0.0016, los_distance=-0.1055, yaw=0.2903
+[core_node-1] [INFO] [1780177192.789211963] [ekf_debug]: State: x=2.362, y=-0.028, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=2.641, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177192.789218514] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0042, pyaw=0.0201
+[core_node-1] [INFO] [1780177192.789222076] [ekf_debug]: K_gain: Kx=0.3841, Ky=1.5559, Kz=-1.3009, Kyaw=0.5668
+[core_node-1] [INFO] [1780177193.006318980] [ekf_debug]: Innovation: los_yaw=-0.0047, los_pitch=-0.0009, los_distance=-0.0231, yaw=0.2778
+[core_node-1] [INFO] [1780177193.006356196] [ekf_debug]: State: x=2.361, y=-0.009, z=-0.168, vx=0.000, vy=0.000, vz=-0.000, yaw=2.800, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177193.006362516] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0041, pyaw=0.0199
+[core_node-1] [INFO] [1780177193.006365885] [ekf_debug]: K_gain: Kx=0.3860, Ky=1.5257, Kz=-1.2929, Kyaw=0.5652
+[core_node-1] [INFO] [1780177193.221141948] [ekf_debug]: Innovation: los_yaw=-0.0043, los_pitch=-0.0004, los_distance=0.0287, yaw=0.1801
+[core_node-1] [INFO] [1780177193.221172485] [ekf_debug]: State: x=2.376, y=0.003, z=-0.168, vx=0.000, vy=0.000, vz=-0.000, yaw=2.903, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177193.221178855] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177193.221182258] [ekf_debug]: K_gain: Kx=0.3874, Ky=1.5108, Kz=-1.2876, Kyaw=0.5641
+[core_node-1] [INFO] [1780177193.439025165] [ekf_debug]: Innovation: los_yaw=-0.0077, los_pitch=0.0003, los_distance=-0.0050, yaw=-0.0158
+[core_node-1] [INFO] [1780177193.439057696] [ekf_debug]: State: x=2.375, y=-0.011, z=-0.168, vx=0.000, vy=0.000, vz=-0.000, yaw=2.896, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177193.439065184] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177193.439069007] [ekf_debug]: K_gain: Kx=0.3881, Ky=1.5102, Kz=-1.2868, Kyaw=0.5638
+[core_node-1] [INFO] [1780177193.653910741] [ekf_debug]: Innovation: los_yaw=-0.0083, los_pitch=0.0002, los_distance=-0.0420, yaw=0.0672
+[core_node-1] [INFO] [1780177193.653943019] [ekf_debug]: State: x=2.360, y=-0.016, z=-0.167, vx=0.000, vy=0.000, vz=-0.000, yaw=2.938, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177193.653950342] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177193.653954489] [ekf_debug]: K_gain: Kx=0.3882, Ky=1.5112, Kz=-1.2864, Kyaw=0.5641
+[core_node-1] [INFO] [1780177193.871407675] [ekf_debug]: Innovation: los_yaw=-0.0095, los_pitch=-0.0000, los_distance=0.0052, yaw=0.0870
+[core_node-1] [INFO] [1780177193.871437016] [ekf_debug]: State: x=2.363, y=-0.021, z=-0.168, vx=0.000, vy=0.000, vz=-0.000, yaw=2.990, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177193.871443252] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177193.871446452] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.5040, Kz=-1.2840, Kyaw=0.5638
+[core_node-1] [INFO] [1780177194.085402165] [ekf_debug]: Innovation: los_yaw=-0.0097, los_pitch=0.0000, los_distance=0.0114, yaw=0.0531
+[core_node-1] [INFO] [1780177194.085439840] [ekf_debug]: State: x=2.368, y=-0.030, z=-0.168, vx=0.000, vy=0.000, vz=-0.000, yaw=3.023, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177194.085446059] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177194.085449322] [ekf_debug]: K_gain: Kx=0.3886, Ky=1.5026, Kz=-1.2832, Kyaw=0.5636
+[core_node-1] [INFO] [1780177194.301522066] [ekf_debug]: Innovation: los_yaw=-0.0112, los_pitch=0.0004, los_distance=0.0241, yaw=0.0470
+[core_node-1] [INFO] [1780177194.301556619] [ekf_debug]: State: x=2.378, y=-0.041, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=3.054, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177194.301563018] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177194.301566368] [ekf_debug]: K_gain: Kx=0.3886, Ky=1.5035, Kz=-1.2835, Kyaw=0.5636
+[core_node-1] [INFO] [1780177194.516708198] [ekf_debug]: Innovation: los_yaw=-0.0093, los_pitch=-0.0000, los_distance=-0.0304, yaw=0.0904
+[core_node-1] [INFO] [1780177194.516737460] [ekf_debug]: State: x=2.366, y=-0.045, z=-0.168, vx=0.000, vy=0.000, vz=-0.000, yaw=3.108, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177194.516743701] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177194.516777895] [ekf_debug]: K_gain: Kx=0.3887, Ky=1.5065, Kz=-1.2848, Kyaw=0.5636
+[core_node-1] [INFO] [1780177194.734211030] [ekf_debug]: Innovation: los_yaw=-0.0097, los_pitch=-0.0002, los_distance=-0.0185, yaw=0.1014
+[core_node-1] [INFO] [1780177194.734240733] [ekf_debug]: State: x=2.359, y=-0.049, z=-0.167, vx=0.000, vy=0.000, vz=-0.000, yaw=-3.115, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177194.734247164] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177194.734250455] [ekf_debug]: K_gain: Kx=0.3886, Ky=1.5021, Kz=-1.2837, Kyaw=0.5635
+[core_node-1] [INFO] [1780177194.947772789] [ekf_debug]: Innovation: los_yaw=-0.0088, los_pitch=-0.0002, los_distance=-0.0185, yaw=0.0913
+[core_node-1] [INFO] [1780177194.947803628] [ekf_debug]: State: x=2.352, y=-0.052, z=-0.167, vx=0.000, vy=0.000, vz=-0.000, yaw=-3.060, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177194.947810041] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177194.947813507] [ekf_debug]: K_gain: Kx=0.3886, Ky=1.4992, Kz=-1.2824, Kyaw=0.5635
+[core_node-1] [INFO] [1780177195.166139373] [ekf_debug]: Innovation: los_yaw=-0.0087, los_pitch=-0.0002, los_distance=-0.0154, yaw=0.0902
+[core_node-1] [INFO] [1780177195.166176741] [ekf_debug]: State: x=2.345, y=-0.055, z=-0.166, vx=0.000, vy=0.000, vz=-0.000, yaw=-3.007, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177195.166182969] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177195.166186322] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.4968, Kz=-1.2811, Kyaw=0.5635
+[core_node-1] [INFO] [1780177195.380343309] [ekf_debug]: Innovation: los_yaw=-0.0106, los_pitch=-0.0005, los_distance=-0.0197, yaw=0.2141
+[core_node-1] [INFO] [1780177195.380376263] [ekf_debug]: State: x=2.336, y=-0.047, z=-0.165, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.883, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177195.380383225] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177195.380387212] [ekf_debug]: K_gain: Kx=0.3882, Ky=1.4953, Kz=-1.2800, Kyaw=0.5637
+[core_node-1] [INFO] [1780177195.598343512] [ekf_debug]: Innovation: los_yaw=-0.0061, los_pitch=-0.0002, los_distance=0.0181, yaw=0.1550
+[core_node-1] [INFO] [1780177195.598375894] [ekf_debug]: State: x=2.340, y=-0.040, z=-0.165, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.793, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177195.598382820] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177195.598386889] [ekf_debug]: K_gain: Kx=0.3877, Ky=1.4971, Kz=-1.2794, Kyaw=0.5644
+[core_node-1] [INFO] [1780177195.812933575] [ekf_debug]: Innovation: los_yaw=-0.0065, los_pitch=-0.0001, los_distance=-0.0240, yaw=0.0861
+[core_node-1] [INFO] [1780177195.812962849] [ekf_debug]: State: x=2.329, y=-0.040, z=-0.165, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.743, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177195.812969146] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177195.812972415] [ekf_debug]: K_gain: Kx=0.3871, Ky=1.5042, Kz=-1.2808, Kyaw=0.5652
+[core_node-1] [INFO] [1780177196.029047413] [ekf_debug]: Innovation: los_yaw=-0.0070, los_pitch=-0.0002, los_distance=0.0226, yaw=0.1140
+[core_node-1] [INFO] [1780177196.029084326] [ekf_debug]: State: x=2.334, y=-0.040, z=-0.165, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.675, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177196.029090687] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177196.029094061] [ekf_debug]: K_gain: Kx=0.3867, Ky=1.5039, Kz=-1.2805, Kyaw=0.5656
+[core_node-1] [INFO] [1780177196.272295309] [ekf_debug]: Innovation: los_yaw=-0.0074, los_pitch=-0.0004, los_distance=0.0273, yaw=0.0391
+[core_node-1] [INFO] [1780177196.272331094] [ekf_debug]: State: x=2.343, y=-0.048, z=-0.165, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.650, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177196.272337891] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177196.272341476] [ekf_debug]: K_gain: Kx=0.3862, Ky=1.5113, Kz=-1.2822, Kyaw=0.5663
+[core_node-1] [INFO] [1780177196.488098114] [ekf_debug]: Innovation: los_yaw=-0.0074, los_pitch=-0.0003, los_distance=0.0160, yaw=0.0425
+[core_node-1] [INFO] [1780177196.488161237] [ekf_debug]: State: x=2.347, y=-0.055, z=-0.166, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.623, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177196.488167785] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177196.488171070] [ekf_debug]: K_gain: Kx=0.3859, Ky=1.5166, Kz=-1.2845, Kyaw=0.5666
+[core_node-1] [INFO] [1780177196.702393291] [ekf_debug]: Innovation: los_yaw=-0.0065, los_pitch=-0.0004, los_distance=0.0661, yaw=0.1149
+[core_node-1] [INFO] [1780177196.702426720] [ekf_debug]: State: x=2.369, y=-0.056, z=-0.167, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.553, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177196.702432818] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177196.702436089] [ekf_debug]: K_gain: Kx=0.3856, Ky=1.5209, Kz=-1.2864, Kyaw=0.5669
+[core_node-1] [INFO] [1780177196.919044659] [ekf_debug]: Innovation: los_yaw=-0.0043, los_pitch=-0.0001, los_distance=0.0762, yaw=0.2648
+[core_node-1] [INFO] [1780177196.919078675] [ekf_debug]: State: x=2.389, y=-0.041, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.397, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177196.919084821] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177196.919088130] [ekf_debug]: K_gain: Kx=0.3850, Ky=1.5357, Kz=-1.2909, Kyaw=0.5678
+[core_node-1] [WARN] [1780177197.131987802] [core_node_offline]: 发生切板！切换至 1 号装甲板
+[core_node-1] [INFO] [1780177197.132203342] [ekf_debug]: Innovation: los_yaw=-0.0032, los_pitch=0.0065, los_distance=-0.1535, yaw=0.0960
+[core_node-1] [INFO] [1780177197.132212057] [ekf_debug]: State: x=2.333, y=-0.041, z=-0.175, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.331, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177197.132217989] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177197.132221216] [ekf_debug]: K_gain: Kx=0.3840, Ky=1.5741, Kz=-1.2963, Kyaw=0.5688
+[core_node-1] [INFO] [1780177197.348576394] [ekf_debug]: Innovation: los_yaw=-0.0071, los_pitch=0.0028, los_distance=-0.0852, yaw=0.0764
+[core_node-1] [INFO] [1780177197.348607724] [ekf_debug]: State: x=2.304, y=-0.048, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.281, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177197.348614017] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0041, pyaw=0.0200
+[core_node-1] [INFO] [1780177197.348617287] [ekf_debug]: K_gain: Kx=0.3844, Ky=1.5466, Kz=-1.2900, Kyaw=0.5683
+[core_node-1] [INFO] [1780177197.563085126] [ekf_debug]: Innovation: los_yaw=-0.0080, los_pitch=0.0010, los_distance=-0.0439, yaw=-0.0183
+[core_node-1] [INFO] [1780177197.563114522] [ekf_debug]: State: x=2.287, y=-0.062, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.287, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177197.563121054] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177197.563124309] [ekf_debug]: K_gain: Kx=0.3852, Ky=1.5277, Kz=-1.2817, Kyaw=0.5680
+[core_node-1] [INFO] [1780177197.779502044] [ekf_debug]: Innovation: los_yaw=-0.0099, los_pitch=0.0007, los_distance=-0.0351, yaw=0.1172
+[core_node-1] [INFO] [1780177197.779533820] [ekf_debug]: State: x=2.279, y=-0.068, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.216, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177197.779541113] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0200
+[core_node-1] [INFO] [1780177197.779545289] [ekf_debug]: K_gain: Kx=0.3856, Ky=1.5210, Kz=-1.2763, Kyaw=0.5683
+[core_node-1] [INFO] [1780177197.994911000] [ekf_debug]: Innovation: los_yaw=-0.0084, los_pitch=0.0001, los_distance=-0.0122, yaw=0.0868
+[core_node-1] [INFO] [1780177197.994940369] [ekf_debug]: State: x=2.278, y=-0.073, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.164, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177197.994946779] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0039, pyaw=0.0200
+[core_node-1] [INFO] [1780177197.994950279] [ekf_debug]: K_gain: Kx=0.3865, Ky=1.5084, Kz=-1.2717, Kyaw=0.5675
+[core_node-1] [INFO] [1780177198.211340503] [ekf_debug]: Innovation: los_yaw=-0.0089, los_pitch=0.0002, los_distance=0.0110, yaw=0.0433
+[core_node-1] [INFO] [1780177198.211377788] [ekf_debug]: State: x=2.284, y=-0.082, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.137, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177198.211414991] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0038, pyaw=0.0200
+[core_node-1] [INFO] [1780177198.211418751] [ekf_debug]: K_gain: Kx=0.3871, Ky=1.5016, Kz=-1.2688, Kyaw=0.5669
+[core_node-1] [INFO] [1780177198.426532366] [ekf_debug]: Innovation: los_yaw=-0.0098, los_pitch=0.0001, los_distance=-0.0030, yaw=0.1355
+[core_node-1] [INFO] [1780177198.426564930] [ekf_debug]: State: x=2.288, y=-0.084, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-2.057, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177198.426571280] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0038, pyaw=0.0200
+[core_node-1] [INFO] [1780177198.426574620] [ekf_debug]: K_gain: Kx=0.3874, Ky=1.5010, Kz=-1.2682, Kyaw=0.5667
+[core_node-1] [INFO] [1780177198.642101314] [ekf_debug]: Innovation: los_yaw=-0.0079, los_pitch=-0.0000, los_distance=0.0043, yaw=0.1480
+[core_node-1] [INFO] [1780177198.642131388] [ekf_debug]: State: x=2.294, y=-0.082, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.971, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177198.642137941] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177198.642141323] [ekf_debug]: K_gain: Kx=0.3881, Ky=1.4943, Kz=-1.2671, Kyaw=0.5658
+[core_node-1] [INFO] [1780177198.858697552] [ekf_debug]: Innovation: los_yaw=-0.0108, los_pitch=0.0000, los_distance=0.0315, yaw=0.1758
+[core_node-1] [INFO] [1780177198.858727827] [ekf_debug]: State: x=2.311, y=-0.080, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.869, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177198.858733961] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177198.858737324] [ekf_debug]: K_gain: Kx=0.3886, Ky=1.4891, Kz=-1.2663, Kyaw=0.5650
+[core_node-1] [INFO] [1780177199.075506378] [ekf_debug]: Innovation: los_yaw=-0.0086, los_pitch=0.0001, los_distance=0.0143, yaw=0.1463
+[core_node-1] [INFO] [1780177199.075544135] [ekf_debug]: State: x=2.319, y=-0.078, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.784, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177199.075550416] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177199.075553667] [ekf_debug]: K_gain: Kx=0.3891, Ky=1.4883, Kz=-1.2673, Kyaw=0.5643
+[core_node-1] [INFO] [1780177199.290285420] [ekf_debug]: Innovation: los_yaw=-0.0071, los_pitch=0.0001, los_distance=0.0088, yaw=0.1731
+[core_node-1] [INFO] [1780177199.290316260] [ekf_debug]: State: x=2.325, y=-0.070, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.684, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177199.290322413] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177199.290325777] [ekf_debug]: K_gain: Kx=0.3893, Ky=1.4877, Kz=-1.2681, Kyaw=0.5639
+[core_node-1] [INFO] [1780177199.506984988] [ekf_debug]: Innovation: los_yaw=-0.0074, los_pitch=0.0000, los_distance=0.0056, yaw=0.2004
+[core_node-1] [INFO] [1780177199.507015765] [ekf_debug]: State: x=2.329, y=-0.059, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.569, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177199.507021972] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177199.507025310] [ekf_debug]: K_gain: Kx=0.3895, Ky=1.4871, Kz=-1.2686, Kyaw=0.5636
+[core_node-1] [INFO] [1780177199.720873476] [ekf_debug]: Innovation: los_yaw=-0.0077, los_pitch=-0.0000, los_distance=0.0066, yaw=0.1416
+[core_node-1] [INFO] [1780177199.720903953] [ekf_debug]: State: x=2.332, y=-0.055, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.486, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177199.720910395] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177199.720913680] [ekf_debug]: K_gain: Kx=0.3894, Ky=1.4877, Kz=-1.2692, Kyaw=0.5636
+[core_node-1] [INFO] [1780177199.937299919] [ekf_debug]: Innovation: los_yaw=-0.0077, los_pitch=-0.0000, los_distance=-0.0091, yaw=0.0997
+[core_node-1] [INFO] [1780177199.937333766] [ekf_debug]: State: x=2.328, y=-0.055, z=-0.178, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.428, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177199.937340322] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177199.937343707] [ekf_debug]: K_gain: Kx=0.3892, Ky=1.4899, Kz=-1.2700, Kyaw=0.5638
+[core_node-1] [INFO] [1780177200.150732070] [ekf_debug]: Innovation: los_yaw=-0.0045, los_pitch=0.0000, los_distance=-0.0476, yaw=-0.0129
+[core_node-1] [INFO] [1780177200.150804358] [ekf_debug]: State: x=2.309, y=-0.062, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.434, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177200.150811053] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177200.150814459] [ekf_debug]: K_gain: Kx=0.3890, Ky=1.4901, Kz=-1.2699, Kyaw=0.5640
+[core_node-1] [INFO] [1780177200.367907740] [ekf_debug]: Innovation: los_yaw=-0.0105, los_pitch=-0.0004, los_distance=0.0105, yaw=0.1002
+[core_node-1] [INFO] [1780177200.367939508] [ekf_debug]: State: x=2.312, y=-0.067, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.374, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177200.367945643] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177200.367949005] [ekf_debug]: K_gain: Kx=0.3889, Ky=1.4826, Kz=-1.2672, Kyaw=0.5639
+[core_node-1] [INFO] [1780177200.582550989] [ekf_debug]: Innovation: los_yaw=-0.0081, los_pitch=-0.0003, los_distance=0.0014, yaw=0.0920
+[core_node-1] [INFO] [1780177200.582581557] [ekf_debug]: State: x=2.311, y=-0.069, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.319, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177200.582587892] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177200.582591323] [ekf_debug]: K_gain: Kx=0.3886, Ky=1.4851, Kz=-1.2672, Kyaw=0.5643
+[core_node-1] [INFO] [1780177200.849728801] [ekf_debug]: Innovation: los_yaw=-0.0077, los_pitch=-0.0003, los_distance=0.0214, yaw=0.0653
+[core_node-1] [INFO] [1780177200.849761371] [ekf_debug]: State: x=2.317, y=-0.074, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.279, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177200.849767630] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177200.849770984] [ekf_debug]: K_gain: Kx=0.3882, Ky=1.4874, Kz=-1.2677, Kyaw=0.5647
+[core_node-1] [INFO] [1780177201.064105715] [ekf_debug]: Innovation: los_yaw=-0.0075, los_pitch=-0.0003, los_distance=0.0152, yaw=0.0175
+[core_node-1] [INFO] [1780177201.064153804] [ekf_debug]: State: x=2.322, y=-0.084, z=-0.177, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.267, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177201.064161665] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177201.064165801] [ekf_debug]: K_gain: Kx=0.3879, Ky=1.4921, Kz=-1.2693, Kyaw=0.5650
+[core_node-1] [WARN] [1780177201.280709732] [core_node_offline]: 发生切板！切换至 0 号装甲板
+[core_node-1] [INFO] [1780177201.280901714] [ekf_debug]: Innovation: los_yaw=0.0106, los_pitch=0.0008, los_distance=-0.0857, yaw=0.2367
+[core_node-1] [INFO] [1780177201.280909878] [ekf_debug]: State: x=2.300, y=-0.060, z=-0.175, vx=0.000, vy=0.000, vz=-0.000, yaw=-1.125, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177201.280915959] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177201.280919246] [ekf_debug]: K_gain: Kx=0.3797, Ky=1.6005, Kz=-1.2923, Kyaw=0.5708
+[core_node-1] [INFO] [1780177201.494134566] [ekf_debug]: Innovation: los_yaw=-0.0008, los_pitch=-0.0002, los_distance=-0.0497, yaw=0.2183
+[core_node-1] [INFO] [1780177201.494165668] [ekf_debug]: State: x=2.293, y=-0.053, z=-0.173, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.996, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177201.494172251] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0041, pyaw=0.0201
+[core_node-1] [INFO] [1780177201.494175676] [ekf_debug]: K_gain: Kx=0.3802, Ky=1.5775, Kz=-1.2970, Kyaw=0.5712
+[core_node-1] [INFO] [1780177201.711870378] [ekf_debug]: Innovation: los_yaw=-0.0037, los_pitch=-0.0002, los_distance=-0.0407, yaw=0.2226
+[core_node-1] [INFO] [1780177201.711910513] [ekf_debug]: State: x=2.289, y=-0.047, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.866, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177201.711921017] [ekf_debug]: P_diag: px=0.0120, py=0.0056, pz=0.0041, pyaw=0.0201
+[core_node-1] [INFO] [1780177201.711927306] [ekf_debug]: K_gain: Kx=0.3817, Ky=1.5573, Kz=-1.2936, Kyaw=0.5706
+[core_node-1] [INFO] [1780177201.929736846] [ekf_debug]: Innovation: los_yaw=-0.0051, los_pitch=0.0000, los_distance=-0.0328, yaw=0.1955
+[core_node-1] [INFO] [1780177201.929776697] [ekf_debug]: State: x=2.286, y=-0.042, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.751, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177201.929830356] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0041, pyaw=0.0201
+[core_node-1] [INFO] [1780177201.929837529] [ekf_debug]: K_gain: Kx=0.3832, Ky=1.5382, Kz=-1.2884, Kyaw=0.5694
+[core_node-1] [INFO] [1780177202.149854657] [ekf_debug]: Innovation: los_yaw=-0.0058, los_pitch=0.0000, los_distance=-0.0261, yaw=0.1585
+[core_node-1] [INFO] [1780177202.149893941] [ekf_debug]: State: x=2.283, y=-0.039, z=-0.168, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.658, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177202.149900367] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0040, pyaw=0.0201
+[core_node-1] [INFO] [1780177202.149903678] [ekf_debug]: K_gain: Kx=0.3845, Ky=1.5222, Kz=-1.2832, Kyaw=0.5682
+[core_node-1] [INFO] [1780177202.364403003] [ekf_debug]: Innovation: los_yaw=-0.0066, los_pitch=-0.0000, los_distance=-0.0168, yaw=0.0939
+[core_node-1] [INFO] [1780177202.364440031] [ekf_debug]: State: x=2.281, y=-0.042, z=-0.168, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.602, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177202.364446399] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177202.364449812] [ekf_debug]: K_gain: Kx=0.3855, Ky=1.5098, Kz=-1.2790, Kyaw=0.5673
+[core_node-1] [INFO] [1780177202.583772804] [ekf_debug]: Innovation: los_yaw=-0.0081, los_pitch=0.0002, los_distance=-0.0127, yaw=0.1138
+[core_node-1] [INFO] [1780177202.583806612] [ekf_debug]: State: x=2.281, y=-0.044, z=-0.167, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.535, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177202.583812652] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0039, pyaw=0.0200
+[core_node-1] [INFO] [1780177202.583815917] [ekf_debug]: K_gain: Kx=0.3861, Ky=1.5027, Kz=-1.2760, Kyaw=0.5668
+[core_node-1] [INFO] [1780177202.801937118] [ekf_debug]: Innovation: los_yaw=-0.0093, los_pitch=0.0004, los_distance=-0.0055, yaw=0.1191
+[core_node-1] [INFO] [1780177202.801966440] [ekf_debug]: State: x=2.283, y=-0.046, z=-0.167, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.464, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177202.801972174] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177202.801975445] [ekf_debug]: K_gain: Kx=0.3866, Ky=1.4953, Kz=-1.2736, Kyaw=0.5661
+[core_node-1] [INFO] [1780177203.019524220] [ekf_debug]: Innovation: los_yaw=-0.0096, los_pitch=0.0003, los_distance=0.0724, yaw=0.0834
+[core_node-1] [INFO] [1780177203.019565689] [ekf_debug]: State: x=2.314, y=-0.052, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.417, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177203.019572404] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177203.019575673] [ekf_debug]: K_gain: Kx=0.3872, Ky=1.4892, Kz=-1.2718, Kyaw=0.5653
+[core_node-1] [INFO] [1780177203.234195544] [ekf_debug]: Innovation: los_yaw=-0.0089, los_pitch=0.0002, los_distance=-0.0051, yaw=0.0478
+[core_node-1] [INFO] [1780177203.234226835] [ekf_debug]: State: x=2.314, y=-0.060, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.387, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177203.234232919] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177203.234236339] [ekf_debug]: K_gain: Kx=0.3875, Ky=1.4966, Kz=-1.2749, Kyaw=0.5650
+[core_node-1] [INFO] [1780177203.450865892] [ekf_debug]: Innovation: los_yaw=-0.0104, los_pitch=0.0002, los_distance=0.0209, yaw=0.0797
+[core_node-1] [INFO] [1780177203.450896174] [ekf_debug]: State: x=2.324, y=-0.068, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.339, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177203.450902606] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177203.450906135] [ekf_debug]: K_gain: Kx=0.3877, Ky=1.4953, Kz=-1.2755, Kyaw=0.5648
+[core_node-1] [INFO] [1780177203.665170997] [ekf_debug]: Innovation: los_yaw=-0.0095, los_pitch=0.0001, los_distance=0.0095, yaw=0.1223
+[core_node-1] [INFO] [1780177203.665200384] [ekf_debug]: State: x=2.330, y=-0.069, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.267, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177203.665206503] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177203.665209898] [ekf_debug]: K_gain: Kx=0.3879, Ky=1.4956, Kz=-1.2765, Kyaw=0.5644
+[core_node-1] [INFO] [1780177203.883714465] [ekf_debug]: Innovation: los_yaw=-0.0104, los_pitch=-0.0000, los_distance=0.0178, yaw=0.0930
+[core_node-1] [INFO] [1780177203.883775219] [ekf_debug]: State: x=2.339, y=-0.075, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.212, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177203.883781616] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177203.883785247] [ekf_debug]: K_gain: Kx=0.3882, Ky=1.4937, Kz=-1.2769, Kyaw=0.5639
+[core_node-1] [INFO] [1780177204.097090316] [ekf_debug]: Innovation: los_yaw=-0.0098, los_pitch=0.0001, los_distance=0.0016, yaw=0.1123
+[core_node-1] [INFO] [1780177204.097130585] [ekf_debug]: State: x=2.341, y=-0.077, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.145, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177204.097137252] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177204.097140591] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.4943, Kz=-1.2779, Kyaw=0.5637
+[core_node-1] [INFO] [1780177204.313381308] [ekf_debug]: Innovation: los_yaw=-0.0084, los_pitch=0.0001, los_distance=-0.0657, yaw=0.0799
+[core_node-1] [INFO] [1780177204.313412040] [ekf_debug]: State: x=2.316, y=-0.081, z=-0.169, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.096, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177204.313418405] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177204.313421788] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.4930, Kz=-1.2781, Kyaw=0.5635
+[core_node-1] [INFO] [1780177204.529712003] [ekf_debug]: Innovation: los_yaw=-0.0094, los_pitch=-0.0003, los_distance=-0.0235, yaw=0.0611
+[core_node-1] [INFO] [1780177204.529742005] [ekf_debug]: State: x=2.307, y=-0.088, z=-0.168, vx=0.000, vy=0.000, vz=-0.000, yaw=-0.059, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177204.529748376] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177204.529751856] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.4827, Kz=-1.2745, Kyaw=0.5632
+[core_node-1] [INFO] [1780177204.745551932] [ekf_debug]: Innovation: los_yaw=-0.0104, los_pitch=-0.0003, los_distance=0.0795, yaw=0.1100
+[core_node-1] [INFO] [1780177204.745581174] [ekf_debug]: State: x=2.338, y=-0.092, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=0.007, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177204.745587419] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177204.745590690] [ekf_debug]: K_gain: Kx=0.3883, Ky=1.4777, Kz=-1.2719, Kyaw=0.5632
+[core_node-1] [INFO] [1780177204.960706603] [ekf_debug]: Innovation: los_yaw=-0.0099, los_pitch=-0.0002, los_distance=0.0075, yaw=0.1514
+[core_node-1] [INFO] [1780177204.960739620] [ekf_debug]: State: x=2.341, y=-0.090, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=0.096, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177204.960746270] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177204.960749473] [ekf_debug]: K_gain: Kx=0.3882, Ky=1.4884, Kz=-1.2756, Kyaw=0.5634
+[core_node-1] [INFO] [1780177205.178637811] [ekf_debug]: Innovation: los_yaw=-0.0080, los_pitch=-0.0002, los_distance=0.0195, yaw=0.0798
+[core_node-1] [INFO] [1780177205.178675944] [ekf_debug]: State: x=2.348, y=-0.094, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=0.144, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177205.178682183] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177205.178685474] [ekf_debug]: K_gain: Kx=0.3880, Ky=1.4917, Kz=-1.2776, Kyaw=0.5636
+[core_node-1] [INFO] [1780177205.393126153] [ekf_debug]: Innovation: los_yaw=-0.0081, los_pitch=-0.0004, los_distance=-0.0070, yaw=0.0794
+[core_node-1] [INFO] [1780177205.393157454] [ekf_debug]: State: x=2.344, y=-0.097, z=-0.170, vx=0.000, vy=0.000, vz=-0.000, yaw=0.191, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177205.393163833] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177205.393167207] [ekf_debug]: K_gain: Kx=0.3877, Ky=1.4956, Kz=-1.2795, Kyaw=0.5639
+[core_node-1] [INFO] [1780177205.610678677] [ekf_debug]: Innovation: los_yaw=-0.0069, los_pitch=-0.0003, los_distance=0.0421, yaw=0.1580
+[core_node-1] [INFO] [1780177205.610713098] [ekf_debug]: State: x=2.358, y=-0.091, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=0.283, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177205.610747436] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177205.610751287] [ekf_debug]: K_gain: Kx=0.3874, Ky=1.4963, Kz=-1.2800, Kyaw=0.5641
+[core_node-1] [INFO] [1780177205.825091258] [ekf_debug]: Innovation: los_yaw=-0.0073, los_pitch=-0.0005, los_distance=0.0225, yaw=0.0046
+[core_node-1] [INFO] [1780177205.825121691] [ekf_debug]: State: x=2.366, y=-0.102, z=-0.171, vx=0.000, vy=0.000, vz=-0.000, yaw=0.289, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177205.825128107] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177205.825132992] [ekf_debug]: K_gain: Kx=0.3869, Ky=1.5062, Kz=-1.2829, Kyaw=0.5649
+[core_node-1] [INFO] [1780177206.040978935] [ekf_debug]: Innovation: los_yaw=-0.0065, los_pitch=-0.0002, los_distance=0.0629, yaw=0.1520
+[core_node-1] [INFO] [1780177206.041017057] [ekf_debug]: State: x=2.387, y=-0.098, z=-0.172, vx=0.000, vy=0.000, vz=-0.000, yaw=0.379, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177206.041023493] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177206.041027154] [ekf_debug]: K_gain: Kx=0.3868, Ky=1.5095, Kz=-1.2852, Kyaw=0.5650
+[core_node-1] [INFO] [1780177206.254766720] [ekf_debug]: Innovation: los_yaw=-0.0058, los_pitch=-0.0003, los_distance=0.0254, yaw=0.0744
+[core_node-1] [INFO] [1780177206.254802708] [ekf_debug]: State: x=2.395, y=-0.100, z=-0.172, vx=0.000, vy=0.000, vz=-0.000, yaw=0.424, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177206.254809315] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177206.254812717] [ekf_debug]: K_gain: Kx=0.3862, Ky=1.5237, Kz=-1.2896, Kyaw=0.5659
+[core_node-1] [WARN] [1780177206.472213946] [core_node_offline]: 发生切板！切换至 3 号装甲板
+[core_node-1] [INFO] [1780177206.472428910] [ekf_debug]: Innovation: los_yaw=0.0082, los_pitch=0.0067, los_distance=-0.1244, yaw=0.0221
+[core_node-1] [INFO] [1780177206.472437382] [ekf_debug]: State: x=2.347, y=-0.087, z=-0.179, vx=0.000, vy=0.000, vz=-0.000, yaw=0.446, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177206.472443622] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177206.472446892] [ekf_debug]: K_gain: Kx=0.3819, Ky=1.6160, Kz=-1.3024, Kyaw=0.5710
+[core_node-1] [INFO] [1780177206.687597998] [ekf_debug]: Innovation: los_yaw=-0.0041, los_pitch=0.0029, los_distance=-0.1173, yaw=0.4426
+[core_node-1] [INFO] [1780177206.687628794] [ekf_debug]: State: x=2.325, y=-0.076, z=-0.180, vx=0.000, vy=0.000, vz=-0.000, yaw=0.708, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177206.687635124] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0042, pyaw=0.0201
+[core_node-1] [INFO] [1780177206.687638443] [ekf_debug]: K_gain: Kx=0.3817, Ky=1.5977, Kz=-1.3026, Kyaw=0.5717
+[core_node-1] [INFO] [1780177206.908339353] [ekf_debug]: Innovation: los_yaw=-0.0026, los_pitch=0.0010, los_distance=-0.0039, yaw=0.1862
+[core_node-1] [INFO] [1780177206.908369917] [ekf_debug]: State: x=2.332, y=-0.067, z=-0.180, vx=0.000, vy=0.000, vz=-0.000, yaw=0.815, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177206.908375840] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0041, pyaw=0.0202
+[core_node-1] [INFO] [1780177206.908379525] [ekf_debug]: K_gain: Kx=0.3842, Ky=1.5546, Kz=-1.2928, Kyaw=0.5692
+[core_node-1] [INFO] [1780177207.125317754] [ekf_debug]: Innovation: los_yaw=-0.0062, los_pitch=0.0005, los_distance=0.0127, yaw=0.1647
+[core_node-1] [INFO] [1780177207.125350805] [ekf_debug]: State: x=2.344, y=-0.064, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=0.910, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177207.125357014] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177207.125360277] [ekf_debug]: K_gain: Kx=0.3855, Ky=1.5416, Kz=-1.2869, Kyaw=0.5683
+[core_node-1] [INFO] [1780177207.342414268] [ekf_debug]: Innovation: los_yaw=-0.0071, los_pitch=0.0000, los_distance=0.0120, yaw=0.2240
+[core_node-1] [INFO] [1780177207.342447628] [ekf_debug]: State: x=2.358, y=-0.056, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.038, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177207.342455358] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177207.342459437] [ekf_debug]: K_gain: Kx=0.3865, Ky=1.5348, Kz=-1.2844, Kyaw=0.5676
+[core_node-1] [INFO] [1780177207.559132191] [ekf_debug]: Innovation: los_yaw=-0.0062, los_pitch=0.0002, los_distance=-0.0196, yaw=0.1659
+[core_node-1] [INFO] [1780177207.559164748] [ekf_debug]: State: x=2.356, y=-0.050, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.135, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177207.559171750] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177207.559175466] [ekf_debug]: K_gain: Kx=0.3877, Ky=1.5263, Kz=-1.2830, Kyaw=0.5663
+[core_node-1] [INFO] [1780177207.776893656] [ekf_debug]: Innovation: los_yaw=-0.0077, los_pitch=-0.0000, los_distance=0.0198, yaw=0.1397
+[core_node-1] [INFO] [1780177207.776923046] [ekf_debug]: State: x=2.368, y=-0.048, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.216, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177207.776929419] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177207.776932617] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.5175, Kz=-1.2808, Kyaw=0.5654
+[core_node-1] [INFO] [1780177207.993163466] [ekf_debug]: Innovation: los_yaw=-0.0087, los_pitch=0.0001, los_distance=0.0188, yaw=0.0982
+[core_node-1] [INFO] [1780177207.993192876] [ekf_debug]: State: x=2.378, y=-0.051, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.273, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177207.993199172] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177207.993202287] [ekf_debug]: K_gain: Kx=0.3889, Ky=1.5156, Kz=-1.2804, Kyaw=0.5649
+[core_node-1] [INFO] [1780177208.209573093] [ekf_debug]: Innovation: los_yaw=-0.0088, los_pitch=0.0001, los_distance=0.0009, yaw=0.0882
+[core_node-1] [INFO] [1780177208.209611325] [ekf_debug]: State: x=2.380, y=-0.055, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.326, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177208.209617847] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177208.209621140] [ekf_debug]: K_gain: Kx=0.3891, Ky=1.5159, Kz=-1.2810, Kyaw=0.5646
+[core_node-1] [INFO] [1780177208.424115576] [ekf_debug]: Innovation: los_yaw=-0.0085, los_pitch=0.0001, los_distance=-0.0087, yaw=0.0494
+[core_node-1] [INFO] [1780177208.424148673] [ekf_debug]: State: x=2.377, y=-0.063, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.357, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177208.424156438] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177208.424160991] [ekf_debug]: K_gain: Kx=0.3893, Ky=1.5143, Kz=-1.2810, Kyaw=0.5644
+[core_node-1] [INFO] [1780177208.640023546] [ekf_debug]: Innovation: los_yaw=-0.0114, los_pitch=0.0000, los_distance=-0.1319, yaw=0.2662
+[core_node-1] [INFO] [1780177208.640052925] [ekf_debug]: State: x=2.330, y=-0.051, z=-0.179, vx=0.000, vy=0.000, vz=-0.000, yaw=1.513, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177208.640059197] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177208.640062418] [ekf_debug]: K_gain: Kx=0.3893, Ky=1.5122, Kz=-1.2805, Kyaw=0.5643
+[core_node-1] [INFO] [1780177208.856749196] [ekf_debug]: Innovation: los_yaw=-0.0067, los_pitch=-0.0002, los_distance=0.0865, yaw=0.0409
+[core_node-1] [INFO] [1780177208.856782089] [ekf_debug]: State: x=2.363, y=-0.057, z=-0.180, vx=0.000, vy=0.000, vz=-0.000, yaw=1.538, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177208.856789170] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177208.856792958] [ekf_debug]: K_gain: Kx=0.3895, Ky=1.4904, Kz=-1.2731, Kyaw=0.5635
+[core_node-1] [INFO] [1780177209.075297357] [ekf_debug]: Innovation: los_yaw=-0.0107, los_pitch=-0.0000, los_distance=0.0547, yaw=0.0314
+[core_node-1] [INFO] [1780177209.075335750] [ekf_debug]: State: x=2.384, y=-0.070, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.560, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177209.075343220] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177209.075347266] [ekf_debug]: K_gain: Kx=0.3894, Ky=1.5007, Kz=-1.2751, Kyaw=0.5637
+[core_node-1] [INFO] [1780177209.289181081] [ekf_debug]: Innovation: los_yaw=-0.0095, los_pitch=-0.0001, los_distance=0.0498, yaw=0.0033
+[core_node-1] [INFO] [1780177209.289216139] [ekf_debug]: State: x=2.403, y=-0.085, z=-0.182, vx=0.000, vy=0.000, vz=-0.000, yaw=1.565, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177209.289265132] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177209.289269764] [ekf_debug]: K_gain: Kx=0.3893, Ky=1.5091, Kz=-1.2789, Kyaw=0.5639
+[core_node-1] [INFO] [1780177209.507013019] [ekf_debug]: Innovation: los_yaw=-0.0104, los_pitch=-0.0000, los_distance=-0.0473, yaw=0.1057
+[core_node-1] [INFO] [1780177209.507042053] [ekf_debug]: State: x=2.385, y=-0.089, z=-0.181, vx=0.000, vy=0.000, vz=-0.000, yaw=1.628, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177209.507048065] [ekf_debug]: P_diag: px=0.0121, py=0.0059, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177209.507051341] [ekf_debug]: K_gain: Kx=0.3892, Ky=1.5166, Kz=-1.2826, Kyaw=0.5640
+[core_node-1] [INFO] [1780177209.723227666] [ekf_debug]: Innovation: los_yaw=-0.0081, los_pitch=-0.0001, los_distance=-0.0864, yaw=0.2988
+[core_node-1] [INFO] [1780177209.723256573] [ekf_debug]: State: x=2.350, y=-0.067, z=-0.179, vx=0.000, vy=0.000, vz=-0.000, yaw=1.799, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177209.723262654] [ekf_debug]: P_diag: px=0.0121, py=0.0059, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177209.723265938] [ekf_debug]: K_gain: Kx=0.3890, Ky=1.5113, Kz=-1.2818, Kyaw=0.5640
+[core_node-1] [INFO] [1780177209.939439645] [ekf_debug]: Innovation: los_yaw=-0.0049, los_pitch=-0.0003, los_distance=0.0083, yaw=-0.1072
+[core_node-1] [INFO] [1780177209.939468963] [ekf_debug]: State: x=2.354, y=-0.086, z=-0.179, vx=0.000, vy=0.000, vz=-0.000, yaw=1.740, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177209.939475132] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177209.939478362] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.5042, Kz=-1.2777, Kyaw=0.5646
+[core_node-1] [INFO] [1780177210.178361134] [ekf_debug]: Innovation: los_yaw=-0.0106, los_pitch=-0.0005, los_distance=0.0268, yaw=0.0235
+[core_node-1] [INFO] [1780177210.178397271] [ekf_debug]: State: x=2.363, y=-0.100, z=-0.179, vx=0.000, vy=0.000, vz=-0.000, yaw=1.757, omega=0.001, r1=0.248, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177210.178403657] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177210.178406964] [ekf_debug]: K_gain: Kx=0.3885, Ky=1.5010, Kz=-1.2764, Kyaw=0.5643
+[core_node-1] [WARN] [1780177210.393991961] [core_node_offline]: 发生切板！切换至 2 号装甲板
+[core_node-1] [INFO] [1780177210.394176219] [ekf_debug]: Innovation: los_yaw=-0.1382, los_pitch=-0.0132, los_distance=-0.6328, yaw=-0.2827
+[core_node-1] [INFO] [1780177210.394184134] [ekf_debug]: State: x=2.128, y=-0.342, z=-0.147, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.646, omega=0.001, r1=0.247, r2=0.246, dz=0.050
+[core_node-1] [INFO] [1780177210.394190021] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177210.394193476] [ekf_debug]: K_gain: Kx=0.3797, Ky=1.6261, Kz=-1.3005, Kyaw=0.5705
+[core_node-1] [WARN] [1780177210.611213715] [core_node_offline]: 发生切板！切换至 3 号装甲板
+[core_node-1] [INFO] [1780177210.611465241] [ekf_debug]: Innovation: los_yaw=0.1076, los_pitch=0.0095, los_distance=0.2727, yaw=0.4541
+[core_node-1] [INFO] [1780177210.611481193] [ekf_debug]: State: x=2.270, y=-0.162, z=-0.164, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.869, omega=0.001, r1=0.247, r2=0.246, dz=0.049
+[core_node-1] [INFO] [1780177210.611489651] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0042, pyaw=0.0200
+[core_node-1] [INFO] [1780177210.611494795] [ekf_debug]: K_gain: Kx=0.3811, Ky=1.3933, Kz=-1.2534, Kyaw=0.5584
+[core_node-1] [INFO] [1780177210.830187145] [ekf_debug]: Innovation: los_yaw=0.0275, los_pitch=0.0041, los_distance=0.1893, yaw=0.2980
+[core_node-1] [INFO] [1780177210.830218729] [ekf_debug]: State: x=2.345, y=-0.098, z=-0.173, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.035, omega=0.001, r1=0.246, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177210.830225128] [ekf_debug]: P_diag: px=0.0117, py=0.0053, pz=0.0037, pyaw=0.0194
+[core_node-1] [INFO] [1780177210.830228401] [ekf_debug]: K_gain: Kx=0.3849, Ky=1.4669, Kz=-1.2592, Kyaw=0.5626
+[core_node-1] [INFO] [1780177211.045379366] [ekf_debug]: Innovation: los_yaw=0.0057, los_pitch=0.0020, los_distance=0.0895, yaw=0.2189
+[core_node-1] [INFO] [1780177211.045426369] [ekf_debug]: State: x=2.376, y=-0.072, z=-0.178, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.161, omega=0.001, r1=0.246, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177211.045435124] [ekf_debug]: P_diag: px=0.0118, py=0.0055, pz=0.0037, pyaw=0.0197
+[core_node-1] [INFO] [1780177211.045473184] [ekf_debug]: K_gain: Kx=0.3851, Ky=1.5133, Kz=-1.2734, Kyaw=0.5658
+[core_node-1] [INFO] [1780177211.262016598] [ekf_debug]: Innovation: los_yaw=-0.0016, los_pitch=0.0006, los_distance=0.0895, yaw=0.1451
+[core_node-1] [INFO] [1780177211.262046186] [ekf_debug]: State: x=2.406, y=-0.064, z=-0.180, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.248, omega=0.001, r1=0.246, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177211.262052043] [ekf_debug]: P_diag: px=0.0119, py=0.0057, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177211.262055226] [ekf_debug]: K_gain: Kx=0.3847, Ky=1.5400, Kz=-1.2838, Kyaw=0.5679
+[core_node-1] [WARN] [1780177211.476221859] [core_node_offline]: 发生切板！切换至 2 号装甲板
+[core_node-1] [INFO] [1780177211.476407584] [ekf_debug]: Innovation: los_yaw=-0.0049, los_pitch=-0.0019, los_distance=-0.1460, yaw=0.4563
+[core_node-1] [INFO] [1780177211.476415866] [ekf_debug]: State: x=2.368, y=-0.043, z=-0.173, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.520, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177211.476422011] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177211.476425361] [ekf_debug]: K_gain: Kx=0.3818, Ky=1.5867, Kz=-1.2979, Kyaw=0.5692
+[core_node-1] [INFO] [1780177211.693268346] [ekf_debug]: Innovation: los_yaw=-0.0017, los_pitch=-0.0016, los_distance=-0.0754, yaw=0.2324
+[core_node-1] [INFO] [1780177211.693298588] [ekf_debug]: State: x=2.347, y=-0.026, z=-0.169, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.656, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177211.693304542] [ekf_debug]: P_diag: px=0.0119, py=0.0059, pz=0.0041, pyaw=0.0201
+[core_node-1] [INFO] [1780177211.693307941] [ekf_debug]: K_gain: Kx=0.3843, Ky=1.5419, Kz=-1.2956, Kyaw=0.5663
+[core_node-1] [INFO] [1780177211.908015438] [ekf_debug]: Innovation: los_yaw=-0.0046, los_pitch=-0.0006, los_distance=-0.0519, yaw=0.1407
+[core_node-1] [INFO] [1780177211.908044468] [ekf_debug]: State: x=2.332, y=-0.020, z=-0.166, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.739, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177211.908051369] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0041, pyaw=0.0199
+[core_node-1] [INFO] [1780177211.908054726] [ekf_debug]: K_gain: Kx=0.3860, Ky=1.5189, Kz=-1.2889, Kyaw=0.5652
+[core_node-1] [INFO] [1780177212.126429372] [ekf_debug]: Innovation: los_yaw=-0.0074, los_pitch=-0.0002, los_distance=0.0175, yaw=0.1359
+[core_node-1] [INFO] [1780177212.126464488] [ekf_debug]: State: x=2.342, y=-0.018, z=-0.166, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.817, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177212.126470776] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177212.126474079] [ekf_debug]: K_gain: Kx=0.3870, Ky=1.5055, Kz=-1.2832, Kyaw=0.5648
+[core_node-1] [INFO] [1780177212.341341245] [ekf_debug]: Innovation: los_yaw=-0.0084, los_pitch=0.0000, los_distance=0.0161, yaw=0.0923
+[core_node-1] [INFO] [1780177212.341371397] [ekf_debug]: State: x=2.350, y=-0.021, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.872, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177212.341377605] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177212.341380888] [ekf_debug]: K_gain: Kx=0.3877, Ky=1.5030, Kz=-1.2817, Kyaw=0.5645
+[core_node-1] [INFO] [1780177212.557760707] [ekf_debug]: Innovation: los_yaw=-0.0077, los_pitch=0.0002, los_distance=-0.0144, yaw=0.1002
+[core_node-1] [INFO] [1780177212.557790484] [ekf_debug]: State: x=2.347, y=-0.022, z=-0.166, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.931, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177212.557796823] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177212.557800116] [ekf_debug]: K_gain: Kx=0.3881, Ky=1.5032, Kz=-1.2818, Kyaw=0.5643
+[core_node-1] [INFO] [1780177212.771973075] [ekf_debug]: Innovation: los_yaw=-0.0089, los_pitch=0.0001, los_distance=0.0091, yaw=0.0660
+[core_node-1] [INFO] [1780177212.772001746] [ekf_debug]: State: x=2.351, y=-0.028, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.971, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177212.772007482] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177212.772010636] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.4994, Kz=-1.2809, Kyaw=0.5640
+[core_node-1] [INFO] [1780177212.990737810] [ekf_debug]: Innovation: los_yaw=-0.0097, los_pitch=-0.0000, los_distance=0.0185, yaw=0.1034
+[core_node-1] [INFO] [1780177212.990767283] [ekf_debug]: State: x=2.360, y=-0.032, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=3.033, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177212.990773514] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177212.990776845] [ekf_debug]: K_gain: Kx=0.3885, Ky=1.4994, Kz=-1.2809, Kyaw=0.5639
+[core_node-1] [INFO] [1780177213.205276006] [ekf_debug]: Innovation: los_yaw=-0.0090, los_pitch=0.0001, los_distance=-0.0006, yaw=0.0840
+[core_node-1] [INFO] [1780177213.205313228] [ekf_debug]: State: x=2.360, y=-0.036, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=3.083, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177213.205319843] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177213.205323223] [ekf_debug]: K_gain: Kx=0.3887, Ky=1.5008, Kz=-1.2818, Kyaw=0.5637
+[core_node-1] [INFO] [1780177213.421242651] [ekf_debug]: Innovation: los_yaw=-0.0100, los_pitch=0.0001, los_distance=-0.0178, yaw=0.0660
+[core_node-1] [INFO] [1780177213.421272838] [ekf_debug]: State: x=2.354, y=-0.044, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=3.124, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177213.421278970] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177213.421282388] [ekf_debug]: K_gain: Kx=0.3887, Ky=1.5004, Kz=-1.2821, Kyaw=0.5636
+[core_node-1] [INFO] [1780177213.634952891] [ekf_debug]: Innovation: los_yaw=-0.0104, los_pitch=-0.0001, los_distance=0.0342, yaw=0.1765
+[core_node-1] [INFO] [1780177213.634982211] [ekf_debug]: State: x=2.367, y=-0.040, z=-0.168, vx=0.000, vy=-0.000, vz=-0.000, yaw=-3.056, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177213.634988318] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177213.634991607] [ekf_debug]: K_gain: Kx=0.3887, Ky=1.4977, Kz=-1.2812, Kyaw=0.5636
+[core_node-1] [INFO] [1780177213.850692688] [ekf_debug]: Innovation: los_yaw=-0.0085, los_pitch=0.0000, los_distance=0.0266, yaw=0.1314
+[core_node-1] [INFO] [1780177213.850730896] [ekf_debug]: State: x=2.377, y=-0.039, z=-0.168, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.979, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177213.850737251] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177213.850740711] [ekf_debug]: K_gain: Kx=0.3885, Ky=1.5032, Kz=-1.2829, Kyaw=0.5638
+[core_node-1] [INFO] [1780177214.063933664] [ekf_debug]: Innovation: los_yaw=-0.0073, los_pitch=0.0001, los_distance=-0.0469, yaw=0.0384
+[core_node-1] [INFO] [1780177214.063974081] [ekf_debug]: State: x=2.358, y=-0.045, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.956, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177214.063980251] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177214.063983526] [ekf_debug]: K_gain: Kx=0.3882, Ky=1.5093, Kz=-1.2851, Kyaw=0.5642
+[core_node-1] [INFO] [1780177214.280582615] [ekf_debug]: Innovation: los_yaw=-0.0088, los_pitch=-0.0002, los_distance=-0.0244, yaw=0.0753
+[core_node-1] [INFO] [1780177214.280612918] [ekf_debug]: State: x=2.347, y=-0.050, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.911, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177214.280619311] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177214.280622612] [ekf_debug]: K_gain: Kx=0.3881, Ky=1.5037, Kz=-1.2836, Kyaw=0.5642
+[core_node-1] [INFO] [1780177214.494288195] [ekf_debug]: Innovation: los_yaw=-0.0103, los_pitch=-0.0007, los_distance=-0.0092, yaw=0.0715
+[core_node-1] [INFO] [1780177214.494317143] [ekf_debug]: State: x=2.342, y=-0.058, z=-0.165, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.867, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177214.494323305] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177214.494326595] [ekf_debug]: K_gain: Kx=0.3878, Ky=1.5012, Kz=-1.2820, Kyaw=0.5645
+[core_node-1] [INFO] [1780177214.759300185] [ekf_debug]: Innovation: los_yaw=-0.0085, los_pitch=-0.0004, los_distance=0.0034, yaw=0.0766
+[core_node-1] [INFO] [1780177214.759330424] [ekf_debug]: State: x=2.341, y=-0.062, z=-0.165, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.821, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177214.759368201] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177214.759371896] [ekf_debug]: K_gain: Kx=0.3875, Ky=1.5010, Kz=-1.2813, Kyaw=0.5648
+[core_node-1] [INFO] [1780177214.974136060] [ekf_debug]: Innovation: los_yaw=-0.0067, los_pitch=-0.0002, los_distance=0.0154, yaw=0.2464
+[core_node-1] [INFO] [1780177214.974166913] [ekf_debug]: State: x=2.342, y=-0.047, z=-0.166, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.679, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177214.974173300] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177214.974176679] [ekf_debug]: K_gain: Kx=0.3871, Ky=1.5034, Kz=-1.2816, Kyaw=0.5652
+[core_node-1] [INFO] [1780177215.190888169] [ekf_debug]: Innovation: los_yaw=-0.0059, los_pitch=-0.0001, los_distance=0.0379, yaw=0.4068
+[core_node-1] [INFO] [1780177215.190925590] [ekf_debug]: State: x=2.347, y=-0.018, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.445, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177215.190931913] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177215.190935231] [ekf_debug]: K_gain: Kx=0.3862, Ky=1.5155, Kz=-1.2838, Kyaw=0.5665
+[core_node-1] [INFO] [1780177215.408154344] [ekf_debug]: Innovation: los_yaw=-0.0043, los_pitch=0.0000, los_distance=0.0136, yaw=-0.0549
+[core_node-1] [INFO] [1780177215.408183414] [ekf_debug]: State: x=2.353, y=-0.029, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.475, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177215.408189730] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177215.408193303] [ekf_debug]: K_gain: Kx=0.3843, Ky=1.5420, Kz=-1.2892, Kyaw=0.5691
+[core_node-1] [INFO] [1780177215.624358697] [ekf_debug]: Innovation: los_yaw=-0.0060, los_pitch=-0.0001, los_distance=0.0253, yaw=0.0835
+[core_node-1] [INFO] [1780177215.624388361] [ekf_debug]: State: x=2.359, y=-0.032, z=-0.168, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.424, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177215.624394602] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0201
+[core_node-1] [INFO] [1780177215.624398129] [ekf_debug]: K_gain: Kx=0.3845, Ky=1.5400, Kz=-1.2915, Kyaw=0.5687
+[core_node-1] [INFO] [1780177215.838793780] [ekf_debug]: Innovation: los_yaw=-0.0056, los_pitch=-0.0003, los_distance=0.0768, yaw=0.1446
+[core_node-1] [INFO] [1780177215.838824417] [ekf_debug]: State: x=2.382, y=-0.031, z=-0.170, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.336, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177215.838830749] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0201
+[core_node-1] [INFO] [1780177215.838834148] [ekf_debug]: K_gain: Kx=0.3841, Ky=1.5478, Kz=-1.2940, Kyaw=0.5693
+[core_node-1] [WARN] [1780177216.055349685] [core_node_offline]: 发生切板！切换至 1 号装甲板
+[core_node-1] [INFO] [1780177216.055543175] [ekf_debug]: Innovation: los_yaw=-0.0049, los_pitch=0.0060, los_distance=-0.1235, yaw=-0.0349
+[core_node-1] [INFO] [1780177216.055551743] [ekf_debug]: State: x=2.334, y=-0.043, z=-0.175, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.346, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177216.055557836] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0041, pyaw=0.0201
+[core_node-1] [INFO] [1780177216.055561161] [ekf_debug]: K_gain: Kx=0.3846, Ky=1.5638, Kz=-1.2955, Kyaw=0.5679
+[core_node-1] [INFO] [1780177216.269457534] [ekf_debug]: Innovation: los_yaw=-0.0088, los_pitch=0.0025, los_distance=-0.0867, yaw=0.0671
+[core_node-1] [INFO] [1780177216.269487136] [ekf_debug]: State: x=2.304, y=-0.053, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.301, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177216.269493596] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0041, pyaw=0.0200
+[core_node-1] [INFO] [1780177216.269496981] [ekf_debug]: K_gain: Kx=0.3843, Ky=1.5486, Kz=-1.2899, Kyaw=0.5683
+[core_node-1] [INFO] [1780177216.487386161] [ekf_debug]: Innovation: los_yaw=-0.0086, los_pitch=0.0009, los_distance=-0.0434, yaw=0.0429
+[core_node-1] [INFO] [1780177216.487415467] [ekf_debug]: State: x=2.290, y=-0.063, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.272, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177216.487421752] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177216.487425194] [ekf_debug]: K_gain: Kx=0.3851, Ky=1.5305, Kz=-1.2822, Kyaw=0.5682
+[core_node-1] [INFO] [1780177216.702184352] [ekf_debug]: Innovation: los_yaw=-0.0102, los_pitch=0.0007, los_distance=-0.0277, yaw=0.2033
+[core_node-1] [INFO] [1780177216.702213749] [ekf_debug]: State: x=2.287, y=-0.062, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.152, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177216.702219495] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0200
+[core_node-1] [INFO] [1780177216.702222798] [ekf_debug]: K_gain: Kx=0.3857, Ky=1.5204, Kz=-1.2766, Kyaw=0.5681
+[core_node-1] [INFO] [1780177216.917701608] [ekf_debug]: Innovation: los_yaw=-0.0063, los_pitch=0.0001, los_distance=-0.0081, yaw=0.0529
+[core_node-1] [INFO] [1780177216.917731840] [ekf_debug]: State: x=2.286, y=-0.067, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.120, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177216.917738192] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0039, pyaw=0.0200
+[core_node-1] [INFO] [1780177216.917741555] [ekf_debug]: K_gain: Kx=0.3870, Ky=1.5047, Kz=-1.2717, Kyaw=0.5668
+[core_node-1] [INFO] [1780177217.132227953] [ekf_debug]: Innovation: los_yaw=-0.0090, los_pitch=0.0001, los_distance=0.0083, yaw=0.0571
+[core_node-1] [INFO] [1780177217.132269198] [ekf_debug]: State: x=2.292, y=-0.075, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.085, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177217.132275535] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177217.132278766] [ekf_debug]: K_gain: Kx=0.3874, Ky=1.5010, Kz=-1.2693, Kyaw=0.5666
+[core_node-1] [INFO] [1780177217.351406570] [ekf_debug]: Innovation: los_yaw=-0.0103, los_pitch=0.0001, los_distance=-0.0019, yaw=0.0482
+[core_node-1] [INFO] [1780177217.351435811] [ekf_debug]: State: x=2.293, y=-0.086, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.055, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177217.351442120] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177217.351445351] [ekf_debug]: K_gain: Kx=0.3878, Ky=1.4996, Kz=-1.2687, Kyaw=0.5663
+[core_node-1] [INFO] [1780177217.569586427] [ekf_debug]: Innovation: los_yaw=-0.0109, los_pitch=0.0001, los_distance=0.0018, yaw=0.1797
+[core_node-1] [INFO] [1780177217.569629183] [ekf_debug]: State: x=2.299, y=-0.085, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-1.950, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177217.569640104] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177217.569646270] [ekf_debug]: K_gain: Kx=0.3880, Ky=1.4973, Kz=-1.2681, Kyaw=0.5660
+[core_node-1] [INFO] [1780177217.788947035] [ekf_debug]: Innovation: los_yaw=-0.0091, los_pitch=0.0000, los_distance=-0.0074, yaw=0.2136
+[core_node-1] [INFO] [1780177217.788977445] [ekf_debug]: State: x=2.302, y=-0.077, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-1.826, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177217.788983759] [ekf_debug]: P_diag: px=0.0121, py=0.0055, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177217.788987039] [ekf_debug]: K_gain: Kx=0.3887, Ky=1.4903, Kz=-1.2672, Kyaw=0.5650
+[core_node-1] [INFO] [1780177218.003145813] [ekf_debug]: Innovation: los_yaw=-0.0072, los_pitch=-0.0001, los_distance=0.0438, yaw=0.1849
+[core_node-1] [INFO] [1780177218.003185001] [ekf_debug]: State: x=2.322, y=-0.068, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-1.720, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177218.003191418] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177218.003194718] [ekf_debug]: K_gain: Kx=0.3892, Ky=1.4832, Kz=-1.2659, Kyaw=0.5641
+[core_node-1] [INFO] [1780177218.220423018] [ekf_debug]: Innovation: los_yaw=-0.0076, los_pitch=0.0001, los_distance=0.0075, yaw=0.1587
+[core_node-1] [INFO] [1780177218.220452186] [ekf_debug]: State: x=2.326, y=-0.062, z=-0.178, vx=0.000, vy=-0.000, vz=-0.000, yaw=-1.628, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177218.220458318] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177218.220461637] [ekf_debug]: K_gain: Kx=0.3895, Ky=1.4866, Kz=-1.2677, Kyaw=0.5637
+[core_node-1] [INFO] [1780177218.435691506] [ekf_debug]: Innovation: los_yaw=-0.0085, los_pitch=0.0000, los_distance=-0.0052, yaw=0.1425
+[core_node-1] [INFO] [1780177218.435725042] [ekf_debug]: State: x=2.325, y=-0.059, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-1.545, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177218.435769297] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177218.435773132] [ekf_debug]: K_gain: Kx=0.3895, Ky=1.4874, Kz=-1.2687, Kyaw=0.5636
+[core_node-1] [INFO] [1780177218.652775248] [ekf_debug]: Innovation: los_yaw=-0.0071, los_pitch=-0.0000, los_distance=-0.0013, yaw=0.1117
+[core_node-1] [INFO] [1780177218.652805715] [ekf_debug]: State: x=2.324, y=-0.057, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-1.480, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177218.652811674] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177218.652815157] [ekf_debug]: K_gain: Kx=0.3894, Ky=1.4871, Kz=-1.2688, Kyaw=0.5637
+[core_node-1] [INFO] [1780177218.867448408] [ekf_debug]: Innovation: los_yaw=-0.0087, los_pitch=-0.0002, los_distance=-0.0058, yaw=0.1336
+[core_node-1] [INFO] [1780177218.867479079] [ekf_debug]: State: x=2.321, y=-0.055, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-1.401, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177218.867485286] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177218.867488581] [ekf_debug]: K_gain: Kx=0.3892, Ky=1.4878, Kz=-1.2689, Kyaw=0.5639
+[core_node-1] [INFO] [1780177219.084308213] [ekf_debug]: Innovation: los_yaw=-0.0074, los_pitch=-0.0002, los_distance=-0.0093, yaw=0.0580
+[core_node-1] [INFO] [1780177219.084344801] [ekf_debug]: State: x=2.317, y=-0.060, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-1.366, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177219.084351041] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177219.084354358] [ekf_debug]: K_gain: Kx=0.3888, Ky=1.4890, Kz=-1.2690, Kyaw=0.5643
+[core_node-1] [INFO] [1780177219.298336680] [ekf_debug]: Innovation: los_yaw=-0.0082, los_pitch=-0.0002, los_distance=0.0094, yaw=0.0784
+[core_node-1] [INFO] [1780177219.298366853] [ekf_debug]: State: x=2.319, y=-0.064, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-1.319, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177219.298372991] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177219.298376330] [ekf_debug]: K_gain: Kx=0.3886, Ky=1.4885, Kz=-1.2686, Kyaw=0.5645
+[core_node-1] [INFO] [1780177219.516165774] [ekf_debug]: Innovation: los_yaw=-0.0079, los_pitch=-0.0002, los_distance=-0.0066, yaw=0.0533
+[core_node-1] [INFO] [1780177219.516205388] [ekf_debug]: State: x=2.315, y=-0.070, z=-0.176, vx=0.000, vy=-0.000, vz=-0.000, yaw=-1.287, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177219.516214799] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0198
+[core_node-1] [INFO] [1780177219.516220571] [ekf_debug]: K_gain: Kx=0.3883, Ky=1.4914, Kz=-1.2693, Kyaw=0.5648
+[core_node-1] [INFO] [1780177219.732486196] [ekf_debug]: Innovation: los_yaw=-0.0078, los_pitch=-0.0003, los_distance=0.0028, yaw=0.0510
+[core_node-1] [INFO] [1780177219.732518507] [ekf_debug]: State: x=2.314, y=-0.077, z=-0.176, vx=0.000, vy=-0.000, vz=-0.000, yaw=-1.255, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177219.732525156] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177219.732528502] [ekf_debug]: K_gain: Kx=0.3880, Ky=1.4917, Kz=-1.2695, Kyaw=0.5651
+[core_node-1] [INFO] [1780177219.950186012] [ekf_debug]: Innovation: los_yaw=-0.0063, los_pitch=-0.0000, los_distance=-0.0088, yaw=0.0931
+[core_node-1] [INFO] [1780177219.950217043] [ekf_debug]: State: x=2.309, y=-0.076, z=-0.176, vx=0.000, vy=-0.000, vz=-0.000, yaw=-1.201, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177219.950223212] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177219.950226525] [ekf_debug]: K_gain: Kx=0.3877, Ky=1.4933, Kz=-1.2699, Kyaw=0.5653
+[core_node-1] [INFO] [1780177220.164913456] [ekf_debug]: Innovation: los_yaw=-0.0062, los_pitch=-0.0002, los_distance=0.0246, yaw=0.2987
+[core_node-1] [INFO] [1780177220.164957515] [ekf_debug]: State: x=2.312, y=-0.056, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-1.029, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177220.164963931] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177220.164967238] [ekf_debug]: K_gain: Kx=0.3873, Ky=1.4951, Kz=-1.2700, Kyaw=0.5658
+[core_node-1] [INFO] [1780177220.380883351] [ekf_debug]: Innovation: los_yaw=-0.0041, los_pitch=-0.0002, los_distance=0.0395, yaw=0.1216
+[core_node-1] [INFO] [1780177220.380913982] [ekf_debug]: State: x=2.323, y=-0.052, z=-0.177, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.957, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177220.380920074] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0038, pyaw=0.0199
+[core_node-1] [INFO] [1780177220.380923301] [ekf_debug]: K_gain: Kx=0.3860, Ky=1.5120, Kz=-1.2732, Kyaw=0.5676
+[core_node-1] [INFO] [1780177220.597012554] [ekf_debug]: Innovation: los_yaw=-0.0046, los_pitch=-0.0002, los_distance=0.0467, yaw=-0.1246
+[core_node-1] [INFO] [1780177220.597051103] [ekf_debug]: State: x=2.345, y=-0.071, z=-0.178, vx=0.000, vy=-0.000, vz=-0.000, yaw=-1.024, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177220.597060156] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0039, pyaw=0.0200
+[core_node-1] [INFO] [1780177220.597065648] [ekf_debug]: K_gain: Kx=0.3854, Ky=1.5233, Kz=-1.2773, Kyaw=0.5685
+[core_node-1] [WARN] [1780177220.815441890] [core_node_offline]: 发生切板！切换至 0 号装甲板
+[core_node-1] [INFO] [1780177220.815719932] [ekf_debug]: Innovation: los_yaw=-0.0068, los_pitch=0.0005, los_distance=-0.0714, yaw=0.2811
+[core_node-1] [INFO] [1780177220.815741645] [ekf_debug]: State: x=2.330, y=-0.067, z=-0.176, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.858, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177220.815751722] [ekf_debug]: P_diag: px=0.0120, py=0.0057, pz=0.0039, pyaw=0.0200
+[core_node-1] [INFO] [1780177220.815757787] [ekf_debug]: K_gain: Kx=0.3812, Ky=1.5805, Kz=-1.2920, Kyaw=0.5700
+[core_node-1] [INFO] [1780177221.033233365] [ekf_debug]: Innovation: los_yaw=-0.0061, los_pitch=-0.0002, los_distance=-0.0249, yaw=0.1837
+[core_node-1] [INFO] [1780177221.033275830] [ekf_debug]: State: x=2.329, y=-0.064, z=-0.174, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.750, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177221.033282229] [ekf_debug]: P_diag: px=0.0119, py=0.0057, pz=0.0041, pyaw=0.0201
+[core_node-1] [INFO] [1780177221.033285569] [ekf_debug]: K_gain: Kx=0.3824, Ky=1.5547, Kz=-1.2933, Kyaw=0.5688
+[core_node-1] [INFO] [1780177221.250986938] [ekf_debug]: Innovation: los_yaw=-0.0057, los_pitch=-0.0003, los_distance=-0.0753, yaw=0.2212
+[core_node-1] [INFO] [1780177221.251016016] [ekf_debug]: State: x=2.310, y=-0.057, z=-0.172, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.619, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177221.251022382] [ekf_debug]: P_diag: px=0.0120, py=0.0056, pz=0.0041, pyaw=0.0200
+[core_node-1] [INFO] [1780177221.251025677] [ekf_debug]: K_gain: Kx=0.3839, Ky=1.5399, Kz=-1.2906, Kyaw=0.5680
+[core_node-1] [INFO] [1780177221.465468736] [ekf_debug]: Innovation: los_yaw=-0.0071, los_pitch=-0.0001, los_distance=0.0258, yaw=0.1065
+[core_node-1] [INFO] [1780177221.465501220] [ekf_debug]: State: x=2.324, y=-0.058, z=-0.172, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.557, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177221.465507500] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177221.465510749] [ekf_debug]: K_gain: Kx=0.3854, Ky=1.5174, Kz=-1.2843, Kyaw=0.5667
+[core_node-1] [INFO] [1780177221.681593425] [ekf_debug]: Innovation: los_yaw=-0.0074, los_pitch=-0.0001, los_distance=-0.0431, yaw=0.1496
+[core_node-1] [INFO] [1780177221.681622998] [ekf_debug]: State: x=2.313, y=-0.055, z=-0.170, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.469, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177221.681629052] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177221.681632449] [ekf_debug]: K_gain: Kx=0.3862, Ky=1.5153, Kz=-1.2827, Kyaw=0.5664
+[core_node-1] [INFO] [1780177221.894553345] [ekf_debug]: Innovation: los_yaw=-0.0090, los_pitch=0.0001, los_distance=-0.0275, yaw=0.0738
+[core_node-1] [INFO] [1780177221.894583997] [ekf_debug]: State: x=2.305, y=-0.062, z=-0.169, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.423, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177221.894590697] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177221.894594066] [ekf_debug]: K_gain: Kx=0.3870, Ky=1.5031, Kz=-1.2793, Kyaw=0.5655
+[core_node-1] [INFO] [1780177222.112345871] [ekf_debug]: Innovation: los_yaw=-0.0078, los_pitch=-0.0001, los_distance=0.0122, yaw=0.1133
+[core_node-1] [INFO] [1780177222.112431411] [ekf_debug]: State: x=2.312, y=-0.062, z=-0.170, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.357, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177222.112442288] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177222.112447614] [ekf_debug]: K_gain: Kx=0.3874, Ky=1.4959, Kz=-1.2762, Kyaw=0.5652
+[core_node-1] [INFO] [1780177222.329751746] [ekf_debug]: Innovation: los_yaw=-0.0114, los_pitch=0.0001, los_distance=0.0125, yaw=0.1033
+[core_node-1] [INFO] [1780177222.329793255] [ekf_debug]: State: x=2.320, y=-0.069, z=-0.170, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.295, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177222.329803447] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177222.329809506] [ekf_debug]: K_gain: Kx=0.3878, Ky=1.4932, Kz=-1.2754, Kyaw=0.5647
+[core_node-1] [INFO] [1780177222.545897725] [ekf_debug]: Innovation: los_yaw=-0.0099, los_pitch=0.0001, los_distance=0.0226, yaw=0.0895
+[core_node-1] [INFO] [1780177222.545930833] [ekf_debug]: State: x=2.330, y=-0.074, z=-0.171, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.242, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177222.545937318] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177222.545940671] [ekf_debug]: K_gain: Kx=0.3881, Ky=1.4920, Kz=-1.2755, Kyaw=0.5642
+[core_node-1] [INFO] [1780177222.759256200] [ekf_debug]: Innovation: los_yaw=-0.0112, los_pitch=0.0001, los_distance=0.0105, yaw=0.0753
+[core_node-1] [INFO] [1780177222.759284275] [ekf_debug]: State: x=2.336, y=-0.083, z=-0.171, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.196, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177222.759290476] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177222.759293756] [ekf_debug]: K_gain: Kx=0.3883, Ky=1.4932, Kz=-1.2766, Kyaw=0.5640
+[core_node-1] [INFO] [1780177222.978626633] [ekf_debug]: Innovation: los_yaw=-0.0104, los_pitch=-0.0001, los_distance=0.0029, yaw=0.1017
+[core_node-1] [INFO] [1780177222.978665969] [ekf_debug]: State: x=2.338, y=-0.087, z=-0.171, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.135, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177222.978675303] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177222.978680624] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.4934, Kz=-1.2774, Kyaw=0.5638
+[core_node-1] [INFO] [1780177223.191728735] [ekf_debug]: Innovation: los_yaw=-0.0097, los_pitch=-0.0001, los_distance=-0.0055, yaw=0.1053
+[core_node-1] [INFO] [1780177223.191768457] [ekf_debug]: State: x=2.337, y=-0.090, z=-0.170, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.072, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177223.191774659] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177223.191778021] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.4924, Kz=-1.2777, Kyaw=0.5636
+[core_node-1] [INFO] [1780177223.409072748] [ekf_debug]: Innovation: los_yaw=-0.0087, los_pitch=-0.0002, los_distance=-0.0000, yaw=0.1101
+[core_node-1] [INFO] [1780177223.409102484] [ekf_debug]: State: x=2.337, y=-0.091, z=-0.170, vx=0.000, vy=-0.000, vz=-0.000, yaw=-0.007, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177223.409108680] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177223.409111959] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.4906, Kz=-1.2774, Kyaw=0.5635
+[core_node-1] [INFO] [1780177223.623247523] [ekf_debug]: Innovation: los_yaw=-0.0086, los_pitch=-0.0002, los_distance=0.0027, yaw=0.1274
+[core_node-1] [INFO] [1780177223.623278554] [ekf_debug]: State: x=2.338, y=-0.090, z=-0.170, vx=0.000, vy=-0.000, vz=-0.000, yaw=0.067, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177223.623284958] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177223.623288221] [ekf_debug]: K_gain: Kx=0.3883, Ky=1.4902, Kz=-1.2774, Kyaw=0.5636
+[core_node-1] [INFO] [1780177223.838313961] [ekf_debug]: Innovation: los_yaw=-0.0069, los_pitch=-0.0001, los_distance=0.0462, yaw=0.1275
+[core_node-1] [INFO] [1780177223.838343036] [ekf_debug]: State: x=2.355, y=-0.087, z=-0.171, vx=0.000, vy=-0.000, vz=-0.000, yaw=0.142, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177223.838349446] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177223.838384543] [ekf_debug]: K_gain: Kx=0.3881, Ky=1.4912, Kz=-1.2778, Kyaw=0.5637
+[core_node-1] [INFO] [1780177224.078085555] [ekf_debug]: Innovation: los_yaw=-0.0082, los_pitch=-0.0003, los_distance=0.0227, yaw=0.1302
+[core_node-1] [INFO] [1780177224.078122688] [ekf_debug]: State: x=2.363, y=-0.086, z=-0.172, vx=0.000, vy=-0.000, vz=-0.000, yaw=0.219, omega=0.001, r1=0.246, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177224.078129131] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177224.078132518] [ekf_debug]: K_gain: Kx=0.3878, Ky=1.4994, Kz=-1.2806, Kyaw=0.5641
+[core_node-1] [INFO] [1780177224.294097221] [ekf_debug]: Innovation: los_yaw=-0.0077, los_pitch=-0.0004, los_distance=-0.0024, yaw=0.0249
+[core_node-1] [INFO] [1780177224.294126296] [ekf_debug]: State: x=2.361, y=-0.094, z=-0.171, vx=0.000, vy=-0.000, vz=-0.000, yaw=0.235, omega=0.001, r1=0.247, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177224.294132678] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177224.294136073] [ekf_debug]: K_gain: Kx=0.3874, Ky=1.5058, Kz=-1.2832, Kyaw=0.5646
+[core_node-1] [INFO] [1780177224.507678612] [ekf_debug]: Innovation: los_yaw=-0.0081, los_pitch=-0.0004, los_distance=0.0106, yaw=0.0741
+[core_node-1] [INFO] [1780177224.507714185] [ekf_debug]: State: x=2.363, y=-0.099, z=-0.171, vx=0.000, vy=-0.000, vz=-0.000, yaw=0.280, omega=0.001, r1=0.246, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177224.507720651] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177224.507723903] [ekf_debug]: K_gain: Kx=0.3872, Ky=1.5061, Kz=-1.2841, Kyaw=0.5647
+[core_node-1] [INFO] [1780177224.723503482] [ekf_debug]: Innovation: los_yaw=-0.0063, los_pitch=-0.0004, los_distance=0.0328, yaw=0.0774
+[core_node-1] [INFO] [1780177224.723533793] [ekf_debug]: State: x=2.374, y=-0.101, z=-0.171, vx=0.000, vy=-0.000, vz=-0.000, yaw=0.327, omega=0.001, r1=0.246, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177224.723540025] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177224.723543505] [ekf_debug]: K_gain: Kx=0.3869, Ky=1.5093, Kz=-1.2852, Kyaw=0.5651
+[core_node-1] [INFO] [1780177224.937882182] [ekf_debug]: Innovation: los_yaw=-0.0068, los_pitch=-0.0004, los_distance=0.0614, yaw=0.1062
+[core_node-1] [INFO] [1780177224.937913141] [ekf_debug]: State: x=2.395, y=-0.103, z=-0.173, vx=0.000, vy=-0.000, vz=-0.000, yaw=0.391, omega=0.001, r1=0.246, r2=0.245, dz=0.049
+[core_node-1] [INFO] [1780177224.937919391] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177224.937922673] [ekf_debug]: K_gain: Kx=0.3865, Ky=1.5161, Kz=-1.2875, Kyaw=0.5655
+[core_node-1] [WARN] [1780177225.154220333] [core_node_offline]: 发生切板！切换至 1 号装甲板
+[core_node-1] [INFO] [1780177225.154420516] [ekf_debug]: Innovation: los_yaw=0.1959, los_pitch=0.0139, los_distance=-0.7437, yaw=-0.4635
+[core_node-1] [INFO] [1780177225.154429192] [ekf_debug]: State: x=2.176, y=0.275, z=-0.178, vx=0.000, vy=-0.000, vz=-0.000, yaw=0.138, omega=0.001, r1=0.247, r2=0.243, dz=0.049
+[core_node-1] [INFO] [1780177225.154435215] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177225.154438698] [ekf_debug]: K_gain: Kx=0.3803, Ky=1.6480, Kz=-1.3134, Kyaw=0.5633
+[core_node-1] [WARN] [1780177225.368905893] [core_node_offline]: 发生切板！切换至 3 号装甲板
+[core_node-1] [INFO] [1780177225.369089997] [ekf_debug]: Innovation: los_yaw=-0.1778, los_pitch=0.0022, los_distance=-0.0143, yaw=0.5662
+[core_node-1] [INFO] [1780177225.369098045] [ekf_debug]: State: x=2.278, y=-0.002, z=-0.180, vx=0.000, vy=-0.000, vz=-0.000, yaw=0.454, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177225.369104021] [ekf_debug]: P_diag: px=0.0121, py=0.0063, pz=0.0044, pyaw=0.0195
+[core_node-1] [INFO] [1780177225.369107307] [ekf_debug]: K_gain: Kx=0.3673, Ky=1.5533, Kz=-1.3060, Kyaw=0.5678
+[core_node-1] [INFO] [1780177225.585986476] [ekf_debug]: Innovation: los_yaw=-0.0473, los_pitch=0.0007, los_distance=-0.0220, yaw=0.4809
+[core_node-1] [INFO] [1780177225.586018847] [ekf_debug]: State: x=2.301, y=-0.058, z=-0.180, vx=0.000, vy=-0.000, vz=-0.000, yaw=0.737, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177225.586025067] [ekf_debug]: P_diag: px=0.0115, py=0.0058, pz=0.0042, pyaw=0.0198
+[core_node-1] [INFO] [1780177225.586028447] [ekf_debug]: K_gain: Kx=0.3778, Ky=1.5700, Kz=-1.2948, Kyaw=0.5692
+[core_node-1] [INFO] [1780177225.801336227] [ekf_debug]: Innovation: los_yaw=-0.0122, los_pitch=0.0001, los_distance=0.0297, yaw=0.3113
+[core_node-1] [INFO] [1780177225.801368230] [ekf_debug]: State: x=2.326, y=-0.055, z=-0.180, vx=0.000, vy=-0.000, vz=-0.000, yaw=0.915, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177225.801374430] [ekf_debug]: P_diag: px=0.0118, py=0.0056, pz=0.0041, pyaw=0.0199
+[core_node-1] [INFO] [1780177225.801377835] [ekf_debug]: K_gain: Kx=0.3826, Ky=1.5407, Kz=-1.2859, Kyaw=0.5677
+[core_node-1] [INFO] [1780177226.016162514] [ekf_debug]: Innovation: los_yaw=-0.0053, los_pitch=-0.0001, los_distance=-0.0241, yaw=0.1641
+[core_node-1] [INFO] [1780177226.016201289] [ekf_debug]: State: x=2.324, y=-0.050, z=-0.179, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.011, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177226.016207683] [ekf_debug]: P_diag: px=0.0120, py=0.0055, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177226.016211137] [ekf_debug]: K_gain: Kx=0.3853, Ky=1.5280, Kz=-1.2820, Kyaw=0.5668
+[core_node-1] [INFO] [1780177226.231636141] [ekf_debug]: Innovation: los_yaw=-0.0080, los_pitch=0.0003, los_distance=0.0362, yaw=0.1232
+[core_node-1] [INFO] [1780177226.231667067] [ekf_debug]: State: x=2.342, y=-0.051, z=-0.180, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.081, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177226.231673258] [ekf_debug]: P_diag: px=0.0120, py=0.0056, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177226.231676577] [ekf_debug]: K_gain: Kx=0.3868, Ky=1.5184, Kz=-1.2786, Kyaw=0.5666
+[core_node-1] [INFO] [1780177226.449652093] [ekf_debug]: Innovation: los_yaw=-0.0083, los_pitch=0.0000, los_distance=0.0334, yaw=0.1376
+[core_node-1] [INFO] [1780177226.449683862] [ekf_debug]: State: x=2.359, y=-0.050, z=-0.180, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.161, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177226.449690003] [ekf_debug]: P_diag: px=0.0121, py=0.0056, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177226.449697123] [ekf_debug]: K_gain: Kx=0.3877, Ky=1.5187, Kz=-1.2786, Kyaw=0.5664
+[core_node-1] [INFO] [1780177226.665611245] [ekf_debug]: Innovation: los_yaw=-0.0075, los_pitch=0.0001, los_distance=-0.0098, yaw=0.0444
+[core_node-1] [INFO] [1780177226.665644948] [ekf_debug]: State: x=2.357, y=-0.057, z=-0.180, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.188, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177226.665651066] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177226.665654345] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.5190, Kz=-1.2798, Kyaw=0.5659
+[core_node-1] [INFO] [1780177226.883897826] [ekf_debug]: Innovation: los_yaw=-0.0098, los_pitch=0.0002, los_distance=0.0040, yaw=0.1186
+[core_node-1] [INFO] [1780177226.883927015] [ekf_debug]: State: x=2.362, y=-0.061, z=-0.181, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.259, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177226.883933357] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177226.883936932] [ekf_debug]: K_gain: Kx=0.3886, Ky=1.5171, Kz=-1.2796, Kyaw=0.5658
+[core_node-1] [INFO] [1780177227.098163594] [ekf_debug]: Innovation: los_yaw=-0.0089, los_pitch=0.0001, los_distance=0.0177, yaw=0.1114
+[core_node-1] [INFO] [1780177227.098201179] [ekf_debug]: State: x=2.371, y=-0.063, z=-0.181, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.324, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177227.098207548] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177227.098210967] [ekf_debug]: K_gain: Kx=0.3890, Ky=1.5139, Kz=-1.2792, Kyaw=0.5653
+[core_node-1] [INFO] [1780177227.315939438] [ekf_debug]: Innovation: los_yaw=-0.0095, los_pitch=-0.0000, los_distance=0.0063, yaw=0.0827
+[core_node-1] [INFO] [1780177227.315973547] [ekf_debug]: State: x=2.375, y=-0.068, z=-0.181, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.374, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177227.315982467] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177227.315987538] [ekf_debug]: K_gain: Kx=0.3892, Ky=1.5137, Kz=-1.2797, Kyaw=0.5650
+[core_node-1] [INFO] [1780177227.530355583] [ekf_debug]: Innovation: los_yaw=-0.0092, los_pitch=0.0001, los_distance=-0.0137, yaw=0.0640
+[core_node-1] [INFO] [1780177227.530385072] [ekf_debug]: State: x=2.370, y=-0.075, z=-0.181, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.413, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177227.530422351] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177227.530426105] [ekf_debug]: K_gain: Kx=0.3893, Ky=1.5133, Kz=-1.2801, Kyaw=0.5648
+[core_node-1] [INFO] [1780177227.748212188] [ekf_debug]: Innovation: los_yaw=-0.0104, los_pitch=-0.0001, los_distance=-0.0053, yaw=0.0853
+[core_node-1] [INFO] [1780177227.748244314] [ekf_debug]: State: x=2.369, y=-0.082, z=-0.181, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.465, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177227.748250371] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0199
+[core_node-1] [INFO] [1780177227.748253620] [ekf_debug]: K_gain: Kx=0.3893, Ky=1.5105, Kz=-1.2794, Kyaw=0.5647
+[core_node-1] [INFO] [1780177227.964426334] [ekf_debug]: Innovation: los_yaw=-0.0116, los_pitch=-0.0003, los_distance=0.0666, yaw=0.1492
+[core_node-1] [INFO] [1780177227.964457009] [ekf_debug]: State: x=2.395, y=-0.084, z=-0.182, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.553, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177227.964463428] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177227.964466811] [ekf_debug]: K_gain: Kx=0.3893, Ky=1.5084, Kz=-1.2788, Kyaw=0.5645
+[core_node-1] [INFO] [1780177228.180530648] [ekf_debug]: Innovation: los_yaw=-0.0080, los_pitch=-0.0002, los_distance=-0.0045, yaw=-0.0570
+[core_node-1] [INFO] [1780177228.180570276] [ekf_debug]: State: x=2.393, y=-0.102, z=-0.181, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.523, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177228.180576633] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177228.180579932] [ekf_debug]: K_gain: Kx=0.3893, Ky=1.5166, Kz=-1.2820, Kyaw=0.5646
+[core_node-1] [INFO] [1780177228.394904144] [ekf_debug]: Innovation: los_yaw=-0.0104, los_pitch=0.0000, los_distance=0.0235, yaw=0.1998
+[core_node-1] [INFO] [1780177228.394933487] [ekf_debug]: State: x=2.403, y=-0.097, z=-0.182, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.640, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177228.394940040] [ekf_debug]: P_diag: px=0.0121, py=0.0059, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177228.394943375] [ekf_debug]: K_gain: Kx=0.3892, Ky=1.5168, Kz=-1.2830, Kyaw=0.5646
+[core_node-1] [INFO] [1780177228.662438838] [ekf_debug]: Innovation: los_yaw=-0.0063, los_pitch=0.0001, los_distance=0.0062, yaw=0.0230
+[core_node-1] [INFO] [1780177228.662469825] [ekf_debug]: State: x=2.404, y=-0.104, z=-0.182, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.655, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177228.662476260] [ekf_debug]: P_diag: px=0.0121, py=0.0059, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177228.662479674] [ekf_debug]: K_gain: Kx=0.3889, Ky=1.5206, Kz=-1.2846, Kyaw=0.5649
+[core_node-1] [INFO] [1780177228.877152136] [ekf_debug]: Innovation: los_yaw=-0.0090, los_pitch=-0.0003, los_distance=-0.0041, yaw=0.1687
+[core_node-1] [INFO] [1780177228.877182896] [ekf_debug]: State: x=2.402, y=-0.100, z=-0.182, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.753, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177228.877189378] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177228.877192795] [ekf_debug]: K_gain: Kx=0.3888, Ky=1.5218, Kz=-1.2855, Kyaw=0.5649
+[core_node-1] [INFO] [1780177229.093954421] [ekf_debug]: Innovation: los_yaw=-0.0075, los_pitch=-0.0006, los_distance=-0.0286, yaw=0.1236
+[core_node-1] [INFO] [1780177229.093992858] [ekf_debug]: State: x=2.389, y=-0.098, z=-0.180, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.825, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177229.093999838] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177229.094003511] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.5239, Kz=-1.2861, Kyaw=0.5654
+[core_node-1] [INFO] [1780177229.311214380] [ekf_debug]: Innovation: los_yaw=-0.0056, los_pitch=-0.0002, los_distance=0.0286, yaw=0.1340
+[core_node-1] [INFO] [1780177229.311243604] [ekf_debug]: State: x=2.398, y=-0.094, z=-0.181, vx=0.000, vy=-0.000, vz=-0.000, yaw=1.904, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177229.311249751] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177229.311253148] [ekf_debug]: K_gain: Kx=0.3880, Ky=1.5227, Kz=-1.2853, Kyaw=0.5658
+[core_node-1] [INFO] [1780177229.528505727] [ekf_debug]: Innovation: los_yaw=-0.0055, los_pitch=-0.0002, los_distance=0.0210, yaw=0.1749
+[core_node-1] [INFO] [1780177229.528535844] [ekf_debug]: State: x=2.402, y=-0.085, z=-0.181, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.005, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177229.528542251] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177229.528545461] [ekf_debug]: K_gain: Kx=0.3875, Ky=1.5299, Kz=-1.2868, Kyaw=0.5664
+[core_node-1] [INFO] [1780177229.743335616] [ekf_debug]: Innovation: los_yaw=-0.0041, los_pitch=-0.0002, los_distance=0.0464, yaw=0.4043
+[core_node-1] [INFO] [1780177229.743367033] [ekf_debug]: State: x=2.411, y=-0.054, z=-0.182, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.237, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177229.743373081] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177229.743376408] [ekf_debug]: K_gain: Kx=0.3868, Ky=1.5394, Kz=-1.2892, Kyaw=0.5673
+[core_node-1] [INFO] [1780177229.961722425] [ekf_debug]: Innovation: los_yaw=-0.0038, los_pitch=-0.0001, los_distance=0.0216, yaw=-0.0655
+[core_node-1] [INFO] [1780177229.961751946] [ekf_debug]: State: x=2.421, y=-0.066, z=-0.182, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.202, omega=0.001, r1=0.246, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177229.961758064] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0040, pyaw=0.0200
+[core_node-1] [INFO] [1780177229.961761685] [ekf_debug]: K_gain: Kx=0.3850, Ky=1.5655, Kz=-1.2944, Kyaw=0.5697
+[core_node-1] [WARN] [1780177230.177217626] [core_node_offline]: 发生切板！切换至 2 号装甲板
+[core_node-1] [INFO] [1780177230.177496691] [ekf_debug]: Innovation: los_yaw=-0.0037, los_pitch=-0.0021, los_distance=-0.1150, yaw=0.4208
+[core_node-1] [INFO] [1780177230.177511351] [ekf_debug]: State: x=2.395, y=-0.047, z=-0.176, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.451, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177230.177519653] [ekf_debug]: P_diag: px=0.0120, py=0.0060, pz=0.0041, pyaw=0.0201
+[core_node-1] [INFO] [1780177230.177524926] [ekf_debug]: K_gain: Kx=0.3820, Ky=1.5990, Kz=-1.3043, Kyaw=0.5696
+[core_node-1] [INFO] [1780177230.394347485] [ekf_debug]: Innovation: los_yaw=-0.0016, los_pitch=-0.0014, los_distance=-0.1158, yaw=0.2986
+[core_node-1] [INFO] [1780177230.394377463] [ekf_debug]: State: x=2.361, y=-0.027, z=-0.170, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.627, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177230.394383764] [ekf_debug]: P_diag: px=0.0120, py=0.0059, pz=0.0042, pyaw=0.0201
+[core_node-1] [INFO] [1780177230.394387076] [ekf_debug]: K_gain: Kx=0.3840, Ky=1.5595, Kz=-1.3023, Kyaw=0.5671
+[core_node-1] [INFO] [1780177230.608986020] [ekf_debug]: Innovation: los_yaw=-0.0034, los_pitch=-0.0009, los_distance=-0.0580, yaw=0.1756
+[core_node-1] [INFO] [1780177230.609017029] [ekf_debug]: State: x=2.344, y=-0.016, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.730, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177230.609023152] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0041, pyaw=0.0199
+[core_node-1] [INFO] [1780177230.609026483] [ekf_debug]: K_gain: Kx=0.3859, Ky=1.5275, Kz=-1.2936, Kyaw=0.5654
+[core_node-1] [INFO] [1780177230.826716106] [ekf_debug]: Innovation: los_yaw=-0.0081, los_pitch=-0.0002, los_distance=0.0219, yaw=0.0973
+[core_node-1] [INFO] [1780177230.826746815] [ekf_debug]: State: x=2.355, y=-0.018, z=-0.168, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.787, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177230.826753437] [ekf_debug]: P_diag: px=0.0120, py=0.0058, pz=0.0041, pyaw=0.0199
+[core_node-1] [INFO] [1780177230.826756774] [ekf_debug]: K_gain: Kx=0.3869, Ky=1.5111, Kz=-1.2866, Kyaw=0.5648
+[core_node-1] [INFO] [1780177231.043479990] [ekf_debug]: Innovation: los_yaw=-0.0073, los_pitch=-0.0002, los_distance=0.0218, yaw=0.2279
+[core_node-1] [INFO] [1780177231.043517636] [ekf_debug]: State: x=2.369, y=-0.006, z=-0.168, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.917, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177231.043523634] [ekf_debug]: P_diag: px=0.0121, py=0.0057, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177231.043526987] [ekf_debug]: K_gain: Kx=0.3876, Ky=1.5104, Kz=-1.2849, Kyaw=0.5647
+[core_node-1] [INFO] [1780177231.260755149] [ekf_debug]: Innovation: los_yaw=-0.0056, los_pitch=0.0003, los_distance=-0.0250, yaw=0.0136
+[core_node-1] [INFO] [1780177231.260812426] [ekf_debug]: State: x=2.360, y=-0.013, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.927, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177231.260819032] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177231.260822375] [ekf_debug]: K_gain: Kx=0.3883, Ky=1.5078, Kz=-1.2851, Kyaw=0.5640
+[core_node-1] [INFO] [1780177231.475158538] [ekf_debug]: Innovation: los_yaw=-0.0093, los_pitch=0.0001, los_distance=-0.0018, yaw=0.0871
+[core_node-1] [INFO] [1780177231.475189910] [ekf_debug]: State: x=2.361, y=-0.018, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=2.980, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177231.475195982] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177231.475199297] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.5050, Kz=-1.2838, Kyaw=0.5640
+[core_node-1] [INFO] [1780177231.693673890] [ekf_debug]: Innovation: los_yaw=-0.0095, los_pitch=0.0002, los_distance=-0.0060, yaw=0.1042
+[core_node-1] [INFO] [1780177231.693708545] [ekf_debug]: State: x=2.359, y=-0.021, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=3.042, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177231.693714888] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177231.693718235] [ekf_debug]: K_gain: Kx=0.3886, Ky=1.5030, Kz=-1.2831, Kyaw=0.5639
+[core_node-1] [INFO] [1780177231.907544314] [ekf_debug]: Innovation: los_yaw=-0.0084, los_pitch=0.0001, los_distance=-0.0110, yaw=0.0170
+[core_node-1] [INFO] [1780177231.907574281] [ekf_debug]: State: x=2.355, y=-0.032, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=3.054, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177231.907580313] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177231.907583621] [ekf_debug]: K_gain: Kx=0.3887, Ky=1.5009, Kz=-1.2824, Kyaw=0.5637
+[core_node-1] [INFO] [1780177232.126968814] [ekf_debug]: Innovation: los_yaw=-0.0122, los_pitch=-0.0001, los_distance=0.0199, yaw=0.1209
+[core_node-1] [INFO] [1780177232.127005122] [ekf_debug]: State: x=2.364, y=-0.037, z=-0.168, vx=0.000, vy=-0.000, vz=-0.000, yaw=3.127, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177232.127011614] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177232.127015112] [ekf_debug]: K_gain: Kx=0.3887, Ky=1.4991, Kz=-1.2816, Kyaw=0.5637
+[core_node-1] [INFO] [1780177232.344466604] [ekf_debug]: Innovation: los_yaw=-0.0101, los_pitch=-0.0000, los_distance=0.0213, yaw=0.1537
+[core_node-1] [INFO] [1780177232.344497332] [ekf_debug]: State: x=2.372, y=-0.035, z=-0.168, vx=0.000, vy=-0.000, vz=-0.000, yaw=-3.066, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177232.344503387] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0039, pyaw=0.0198
+[core_node-1] [INFO] [1780177232.344506715] [ekf_debug]: K_gain: Kx=0.3887, Ky=1.5012, Kz=-1.2824, Kyaw=0.5636
+[core_node-1] [INFO] [1780177232.561008110] [ekf_debug]: Innovation: los_yaw=-0.0086, los_pitch=0.0000, los_distance=0.0252, yaw=0.1024
+[core_node-1] [INFO] [1780177232.561038572] [ekf_debug]: State: x=2.381, y=-0.037, z=-0.169, vx=0.000, vy=-0.000, vz=-0.000, yaw=-3.005, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177232.561045095] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177232.561048523] [ekf_debug]: K_gain: Kx=0.3886, Ky=1.5052, Kz=-1.2839, Kyaw=0.5638
+[core_node-1] [INFO] [1780177232.777406736] [ekf_debug]: Innovation: los_yaw=-0.0079, los_pitch=0.0001, los_distance=-0.0418, yaw=0.0321
+[core_node-1] [INFO] [1780177232.777437857] [ekf_debug]: State: x=2.364, y=-0.045, z=-0.168, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.985, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177232.777444286] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177232.777447682] [ekf_debug]: K_gain: Kx=0.3884, Ky=1.5102, Kz=-1.2859, Kyaw=0.5641
+[core_node-1] [INFO] [1780177514.902860661] [ekf_debug]: Innovation: los_yaw=-0.0091, los_pitch=-0.0002, los_distance=-0.0244, yaw=0.0743
+[core_node-1] [INFO] [1780177514.902900351] [ekf_debug]: State: x=2.354, y=-0.050, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.941, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177514.902906459] [ekf_debug]: P_diag: px=0.0121, py=0.0059, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177514.902950033] [ekf_debug]: K_gain: Kx=0.3882, Ky=1.5052, Kz=-1.2846, Kyaw=0.5641
+[core_node-1] [INFO] [1780177515.120514641] [ekf_debug]: Innovation: los_yaw=-0.0095, los_pitch=-0.0004, los_distance=0.0483, yaw=0.1842
+[core_node-1] [INFO] [1780177515.120559601] [ekf_debug]: State: x=2.370, y=-0.045, z=-0.168, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.833, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177515.120570384] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177515.120576853] [ekf_debug]: K_gain: Kx=0.3880, Ky=1.5025, Kz=-1.2830, Kyaw=0.5643
+[core_node-1] [INFO] [1780177515.340967697] [ekf_debug]: Innovation: los_yaw=-0.0084, los_pitch=-0.0004, los_distance=-0.0324, yaw=0.0500
+[core_node-1] [INFO] [1780177515.340998637] [ekf_debug]: State: x=2.356, y=-0.052, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.802, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177515.341004881] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0198
+[core_node-1] [INFO] [1780177515.341008295] [ekf_debug]: K_gain: Kx=0.3874, Ky=1.5138, Kz=-1.2856, Kyaw=0.5652
+[core_node-1] [INFO] [1780177515.557151043] [ekf_debug]: Innovation: los_yaw=-0.0082, los_pitch=-0.0004, los_distance=0.0115, yaw=0.0825
+[core_node-1] [INFO] [1780177515.557181605] [ekf_debug]: State: x=2.358, y=-0.057, z=-0.167, vx=0.000, vy=-0.000, vz=-0.000, yaw=-2.753, omega=0.001, r1=0.247, r2=0.242, dz=0.049
+[core_node-1] [INFO] [1780177515.557187950] [ekf_debug]: P_diag: px=0.0121, py=0.0058, pz=0.0040, pyaw=0.0199
+[core_node-1] [INFO] [1780177515.557191236] [ekf_debug]: K_gain: Kx=0.3871, Ky=1.5112, Kz=-1.2852, Kyaw=0.5653
+[INFO] [core_node-1]: process has finished cleanly [pid 157955]

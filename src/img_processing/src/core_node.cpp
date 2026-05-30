@@ -64,24 +64,25 @@ void CoreNode::InitParams()
 
     // EKF相关（传递给ekf）
     this->declare_parameter("ekf.predict_time", 0.2); // 预测时间（记得改！）0.2? 0.225? 其实未来还要根据速度来确定
-    this->declare_parameter("ekf.show_logger_debug", false); // ekf 调试
+    this->declare_parameter("ekf.show_logger_debug", true); // ekf 调试
 
-    this->declare_parameter("ekf.q_x", 0.05);
-    this->declare_parameter("ekf.q_y", 0.05);
-    this->declare_parameter("ekf.q_z", 0.05);
-    this->declare_parameter("ekf.q_v_x", 0.5);
-    this->declare_parameter("ekf.q_v_y", 0.5);
-    this->declare_parameter("ekf.q_v_z", 0.5);
+    this->declare_parameter("ekf.q_x", 0.02);
+    this->declare_parameter("ekf.q_y", 0.02);
+    this->declare_parameter("ekf.q_z", 0.01);
+    this->declare_parameter("ekf.q_v_x", 0.05);
+    this->declare_parameter("ekf.q_v_y", 0.05);
+    this->declare_parameter("ekf.q_v_z", 0.01);
     this->declare_parameter("ekf.q_yaw", 0.05);
-    this->declare_parameter("ekf.q_omega", 0.5);
-    this->declare_parameter("ekf.q_a_omega", 1.0);
+    this->declare_parameter("ekf.q_omega", 2.0);
+
+    // 【新增】：模型几何噪声，给很小的值让它平滑收敛
+    this->declare_parameter("ekf.q_r", 1e-4); 
+    this->declare_parameter("ekf.q_dz", 1e-4);
     
     this->declare_parameter("ekf.r_los_yaw", 0.002);   // 相机角度极其精准，给极小方差
     this->declare_parameter("ekf.r_los_pitch", 0.002); // 相机角度极其精准，给极小方差
-    this->declare_parameter("ekf.r_distance", 7.5);    // PnP 测距极其垃圾！给巨大方差 (5.0~10.0都行)
+    this->declare_parameter("ekf.r_distance", 0.05);    // PnP 测距极其垃圾！给巨大方差 (5.0~10.0都行)
     this->declare_parameter("ekf.r_euler_yaw", 0.05); // 目前观测到的装甲板的角度（需要转换到整车下）
-
-    this->declare_parameter("ekf.radius", 0.25);
 
     // TF 参数声明
     this->declare_parameter("tf.show_logger_error", false);
@@ -338,6 +339,9 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
                    armorplate_center_now, armorplate_center_filter, armorplate_center_predict, 
                    car_center_predict);
 
+    cv::putText(img_show_, "r1 = " + std::to_string((double)ekf_->X(8)), cv::Point2f(0, 50), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+    cv::putText(img_show_, "r2 = " + std::to_string((double)ekf_->X(9)), cv::Point2f(0, 100), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+    cv::putText(img_show_, "dz = " + std::to_string((double)ekf_->X(10)), cv::Point2f(0, 150), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
 
 
     // ====================================================================
@@ -772,9 +776,10 @@ rcl_interfaces::msg::SetParametersResult CoreNode::OnParameterChange(const std::
 
         else if (name == "ekf.q_x" || name == "ekf.q_y" || name == "ekf.q_z" || 
                 name == "ekf.q_v_x" || name == "ekf.q_v_y" || name == "ekf.q_v_z" ||
-                name == "ekf.q_yaw" || name == "ekf.q_omega" || name == "ekf.q_a_omega" ||
+                name == "ekf.q_yaw" || name == "ekf.q_omega" ||
+                name == "ekf.q_r" || name == "ekf.q_dz" ||
                 name == "ekf.r_x" || name == "ekf.r_y" || name == "ekf.r_z" ||
-                name == "ekf.r_yaw" || name == "ekf.radius" || name == "ekf.show_logger_debug") 
+                name == "ekf.r_yaw" || name == "ekf.show_logger_debug") 
         {
             RCLCPP_INFO(this->get_logger(), "EKF 参数已更新! ");
             ekf_->UpdateParamsFromServer();  // 让EKF自己重新读取参数

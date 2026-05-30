@@ -21,7 +21,7 @@
 
              传入观测数据 -> 推算几何中心位姿 -> ekf滤波 -> 发布整车中心与四个装甲板的坐标系 -> 预测
 
-        状态 X = [x_c, y_c, z_c, vx_c, vy_c, vz_c, yaw, ω, a_ω]^T (9维)
+        状态 X = [x_c, y_c, z_c, vx_c, vy_c, vz_c, yaw, ω, r1, r2, dz]^T (11维)
         观测 Z = [x_armor, y_armor, z_armor, yaw_armor]^T (4维)
         观测方程（非线性）：
             （都在世界坐标系下）
@@ -42,9 +42,8 @@
 class EKF
 {
 public:
-// 构造函数拿到 Node 指针以创建 ROS2 相关的对象
+    // 构造函数拿到 Node 指针以创建 ROS2 相关的对象
     explicit EKF(rclcpp::Node* node); 
-	
 
 	/**
 	* @brief	滤波主要过程
@@ -88,9 +87,9 @@ public:
     void GetArmorplateFourCorners(std::vector<Eigen::Vector3d>& corners, int armor_id);
 
     // 状态矩阵
-	Eigen::Matrix<double, 9, 1> X;      // k 时刻状态
-	Eigen::Matrix<double, 9, 1> X_est;  // k 时刻预测状态
-	Eigen::Matrix<double, 9, 1> X_prev; // k-1 时刻状态
+	Eigen::Matrix<double, 11, 1> X;      // k 时刻状态
+	Eigen::Matrix<double, 11, 1> X_est;  // k 时刻预测状态
+	Eigen::Matrix<double, 11, 1> X_prev; // k-1 时刻状态
 
     bool is_initialized; // 是否初始化
 
@@ -151,22 +150,23 @@ private:
 
 
     // 非线性观测方程 h(x, armor_id)：将状态映射到装甲板观测空间
-    Eigen::Matrix<double, 4, 1> h(const Eigen::Matrix<double, 9, 1>& x);
+    Eigen::Matrix<double, 4, 1> h(const Eigen::Matrix<double, 11, 1>& x);
 
     // 计算观测雅可比矩阵 H = ∂h/∂x，在预测状态 X_est 处线性化
-    Eigen::Matrix<double, 4, 9> ComputeH(const Eigen::Matrix<double, 9, 1>& x);
+    Eigen::Matrix<double, 4, 11> ComputeH(const Eigen::Matrix<double, 11, 1>& x);
 
 
     // 【新增 1】：用于计算 YPD 预测值的非线性函数
-    Eigen::Matrix<double, 4, 1> h_ypd(const Eigen::Matrix<double, 9, 1>& X_in);
+    Eigen::Matrix<double, 4, 1> h_ypd(const Eigen::Matrix<double, 11, 1>& X_in);
 
     // 【新增 2】：用于计算 YPD 观测空间雅可比矩阵的函数 (链式法则)
-    Eigen::Matrix<double, 4, 9> ComputeH_YPD(const Eigen::Matrix<double, 9, 1>& X_in);
+    Eigen::Matrix<double, 4, 11> ComputeH_YPD(const Eigen::Matrix<double, 11, 1>& X_in);
 
 
 
     // 根据装甲板 ID 获取车体系下偏移量 (dx, dy) 和偏航角差 θ_offset
-    void GetArmorplateParams(double& dx, double& dy, double& theta_offset);
+    // 【极其关键】：把参数获取变成纯净函数，传入状态 X_in！
+    void GetArmorplateParams(const Eigen::Matrix<double, 11, 1>& X_in, int id, double& dx, double& dy, double& dz_offset, double& theta_offset);
 
 
     // 【新增 1】：YPD 观测的 R 矩阵和参数
@@ -179,20 +179,18 @@ private:
     void UpdateYPDFromXYZ(const Eigen::Vector3d& obs_xyz);
 
 
-    double radius = 0.25; // 整车旋转半径 m
-
     bool SHOW_LOGGER_DEBUG; // 是否打印调参日志
 
 	// 协方差矩阵
-	Eigen::Matrix<double, 9, 9> P;      // k 时刻协方差矩阵
-	Eigen::Matrix<double, 9, 9> P_est;  // k 时刻预测协方差矩阵
-	Eigen::Matrix<double, 9, 9> P_prev; // k-1 时刻协方差矩阵
+	Eigen::Matrix<double, 11, 11> P;      // k 时刻协方差矩阵
+	Eigen::Matrix<double, 11, 11> P_est;  // k 时刻预测协方差矩阵
+	Eigen::Matrix<double, 11, 11> P_prev; // k-1 时刻协方差矩阵
 
 	// 状态转移矩阵 
-	Eigen::Matrix<double, 9, 9> F;
+	Eigen::Matrix<double, 11, 11> F;
 
 	// 预测过程噪声矩阵
-	Eigen::Matrix<double, 9, 9> Q;
+	Eigen::Matrix<double, 11, 11> Q;
 
     double q_x_;
     double q_y_;
@@ -202,10 +200,11 @@ private:
     double q_v_z_;
     double q_yaw_;
     double q_omega_;
-    double q_a_omega_;
+    double q_r_;
+    double q_dz_; 
 
 	// 观测矩阵（不写定值，而是雅可比矩阵） 只观测 x_center y_center z_center yaw
-	Eigen::Matrix<double, 4, 9> H;
+	Eigen::Matrix<double, 4, 11> H;
 
 	// 测量过程噪声 
 	Eigen::Matrix<double, 4, 4> R;
@@ -221,10 +220,10 @@ private:
 	Eigen::Matrix<double, 4, 1> Z;
 
 	// 卡尔曼增益
-	Eigen::Matrix<double, 9, 4> K;
+	Eigen::Matrix<double, 11, 4> K;
 
 	// 单位矩阵
-	Eigen::Matrix<double, 9, 9> I;
+	Eigen::Matrix<double, 11, 11> I;
 
     // TF 广播器、缓存、监听器，发布从 整车中心到装甲板的动态变换
     // car_center_frame -> armorplate_frame
@@ -234,7 +233,7 @@ private:
 
     rclcpp::Node* node_;  // 拿到 ros2 的节点指针
 
-    int armor_id; // 传入的装甲板 id （1:前，2:右，3:后，4:左）
+    int armor_id; // 传入的装甲板 id （0:后，1:右，2:前，3:左）
 
     double width; // 当前装甲板的长，单位 m
     double height; // 当前装甲板的宽，单位 m
