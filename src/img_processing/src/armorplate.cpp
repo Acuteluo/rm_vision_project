@@ -372,33 +372,29 @@ double ArmorPlate::CalculateReprojectionError(double test_euler_yaw)
     // 4. 【核心黑魔法】：计算尺度无关的透视畸变误差！彻底消除 W 型双极小值陷阱！
     // =========================================================================
     
-    // (A) 提取实际像素点中的左/右灯条长度，以及高度畸变率
-    double L_pixel = cv::norm(this->vertice_pixel[0] - this->vertice_pixel[1]);
-    double R_pixel = cv::norm(this->vertice_pixel[3] - this->vertice_pixel[2]);
-    double h_diff_pixel = (L_pixel - R_pixel) / (L_pixel + R_pixel); // 取值范围 [-1, 1]
-    
-    // (B) 提取实际像素点中的左右 Y 轴中心偏移率 (反应透视梯形变斜)
+    // (A) 提取实际像素点的左右灯条高度和 Y 中心
+    double h_L_pixel = std::abs(this->vertice_pixel[0].y - this->vertice_pixel[1].y);
+    double h_R_pixel = std::abs(this->vertice_pixel[3].y - this->vertice_pixel[2].y);
     double y_center_L_pixel = (this->vertice_pixel[0].y + this->vertice_pixel[1].y) / 2.0;
     double y_center_R_pixel = (this->vertice_pixel[3].y + this->vertice_pixel[2].y) / 2.0;
-    double y_diff_pixel = (y_center_R_pixel - y_center_L_pixel) / (L_pixel + R_pixel);
 
-    // (C) 提取投影点中的左/右灯条长度，以及高度畸变率
-    double L_proj = cv::norm(projected_points[0] - projected_points[1]);
-    double R_proj = cv::norm(projected_points[3] - projected_points[2]);
-    double h_diff_proj = (L_proj - R_proj) / (L_proj + R_proj);
-
-    // (D) 提取投影点中的左右 Y 轴中心偏移率
+    // (B) 提取投影点的左右灯条高度和 Y 中心
+    double h_L_proj = std::abs(projected_points[0].y - projected_points[1].y);
+    double h_R_proj = std::abs(projected_points[3].y - projected_points[2].y);
     double y_center_L_proj = (projected_points[0].y + projected_points[1].y) / 2.0;
     double y_center_R_proj = (projected_points[3].y + projected_points[2].y) / 2.0;
-    double y_diff_proj = (y_center_R_proj - y_center_L_proj) / (L_proj + R_proj);
 
-    // 终极误差 = 左右长度比例误差 + Y中心倾斜误差
-    // 这个误差函数是一个完美的 V 型凸函数，具有唯一的极小值，且完全不受 t_z 深度的影响！
-    double error = std::abs(h_diff_proj - h_diff_pixel) + std::abs(y_diff_proj - y_diff_pixel);
+    // (C) 极其丝滑的平滑误差函数 (采用 L2 距离的平方，保证底部是 U 型而不是 V 型！)
+    double dh_L = h_L_proj - h_L_pixel;
+    double dh_R = h_R_proj - h_R_pixel;
+    double dy_L = y_center_L_proj - y_center_L_pixel;
+    double dy_R = y_center_R_proj - y_center_R_pixel;
+
+    // 平方和误差，保证在 0 附近是极其平滑的碗底，绝对不会来回横跳！
+    double error = dh_L*dh_L + dh_R*dh_R + dy_L*dy_L + dy_R*dy_R;
 
     return error;
 }
-
 
 
 // ==================== 2. 黄金分割法 (Phi优选 欧拉角) ====================

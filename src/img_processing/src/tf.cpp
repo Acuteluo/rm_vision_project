@@ -236,11 +236,12 @@ bool TF::getFatherToArmorplateTransform(const Eigen::Matrix3d& R, const Eigen::V
  * @param D            畸变系数 (1x5)
  * @param T_world_cam  世界到相机的变换
  * @param color        绘制颜色
+ * @param id           绘制的点的 ID（用于区分装甲板的四个角点，或者区分装甲板中心点和整车中心点等），可以在绘制时显示在图像上
  */
 void TF::ProjectAndDraw(cv::Mat& img_show, const std::vector<Eigen::Vector3d>& world_points,
                     const cv::Mat& K, const cv::Mat& D,
                     const tf2::Transform& T_world_cam,
-                    const cv::Scalar& color)
+                    const cv::Scalar& color, int id)
 {
     if (world_points.empty()) return;
 
@@ -285,9 +286,10 @@ void TF::ProjectAndDraw(cv::Mat& img_show, const std::vector<Eigen::Vector3d>& w
             cv::line(img_show, img_points[i], img_points[(i + 1) % 4], color, 2);
         }
 
-        // 绘制装甲板中心点
+        // 绘制装甲板中心点 / 编号
         cv::Point2f center = (img_points[0] + img_points[1] + img_points[2] + img_points[3]) / 4.0f;
-        cv::circle(img_show, center, 2.5, color, -1);
+        if(id == -1) cv::circle(img_show, center, 2.5, color, -1);
+        else cv::putText(img_show, std::to_string(id), center + cv::Point2f(0, 15), cv::FONT_HERSHEY_SIMPLEX, 1, color, 4);
     }
     else // 否则就是投影整车中心点
     {

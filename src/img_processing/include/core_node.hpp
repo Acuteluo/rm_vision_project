@@ -16,6 +16,35 @@
 #include "plotter.hpp"
 #include "serial_driver_interfaces/msg/serial_driver.hpp"
 
+
+// ==================== [新增] 工具函数命名空间 ====================
+namespace tools 
+{
+    /**
+     * @brief 将任意角度限制在 [-PI, PI] 之间
+     * @details 原理：利用三角函数的周期性。sin 和 cos 会自然消解掉多余的 2*PI 圈数。
+     * atan2 则会严格按照四象限返回绝对标准、无边界跳变的相位角。
+     * 这是解决 "角度跨越 180 度边界导致误差爆炸" 的工业级标准做法！
+     */
+    inline double limit_rad(double angle) 
+    {
+        return std::atan2(std::sin(angle), std::cos(angle));
+    }
+}
+
+
+// ==================== [新增] 追踪器状态机枚举 ====================
+// 四阶段逻辑
+enum class TrackerState 
+{
+    LOST,       // 彻底丢失状态：没有目标，滤波器重置
+    DETECTING,  // 防抖确认状态：刚看到目标，但还不稳定，不立刻开始跟踪
+    TRACKING,   // 稳定跟踪状态：目标连续可见，EKF 正常工作
+    TEMP_LOST   // 短暂丢失状态：目标突然消失（被遮挡或小陀螺），EKF 开启盲推外推！
+};
+
+
+
 class CoreNode: public rclcpp::Node
 {
 public:
@@ -37,6 +66,17 @@ private:
     void VideoReading(); // 本地视频读取专用线程函数
     void CameraImageCallback(const sensor_msgs::msg::Image::SharedPtr msg); // ROS2 相机节点订阅回调函数
     void CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time); // 核心逻辑函数，接收图像和时间戳，执行预处理、pnp、ekf、发布等全部核心功能
+    
+    // 【新增】：状态机大脑决策（只改变状态，不执行动作）
+    void UpdateTrackerState(bool is_found); 
+
+    // 【新增】：追踪器肢体执行（根据状态去执行 EKF 动作）
+    void ExecuteTracker(double dt, rclcpp::Time current_image_time,
+                        double& yaw_armorplate_now,
+                        Eigen::Vector3d& armorplate_center_now, 
+                        Eigen::Vector3d& armorplate_center_filter, 
+                        Eigen::Vector3d& armorplate_center_predict, 
+                        Eigen::Vector3d& car_center_predict);
 
     // ==================== 工具函数 ====================
     
@@ -75,11 +115,22 @@ private:
 
     // ==================== EKF 运行状态机变量 ====================
 
-    int continuous_count_ = 0;      // 记录连续有效的帧数，刚收到数据的前几帧不要（因为不稳定）
-    int lost_count_ = 0;            // 记录连续丢失的帧数，丢失一定次数后不给ekf了，并且重置
-    int max_lost_count_ = 60;       // 最大连续丢失量，超过这个就不用 ekf 的预测了，大概 60 / 200 = 0.3s
+    TrackerState tracker_state_ = TrackerState::LOST; // 初始状态设为彻底丢失
+
+    int detect_count_ = 0;          // 刚发现目标时的防抖计数器
+    int temp_lost_count_ = 0;       // 丢失目标时的盲推计数器
+
+    int min_detect_frames_ = 3;     // 最小开始跟踪阈值：连续看到 3 帧才认为是真正发现了目标 (防抖)
+    int max_lost_frames_ = 80;      // 最大连续丢失阈值：连续丢失 80 帧 (约0.4s) 才认为是彻底丢失，放弃盲推
+
+    int armor_num_ = 4;             // 兵种装甲板数量 (平衡步兵2，前哨站3，其他4)
+    
     bool ekf_ready_ = false;        // ekf 是否已经稳定跟踪
-    int tracking_id_ = 3;           // 当前正在追踪的最好的装甲板 ID
+
+    // 【极其关键】：初始化必须为 0！
+    // 这样当相机第一次看到目标时，EKF 就会把该目标认作 0 号板 (车头)。
+    // 从而自动建立 "初始视线 = 整车 0 度角" 的相对坐标系！
+    int tracking_id_ = 0;           // 当前正在追踪的最好的装甲板 ID
 
     // ============ 配置参数 (Config) 从参数服务器获取，可修改 ============
 

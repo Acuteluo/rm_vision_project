@@ -17,7 +17,7 @@ EKF::EKF(rclcpp::Node* node): node_(node)
 
 
 // 从参数服务器更新（运行时调用）
-void EKF::updateParamsFromServer() 
+void EKF::UpdateParamsFromServer() 
 {
     if (!node_) return;
 
@@ -52,7 +52,7 @@ void EKF::updateParamsFromServer()
 
 
 // 设置装甲板的 width 和 height
-void EKF::setParam(std::string ARMOR_TYPE)
+void EKF::SetArmorplateSize(std::string ARMOR_TYPE)
 {
     if(ARMOR_TYPE == "normal") // 步兵装甲板
     {
@@ -68,21 +68,26 @@ void EKF::setParam(std::string ARMOR_TYPE)
 
 
 // 设置是否打印日志
-void EKF::setDebugLogger(bool SHOW_LOGGER_DEBUG)
+void EKF::SetDebugLogger(bool SHOW_LOGGER_DEBUG)
 {
     this->SHOW_LOGGER_DEBUG = SHOW_LOGGER_DEBUG;
 }
 
+// 设置装甲板的数量
+void EKF::SetArmorNum(int num) 
+{ 
+    armor_num_ = num; 
+} 
 
 
-void EKF::reset()
+void EKF::Reset()
 {
     this->is_initialized = false; // 重置初始化
 }
 
 
 // 05【整车中心坐标系】-> 四个【装甲板坐标系】
-void EKF::updateCarCenterToArmorplate(std::string child_frame, double x, double y, double z, double roll, double pitch, double yaw)
+void EKF::UpdateCarCenterToArmorplate(std::string child_frame, double x, double y, double z, double roll, double pitch, double yaw)
 {
     geometry_msgs::msg::TransformStamped tf;
     tf.header.stamp = this->node_->now(); // 帧头 -> 直接获取当前时刻
@@ -113,25 +118,24 @@ void EKF::updateCarCenterToArmorplate(std::string child_frame, double x, double 
 }
 
 
-void EKF::updateFourArmorplates()
+void EKF::UpdateCarCenterToArmorplates()
 {
-    // 前装甲板： (R, 0, 0)，x轴朝向正前方（yaw=π）
-    updateCarCenterToArmorplate("front_armorplate", this->radius, 0.0, 0.0, 0.0, 0.0, M_PI);
-    
-    // 后装甲板： (-R, 0, 0)，x轴朝向正后方（yaw=0）这与整车中心坐标系的 姿态 相等
-    updateCarCenterToArmorplate("behind_armorplate", -this->radius, 0.0, 0.0, 0.0, 0.0, 0.0);
-    
-    // 左装甲板： (0, R, 0)，x轴朝向左方（yaw=-π/2）
-    updateCarCenterToArmorplate("left_armorplate", 0.0, this->radius, 0.0, 0.0, 0.0, -M_PI/2);
-    
-    // 右装甲板： (0, -R, 0)，x轴朝向右方（yaw=π/2）
-    updateCarCenterToArmorplate("right_armorplate", 0.0, -this->radius, 0.0, 0.0, 0.0, M_PI/2);
+    for (int i = 0; i < armor_num_; i++) 
+    {
+        double offset = i * 2.0 * M_PI / armor_num_;
+        NormalizeAngle(offset);
+        double dx = -this->radius * std::cos(offset);
+        double dy = -this->radius * std::sin(offset);
+        
+        std::string frame_name = "armor_" + std::to_string(i);
+        UpdateCarCenterToArmorplate(frame_name, dx, dy, 0.0, 0.0, 0.0, offset);
+    }
 }
 
 
 // 05 【父坐标系】->【整车中心坐标系】注意这里忽略了 pitch & roll
 // 如果是单机模式，父坐标系是 camera_frame，如果是联调模式，父坐标系是 world_frame
-void EKF::updateFatherToCarCenter()
+void EKF::UpdateFatherToCarCenter()
 {
     geometry_msgs::msg::TransformStamped tf;
     tf.header.stamp = this->node_->now(); // 帧头 -> 直接获取当前时刻
@@ -162,95 +166,27 @@ void EKF::updateFatherToCarCenter()
 }
 
 
-
-// // 查询【世界坐标系】-> 【某个装甲板坐标系】和中心点在世界下坐标
-// bool EKF::getTransform(double& x_predict, double& y_predict, double& z_predict, double& center)
-// {
-//     geometry_msgs::msg::TransformStamped transform_world_armorplate; // 世界 -> 整车中心
-//     try 
-//     {
-//         transform_world_armorplate = tf_buffer_->lookupTransform("world_frame", "car_center_frame", tf2::TimePointZero);
-//     } 
-//     catch (tf2::TransformException &ex) 
-//     {
-//         RCLCPP_ERROR(node_->get_logger(), "【世界坐标系 -> 整车中心 坐标系】TF lookup failed: %s", ex.what());
-//         return false; 
-//     }
-
-//     // 获得 世界 -> 装甲板 的平移向量 
-//     x_c = transform_world_armorplate.transform.translation.x;
-//     y_c = transform_world_armorplate.transform.translation.y;
-//     z_c = transform_world_armorplate.transform.translation.z;
-
-//     // 获得 世界 -> 装甲板 的旋转向量（四元数转欧拉角，取 yaw）
-//     tf2::Quaternion q(
-//         transform_world_armorplate.transform.rotation.x,
-//         transform_world_armorplate.transform.rotation.y,
-//         transform_world_armorplate.transform.rotation.z,
-//         transform_world_armorplate.transform.rotation.w
-//     );
-//     double roll_c, pitch_c, yaw_c;
-//     tf2::Matrix3x3(q).getRPY(roll_c, pitch_c, yaw_c); // 顺序：roll, pitch, yaw （XYZ）
-    
-//     yaw = yaw_c; // 返回的 yaw 是弧度
-
-//     return true;
-// }
-
-
 // 根据 ID 获取装甲板在 整车中心坐标系 下的参数
-void EKF::getArmorParams(double& dx, double& dy, double& theta_offset)
+void EKF::GetArmorplateParams(double& dx, double& dy, double& theta_offset)
 {
-    switch(this->armor_id)
-    {
-        case 1: // 正前方装甲板 (+, 0)
-        {
-            dx = this->radius;
-            dy = 0.0; 
-            theta_offset = M_PI; // 180
-            break;
-        }
-            
+    // 严格按照你的 0123 体系：偏差角 = ID * (360 / 装甲板数量)
+    theta_offset = this->armor_id * 2.0 * M_PI / armor_num_;
 
-        case 2: // 右侧装甲板 (0, +)
-        {
-            dx = 0.0; 
-            dy = -this->radius; 
-            theta_offset = M_PI / 2; // +90  
-            break;
-        }
-
-            
-        case 3: // 正后方装甲板 (与中心坐标系同向) (-, 0)
-        {
-            dx = -this->radius; 
-            dy = 0.0; 
-            theta_offset = 0.0; // 0
-            break;
-        }
-            
-        
-        case 4: // 左侧装甲板 (0, +)
-        {
-            dx = 0.0; 
-            dy = this->radius; 
-            theta_offset = -M_PI / 2; // -90  
-            break;
-        }
-            
-    }
+    // 装甲板的 +X 轴指向车心，所以它处于车心的反方向
+    dx = -this->radius * std::cos(theta_offset);
+    dy = -this->radius * std::sin(theta_offset);
 }
 
 
 // 这是滤波的实时值，而不是预测位置喵
 // 得到某个 id 装甲板四个角点在世界下的坐标
-void EKF::getArmorFourCorners(std::vector<Eigen::Vector3d>& corners, int armor_id)
+void EKF::GetArmorplateFourCorners(std::vector<Eigen::Vector3d>& corners, int armor_id)
 {
     corners.resize(4);
     double x_c = this->X(0), y_c = this->X(1), z_c = this->X(2), yaw = this->X(6);
     this->armor_id = armor_id;
     double dx, dy, theta_offset;
-    getArmorParams(dx, dy, theta_offset);
+    GetArmorplateParams(dx, dy, theta_offset);
 
     // 根据 ARMOR_TYPE 实际值，单位m
     const double width = this->width;   
@@ -291,7 +227,7 @@ Eigen::Matrix<double, 4, 1> EKF::h(const Eigen::Matrix<double, 9, 1>& X_in)
     double x_c = X_in(0), y_c = X_in(1), z_c = X_in(2);
     double yaw = X_in(6);
     double dx, dy, theta_offset;
-    getArmorParams(dx, dy, theta_offset);
+    GetArmorplateParams(dx, dy, theta_offset);
 
     double cos_yaw = cos(yaw);
     double sin_yaw = sin(yaw);
@@ -303,17 +239,18 @@ Eigen::Matrix<double, 4, 1> EKF::h(const Eigen::Matrix<double, 9, 1>& X_in)
     z_pred(1) = y_c + sin_yaw * dx + cos_yaw * dy;   // y_armor
     z_pred(2) = z_c;                                 // z 相同
     z_pred(3) = yaw + theta_offset;                  // yaw_armor
+    NormalizeAngle(z_pred(3)); // 归一化装甲板的 yaw 到 [-pi, pi]
 
     return z_pred;
 }
 
 
 // 观测矩阵 雅可比矩阵 H = ∂h/∂x
-Eigen::Matrix<double, 4, 9> EKF::computeH(const Eigen::Matrix<double, 9, 1>& X_in)
+Eigen::Matrix<double, 4, 9> EKF::ComputeH(const Eigen::Matrix<double, 9, 1>& X_in)
 {
     double yaw = X_in(6);
     double dx, dy, theta_offset;
-    getArmorParams(dx, dy, theta_offset);  // theta_offset 用不到，只关心 dx, dy
+    GetArmorplateParams(dx, dy, theta_offset);  // theta_offset 用不到，只关心 dx, dy
 
     double cos_yaw = cos(yaw);
     double sin_yaw = sin(yaw);
@@ -367,10 +304,10 @@ Eigen::Matrix<double, 4, 1> EKF::h_ypd(const Eigen::Matrix<double, 9, 1>& X_in)
 
 
 // 【新增】：利用链式求导法则，算出 YPD 坐标系下的 4x9 雅可比矩阵
-Eigen::Matrix<double, 4, 9> EKF::computeH_YPD(const Eigen::Matrix<double, 9, 1>& X_in)
+Eigen::Matrix<double, 4, 9> EKF::ComputeH_YPD(const Eigen::Matrix<double, 9, 1>& X_in)
 {
     // 1. 先复用你原来写好的 XYZ 雅可比矩阵 H_xyz (4x9)
-    Eigen::Matrix<double, 4, 9> H_xyz = this->computeH(X_in);
+    Eigen::Matrix<double, 4, 9> H_xyz = this->ComputeH(X_in);
 
     // 2. 获取预测的 XYZ
     Eigen::Matrix<double, 4, 1> z_xyz = this->h(X_in);
@@ -412,7 +349,7 @@ Eigen::Matrix<double, 4, 9> EKF::computeH_YPD(const Eigen::Matrix<double, 9, 1>&
 }
 
 
-void EKF::normalizeAngle(double& angle)
+void EKF::NormalizeAngle(double& angle)
 {
     angle = std::atan2(std::sin(angle), std::cos(angle));
 }
@@ -420,14 +357,14 @@ void EKF::normalizeAngle(double& angle)
 
 
 // 发布整车的 tf 动态变换，拿到整车中心作为观测数据，进行预测
-void EKF::getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int armor_id, double dt)
+void EKF::UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int armor_id, double dt)
 {
     this->armor_id = armor_id; // 传入的装甲板 id （1:前，2:右，3:后，4:左）
 
 	// 如果没有初始化就初始化 
     if (this->is_initialized == false)
 	{
-        updateParamsFromServer();  // 确保读取有效值
+        UpdateParamsFromServer();  // 确保读取有效值
 
 		Initialized(armorplate_center, yaw_armor);
         
@@ -435,7 +372,7 @@ void EKF::getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int arm
 	}
 
 	// 根据dt更新参数
-	CalculateParameter(dt); 
+	UpdateParameters(dt); 
 
     // 【修改】：把你的 Z 赋值改为存入 YPD！
     double obs_x = armorplate_center[0];
@@ -456,7 +393,7 @@ void EKF::getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int arm
 	UncertaintyPredict(); // 不确定性预测
 
     // 计算当前原始观测值的 雅可比矩阵（偏导数矩阵），在 X_est 处求值，再转换到 YPD 球面坐标系下
-    H = computeH_YPD(X_est);
+    H = ComputeH_YPD(X_est);
 
 	CalculateKalmanGain(); // 计算卡尔曼增益
 
@@ -466,13 +403,13 @@ void EKF::getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int arm
 	UpdateUncertainty(); // 更新不确定性
 
     // 偏航角归一化到 [-π, π]
-    normalizeAngle(X(6));
+    NormalizeAngle(X(6));
 
 	UpdateHistoricalData(); // 更新历史数据
 
-    updateFourArmorplates(); // 发布 整车中心 -> 四个装甲板 的 tf 坐标系变换
+    UpdateCarCenterToArmorplates(); // 发布 整车中心 -> 四个装甲板 的 tf 坐标系变换
 
-    updateFatherToCarCenter(); // 发布 父坐标系 -> 整车中心 的 tf 坐标系
+    UpdateFatherToCarCenter(); // 发布 父坐标系 -> 整车中心 的 tf 坐标系
 }
 
 
@@ -493,7 +430,7 @@ void EKF::Initialized(const Eigen::Vector3d& armorplate_center, const double& ya
 
     // 根据第一次观测反算一个粗略的中心初始状态
     double dx, dy, theta_offset;
-    getArmorParams(dx, dy, theta_offset);
+    GetArmorplateParams(dx, dy, theta_offset);
     double init_yaw = yaw_armor - theta_offset;   // 粗略的中心偏航角
 
     // 反推中心位置
@@ -510,7 +447,7 @@ void EKF::Initialized(const Eigen::Vector3d& armorplate_center, const double& ya
 
 
 // 依据 dt 更新参数
-void EKF::CalculateParameter(double dt)
+void EKF::UpdateParameters(double dt)
 {
 	// // 观测矩阵 观测 x_c y_c z_c 和 yaw
 	// H << 1, 0, 0, 0, 0, 0, 0, 0,
@@ -592,16 +529,16 @@ void EKF::UpdateStatus()
     
     // 将视线角 (los_yaw, los_pitch) 和目前姿态 (yaw_armor) 全部做归一化！
     // 否则比如 从 +179 到 -179，就会跳 358 度！但是用 sin 和 cos 就可以归一化到 -PI 到 PI 内，再 atan2 反求角度
-    normalizeAngle(innovation(0)); // los_yaw 归一化
-    normalizeAngle(innovation(1)); // los_pitch 归一化
-    normalizeAngle(innovation(3)); // yaw_armor 归一化
+    NormalizeAngle(innovation(0)); // los_yaw 归一化
+    NormalizeAngle(innovation(1)); // los_pitch 归一化
+    NormalizeAngle(innovation(3)); // yaw_armor 归一化
 
 
     // 再用处理后的新息进行状态更新
     X = X_est + K * innovation;
 
     // 整车角度 yaw 归一化
-    normalizeAngle(X(6)); 
+    NormalizeAngle(X(6)); 
 
     if(this->SHOW_LOGGER_DEBUG)
     {
@@ -645,7 +582,7 @@ void EKF::UpdateHistoricalData()
 
 
 // 预测未来 future 秒的中心点的位置，通过传入引用，获得 x y z
-void EKF::getCenterPredict(Eigen::Vector3d& car_center_predict, double future_time)
+void EKF::GetCarCenterPredict(Eigen::Vector3d& car_center_predict, double future_time)
 {
 	car_center_predict[0] = this->X(0) + this->X(3) * future_time; // x + v_x * future_time
     car_center_predict[1] = this->X(1) + this->X(4) * future_time; // y + v_y * future_time
@@ -653,7 +590,7 @@ void EKF::getCenterPredict(Eigen::Vector3d& car_center_predict, double future_ti
 }
 
 // 获得装甲板的预测位置
-void EKF::getArmorPredict(Eigen::Vector3d& armorplate_center_predict, 
+void EKF::GetArmorplatePredict(Eigen::Vector3d& armorplate_center_predict, 
                           int armor_id, double future_time) 
 {
     // 1. 先预测未来中心状态
@@ -661,11 +598,12 @@ void EKF::getArmorPredict(Eigen::Vector3d& armorplate_center_predict,
     double future_y_c = this->X(1) + this->X(4) * future_time; // y + v_y * future_time
     double future_z_c = this->X(2) + this->X(5) * future_time; // z + v_z * future_time
     double future_yaw = X(6) + X(7) * future_time + 0.5 * X(8) * future_time * future_time;
+    NormalizeAngle(future_yaw);
 
     // 2. 根据装甲板ID获取几何参数
     this->armor_id = armor_id;
     double dx, dy, theta_offset;
-    getArmorParams(dx, dy, theta_offset);
+    GetArmorplateParams(dx, dy, theta_offset);
 
     // 3. 应用旋转得到装甲板世界坐标
     double cos_yaw = cos(future_yaw);
@@ -678,11 +616,11 @@ void EKF::getArmorPredict(Eigen::Vector3d& armorplate_center_predict,
 
 
 // 改变滤波器内部状态的预测，会更新状态
-void EKF::predictOnly(double dt)
+void EKF::PredictOnly(double dt)
 {
     if (!this->is_initialized) return;
 
-    CalculateParameter(dt);
+    UpdateParameters(dt);
     StatusPredict();
     UncertaintyPredict();
 
@@ -690,7 +628,7 @@ void EKF::predictOnly(double dt)
     P = P_est;
 
     // 偏航角归一化到 [-π, π]
-    normalizeAngle(X(6));
+    NormalizeAngle(X(6));
 
     X_prev = X;
     P_prev = P;

@@ -54,32 +54,62 @@ public:
     * @param    dt
 	* @return   无返回值
 	*/
-	void getKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int armor_id, double dt);
+	void UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int armor_id, double dt);
 	
     ////////// 动态传参 ///////////
 
     // 从参数服务器更新（运行时调用）
-    void updateParamsFromServer();
-
-	// 初始化  状态转移矩阵F  协方差矩阵P  预测过程噪声Q  观测矩阵H  测量过程噪声R
-	void Initialized(const Eigen::Vector3d& armorplate_center, const double& yaw_armor);
+    void UpdateParamsFromServer();
 
     // 设置装甲板的 width 和 height
-    void setParam(std::string ARMOR_TYPE);
+    void SetArmorplateSize(std::string ARMOR_TYPE);
 
     // 设置是否打印日志
-    void setDebugLogger(bool SHOW_LOGGER_DEBUG);
+    void SetDebugLogger(bool SHOW_LOGGER_DEBUG);
 	
     // 重置初始化（丢失目标超过一定帧数时）
-    void reset();
+    void Reset();
 
-	// 更新参数
-	void CalculateParameter(double dt);
+
+	// 获得装甲板的预测位置。通过传入引用，获得 x y z
+    void GetArmorplatePredict(Eigen::Vector3d& armorplate_center_predict, 
+                          int armor_id, double future_time);
+
+
+	// 预测未来 future 秒的中心点的位置，通过传入引用，获得 x y z
+	void GetCarCenterPredict(Eigen::Vector3d& car_center_predict, double future_time);
+	
+
+    // 改变滤波器内部状态的预测，会更新状态
+    void PredictOnly(double dt);
+
+
+    // 得到某个 id 装甲板四个角点在世界下的坐标
+    void GetArmorplateFourCorners(std::vector<Eigen::Vector3d>& corners, int armor_id);
+
+    // 状态矩阵
+	Eigen::Matrix<double, 9, 1> X;      // k 时刻状态
+	Eigen::Matrix<double, 9, 1> X_est;  // k 时刻预测状态
+	Eigen::Matrix<double, 9, 1> X_prev; // k-1 时刻状态
+
+    bool is_initialized; // 是否初始化
+
+    int armor_num_; // 装甲板数量
+
+    void SetArmorNum(int num); // 给 CoreNode 调用的接口
+
+private:
+
+    // 初始化  状态转移矩阵F  协方差矩阵P  预测过程噪声Q  观测矩阵H  测量过程噪声R
+	void Initialized(const Eigen::Vector3d& armorplate_center, const double& yaw_armor);
+
+    // 更新参数
+	void UpdateParameters(double dt);
 	
 
 
     // 归一化
-    void normalizeAngle(double& angle);
+    void NormalizeAngle(double& angle);
 
 
 	// 状态预测 X_hat_k_est = F * X_hat_k-1
@@ -110,62 +140,33 @@ public:
 	void UpdateHistoricalData();
 
 
-	// 获得装甲板的预测位置。通过传入引用，获得 x y z
-    void getArmorPredict(Eigen::Vector3d& armorplate_center_predict, 
-                          int armor_id, double future_time);
-
-
-	// 预测未来 future 秒的中心点的位置，通过传入引用，获得 x y z
-	void getCenterPredict(Eigen::Vector3d& car_center_predict, double future_time);
-	
-
-    // 改变滤波器内部状态的预测，会更新状态
-    void predictOnly(double dt);
-
-
     // 05【整车中心坐标系】-> 四个【装甲板坐标系】
-    void updateCarCenterToArmorplate(std::string child_frame, double x, double y, double z, double roll, double pitch, double yaw);
+    void UpdateCarCenterToArmorplate(std::string child_frame, double x, double y, double z, double roll, double pitch, double yaw);
 
-    void updateFourArmorplates();
+    void UpdateCarCenterToArmorplates();
 
     // 06【父坐标系】->【整车中心坐标系】注意这里忽略了 pitch & roll
     // 父坐标系在单机模式下是 camera_frame，在联调模式下是 world_frame
-    void updateFatherToCarCenter();
+    void UpdateFatherToCarCenter();
 
-
-    // 得到某个 id 装甲板四个角点在世界下的坐标
-    void getArmorFourCorners(std::vector<Eigen::Vector3d>& corners, int armor_id);
-
-    // 查询【世界坐标系】-> 【整车中心坐标系】
-    // bool getTransform(double& x_c, double& y_c, double& z_c, double& yaw);
-
-
-    // 状态矩阵
-	Eigen::Matrix<double, 9, 1> X;      // k 时刻状态
-	Eigen::Matrix<double, 9, 1> X_est;  // k 时刻预测状态
-	Eigen::Matrix<double, 9, 1> X_prev; // k-1 时刻状态
-
-
-
-private:
 
     // 非线性观测方程 h(x, armor_id)：将状态映射到装甲板观测空间
     Eigen::Matrix<double, 4, 1> h(const Eigen::Matrix<double, 9, 1>& x);
 
     // 计算观测雅可比矩阵 H = ∂h/∂x，在预测状态 X_est 处线性化
-    Eigen::Matrix<double, 4, 9> computeH(const Eigen::Matrix<double, 9, 1>& x);
+    Eigen::Matrix<double, 4, 9> ComputeH(const Eigen::Matrix<double, 9, 1>& x);
 
 
     // 【新增 1】：用于计算 YPD 预测值的非线性函数
     Eigen::Matrix<double, 4, 1> h_ypd(const Eigen::Matrix<double, 9, 1>& X_in);
 
     // 【新增 2】：用于计算 YPD 观测空间雅可比矩阵的函数 (链式法则)
-    Eigen::Matrix<double, 4, 9> computeH_YPD(const Eigen::Matrix<double, 9, 1>& X_in);
+    Eigen::Matrix<double, 4, 9> ComputeH_YPD(const Eigen::Matrix<double, 9, 1>& X_in);
 
 
 
     // 根据装甲板 ID 获取车体系下偏移量 (dx, dy) 和偏航角差 θ_offset
-    void getArmorParams(double& dx, double& dy, double& theta_offset);
+    void GetArmorplateParams(double& dx, double& dy, double& theta_offset);
 
 
     // 【新增 1】：YPD 观测的 R 矩阵和参数
@@ -175,7 +176,7 @@ private:
     double r_distance; // 距离观测噪声 (极大)
 
     // 【新增 2】：新增一个 YPD 更新函数的声明
-    void updateYPD(const Eigen::Vector3d& obs_xyz);
+    void UpdateYPDFromXYZ(const Eigen::Vector3d& obs_xyz);
 
 
     double radius = 0.25; // 整车旋转半径 m
@@ -224,8 +225,6 @@ private:
 
 	// 单位矩阵
 	Eigen::Matrix<double, 9, 9> I;
-
-	bool is_initialized; // 是否初始化
 
     // TF 广播器、缓存、监听器，发布从 整车中心到装甲板的动态变换
     // car_center_frame -> armorplate_frame
