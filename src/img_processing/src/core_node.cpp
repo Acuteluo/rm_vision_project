@@ -296,14 +296,15 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     // 3. 解算 pnp
     if (armorplates_.size() > 0) // 存在装甲板
     {
-        armorplates_[0].perspectiveNPoint(); // 解算 pnp，算出了初版的 t_vec 和 辣鸡 R
-
-        // 【新增】：一键优化！内部直接用极品 R 覆盖掉辣鸡 R！
-        armorplates_[0].OptimizeEulerYaw(img_show_);
-
         // 画出所有装甲板（按置信度排序的）并打印信息
         for (int i = 0; i < armorplates_.size(); i++) 
         { 
+            // 对所有的装甲板进行 pnp
+            armorplates_[i].perspectiveNPoint(); // 解算 pnp，算出了初版的 t_vec 和 辣鸡 R
+
+            // 【新增】：一键优化！内部直接用极品 R 覆盖掉辣鸡 R！
+            armorplates_[i].OptimizeEulerYaw(img_show_, i);
+
             // 画所有的装甲板，并打印综合置信度（考虑与上一帧追踪装甲板的距离）最高的装甲板也就是 0号 的 pnp 信息
             armorplates_[i].drawArmorPlateAndPrintPNPInfo(img_show_, chosen_color_, i); 
         }
@@ -657,6 +658,21 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
                         min_error = error;
                         current_id = id;
                     }
+                }
+
+                // =========================================================
+                // 【核心新增：卡方检验 / 门限拒绝 (Gating)】
+                // 如果发现匹配的误差依然巨大(比如大于 0.6 弧度，约35度)，
+                // 绝对是遇到了灯条重叠的畸形板！坚决丢弃这帧，保护 EKF！
+                // =========================================================
+                if (min_error > 0.6) 
+                {
+                    RCLCPP_WARN(this->get_logger(), "遇到畸形板，误差高达 %.2f，启动门限拒绝，本帧走盲推！", min_error);
+                    ekf_->PredictOnly(dt);
+                    ekf_->GetArmorplatePredict(armorplate_center_filter, tracking_id_, 0.00);
+                    ekf_->GetArmorplatePredict(armorplate_center_predict, tracking_id_, ekf_predict_time_);
+                    ekf_->GetCarCenterPredict(car_center_predict, ekf_predict_time_);
+                    return; // 提前结束，不进行 Update
                 }
 
                 RCLCPP_INFO(this->get_logger(), "【识别器】当前 识别和跟踪 的装甲板为 ID = %d", tracking_id_);

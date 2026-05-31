@@ -359,30 +359,36 @@ std::vector<ArmorPlate> Prepare::PairStrip()
     std::sort(armorplate.begin(), armorplate.end(), 
     [this](const ArmorPlate& a, const ArmorPlate& b) 
     {
-        // 如果系统刚刚启动，没有历史中心，按 moderation 排序
-        if (this->last_best_center == cv::Point2f(-1.00, -1.00)) 
-        {
-            return a.moderation > b.moderation;
-        }
+        // // 如果系统刚刚启动，没有历史中心，按 moderation 排序
+        // if (this->last_best_center == cv::Point2f(-1.00, -1.00)) 
+        // {
+        //     return a.moderation > b.moderation;
+        // }
 
-        // 计算综合得分 (Score = 置信度 - 距离惩罚)
+        // // 计算综合得分 (Score = 置信度 - 距离惩罚)
         
-        // 算 A 的距离惩罚
-        double dist_A = cv::norm(a.center - this->last_best_center);
-        // 距离越远，扣分越多，控制最多扣 15 分。惩罚系数可以调，比如 0.1 意味着每偏离 10 像素扣 1 分
-        double penalty_A = std::min(dist_A * 0.1, 15.0);
-        double score_A = a.moderation - penalty_A; 
+        // // 算 A 的距离惩罚
+        // double dist_A = cv::norm(a.center - this->last_best_center);
+        // // 距离越远，扣分越多，控制最多扣 15 分。惩罚系数可以调，比如 0.1 意味着每偏离 10 像素扣 1 分
+        // double penalty_A = std::min(dist_A * 0.1, 15.0);
+        // double score_A = a.moderation - penalty_A; 
 
-        // 算 B 的距离惩罚
-        double dist_B = cv::norm(b.center - this->last_best_center);
-        double penalty_B = std::min(dist_B * 0.1, 15.0);
-        double score_B = b.moderation - penalty_B; 
+        // // 算 B 的距离惩罚
+        // double dist_B = cv::norm(b.center - this->last_best_center);
+        // double penalty_B = std::min(dist_B * 0.1, 15.0);
+        // double score_B = b.moderation - penalty_B; 
 
-        // 【可选：锁定奖励】如果你想极其死板地咬住老目标，甚至可以给距离近的额外加分
-        // if (dist_A < 100) score_A += 20.0;
-        // if (dist_B < 100) score_B += 20.0;
+        // // 【可选：锁定奖励】如果你想极其死板地咬住老目标，甚至可以给距离近的额外加分
+        // // if (dist_A < 100) score_A += 20.0;
+        // // if (dist_B < 100) score_B += 20.0;
 
-        return score_A > score_B; // 按综合得分降序排列
+        // return score_A > score_B; // 按综合得分降序排列
+
+        // 按照距离图像中心的距离排序，距离近的优先
+
+        cv::Point2f img_center(this->img.cols / 2.0f, this->img.rows / 2.0f);
+
+        return cv::norm(a.center - img_center) < cv::norm(b.center - img_center); // 距离图像中心近的优先
     }
 );
 
@@ -634,7 +640,7 @@ std::vector<Strip> Prepare::FindAndJudgeLightStrip()
                     }
 
                     // 使用细化后的参数构造 Strip
-                    strip.push_back(Strip(refined_rect, refined_angle, refined_width, refined_height, color));
+                    strip.push_back(Strip(refined_rect, refined_angle, refined_width, refined_height, color, contours[i]));
                     RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("info"), this->SHOW_LOGGER, "灯条 %d 经过亚像素优化并入选", sum);
 
                 }
@@ -642,7 +648,7 @@ std::vector<Strip> Prepare::FindAndJudgeLightStrip()
                 else 
                 {
                     // 边界不安全，直接使用原矩形
-                    strip.push_back(Strip(temp_rotatedRect, angle, width, height, color));
+                    strip.push_back(Strip(temp_rotatedRect, angle, width, height, color, contours[i]));
                 }
 
             }

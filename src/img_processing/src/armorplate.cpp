@@ -398,7 +398,7 @@ double ArmorPlate::CalculateReprojectionError(double test_euler_yaw)
 
 
 // ==================== 2. 黄金分割法 (Phi优选 欧拉角) ====================
-void ArmorPlate::OptimizeEulerYaw(cv::Mat& img_show)
+void ArmorPlate::OptimizeEulerYaw(cv::Mat& img_show, int index)
 {
     if (!this->is_success) return;
 
@@ -445,7 +445,7 @@ void ArmorPlate::OptimizeEulerYaw(cv::Mat& img_show)
     // 5. 收敛得到极致精准的 欧拉角 Yaw
     double best_euler_yaw = (a + b) / 2.0;
     double best_euler_yaw_angle = best_euler_yaw * 180.0 / CV_PI;
-    cv::putText(img_show, "best_euler_yaw = " + std::to_string((double)best_euler_yaw_angle), cv::Point2f(0, 650), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+    cv::putText(img_show, "best_euler_yaw_" + std::to_string((int)index) + " = " + std::to_string((double)best_euler_yaw_angle), cv::Point2f(0, 650 + 50 * index), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
 
     // ==========================================================
     // 6. 终极替换：用最优 Yaw 重新生成旋转矩阵，覆盖 PnP 的垃圾矩阵！

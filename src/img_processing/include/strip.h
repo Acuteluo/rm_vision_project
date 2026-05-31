@@ -50,7 +50,7 @@ public:
     * @param	std::string color 灯条颜色
 	* @return   无
 	*/
-	Strip(cv::RotatedRect rotated_rect, double angle, double width, double height, std::string color);
+	Strip(cv::RotatedRect rotated_rect, double angle, double width, double height, std::string color, std::vector<cv::Point> contour);
 
 
 	/**

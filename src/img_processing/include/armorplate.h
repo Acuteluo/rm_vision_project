@@ -60,7 +60,7 @@ public:
     Eigen::Matrix3d R; // 右手系 旋转矩阵
 
     // 【新增】：使用黄金分割法优化自身的 欧拉角 Yaw，并覆盖内部的旋转矩阵 R
-    void OptimizeEulerYaw(cv::Mat& img_show);
+    void OptimizeEulerYaw(cv::Mat& img_show, int index);
 
 private:
 

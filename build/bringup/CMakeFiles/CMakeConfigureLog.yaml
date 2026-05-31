@@ -47,8 +47,8 @@ events:
       - "/opt/ros/humble/bin/"
       - "/opt/ros/humble/sbin/"
       - "/opt/ros/humble/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -86,8 +86,8 @@ events:
       - "/opt/ros/humble/bin/uname"
       - "/opt/ros/humble/sbin/uname"
       - "/opt/ros/humble/uname"
-      - "/home/cly/.local/bin/uname"
       - "/opt/ros/humble/bin/uname"
+      - "/home/cly/.local/bin/uname"
       - "/usr/local/sbin/uname"
       - "/usr/local/bin/uname"
       - "/usr/sbin/uname"
@@ -104,7 +104,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -173,8 +172,8 @@ events:
       - "/opt/ros/humble/bin/"
       - "/opt/ros/humble/sbin/"
       - "/opt/ros/humble/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -212,8 +211,8 @@ events:
       - "/opt/ros/humble/bin/gmake"
       - "/opt/ros/humble/sbin/gmake"
       - "/opt/ros/humble/gmake"
-      - "/home/cly/.local/bin/gmake"
       - "/opt/ros/humble/bin/gmake"
+      - "/home/cly/.local/bin/gmake"
       - "/usr/local/sbin/gmake"
       - "/usr/local/bin/gmake"
       - "/usr/sbin/gmake"
@@ -230,7 +229,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -297,8 +295,8 @@ events:
       - "/opt/ros/humble/bin/"
       - "/opt/ros/humble/sbin/"
       - "/opt/ros/humble/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -336,8 +334,8 @@ events:
       - "/opt/ros/humble/bin/cc"
       - "/opt/ros/humble/sbin/cc"
       - "/opt/ros/humble/cc"
-      - "/home/cly/.local/bin/cc"
       - "/opt/ros/humble/bin/cc"
+      - "/home/cly/.local/bin/cc"
       - "/usr/local/sbin/cc"
       - "/usr/local/bin/cc"
       - "/usr/sbin/cc"
@@ -354,7 +352,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -405,7 +402,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -462,8 +458,8 @@ events:
       - "ar"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -485,7 +481,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -520,8 +515,8 @@ events:
       - "ranlib"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -543,7 +538,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -578,8 +572,8 @@ events:
       - "strip"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -601,7 +595,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -636,8 +629,8 @@ events:
       - "ld"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -659,7 +652,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -694,8 +686,8 @@ events:
       - "nm"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -717,7 +709,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -752,8 +743,8 @@ events:
       - "objdump"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -775,7 +766,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -810,8 +800,8 @@ events:
       - "objcopy"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -833,7 +823,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -868,8 +857,8 @@ events:
       - "readelf"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -891,7 +880,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -926,8 +914,8 @@ events:
       - "dlltool"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -938,8 +926,8 @@ events:
       - "/snap/bin/"
     searched_directories:
       - "/usr/bin/dlltool"
-      - "/home/cly/.local/bin/dlltool"
       - "/opt/ros/humble/bin/dlltool"
+      - "/home/cly/.local/bin/dlltool"
       - "/usr/local/sbin/dlltool"
       - "/usr/local/bin/dlltool"
       - "/usr/sbin/dlltool"
@@ -961,7 +949,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -996,8 +983,8 @@ events:
       - "addr2line"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -1019,7 +1006,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -1054,8 +1040,8 @@ events:
       - "tapi"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -1066,8 +1052,8 @@ events:
       - "/snap/bin/"
     searched_directories:
       - "/usr/bin/tapi"
-      - "/home/cly/.local/bin/tapi"
       - "/opt/ros/humble/bin/tapi"
+      - "/home/cly/.local/bin/tapi"
       - "/usr/local/sbin/tapi"
       - "/usr/local/bin/tapi"
       - "/usr/sbin/tapi"
@@ -1089,7 +1075,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -1127,8 +1112,8 @@ events:
       - "gcc-ar"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -1139,8 +1124,8 @@ events:
       - "/snap/bin/"
     searched_directories:
       - "/usr/bin/gcc-ar-11.4"
-      - "/home/cly/.local/bin/gcc-ar-11.4"
       - "/opt/ros/humble/bin/gcc-ar-11.4"
+      - "/home/cly/.local/bin/gcc-ar-11.4"
       - "/usr/local/sbin/gcc-ar-11.4"
       - "/usr/local/bin/gcc-ar-11.4"
       - "/usr/sbin/gcc-ar-11.4"
@@ -1162,7 +1147,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -1200,8 +1184,8 @@ events:
       - "gcc-ranlib"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -1212,8 +1196,8 @@ events:
       - "/snap/bin/"
     searched_directories:
       - "/usr/bin/gcc-ranlib-11.4"
-      - "/home/cly/.local/bin/gcc-ranlib-11.4"
       - "/opt/ros/humble/bin/gcc-ranlib-11.4"
+      - "/home/cly/.local/bin/gcc-ranlib-11.4"
       - "/usr/local/sbin/gcc-ranlib-11.4"
       - "/usr/local/bin/gcc-ranlib-11.4"
       - "/usr/sbin/gcc-ranlib-11.4"
@@ -1235,7 +1219,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -1292,7 +1275,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -1343,7 +1325,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -1403,8 +1384,8 @@ events:
       - "gcc-ar"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -1415,8 +1396,8 @@ events:
       - "/snap/bin/"
     searched_directories:
       - "/usr/bin/gcc-ar-11.4"
-      - "/home/cly/.local/bin/gcc-ar-11.4"
       - "/opt/ros/humble/bin/gcc-ar-11.4"
+      - "/home/cly/.local/bin/gcc-ar-11.4"
       - "/usr/local/sbin/gcc-ar-11.4"
       - "/usr/local/bin/gcc-ar-11.4"
       - "/usr/sbin/gcc-ar-11.4"
@@ -1438,7 +1419,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -1476,8 +1456,8 @@ events:
       - "gcc-ranlib"
     candidate_directories:
       - "/usr/bin/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -1488,8 +1468,8 @@ events:
       - "/snap/bin/"
     searched_directories:
       - "/usr/bin/gcc-ranlib-11.4"
-      - "/home/cly/.local/bin/gcc-ranlib-11.4"
       - "/opt/ros/humble/bin/gcc-ranlib-11.4"
+      - "/home/cly/.local/bin/gcc-ranlib-11.4"
       - "/usr/local/sbin/gcc-ranlib-11.4"
       - "/usr/local/bin/gcc-ranlib-11.4"
       - "/usr/sbin/gcc-ranlib-11.4"
@@ -1511,7 +1491,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -1534,8 +1513,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-9kLt9s"
-      binary: "/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-9kLt9s"
+      source: "/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-BjPgRY"
+      binary: "/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-BjPgRY"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
@@ -1545,13 +1524,13 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-9kLt9s'
+        Change Dir: '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-BjPgRY'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_c9934/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_c9934.dir/build.make CMakeFiles/cmTC_c9934.dir/build
-        gmake[1]: Entering directory '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-9kLt9s'
-        Building C object CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o
-        /usr/bin/cc   -v -o CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-4.3/Modules/CMakeCCompilerABI.c
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_bc2ec/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_bc2ec.dir/build.make CMakeFiles/cmTC_bc2ec.dir/build
+        gmake[1]: Entering directory '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-BjPgRY'
+        Building C object CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o
+        /usr/bin/cc   -v -o CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-4.3/Modules/CMakeCCompilerABI.c
         Using built-in specs.
         COLLECT_GCC=/usr/bin/cc
         OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa
@@ -1561,8 +1540,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04.3) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_c9934.dir/'
-         /usr/lib/gcc/x86_64-linux-gnu/11/cc1 -quiet -v -imultiarch x86_64-linux-gnu /usr/share/cmake-4.3/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_c9934.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccVpFAm2.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_bc2ec.dir/'
+         /usr/lib/gcc/x86_64-linux-gnu/11/cc1 -quiet -v -imultiarch x86_64-linux-gnu /usr/share/cmake-4.3/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_bc2ec.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccHSScvv.s
         GNU C17 (Ubuntu 11.4.0-1ubuntu1~22.04.3) version 11.4.0 (x86_64-linux-gnu)
         	compiled by GNU C version 11.4.0, GMP version 6.2.1, MPFR version 4.1.0, MPC version 1.2.1, isl version isl-0.24-GMP
         
@@ -1582,14 +1561,14 @@ events:
         
         GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
         Compiler executable checksum: 46ebede1f5b795a957a1e85cb61af9d8
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_c9934.dir/'
-         as -v --64 -o CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o /tmp/ccVpFAm2.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_bc2ec.dir/'
+         as -v --64 -o CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o /tmp/ccHSScvv.s
         GNU assembler version 2.38 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.38
         COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.'
-        Linking C executable cmTC_c9934
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c9934.dir/link.txt --verbose=1
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.'
+        Linking C executable cmTC_bc2ec
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bc2ec.dir/link.txt --verbose=1
         Using built-in specs.
         COLLECT_GCC=/usr/bin/cc
         COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper
@@ -1602,14 +1581,14 @@ events:
         gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04.3) 
         COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_c9934' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_c9934.'
-         /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccFAGKTq.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_c9934 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_bc2ec' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_bc2ec.'
+         /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/cco0eIZk.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_bc2ec /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
         collect2 version 11.4.0
-        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccFAGKTq.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_c9934 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
+        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/cco0eIZk.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_bc2ec /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
         GNU ld (GNU Binutils for Ubuntu) 2.38
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_c9934' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_c9934.'
-        /usr/bin/cc  -v -Wl,-v CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o -o cmTC_c9934
-        gmake[1]: Leaving directory '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-9kLt9s'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_bc2ec' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_bc2ec.'
+        /usr/bin/cc  -v -Wl,-v CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o -o cmTC_bc2ec
+        gmake[1]: Leaving directory '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-BjPgRY'
         
       exitCode: 0
   -
@@ -1644,13 +1623,13 @@ events:
       Parsed C implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
-        ignore line: [Change Dir: '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-9kLt9s']
+        ignore line: [Change Dir: '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-BjPgRY']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_c9934/fast]
-        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_c9934.dir/build.make CMakeFiles/cmTC_c9934.dir/build]
-        ignore line: [gmake[1]: Entering directory '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-9kLt9s']
-        ignore line: [Building C object CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o]
-        ignore line: [/usr/bin/cc   -v -o CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-4.3/Modules/CMakeCCompilerABI.c]
+        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_bc2ec/fast]
+        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_bc2ec.dir/build.make CMakeFiles/cmTC_bc2ec.dir/build]
+        ignore line: [gmake[1]: Entering directory '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-BjPgRY']
+        ignore line: [Building C object CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o]
+        ignore line: [/usr/bin/cc   -v -o CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-4.3/Modules/CMakeCCompilerABI.c]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/cc]
         ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa]
@@ -1660,8 +1639,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04.3) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_c9934.dir/']
-        ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/11/cc1 -quiet -v -imultiarch x86_64-linux-gnu /usr/share/cmake-4.3/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_c9934.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccVpFAm2.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_bc2ec.dir/']
+        ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/11/cc1 -quiet -v -imultiarch x86_64-linux-gnu /usr/share/cmake-4.3/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_bc2ec.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccHSScvv.s]
         ignore line: [GNU C17 (Ubuntu 11.4.0-1ubuntu1~22.04.3) version 11.4.0 (x86_64-linux-gnu)]
         ignore line: [	compiled by GNU C version 11.4.0  GMP version 6.2.1  MPFR version 4.1.0  MPC version 1.2.1  isl version isl-0.24-GMP]
         ignore line: []
@@ -1681,14 +1660,14 @@ events:
         ignore line: []
         ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
         ignore line: [Compiler executable checksum: 46ebede1f5b795a957a1e85cb61af9d8]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_c9934.dir/']
-        ignore line: [ as -v --64 -o CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o /tmp/ccVpFAm2.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_bc2ec.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o /tmp/ccHSScvv.s]
         ignore line: [GNU assembler version 2.38 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.38]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.']
-        ignore line: [Linking C executable cmTC_c9934]
-        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c9934.dir/link.txt --verbose=1]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.']
+        ignore line: [Linking C executable cmTC_bc2ec]
+        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bc2ec.dir/link.txt --verbose=1]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/cc]
         ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper]
@@ -1701,13 +1680,13 @@ events:
         ignore line: [gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04.3) ]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_c9934' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_c9934.']
-        link line: [ /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccFAGKTq.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_c9934 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_bc2ec' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_bc2ec.']
+        link line: [ /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/cco0eIZk.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_bc2ec /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/collect2] ==> ignore
           arg [-plugin] ==> ignore
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so] ==> ignore
           arg [-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper] ==> ignore
-          arg [-plugin-opt=-fresolution=/tmp/ccFAGKTq.res] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/cco0eIZk.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -1725,7 +1704,7 @@ events:
           arg [-znow] ==> ignore
           arg [-zrelro] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_c9934] ==> ignore
+          arg [cmTC_bc2ec] ==> ignore
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o]
@@ -1738,7 +1717,7 @@ events:
           arg [-L/usr/lib/../lib] ==> dir [/usr/lib/../lib]
           arg [-L/usr/lib/gcc/x86_64-linux-gnu/11/../../..] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/11/../../..]
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o] ==> ignore
+          arg [CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o] ==> ignore
           arg [-lgcc] ==> lib [gcc]
           arg [--push-state] ==> ignore
           arg [--as-needed] ==> ignore
@@ -1753,7 +1732,7 @@ events:
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
         ignore line: [collect2 version 11.4.0]
-        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccFAGKTq.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_c9934 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_c9934.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
+        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/cco0eIZk.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_bc2ec /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_bc2ec.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
         linker tool for 'C': /usr/bin/ld
         collapse obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o] ==> [/usr/lib/x86_64-linux-gnu/Scrt1.o]
         collapse obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o] ==> [/usr/lib/x86_64-linux-gnu/crti.o]
@@ -1791,8 +1770,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-0WFqBC"
-      binary: "/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-0WFqBC"
+      source: "/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-wvZD57"
+      binary: "/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-wvZD57"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
@@ -1803,13 +1782,13 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-0WFqBC'
+        Change Dir: '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-wvZD57'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_f1e72/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_f1e72.dir/build.make CMakeFiles/cmTC_f1e72.dir/build
-        gmake[1]: Entering directory '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-0WFqBC'
-        Building CXX object CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o
-        /usr/bin/c++   -v -o CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-4.3/Modules/CMakeCXXCompilerABI.cpp
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_eb349/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_eb349.dir/build.make CMakeFiles/cmTC_eb349.dir/build
+        gmake[1]: Entering directory '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-wvZD57'
+        Building CXX object CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o
+        /usr/bin/c++   -v -o CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-4.3/Modules/CMakeCXXCompilerABI.cpp
         Using built-in specs.
         COLLECT_GCC=/usr/bin/c++
         OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa
@@ -1819,8 +1798,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04.3) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f1e72.dir/'
-         /usr/lib/gcc/x86_64-linux-gnu/11/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /usr/share/cmake-4.3/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_f1e72.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccY7gXvP.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_eb349.dir/'
+         /usr/lib/gcc/x86_64-linux-gnu/11/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /usr/share/cmake-4.3/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_eb349.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccGLHfie.s
         GNU C++17 (Ubuntu 11.4.0-1ubuntu1~22.04.3) version 11.4.0 (x86_64-linux-gnu)
         	compiled by GNU C version 11.4.0, GMP version 6.2.1, MPFR version 4.1.0, MPC version 1.2.1, isl version isl-0.24-GMP
         
@@ -1844,14 +1823,14 @@ events:
         
         GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
         Compiler executable checksum: ac7fa628ee459f217e6fdb88b3db0bde
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f1e72.dir/'
-         as -v --64 -o CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccY7gXvP.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_eb349.dir/'
+         as -v --64 -o CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccGLHfie.s
         GNU assembler version 2.38 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.38
         COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.'
-        Linking CXX executable cmTC_f1e72
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f1e72.dir/link.txt --verbose=1
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.'
+        Linking CXX executable cmTC_eb349
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_eb349.dir/link.txt --verbose=1
         Using built-in specs.
         COLLECT_GCC=/usr/bin/c++
         COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper
@@ -1864,14 +1843,14 @@ events:
         gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04.3) 
         COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f1e72' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_f1e72.'
-         /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccSXtU8E.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_f1e72 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_eb349' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_eb349.'
+         /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccp2ogMt.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_eb349 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
         collect2 version 11.4.0
-        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccSXtU8E.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_f1e72 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
+        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccp2ogMt.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_eb349 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
         GNU ld (GNU Binutils for Ubuntu) 2.38
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f1e72' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_f1e72.'
-        /usr/bin/c++  -v -Wl,-v CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_f1e72
-        gmake[1]: Leaving directory '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-0WFqBC'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_eb349' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_eb349.'
+        /usr/bin/c++  -v -Wl,-v CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_eb349
+        gmake[1]: Leaving directory '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-wvZD57'
         
       exitCode: 0
   -
@@ -1912,13 +1891,13 @@ events:
       Parsed CXX implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
-        ignore line: [Change Dir: '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-0WFqBC']
+        ignore line: [Change Dir: '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-wvZD57']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_f1e72/fast]
-        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_f1e72.dir/build.make CMakeFiles/cmTC_f1e72.dir/build]
-        ignore line: [gmake[1]: Entering directory '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-0WFqBC']
-        ignore line: [Building CXX object CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o]
-        ignore line: [/usr/bin/c++   -v -o CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-4.3/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_eb349/fast]
+        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_eb349.dir/build.make CMakeFiles/cmTC_eb349.dir/build]
+        ignore line: [gmake[1]: Entering directory '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-wvZD57']
+        ignore line: [Building CXX object CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o]
+        ignore line: [/usr/bin/c++   -v -o CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-4.3/Modules/CMakeCXXCompilerABI.cpp]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/c++]
         ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa]
@@ -1928,8 +1907,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04.3) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f1e72.dir/']
-        ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/11/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /usr/share/cmake-4.3/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_f1e72.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccY7gXvP.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_eb349.dir/']
+        ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/11/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /usr/share/cmake-4.3/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_eb349.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccGLHfie.s]
         ignore line: [GNU C++17 (Ubuntu 11.4.0-1ubuntu1~22.04.3) version 11.4.0 (x86_64-linux-gnu)]
         ignore line: [	compiled by GNU C version 11.4.0  GMP version 6.2.1  MPFR version 4.1.0  MPC version 1.2.1  isl version isl-0.24-GMP]
         ignore line: []
@@ -1953,14 +1932,14 @@ events:
         ignore line: []
         ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
         ignore line: [Compiler executable checksum: ac7fa628ee459f217e6fdb88b3db0bde]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f1e72.dir/']
-        ignore line: [ as -v --64 -o CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccY7gXvP.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_eb349.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccGLHfie.s]
         ignore line: [GNU assembler version 2.38 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.38]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.']
-        ignore line: [Linking CXX executable cmTC_f1e72]
-        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f1e72.dir/link.txt --verbose=1]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.']
+        ignore line: [Linking CXX executable cmTC_eb349]
+        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_eb349.dir/link.txt --verbose=1]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/c++]
         ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper]
@@ -1973,13 +1952,13 @@ events:
         ignore line: [gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04.3) ]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f1e72' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_f1e72.']
-        link line: [ /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccSXtU8E.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_f1e72 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_eb349' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_eb349.']
+        link line: [ /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccp2ogMt.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_eb349 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/collect2] ==> ignore
           arg [-plugin] ==> ignore
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so] ==> ignore
           arg [-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper] ==> ignore
-          arg [-plugin-opt=-fresolution=/tmp/ccSXtU8E.res] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccp2ogMt.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -1997,7 +1976,7 @@ events:
           arg [-znow] ==> ignore
           arg [-zrelro] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_f1e72] ==> ignore
+          arg [cmTC_eb349] ==> ignore
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o]
@@ -2010,7 +1989,7 @@ events:
           arg [-L/usr/lib/../lib] ==> dir [/usr/lib/../lib]
           arg [-L/usr/lib/gcc/x86_64-linux-gnu/11/../../..] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/11/../../..]
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
           arg [-lstdc++] ==> lib [stdc++]
           arg [-lm] ==> lib [m]
           arg [-lgcc_s] ==> lib [gcc_s]
@@ -2021,7 +2000,7 @@ events:
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
         ignore line: [collect2 version 11.4.0]
-        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccSXtU8E.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_f1e72 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_f1e72.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
+        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccp2ogMt.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_eb349 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_eb349.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
         linker tool for 'CXX': /usr/bin/ld
         collapse obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o] ==> [/usr/lib/x86_64-linux-gnu/Scrt1.o]
         collapse obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o] ==> [/usr/lib/x86_64-linux-gnu/crti.o]
@@ -2182,7 +2161,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -2256,8 +2234,8 @@ events:
       - "/opt/ros/humble/bin/"
       - "/opt/ros/humble/sbin/"
       - "/opt/ros/humble/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -2312,8 +2290,8 @@ events:
       - "/opt/ros/humble/bin/python3"
       - "/opt/ros/humble/sbin/python3"
       - "/opt/ros/humble/python3"
-      - "/home/cly/.local/bin/python3"
       - "/opt/ros/humble/bin/python3"
+      - "/home/cly/.local/bin/python3"
       - "/usr/local/sbin/python3"
       - "/usr/local/bin/python3"
       - "/usr/sbin/python3"
@@ -2330,7 +2308,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -2485,7 +2462,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -2640,7 +2616,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -2795,7 +2770,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -2950,7 +2924,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -3105,7 +3078,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -3260,7 +3232,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -3415,7 +3386,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -3570,7 +3540,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -3725,7 +3694,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -3880,7 +3848,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -4037,7 +4004,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -4192,7 +4158,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -4347,7 +4312,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -4502,7 +4466,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -5103,7 +5066,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -5160,7 +5122,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -5317,7 +5278,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -5376,7 +5336,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -5439,7 +5398,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -5502,7 +5460,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -5565,7 +5522,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -5632,7 +5588,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -5712,8 +5667,8 @@ events:
       - "/opt/ros/humble/lib/x86_64-linux-gnu/"
       - "/opt/ros/humble/lib/"
       - "/opt/ros/humble/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -5769,8 +5724,8 @@ events:
       - "/opt/ros/humble/lib/x86_64-linux-gnu/"
       - "/opt/ros/humble/lib/"
       - "/opt/ros/humble/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -5796,7 +5751,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -5959,7 +5913,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -6120,7 +6073,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -6183,7 +6135,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -6360,7 +6311,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -6519,7 +6469,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -6676,7 +6625,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -6837,7 +6785,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -7012,7 +6959,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -7177,7 +7123,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -7372,7 +7317,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -7437,7 +7381,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -7630,7 +7573,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -7801,7 +7743,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -7868,7 +7809,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -8111,7 +8051,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -8176,7 +8115,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -8345,7 +8283,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -8412,7 +8349,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -8607,7 +8543,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -8674,7 +8609,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -8837,7 +8771,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -8902,7 +8835,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -9095,7 +9027,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -9162,7 +9093,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -9333,7 +9263,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -9398,7 +9327,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -9567,7 +9495,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -9728,7 +9655,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -9791,7 +9717,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -9854,7 +9779,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -10013,7 +9937,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -10076,7 +9999,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -10141,7 +10063,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -10206,7 +10127,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -10271,7 +10191,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -10336,7 +10255,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -10401,7 +10319,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -10562,7 +10479,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -10723,7 +10639,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -10788,7 +10703,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -10868,8 +10782,8 @@ events:
       - "/opt/ros/humble/lib/x86_64-linux-gnu/"
       - "/opt/ros/humble/lib/"
       - "/opt/ros/humble/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -10936,7 +10850,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -11073,7 +10986,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -11236,7 +11148,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -11397,7 +11308,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -11560,7 +11470,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -11628,7 +11537,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -11698,7 +11606,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -11768,7 +11675,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -11838,7 +11744,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -11908,7 +11813,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -11978,7 +11882,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -12048,7 +11951,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -12214,7 +12116,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -12284,7 +12185,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -12356,7 +12256,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -12532,7 +12431,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -12721,7 +12619,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -13190,7 +13087,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -13277,8 +13173,8 @@ events:
       - "/opt/ros/humble/bin/"
       - "/opt/ros/humble/sbin/"
       - "/opt/ros/humble/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -13360,10 +13256,10 @@ events:
       - "/opt/ros/humble/sbin/pkgconf"
       - "/opt/ros/humble/pkg-config"
       - "/opt/ros/humble/pkgconf"
-      - "/home/cly/.local/bin/pkg-config"
-      - "/home/cly/.local/bin/pkgconf"
       - "/opt/ros/humble/bin/pkg-config"
       - "/opt/ros/humble/bin/pkgconf"
+      - "/home/cly/.local/bin/pkg-config"
+      - "/home/cly/.local/bin/pkgconf"
       - "/usr/local/sbin/pkg-config"
       - "/usr/local/sbin/pkgconf"
       - "/usr/local/bin/pkg-config"
@@ -13383,7 +13279,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -13457,7 +13352,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -13533,7 +13427,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -13647,10 +13540,10 @@ events:
       - "/opt/ros/humble/"
       - "/usr/include/include/"
       - "/usr/include/"
-      - "/home/cly/.local/bin/include/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/include/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/include/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/include/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/include/"
@@ -13774,7 +13667,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -13918,12 +13810,12 @@ events:
       - "/usr/lib/x86_64-linux-gnu/lib/"
       - "/usr/lib/x86_64-linux-gnu/lib64/"
       - "/usr/lib/x86_64-linux-gnu/"
-      - "/home/cly/.local/bin/lib/"
-      - "/home/cly/.local/bin/lib64/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/lib/"
       - "/opt/ros/humble/bin/lib64/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/lib/"
+      - "/home/cly/.local/bin/lib64/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/lib/"
       - "/usr/local/sbin/lib64/"
       - "/usr/local/sbin/"
@@ -14268,7 +14160,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -14410,12 +14301,12 @@ events:
       - "/usr/lib/x86_64-linux-gnu/lib/"
       - "/usr/lib/x86_64-linux-gnu/lib64/"
       - "/usr/lib/x86_64-linux-gnu/"
-      - "/home/cly/.local/bin/lib/"
-      - "/home/cly/.local/bin/lib64/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/lib/"
       - "/opt/ros/humble/bin/lib64/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/lib/"
+      - "/home/cly/.local/bin/lib64/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/lib/"
       - "/usr/local/sbin/lib64/"
       - "/usr/local/sbin/"
@@ -14594,7 +14485,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -14782,7 +14672,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -14865,8 +14754,8 @@ events:
       - "/opt/ros/humble/include/"
       - "/opt/ros/humble/"
       - "/opt/ros/humble/include/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -14933,7 +14822,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -15019,8 +14907,8 @@ events:
       - "/opt/ros/humble/lib/"
       - "/opt/ros/humble/"
       - "/opt/ros/humble/lib/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -15077,8 +14965,8 @@ events:
       - "/opt/ros/humble/lib/"
       - "/opt/ros/humble/"
       - "/opt/ros/humble/lib/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -15144,7 +15032,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -15229,8 +15116,8 @@ events:
       - "/opt/ros/humble/lib/"
       - "/opt/ros/humble/"
       - "/opt/ros/humble/lib/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -15287,8 +15174,8 @@ events:
       - "/opt/ros/humble/lib/"
       - "/opt/ros/humble/"
       - "/opt/ros/humble/lib/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -15329,7 +15216,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -15415,8 +15301,8 @@ events:
       - "/opt/ros/humble/lib/"
       - "/opt/ros/humble/"
       - "/opt/ros/humble/lib/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -15473,8 +15359,8 @@ events:
       - "/opt/ros/humble/lib/"
       - "/opt/ros/humble/"
       - "/opt/ros/humble/lib/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -15540,7 +15426,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -15625,8 +15510,8 @@ events:
       - "/opt/ros/humble/lib/"
       - "/opt/ros/humble/"
       - "/opt/ros/humble/lib/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -15683,8 +15568,8 @@ events:
       - "/opt/ros/humble/lib/"
       - "/opt/ros/humble/"
       - "/opt/ros/humble/lib/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -15725,7 +15610,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -15891,7 +15775,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -16055,7 +15938,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -16232,7 +16114,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -16395,7 +16276,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -16440,8 +16320,8 @@ events:
     checks:
       - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
     directories:
-      source: "/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-osRmnN"
-      binary: "/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-osRmnN"
+      source: "/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-8TbfEg"
+      binary: "/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-8TbfEg"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
@@ -16452,17 +16332,17 @@ events:
       variable: "CMAKE_HAVE_LIBC_PTHREAD"
       cached: true
       stdout: |
-        Change Dir: '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-osRmnN'
+        Change Dir: '/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-8TbfEg'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_c2d4a/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_c2d4a.dir/build.make CMakeFiles/cmTC_c2d4a.dir/build
-        gmake[1]: 进入目录“/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-osRmnN”
-        Building C object CMakeFiles/cmTC_c2d4a.dir/src.c.o
-        /usr/bin/cc -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_c2d4a.dir/src.c.o -c /home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-osRmnN/src.c
-        Linking C executable cmTC_c2d4a
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c2d4a.dir/link.txt --verbose=1
-        /usr/bin/cc CMakeFiles/cmTC_c2d4a.dir/src.c.o -o cmTC_c2d4a
-        gmake[1]: 离开目录“/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-osRmnN”
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_96613/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_96613.dir/build.make CMakeFiles/cmTC_96613.dir/build
+        gmake[1]: 进入目录“/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-8TbfEg”
+        Building C object CMakeFiles/cmTC_96613.dir/src.c.o
+        /usr/bin/cc -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_96613.dir/src.c.o -c /home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-8TbfEg/src.c
+        Linking C executable cmTC_96613
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_96613.dir/link.txt --verbose=1
+        /usr/bin/cc CMakeFiles/cmTC_96613.dir/src.c.o -o cmTC_96613
+        gmake[1]: 离开目录“/home/cly/project/build/bringup/CMakeFiles/CMakeScratch/TryCompile-8TbfEg”
         
       exitCode: 0
   -
@@ -16662,7 +16542,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -16891,7 +16770,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -16956,7 +16834,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -17117,7 +16994,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -17460,7 +17336,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -17523,7 +17398,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -17586,7 +17460,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -17649,7 +17522,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -17712,7 +17584,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -17775,7 +17646,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -17934,7 +17804,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -17997,7 +17866,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -18060,7 +17928,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -18123,7 +17990,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -18186,7 +18052,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -18249,7 +18114,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -18408,7 +18272,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -18565,7 +18428,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -18626,7 +18488,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -18687,7 +18548,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -18748,7 +18608,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -18809,7 +18668,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -18870,7 +18728,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -19027,7 +18884,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -19238,7 +19094,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -19393,7 +19248,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -19551,7 +19405,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -19709,7 +19562,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -19867,7 +19719,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -20025,7 +19876,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -20183,7 +20033,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -20341,7 +20190,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -20497,7 +20345,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -20573,8 +20420,8 @@ events:
       - "/opt/ros/humble/bin/"
       - "/opt/ros/humble/sbin/"
       - "/opt/ros/humble/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -20639,7 +20486,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -20713,8 +20559,8 @@ events:
       - "/opt/ros/humble/bin/"
       - "/opt/ros/humble/sbin/"
       - "/opt/ros/humble/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -20779,7 +20625,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -20853,8 +20698,8 @@ events:
       - "/opt/ros/humble/bin/"
       - "/opt/ros/humble/sbin/"
       - "/opt/ros/humble/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -20919,7 +20764,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -20993,8 +20837,8 @@ events:
       - "/opt/ros/humble/bin/"
       - "/opt/ros/humble/sbin/"
       - "/opt/ros/humble/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -21059,7 +20903,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
@@ -21133,8 +20976,8 @@ events:
       - "/opt/ros/humble/bin/"
       - "/opt/ros/humble/sbin/"
       - "/opt/ros/humble/"
-      - "/home/cly/.local/bin/"
       - "/opt/ros/humble/bin/"
+      - "/home/cly/.local/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
       - "/usr/sbin/"
@@ -21189,8 +21032,8 @@ events:
       - "/opt/ros/humble/bin/xmllint"
       - "/opt/ros/humble/sbin/xmllint"
       - "/opt/ros/humble/xmllint"
-      - "/home/cly/.local/bin/xmllint"
       - "/opt/ros/humble/bin/xmllint"
+      - "/home/cly/.local/bin/xmllint"
       - "/usr/local/sbin/xmllint"
       - "/usr/local/bin/xmllint"
       - "/usr/sbin/xmllint"
@@ -21207,7 +21050,6 @@ events:
         - "/home/cly/ros2_ws/install/test_pkg"
         - "/opt/ros/humble"
       ENV{PATH}:
-        - "/home/cly/.local/bin"
         - "/opt/ros/humble/bin"
         - "/home/cly/.local/bin"
         - "/usr/local/sbin"
