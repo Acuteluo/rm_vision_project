@@ -434,6 +434,7 @@ void EKF::UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double armor_y
     double dynamic_r_dist = std::log(std::abs(delta_angle) + 1.0) + r_distance_;
     double dynamic_r_yaw = std::log(std::abs(obs_d) + 1.0) / 200.0 + r_euler_yaw_;
 
+
     R << r_los_yaw_, 0, 0, 0,
         0, r_los_pitch_, 0, 0,
         0, 0, dynamic_r_dist, 0,
@@ -492,7 +493,7 @@ void EKF::Initialized(const Eigen::Vector3d& armorplate_center, const double& ya
     // 假设 r1 r2 初始都是 0.25 米，dz 初始都是 0.05 米（1、3号装甲板相对于0、2号装甲板，高度-0.05m）
     double init_r1 = 0.25;
     double init_r2 = 0.25;
-    double init_dz = 0.05;
+    double init_dz = 0.00;
     Eigen::Matrix<double, 11, 1> tmp_X = Eigen::Matrix<double, 11, 1>::Zero();
     tmp_X(8) = init_r1, tmp_X(9) = init_r2, tmp_X(10) = init_dz;
 
@@ -565,8 +566,8 @@ void EKF::UpdateParameters(double dt)
     //      0, 0, 0, 0, 0, 0, 0, 0, 0, q_r_, 0,
     //      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, q_dz_;
 
-    double v1 = 100.00;  // 加速度方差
-    double v2 = 400.00;  // 角加速度方差
+    double v1 = 50.00;  // 加速度方差
+    double v2 = 200.00;  // 角加速度方差
     double a = dt * dt * dt * dt / 4;
     double b = dt * dt * dt / 2;
     double c = dt * dt;
@@ -620,6 +621,20 @@ void EKF::UpdateStatus()
     NormalizeAngle(innovation(0)); // los_yaw 归一化
     NormalizeAngle(innovation(1)); // los_pitch 归一化
     NormalizeAngle(innovation(3)); // yaw_armor 归一化
+
+    // 计算卡方值 (马氏距离的平方)
+    Eigen::Matrix<double, 4, 4> S = H * P_est * H.transpose() + R;
+    double nis = innovation.transpose() * S.inverse() * innovation;
+
+    // 自由度为4，95%置信度下的卡方阈值约为 9.488
+    if (nis > 9.488 && this->is_initialized) 
+    {
+        // 这是一个严重的异常点（假装甲板），拒绝更新状态！
+        RCLCPP_ERROR(rclcpp::get_logger("ekf_debug"), "Outlier detected! NIS=%.2f exceeds threshold. Rejecting update.", nis);  
+        X = X_est; 
+        P = P_est;
+        return; 
+    }
 
 
     // 再用处理后的新息进行状态更新

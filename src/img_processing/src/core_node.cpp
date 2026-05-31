@@ -81,8 +81,8 @@ void CoreNode::InitParams()
     
     this->declare_parameter("ekf.r_los_yaw", 4e-3);   // 相机角度极其精准，给极小方差
     this->declare_parameter("ekf.r_los_pitch", 4e-3); // 相机角度极其精准，给极小方差
-    this->declare_parameter("ekf.r_distance", 1.0);    // PnP 测距极其垃圾！给巨大方差 (5.0~10.0都行)
-    this->declare_parameter("ekf.r_euler_yaw", 9e-2); // 目前观测到的装甲板的角度（需要转换到整车下）
+    this->declare_parameter("ekf.r_distance", 5e-3);    // PnP 测距极其垃圾！给巨大方差 (5.0~10.0都行)
+    this->declare_parameter("ekf.r_euler_yaw", 7e-2); // 目前观测到的装甲板的角度（需要转换到整车下）
 
     // TF 参数声明
     this->declare_parameter("tf.show_logger_error", false);
