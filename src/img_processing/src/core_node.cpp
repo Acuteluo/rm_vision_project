@@ -76,13 +76,13 @@ void CoreNode::InitParams()
     this->declare_parameter("ekf.q_omega", 2.0);
 
     // 【新增】：模型几何噪声，给很小的值让它平滑收敛
-    this->declare_parameter("ekf.q_r", 1e-4); 
-    this->declare_parameter("ekf.q_dz", 1e-4);
+    this->declare_parameter("ekf.q_r", 1e-8); 
+    this->declare_parameter("ekf.q_dz", 1e-8);
     
-    this->declare_parameter("ekf.r_los_yaw", 0.002);   // 相机角度极其精准，给极小方差
-    this->declare_parameter("ekf.r_los_pitch", 0.002); // 相机角度极其精准，给极小方差
-    this->declare_parameter("ekf.r_distance", 0.05);    // PnP 测距极其垃圾！给巨大方差 (5.0~10.0都行)
-    this->declare_parameter("ekf.r_euler_yaw", 0.05); // 目前观测到的装甲板的角度（需要转换到整车下）
+    this->declare_parameter("ekf.r_los_yaw", 4e-3);   // 相机角度极其精准，给极小方差
+    this->declare_parameter("ekf.r_los_pitch", 4e-3); // 相机角度极其精准，给极小方差
+    this->declare_parameter("ekf.r_distance", 1.0);    // PnP 测距极其垃圾！给巨大方差 (5.0~10.0都行)
+    this->declare_parameter("ekf.r_euler_yaw", 9e-2); // 目前观测到的装甲板的角度（需要转换到整车下）
 
     // TF 参数声明
     this->declare_parameter("tf.show_logger_error", false);
@@ -231,7 +231,7 @@ void CoreNode::VideoReading()
         CoreLogic(frame, virtual_time);
 
         // 手动控制视频播放速度
-        int key = cv::waitKey(200);
+        int key = cv::waitKey(300);
 
         // 按 ESC 或 q 退出节点
         if (key == 27 || key == 'q') 
@@ -616,47 +616,75 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
 
         if (tf_lookup_flag) 
         {
+            int current_id = tracking_id_; // 先默认当前追踪 ID 是上一帧的追踪 ID，后续如果 EKF 已经初始化好了，就根据 EKF 的预测来识别当前这块板子真正的 ID（同济逻辑）
+
             if (ekf_->is_initialized) 
             {
                 // ===============================================================
-                // 【核心切板防抖逻辑】
+                // 【TRACKING 匹配当前识别到的目标对应的 ID 的逻辑】
                 // ===============================================================
-                if (tracker_state_ == TrackerState::DETECTING) 
+                
+                double min_error = 1e5;
+                // 1. 获取所有预测板的距离（同济逻辑：按距离排序，剔除最远的背板）
+                std::vector<std::pair<double, int>> dist_id_list;
+                for (int i = 0; i < armor_num_; i++) 
                 {
-                    // 预热期：锁定的板子就是 0 号
-                    tracking_id_ = 0; 
+                    Eigen::Vector3d pred_center;
+                    ekf_->GetArmorplatePredict(pred_center, i, 0.0);
+                    double dist = pred_center.norm();
+                    dist_id_list.push_back({dist, i});
                 }
-                else if (tracker_state_ == TrackerState::TRACKING) 
+                std::sort(dist_id_list.begin(), dist_id_list.end());
+
+                // 2. 只遍历最近的 3 块（深度剔除背板，绝不会认错背后的板）
+                for (int i = 0; i < 3; i++) 
                 {
-                    // 稳定期：死死咬住当前的 tracking_id_！
-                    // 计算正在追踪的板的理论角度
-                    double current_target_yaw = tools::limit_rad(ekf_->X(6) + tracking_id_ * 2.0 * M_PI / armor_num_);
-                    double diff = std::abs(tools::limit_rad(current_target_yaw - yaw_armorplate_now));
+                    int id = dist_id_list[i].second;
                     
-                    // 只有当误差大于 45 度 (0.785 rad) 时，说明当前板子已经转到了侧面，才允许切板！
-                    if (diff > 0.785) 
+                    Eigen::Vector3d pred_center;
+                    ekf_->GetArmorplatePredict(pred_center, id, 0.0);
+                    
+                    double pred_yaw = tools::limit_rad(ekf_->X(6) + id * 2.0 * M_PI / armor_num_);
+                    double pred_los_yaw = std::atan2(pred_center[1], pred_center[0]);
+                    double obs_los_yaw = std::atan2(armorplate_center_now[1], armorplate_center_now[0]);
+
+                    // 同济复合误差：姿态误差 + 视线误差
+                    double error = std::abs(tools::limit_rad(yaw_armorplate_now - pred_yaw)) + 
+                                   std::abs(tools::limit_rad(obs_los_yaw - pred_los_yaw));
+                    
+                    if (error < min_error) 
                     {
-                        double min_diff = 10.0;
-                        for (int i = 0; i < armor_num_; i++) 
-                        {
-                            double target_yaw = tools::limit_rad(ekf_->X(6) + i * 2.0 * M_PI / armor_num_);
-                            double test_diff = std::abs(tools::limit_rad(target_yaw - yaw_armorplate_now)); // 看看哪个板的理论位置和当前检测到的位置是否更接近，选最接近的那个作为 tracking_id_
-                            if (test_diff < min_diff) 
-                            {
-                                min_diff = test_diff;
-                                tracking_id_ = i; // 0, 1, 2, 3
-                            }
-                        }
-                        RCLCPP_WARN(this->get_logger(), "发生切板！切换至 %d 号装甲板", tracking_id_);
+                        min_error = error;
+                        current_id = id;
                     }
                 }
+
+                RCLCPP_INFO(this->get_logger(), "【识别器】当前 识别和跟踪 的装甲板为 ID = %d", tracking_id_);
             }
 
-            // 更新EKF：无论是 DETECTING 还是 TRACKING，只要有数据就必须喂，让它收敛！
-            // EKF 即使 Reset 了，喂一次数据就会 Initialize
+            // 无论是 DETECTING 还是 TRACKING，只要有数据就必须给 EKF。用 current_id 也就是目前识别装甲板最匹配对应的 ID 来更新 EKF。
             ekf_->SetArmorplateSize(armorplate_type_); 
-            ekf_->UpdateExtendedKalman(armorplate_center_now, yaw_armorplate_now, tracking_id_, dt);
+            tools::limit_rad(yaw_armorplate_now);
+            ekf_->UpdateExtendedKalman(armorplate_center_now, yaw_armorplate_now, current_id, dt);
 
+            // 注意！我们用现在的 实时的装甲板目标 更新完 EKF，EKF 就已经可以推出任何一个 ID 对应的状态了，接下来的 tracking_id 只是决定要打和跟踪谁而已！
+
+            // 发现现在识别的装甲板 ID 和之前追踪的 ID 不一样了，考虑去跟踪他
+            if (current_id != tracking_id_) 
+            {
+                ++switch_count_; // 增加切换计数器
+                RCLCPP_WARN(this->get_logger(), "【跟踪器】当前识别到的装甲板 变为了 ID = %d，但仍在跟踪 ID = %d", current_id, tracking_id_);
+
+                if(switch_count_ >= min_switch_frames_)
+                {
+                    RCLCPP_ERROR(this->get_logger(), "【跟踪器】已经切换跟踪装甲板 从 ID = %d 变为 ID = %d", tracking_id_, current_id);
+                    tracking_id_ = current_id; // 连续几帧我发现的目标都是 这个新的 ID，那就切换过去追踪他！
+                }
+            }
+            else
+            {
+                switch_count_ = 0; // 反之如果当前识别的 ID 就是我一直在追踪的那个 ID，那就继续追踪他，切换计数器归零
+            }
             
             // 【还在预热期】
             if (tracker_state_ == TrackerState::DETECTING) 
@@ -679,7 +707,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
                 
                 ekf_ready_ = true; // ekf 已经准备好，可以开始盲推了
             }
-            // ===============================================================
+            
         }
         else 
         {

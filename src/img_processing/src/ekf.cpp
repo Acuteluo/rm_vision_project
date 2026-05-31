@@ -399,7 +399,7 @@ void EKF::NormalizeAngle(double& angle)
 
 
 // 发布整车的 tf 动态变换，拿到整车中心作为观测数据，进行预测
-void EKF::UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int armor_id, double dt)
+void EKF::UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double armor_yaw_origin, int armor_id, double dt)
 {
     this->armor_id = armor_id; // 传入的装甲板 id （1:前，2:右，3:后，4:左）
 
@@ -408,7 +408,7 @@ void EKF::UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double yaw_arm
 	{
         UpdateParamsFromServer();  // 确保读取有效值
 
-		Initialized(armorplate_center, yaw_armor);
+		Initialized(armorplate_center, armor_yaw_origin);
         
         return; // 第一帧不输出结果
 	}
@@ -425,8 +425,22 @@ void EKF::UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double yaw_arm
     double obs_los_pitch = -std::atan2(obs_z, std::sqrt(obs_x * obs_x + obs_y * obs_y));
     double obs_d = std::sqrt(obs_x * obs_x + obs_y * obs_y + obs_z * obs_z);
 
-    // 顺序必须是：[yaw_cam, pitch_cam, distance, yaw_armor]
-    Z << obs_los_yaw, obs_los_pitch, obs_d, yaw_armor;
+    // 同时更新 R 矩阵（因为参数可能已改变）
+
+    double center_yaw = std::atan2(obs_y, obs_x);
+    double delta_angle = armor_yaw_origin - center_yaw;
+    NormalizeAngle(delta_angle); // 偏角越大，越不准
+
+    double dynamic_r_dist = std::log(std::abs(delta_angle) + 1.0) + r_distance_;
+    double dynamic_r_yaw = std::log(std::abs(obs_d) + 1.0) / 200.0 + r_euler_yaw_;
+
+    R << r_los_yaw_, 0, 0, 0,
+        0, r_los_pitch_, 0, 0,
+        0, 0, dynamic_r_dist, 0,
+        0, 0, 0, dynamic_r_yaw;
+
+    // 顺序必须是：[yaw_cam, pitch_cam, distance, armor_yaw_origin]
+    Z << obs_los_yaw, obs_los_pitch, obs_d, armor_yaw_origin;
 
 	///////////////////////////////////// 卡尔曼五步 //////////////////////////////////////
 
@@ -469,10 +483,10 @@ void EKF::Initialized(const Eigen::Vector3d& armorplate_center, const double& ya
     // 换成 YPD 球面坐标系 
 	// 测量过程噪声矩阵
     // 单位m rad
-	R << this->r_los_yaw_, 0, 0, 0,
-        0, this->r_los_pitch_, 0, 0,
-        0, 0, this->r_distance_, 0,
-        0, 0, 0, this->r_euler_yaw_;
+	R << r_los_yaw_, 0, 0, 0,
+        0, r_pitch, 0, 0,
+        0, 0, r_distance_, 0,
+        0, 0, 0, r_euler_yaw_;
 
     // 根据第一次观测反算一个粗略的中心初始状态
     // 假设 r1 r2 初始都是 0.25 米，dz 初始都是 0.05 米（1、3号装甲板相对于0、2号装甲板，高度-0.05m）
@@ -539,24 +553,35 @@ void EKF::UpdateParameters(double dt)
 
 
 	// 预测过程噪声矩阵 Q
-	Q << q_x_, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-         0, q_y_, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-         0, 0, q_z_, 0, 0, 0, 0, 0, 0, 0, 0,
-         0, 0, 0, q_v_x_, 0, 0, 0, 0, 0, 0, 0,
-         0, 0, 0, 0, q_v_y_, 0, 0, 0, 0, 0, 0,
-         0, 0, 0, 0, 0, q_v_z_, 0, 0, 0, 0, 0,
-         0, 0, 0, 0, 0, 0, q_yaw_, 0, 0, 0, 0,
-         0, 0, 0, 0, 0, 0, 0, q_omega_, 0, 0, 0,
-         0, 0, 0, 0, 0, 0, 0, 0, q_r_, 0, 0,
-         0, 0, 0, 0, 0, 0, 0, 0, 0, q_r_, 0,
-         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, q_dz_;
+	// Q << q_x_, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    //      0, q_y_, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    //      0, 0, q_z_, 0, 0, 0, 0, 0, 0, 0, 0,
+    //      0, 0, 0, q_v_x_, 0, 0, 0, 0, 0, 0, 0,
+    //      0, 0, 0, 0, q_v_y_, 0, 0, 0, 0, 0, 0,
+    //      0, 0, 0, 0, 0, q_v_z_, 0, 0, 0, 0, 0,
+    //      0, 0, 0, 0, 0, 0, q_yaw_, 0, 0, 0, 0,
+    //      0, 0, 0, 0, 0, 0, 0, q_omega_, 0, 0, 0,
+    //      0, 0, 0, 0, 0, 0, 0, 0, q_r_, 0, 0,
+    //      0, 0, 0, 0, 0, 0, 0, 0, 0, q_r_, 0,
+    //      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, q_dz_;
 
-
-    // 同时更新 R 矩阵（因为参数可能已改变）
-    R << this->r_los_yaw_, 0, 0, 0,
-        0, this->r_los_pitch_, 0, 0,
-        0, 0, this->r_distance_, 0,
-        0, 0, 0, this->r_euler_yaw_;
+    double v1 = 100.00;  // 加速度方差
+    double v2 = 400.00;  // 角加速度方差
+    double a = dt * dt * dt * dt / 4;
+    double b = dt * dt * dt / 2;
+    double c = dt * dt;
+    
+    Q << a*v1, 0, 0, b*v1, 0, 0, 0, 0, 0, 0, 0,
+         0, a*v1, 0, 0, b*v1, 0, 0, 0, 0, 0, 0,
+         0, 0, a*v1, 0, 0, b*v1, 0, 0, 0, 0, 0,
+         b*v1, 0, 0, c*v1, 0, 0, 0, 0, 0, 0, 0,
+         0, b*v1, 0, 0, c*v1, 0, 0, 0, 0, 0, 0,
+         0, 0, b*v1, 0, 0, c*v1, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, a*v2, b*v2, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, b*v2, c*v2, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
 
 }
 
@@ -629,7 +654,7 @@ void EKF::UpdateStatus()
 void EKF::UpdateUncertainty()
 {
 	// P = (I - K * H) * P_est;
-    P = (I - K * H) * P * (I - K * H).transpose() + K * R * K.transpose(); // Joseph form 形式更新协方差矩阵，数值更稳定，防止 P 变成非正定矩阵
+    P = (I - K * H) * P_est * (I - K * H).transpose() + K * R * K.transpose(); // Joseph form 形式更新协方差矩阵，数值更稳定，防止 P 变成非正定矩阵
 }
 
 

@@ -123,6 +123,9 @@ private:
     int min_detect_frames_ = 3;     // 最小开始跟踪阈值：连续看到 3 帧才认为是真正发现了目标 (防抖)
     int max_lost_frames_ = 80;      // 最大连续丢失阈值：连续丢失 80 帧 (约0.4s) 才认为是彻底丢失，放弃盲推
 
+    int switch_count_ = 0;          // 切换追踪目标的计数器（当多个装甲板时，存在更好的目标时，会增加这个计数器）
+    int min_switch_frames_ = 2;     // 切换追踪目标的阈值：当存在更好的目标时，连续几帧才切换追踪目标，避免频繁切来切去
+
     int armor_num_ = 4;             // 兵种装甲板数量 (平衡步兵2，前哨站3，其他4)
     
     bool ekf_ready_ = false;        // ekf 是否已经稳定跟踪
