@@ -58,7 +58,6 @@ public:
 
     /**
      * @brief 根据 pnp 直接发布 camera_frame -> armorplate_frame 的变换
-     * @param 
      */
     void UpdateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t, rclcpp::Time time_stamp);
 

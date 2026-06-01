@@ -1,6 +1,6 @@
 {
     "cmake.sourceDirectory": "/home/cly/project/src/bringup",
-
+    
     // ----- 背景图片插件设置 (shalldie.background) -----
     "background.enabled": true,
     "background.useDefault": false,

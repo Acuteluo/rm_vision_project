@@ -210,30 +210,6 @@ core_node/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/build
 .PHONY : core_node/fast
 
-src/armorplate.o: src/armorplate.cpp.o
-.PHONY : src/armorplate.o
-
-# target to build an object file
-src/armorplate.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/armorplate.cpp.o
-.PHONY : src/armorplate.cpp.o
-
-src/armorplate.i: src/armorplate.cpp.i
-.PHONY : src/armorplate.i
-
-# target to preprocess a source file
-src/armorplate.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/armorplate.cpp.i
-.PHONY : src/armorplate.cpp.i
-
-src/armorplate.s: src/armorplate.cpp.s
-.PHONY : src/armorplate.s
-
-# target to generate assembly for a file
-src/armorplate.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/armorplate.cpp.s
-.PHONY : src/armorplate.cpp.s
-
 src/core_node.o: src/core_node.cpp.o
 .PHONY : src/core_node.o
 
@@ -306,54 +282,6 @@ src/plotter.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/plotter.cpp.s
 .PHONY : src/plotter.cpp.s
 
-src/prepare_algorithm.o: src/prepare_algorithm.cpp.o
-.PHONY : src/prepare_algorithm.o
-
-# target to build an object file
-src/prepare_algorithm.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/prepare_algorithm.cpp.o
-.PHONY : src/prepare_algorithm.cpp.o
-
-src/prepare_algorithm.i: src/prepare_algorithm.cpp.i
-.PHONY : src/prepare_algorithm.i
-
-# target to preprocess a source file
-src/prepare_algorithm.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/prepare_algorithm.cpp.i
-.PHONY : src/prepare_algorithm.cpp.i
-
-src/prepare_algorithm.s: src/prepare_algorithm.cpp.s
-.PHONY : src/prepare_algorithm.s
-
-# target to generate assembly for a file
-src/prepare_algorithm.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/prepare_algorithm.cpp.s
-.PHONY : src/prepare_algorithm.cpp.s
-
-src/strip.o: src/strip.cpp.o
-.PHONY : src/strip.o
-
-# target to build an object file
-src/strip.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/strip.cpp.o
-.PHONY : src/strip.cpp.o
-
-src/strip.i: src/strip.cpp.i
-.PHONY : src/strip.i
-
-# target to preprocess a source file
-src/strip.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/strip.cpp.i
-.PHONY : src/strip.cpp.i
-
-src/strip.s: src/strip.cpp.s
-.PHONY : src/strip.s
-
-# target to generate assembly for a file
-src/strip.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/strip.cpp.s
-.PHONY : src/strip.cpp.s
-
 src/tf.o: src/tf.cpp.o
 .PHONY : src/tf.o
 
@@ -378,6 +306,54 @@ src/tf.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/tf.cpp.s
 .PHONY : src/tf.cpp.s
 
+src/yolo_armor.o: src/yolo_armor.cpp.o
+.PHONY : src/yolo_armor.o
+
+# target to build an object file
+src/yolo_armor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/yolo_armor.cpp.o
+.PHONY : src/yolo_armor.cpp.o
+
+src/yolo_armor.i: src/yolo_armor.cpp.i
+.PHONY : src/yolo_armor.i
+
+# target to preprocess a source file
+src/yolo_armor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/yolo_armor.cpp.i
+.PHONY : src/yolo_armor.cpp.i
+
+src/yolo_armor.s: src/yolo_armor.cpp.s
+.PHONY : src/yolo_armor.s
+
+# target to generate assembly for a file
+src/yolo_armor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/yolo_armor.cpp.s
+.PHONY : src/yolo_armor.cpp.s
+
+src/yolo_detector.o: src/yolo_detector.cpp.o
+.PHONY : src/yolo_detector.o
+
+# target to build an object file
+src/yolo_detector.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/yolo_detector.cpp.o
+.PHONY : src/yolo_detector.cpp.o
+
+src/yolo_detector.i: src/yolo_detector.cpp.i
+.PHONY : src/yolo_detector.i
+
+# target to preprocess a source file
+src/yolo_detector.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/yolo_detector.cpp.i
+.PHONY : src/yolo_detector.cpp.i
+
+src/yolo_detector.s: src/yolo_detector.cpp.s
+.PHONY : src/yolo_detector.s
+
+# target to generate assembly for a file
+src/yolo_detector.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/yolo_detector.cpp.s
+.PHONY : src/yolo_detector.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -394,9 +370,6 @@ help:
 	@echo "... img_processing_uninstall"
 	@echo "... uninstall"
 	@echo "... core_node"
-	@echo "... src/armorplate.o"
-	@echo "... src/armorplate.i"
-	@echo "... src/armorplate.s"
 	@echo "... src/core_node.o"
 	@echo "... src/core_node.i"
 	@echo "... src/core_node.s"
@@ -406,15 +379,15 @@ help:
 	@echo "... src/plotter.o"
 	@echo "... src/plotter.i"
 	@echo "... src/plotter.s"
-	@echo "... src/prepare_algorithm.o"
-	@echo "... src/prepare_algorithm.i"
-	@echo "... src/prepare_algorithm.s"
-	@echo "... src/strip.o"
-	@echo "... src/strip.i"
-	@echo "... src/strip.s"
 	@echo "... src/tf.o"
 	@echo "... src/tf.i"
 	@echo "... src/tf.s"
+	@echo "... src/yolo_armor.o"
+	@echo "... src/yolo_armor.i"
+	@echo "... src/yolo_armor.s"
+	@echo "... src/yolo_detector.o"
+	@echo "... src/yolo_detector.i"
+	@echo "... src/yolo_detector.s"
 .PHONY : help
 
 

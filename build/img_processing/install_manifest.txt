@@ -1,8 +1,10 @@
 /home/cly/project/install/img_processing/lib/img_processing/core_node
 /home/cly/project/install/img_processing/include/strip.h
 /home/cly/project/install/img_processing/include/tf.hpp
+/home/cly/project/install/img_processing/include/yolo_detector.hpp
 /home/cly/project/install/img_processing/include/plotter.hpp
 /home/cly/project/install/img_processing/include/armorplate.h
+/home/cly/project/install/img_processing/include/yolo_armor.hpp
 /home/cly/project/install/img_processing/include/core_node.hpp
 /home/cly/project/install/img_processing/include/ekf.hpp
 /home/cly/project/install/img_processing/include/prepare_algorithm.h

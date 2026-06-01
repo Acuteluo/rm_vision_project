@@ -120,7 +120,7 @@ bool TF::GetCameraToWorldTransform(tf2::Transform& T_world_to_cam_point, rclcpp:
     }
     catch (tf2::TransformException &ex) 
     {
-        RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【%s 坐标系 -> 相机 坐标系】 TF lookup failed: %s", this->father_frame, ex.what());
+        RCLCPP_ERROR_EXPRESSION(node_->get_logger(), this->SHOW_LOGGER_ERROR, "【%s 坐标系 -> 相机 坐标系】 TF lookup failed: %s", this->father_frame.c_str(), ex.what());
         return false;
     }
 

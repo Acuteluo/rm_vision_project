@@ -3,7 +3,7 @@
 Plotter::Plotter(int width, int height, int max_frames)
     : width_(width), height_(height), max_frames_(max_frames) {}
 
-void Plotter::updateAndDraw(double p_now, double y_now, double p_filt, double y_filt, double p_pred, double y_pred) 
+void Plotter::UpdateAndDraw(double p_now, double y_now, double p_filt, double y_filt, double p_pred, double y_pred) 
 {
     // 1. 数据进栈
     buf_p_now.push_back(p_now);   buf_y_now.push_back(y_now);
@@ -40,14 +40,14 @@ void Plotter::updateAndDraw(double p_now, double y_now, double p_filt, double y_
     cv::putText(plot_img, "Predicted (Pink)", cv::Point(width_/2 + 150, 35), cv::FONT_HERSHEY_SIMPLEX, 0.6, c_pred, 1, cv::LINE_AA);
 
     // 7. 执行画图
-    drawChart(plot_img, rect_p, "Pitch Error (deg)", buf_p_now, buf_p_filt, buf_p_pred, c_now, c_filt, c_pred);
-    drawChart(plot_img, rect_y, "Yaw Error (deg)", buf_y_now, buf_y_filt, buf_y_pred, c_now, c_filt, c_pred);
+    DrawChart(plot_img, rect_p, "Pitch Error (deg)", buf_p_now, buf_p_filt, buf_p_pred, c_now, c_filt, c_pred);
+    DrawChart(plot_img, rect_y, "Yaw Error (deg)", buf_y_now, buf_y_filt, buf_y_pred, c_now, c_filt, c_pred);
 
     cv::imshow("EKF Dynamic Plotter", plot_img);
     cv::waitKey(1);
 }
 
-void Plotter::drawChart(cv::Mat& img, cv::Rect rect, const std::string& title,
+void Plotter::DrawChart(cv::Mat& img, cv::Rect rect, const std::string& title,
                         const std::deque<double>& d_now, const std::deque<double>& d_filt, const std::deque<double>& d_pred,
                         cv::Scalar c_now, cv::Scalar c_filt, cv::Scalar c_pred) 
 {

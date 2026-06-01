@@ -13,19 +13,22 @@ CoreNode::CoreNode(): Node("core_node_cpp")
     InitParams();
 
     // 2. 初始化核心算法模块
-    prepare_ = std::make_unique<Prepare>(); // 构造 Prepare 类对象
-    prepare_->SetParam(show_logger_prepare_, chosen_color_, camera_name_, armorplate_type_); 
+    // prepare_ = std::make_unique<Prepare>(); // 构造 Prepare 类对象
+    // prepare_->SetParam(show_logger_prepare_, chosen_color_, camera_name_, armorplate_type_); 
 
     tf_ = std::make_unique<TF>(this); // 传 this 指针给 TF 类来构造，让它能创建 ROS2 相关对象，同时发布静态变换
     ekf_ = std::make_unique<EKF>(this); 
     ekf_->UpdateParamsFromServer(); // 设置一大堆参数
-    ekf_->SetArmorplateSize(armorplate_type_); // 装甲板类型
+    // ekf_->SetArmorplateSize(armorplate_type_); // 装甲板类型
     ekf_->SetDebugLogger(show_logger_ekf_debug_); // 是否打印 ekf 调试日志
     ekf_->SetArmorNum(armor_num_); // 设置装甲板数量
 
     // 3. 初始化 ROS 通信与多线程
     InitROS2();
-    
+
+    // 4. 初始化 yolo 模型
+    std::string yolo_model_path = "/home/cly/project/src/img_processing/model/yolo11.xml"; 
+    yolo_detector_ = std::make_unique<YoloDetector>(yolo_model_path);
 
     RCLCPP_INFO_ONCE(this->get_logger(), "CoreNode 节点创建成功! ");
 }
@@ -57,10 +60,10 @@ void CoreNode::InitParams()
     this->declare_parameter("core.image.show_img", true); // 是否显示图片
     
     // prepare 类
-    this->declare_parameter("core.logger.show_logger_prepare", false); // 是否打印 prepare 类中的日志
+    // this->declare_parameter("core.logger.show_logger_prepare", false); // 是否打印 prepare 类中的日志
     this->declare_parameter("core.param.chosen_color", "blue"); // 选择的装甲板颜色
     this->declare_parameter("core.param.camera_name", "galaxy"); // 使用的相机名称
-    this->declare_parameter("core.param.armor_type", "normal"); // 识别装甲板的类型
+    // this->declare_parameter("core.param.armor_type", "normal"); // 识别装甲板的类型
 
     // EKF相关（传递给ekf）
     this->declare_parameter("ekf.predict_time", 0.2); // 预测时间（记得改！）0.2? 0.225? 其实未来还要根据速度来确定
@@ -105,10 +108,10 @@ void CoreNode::InitParams()
     show_logger_about_time_ = this->get_parameter("core.logger.show_logger_time").as_bool();
     show_logger_about_else_ = this->get_parameter("core.logger.show_logger_else").as_bool();
     show_image_ = this->get_parameter("core.image.show_img").as_bool();
-    show_logger_prepare_ = this->get_parameter("core.logger.show_logger_prepare").as_bool();
+    // show_logger_prepare_ = this->get_parameter("core.logger.show_logger_prepare").as_bool();
     chosen_color_ = this->get_parameter("core.param.chosen_color").as_string();
     camera_name_ = this->get_parameter("core.param.camera_name").as_string();
-    armorplate_type_ = this->get_parameter("core.param.armor_type").as_string();
+    // armorplate_type_ = this->get_parameter("core.param.armor_type").as_string();
     ekf_predict_time_ = this->get_parameter("ekf.predict_time").as_double();
     show_logger_ekf_debug_ = this->get_parameter("ekf.show_logger_debug").as_bool();
     show_plot_ = this->get_parameter("core.image.show_plot").as_bool(); 
@@ -118,10 +121,10 @@ void CoreNode::InitParams()
     is_video_mode_ = this->get_parameter("core.mode.is_video_mode").as_bool();
     video_path_ = this->get_parameter("core.mode.video_path").as_string();
 
-    // 本地视频模式下强制为单机模式（因为没有电控发TF）
+    // 本地视频模式下强制为单机模式，默认是大恒相机得到的图像（因为没有电控发TF）
     if (is_video_mode_) 
     {
-        is_standalone_mode_ = true; // 本地视频模式 下强制为单机模式（一定为 相机+corenode）
+        is_standalone_mode_ = true; // 本地视频模式下 强制为单机模式（没有串口）
 
         // 必须把这个覆盖后的值同步回参数服务器！
         this->set_parameter(rclcpp::Parameter("core.mode.is_standalone_mode", true));
@@ -129,6 +132,37 @@ void CoreNode::InitParams()
     else 
     {
         is_standalone_mode_ = this->get_parameter("core.mode.is_standalone_mode").as_bool(); // 否则按照原本的声明（单机模式下就是 相机+corenode，不要串口）
+    }
+
+    // 设置相机内参：相机内参K，畸变系数D
+    // todo: 之后可以改成从相机配置文件 yaml 获取
+    if (is_video_mode_) // 如果是本地视频模式，默认使用大恒相机的内参
+    {
+        K_ = (cv::Mat_<double>(3, 3) << 1359.21385,    0.     ,  635.62767,
+                                                0.     , 1361.75423,  478.48483,
+                                                0.     ,    0.     ,    1.     );
+
+        D_ = (cv::Mat_<double>(5, 1) << -0.081521, 0.153947, -0.006919, -0.003306, 0.000000);
+    }
+    else // 如果不是本地视频模式，根据 camera_name_ 选择相机内参
+    {
+        if(camera_name_  == "mind_vision") // mind_vision
+        {
+            K_ = (cv::Mat_<double>(3, 3) << 1359.21385,    0.     ,  635.62767,
+                                                0.     , 1361.75423,  478.48483,
+                                                0.     ,    0.     ,    1.     );
+
+            D_ = (cv::Mat_<double>(5, 1) << -0.081521, 0.153947, -0.006919, -0.003306, 0.000000);
+        }
+
+        else // galaxy
+        {
+            K_ = (cv::Mat_<double>(3, 3) << 1305.07013,    0.     ,  666.71169,
+                                                0.     , 1307.67428,  495.17044,
+                                                0.     ,    0.     ,    1.     );
+
+            D_ = (cv::Mat_<double>(5, 1) << -0.209067, 0.129977, -0.002895, -0.000558, 0.000000);
+        }
     }
 
     // 注册参数变化回调（用于运行时动态修改）
@@ -183,9 +217,6 @@ void CoreNode::InitROS2()
     }
 
 }
-
-
-
 
 
 
@@ -273,52 +304,94 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     last_image_time_ = current_image_time; // 更新上一次图像的时间戳
 
 
-    // ... 步骤1 接收图像完成时间戳
+    // t1 = 完成 接收原图 的时间戳
     rclcpp::Time t1 = this->now();
 
 
-    // 2. 预处理（掩码、灯条筛选、灯条配对）
-    prepare_->SetImgShow(img_show_); // 设置 img_show_
-    rclcpp::Time t1_1 = this->now();
-    prepare_->PreProcessing(img_); // 图像预处理
-    rclcpp::Time t1_2 = this->now();
-    strips_ = prepare_->FindAndJudgeLightStrip(); // 找灯带 返回灯带集合
-    rclcpp::Time t1_3 = this->now();
-    armorplates_ = prepare_->PairStrip(); // 灯条配对 【修改】返回按置信度排序后的装甲板集合
-    rclcpp::Time t1_4 = this->now();
-    img_show_ = prepare_->GetImgShow(); // 获取预处理后带有信息的 img_show_
+    // // 2. 预处理（掩码、灯条筛选、灯条配对）
+    // prepare_->SetImgShow(img_show_); // 设置 img_show_
+    // rclcpp::Time t1_1 = this->now();
+    // prepare_->PreProcessing(img_); // 图像预处理
+    // rclcpp::Time t1_2 = this->now();
+    // strips_ = prepare_->FindAndJudgeLightStrip(); // 找灯带 返回灯带集合
+    // rclcpp::Time t1_3 = this->now();
+    // armorplates_ = prepare_->PairStrip(); // 灯条配对 【修改】返回按置信度排序后的装甲板集合
+    // rclcpp::Time t1_4 = this->now();
+    // img_show_ = prepare_->GetImgShow(); // 获取预处理后带有信息的 img_show_
 
-    // ... 步骤2 预处理完成时间戳
+    // // ... 步骤2 预处理完成时间戳
+    // rclcpp::Time t2 = this->now();
+
+
+    // ====================================================================
+    // 1. 调用 YOLO 提取绝对精准的目标对象
+    // ====================================================================
+    auto yolo_results = yolo_detector_->Detect(img_);
+
+    // t2 = 完成 yolo检测 的时间戳
     rclcpp::Time t2 = this->now();
-    
 
+    yolo_armors_.clear();
 
-    // 3. 解算 pnp
-    if (armorplates_.size() > 0) // 存在装甲板
+    // 判断目标颜色 (例如 0 是红，1 是蓝)
+    int target_color = (chosen_color_ == "blue") ? 1 : 0;
+
+    // ====================================================================
+    // 2. 目标筛选与 PnP 解算
+    // ====================================================================
+    for (const auto& obj : yolo_results) 
     {
-        // 画出所有装甲板（按置信度排序的）并打印信息
-        for (int i = 0; i < armorplates_.size(); i++) 
-        { 
-            // 对所有的装甲板进行 pnp
-            armorplates_[i].perspectiveNPoint(); // 解算 pnp，算出了初版的 t_vec 和 辣鸡 R
+        // 筛选颜色
+        if (obj.color != target_color) continue;
 
-            // 【新增】：一键优化！内部直接用极品 R 覆盖掉辣鸡 R！
-            armorplates_[i].OptimizeEulerYaw(img_show_, i);
+        // 构造新装甲板对象
+        // 【核心】：从你的 CoreNode 全局参数里把相机内参传过去！
+        // 在 InitParams() 里根据 CAMERA_NAME 设置了 K_ 和 D_
+        YoloArmor armor(obj.number, obj.color, obj.is_big, obj.prob, obj.box, obj.pts, K_, D_);
 
-            // 画所有的装甲板，并打印综合置信度（考虑与上一帧追踪装甲板的距离）最高的装甲板也就是 0号 的 pnp 信息
-            armorplates_[i].drawArmorPlateAndPrintPNPInfo(img_show_, chosen_color_, i); 
+        // 设置动态 3D 尺寸并执行 PnP
+        armor.SetArmorplateSize(); 
+        armor.perspectiveNPoint();
+
+        if (armor.pnp_success) 
+        {
+            // 画框并输出信息
+            armor.DrawAndPrintInfo(img_show_);
+            yolo_armors_.push_back(armor);
         }
     }
 
-    // ... 步骤3 pnp解算完成时间戳
+    // t3 = 完成 目标筛选与pnp解算 的时间戳
     rclcpp::Time t3 = this->now();
+    
+
+
+    // // 3. 解算 pnp
+    // if (armorplates_.size() > 0) // 存在装甲板
+    // {
+    //     // 画出所有装甲板（按置信度排序的）并打印信息
+    //     for (int i = 0; i < armorplates_.size(); i++) 
+    //     { 
+    //         // 对所有的装甲板进行 pnp
+    //         armorplates_[i].perspectiveNPoint(); // 解算 pnp，算出了初版的 t_vec 和 辣鸡 R
+
+    //         // 【新增】：一键优化！内部直接用极品 R 覆盖掉辣鸡 R！
+    //         armorplates_[i].OptimizeEulerYaw(img_show_, i);
+
+    //         // 画所有的装甲板，并打印综合置信度（考虑与上一帧追踪装甲板的距离）最高的装甲板也就是 0号 的 pnp 信息
+    //         armorplates_[i].drawArmorPlateAndPrintPNPInfo(img_show_, chosen_color_, i); 
+    //     }
+    // }
+
+    // // ... 步骤3 pnp解算完成时间戳
+    // rclcpp::Time t3 = this->now();
 
 
     
     // ====================================================================
     // 4. Tracker 状态机流转 (决策)
     // ====================================================================
-    bool is_found = (armorplates_.size() > 0 && armorplates_[0].is_success);
+    bool is_found = (yolo_armors_.size() > 0); // yolo 是否检测到目标
     
     UpdateTrackerState(is_found); // 调用状态机判定函数
 
@@ -346,7 +419,7 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
 
 
     // ====================================================================
-    // 6. 计算最终预测云台偏角
+    // 6. 计算最终预测云台偏角 并 发送最终信息
     // ====================================================================
     // 只有在预测出有效坐标时才进行解算
 
@@ -361,8 +434,14 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
         RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "armorplate_center_predict: [%.3f, %.3f, %.3f]", armorplate_center_predict[0], armorplate_center_predict[1], armorplate_center_predict[2]);
     }
 
+    auto send_msg = serial_driver_interfaces::msg::SerialDriver();
+    send_msg.pitch = pitch_result;
+    send_msg.yaw = yaw_result;
+    serial_pub_->publish(send_msg);
+    RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "已发送目标角度给串口: pitch = %.2f, yaw = %.2f", pitch_result, yaw_result);
 
-    // ... 步骤4 发布 tf变换 + 滤波 完成时间戳
+
+    // t4 = 完成 状态机流转执行、计算和发送数据 的时间戳
     rclcpp::Time t4 = this->now();
 
 
@@ -372,7 +451,7 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     {
         // 先获取相机内参和畸变系数（可从当前处理的装甲板对象获取，因为 ArmorPlate 已保存）
         //    注意：如果本帧没有成功检测到装甲板，则无法获取相机参数，此时跳过重投影。
-        if (!armorplates_.empty() && armorplates_[0].is_success)
+        if (!yolo_armors_.empty() && yolo_armors_[0].pnp_success)
         {
             // 再查询 camera → 父坐标系 的 TF，因为要转到相机下投影！
             tf2::Transform T_world_cam;
@@ -391,40 +470,31 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
                 {
                     std::vector<Eigen::Vector3d> corners_world;
                     ekf_->GetArmorplateFourCorners(corners_world, id); // id=0 前 红色, id=1 右 黄色, id=2 后 蓝色, id=3 左 绿色
-                    tf_->ProjectAndDraw(img_show_, corners_world, armorplates_[0].K, armorplates_[0].D, T_world_cam, colors[id], id);
+                    tf_->ProjectAndDraw(img_show_, corners_world, K_, D_, T_world_cam, colors[id], id);
                 }
 
                 // 也绘制整车中心点（实时滤波位置）
                 std::vector<Eigen::Vector3d> center_world(1);
                 ekf_->GetCarCenterPredict(center_world[0], 0.00); // 获取实时位置下的整车中心点 在父坐标系下 的位置坐标
-                tf_->ProjectAndDraw(img_show_, center_world, armorplates_[0].K, armorplates_[0].D, T_world_cam, cv::Scalar(255, 255, 255));
+                tf_->ProjectAndDraw(img_show_, center_world, K_, D_, T_world_cam, cv::Scalar(255, 255, 255));
             
                 // 也绘制当前装甲板 dt后的 预测值（不是外推值）
                 std::vector<Eigen::Vector3d> armorplate_center_world(1);
                 armorplate_center_world[0] = armorplate_center_predict; // 预测位置的装甲板中心点 在父坐标系下 的位置坐标
-                tf_->ProjectAndDraw(img_show_, armorplate_center_world, armorplates_[0].K, armorplates_[0].D, T_world_cam, cv::Scalar(255, 0, 255));
+                tf_->ProjectAndDraw(img_show_, armorplate_center_world, K_, D_, T_world_cam, cv::Scalar(255, 0, 255));
             }
         }
     }
     
-        
-    
-    // 6. 发送 最终信息
-    auto send_msg = serial_driver_interfaces::msg::SerialDriver();
-    send_msg.pitch = pitch_result;
-    send_msg.yaw = yaw_result;
-    serial_pub_->publish(send_msg);
-    RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "已发送信息");
-
 
     // 7. 联调模式下，在图上打印要发布的目标角度 和 电控发来的目前芯片姿态
     if (!is_standalone_mode_)
     {
         double pitch_chip;
         double yaw_chip;
-        bool flag = tf_->GetWorldToChipTransform(pitch_chip, yaw_chip, current_image_time); // 获取【世界坐标系】->【芯片坐标系的变换】
+        bool tf_flag = tf_->GetWorldToChipTransform(pitch_chip, yaw_chip, current_image_time); // 获取【世界坐标系】->【芯片坐标系的变换】
         
-        if (flag)
+        if (tf_flag)
         {
             // 1. 提前计算好相对偏差值 (当前查到的值 - 目标值)
             double pitch_diff = pitch_chip - pitch_result;
@@ -447,33 +517,38 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     
 
 
-    // ... 步骤5 重投影 + 发送消息 + 打印 完成时间戳
+    // t5 = 完成 重投影和可视化 的时间戳
     rclcpp::Time t5 = this->now();
 
 
 
     // 8. 计算每个步骤的耗时，并打印
-    if (show_logger_about_time_ && armorplates_.size() > 0 && armorplates_[0].is_success)
-    {
-        double duration1 = (t1 - calculate_start).seconds() * 1000.0; // 转换为毫秒
-        double duration1_1 = (t1_1 - t1).seconds() * 1000.0; // 转换为毫秒
-        double duration1_2 = (t1_2 - t1_1).seconds() * 1000.0; // 转换为毫秒
-        double duration1_3 = (t1_3- t1_2).seconds() * 1000.0; // 转换为毫秒
-        double duration1_4 = (t1_4 - t1_3).seconds() * 1000.0; // 转换为毫秒
-        double duration2 = (t2 - t1).seconds() * 1000.0; // 转换为毫秒
-        double duration3 = (t3 - t2).seconds() * 1000.0; // 转换为毫秒
-        double duration4 = (t4 - t3).seconds() * 1000.0; // 转换为毫秒
-        double duration5 = (t5 - t4).seconds() * 1000.0; // 转换为毫秒
-        double total_duration = (t5 - calculate_start).seconds() * 1000.0; // 转换为毫秒
-        RCLCPP_INFO(this->get_logger(), "本帧处理耗时: 接受图像 = %.4f ms, 预处理 = %.4f ms, pnp 解算 = %.4f ms, tf 变换 + 滤波 = %.4f ms, 重投影 + 发布消息 = %.4f ms. 总耗时 = %.4f ms, t1_1 = %.4f ms, t1_2 = %.4f ms, t1_3 = %.4f ms, t1_4 = %.4f ms", duration1, duration2, duration3, duration4, duration5, total_duration, duration1_1, duration1_2, duration1_3, duration1_4);
-    }
+
+        double duration1 = (t1 - calculate_start).seconds() * 1000.0; // 完成 接收原图 的时间
+        // double duration1_1 = (t1_1 - t1).seconds() * 1000.0; // 完成 设置图像 的时间
+        // double duration1_2 = (t1_2 - t1_1).seconds() * 1000.0; // 完成 预处理 的时间
+        // double duration1_3 = (t1_3- t1_2).seconds() * 1000.0; // 完成 灯条筛选 的时间
+        // double duration1_4 = (t1_4 - t1_3).seconds() * 1000.0; // 完成 灯条配对 的时间
+        double duration2 = (t2 - t1).seconds() * 1000.0; // 完成 yolo检测 的时间
+        double duration3 = (t3 - t2).seconds() * 1000.0; // 完成 目标筛选与pnp解算 的时间
+        double duration4 = (t4 - t3).seconds() * 1000.0; // 完成 状态机流转执行、计算和发送数据 的时间
+        double duration5 = (t5 - t4).seconds() * 1000.0; // 完成 重投影和可视化 的时间
+        double total_duration = (t5 - calculate_start).seconds() * 1000.0; // 完成 整个 CoreLogic 的时间
+        RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_time_ && yolo_armors_.size(), 
+            "本帧处理耗时: "
+            "接收原图 = %.4f ms, "
+            "yolo检测 = %.4f ms, "
+            "目标筛选与pnp解算 = %.4f ms, "
+            "状态机流转执行、计算和发送数据 = %.4f ms,"
+            "重投影和可视化 = %.4f ms, "
+            "总耗时 = %.4f ms", duration1, duration2, duration3, duration4, duration5, total_duration);
     
 
     ShowImg();
 
     UpdatePlotter(armorplate_center_now, armorplate_center_filter, armorplate_center_predict);
 
-    RCLCPP_INFO_ONCE(this->get_logger(), "coreNode 正在发布...");
+    RCLCPP_INFO_ONCE(this->get_logger(), "CoreLogic 正在运行...");
 }
 
 
@@ -487,7 +562,7 @@ void CoreNode::ShowImg()
     if (show_image_)
     {
         cv::imshow("img_show_armorplate", img_show_);
-        int key = cv::waitKey(1);
+        cv::waitKey(1);
     }
 }
 
@@ -530,7 +605,7 @@ void CoreNode::UpdatePlotter(Eigen::Vector3d armorplate_center_now, Eigen::Vecto
 
 
     // 3. 把这帧的状态送入示波器
-    plotter_->updateAndDraw(
+    plotter_->UpdateAndDraw(
         pitch_now, yaw_now, 
         pitch_filter, yaw_filter, 
         pitch_result, yaw_result
@@ -610,10 +685,10 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
     // ====== 场景 A：看到目标了 (处于 DETECTING 预热期 或 TRACKING 稳定期) ======
     if (tracker_state_ == TrackerState::DETECTING || tracker_state_ == TrackerState::TRACKING) 
     {
-        tf_->UpdateCameraToArmorplate(armorplates_[0].R, armorplates_[0].t_vec, current_image_time);
+        tf_->UpdateCameraToArmorplate(yolo_armors_[0].R, yolo_armors_[0].t_vec, current_image_time);
 
         // 用 armorplate_center_now 和 yaw_armorplate_now 接收 TF 查询的结果（如果成功的话）
-        bool tf_lookup_flag = tf_->GetFatherToArmorplateTransform(armorplates_[0].R, armorplates_[0].t_vec, armorplate_center_now, yaw_armorplate_now, current_image_time);
+        bool tf_lookup_flag = tf_->GetFatherToArmorplateTransform(yolo_armors_[0].R, yolo_armors_[0].t_vec, armorplate_center_now, yaw_armorplate_now, current_image_time);
 
         if (tf_lookup_flag) 
         {
@@ -626,6 +701,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
                 // ===============================================================
                 
                 double min_error = 1e5;
+
                 // 1. 获取所有预测板的距离（同济逻辑：按距离排序，剔除最远的背板）
                 std::vector<std::pair<double, int>> dist_id_list;
                 for (int i = 0; i < armor_num_; i++) 
@@ -679,7 +755,16 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
             }
 
             // 无论是 DETECTING 还是 TRACKING，只要有数据就必须给 EKF。用 current_id 也就是目前识别装甲板最匹配对应的 ID 来更新 EKF。
-            ekf_->SetArmorplateSize(armorplate_type_); 
+            // ekf_->SetArmorplateSize(armorplate_type_); 
+
+            if (yolo_armors_[0].is_big) 
+            {
+                ekf_->SetArmorplateSize("hero");   // 大板：225mm * 135mm
+            } 
+            else 
+            {
+                ekf_->SetArmorplateSize("normal"); // 小板：135mm * 135mm
+            }
             tools::limit_rad(yaw_armorplate_now);
             ekf_->UpdateExtendedKalman(armorplate_center_now, yaw_armorplate_now, current_id, dt);
 
@@ -689,7 +774,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
             if (current_id != tracking_id_) 
             {
                 ++switch_count_; // 增加切换计数器
-                RCLCPP_WARN(this->get_logger(), "【跟踪器】当前识别到的装甲板 变为了 ID = %d，但仍在跟踪 ID = %d", current_id, tracking_id_);
+                RCLCPP_WARN(this->get_logger(), "【跟踪器】当前识别到的装甲板 变为了 ID = %d, 但仍在跟踪 ID = %d", current_id, tracking_id_);
 
                 if(switch_count_ >= min_switch_frames_)
                 {
@@ -753,7 +838,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
             ekf_->GetArmorplatePredict(armorplate_center_predict, tracking_id_, ekf_predict_time_);
             ekf_->GetCarCenterPredict(car_center_predict, ekf_predict_time_);
             
-            RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 500, "目标遮挡或丢失，EKF 正在盲推...");
+            RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 500, "目标遮挡或丢失, EKF 正在盲推...");
         }
     }
     // ====== 场景 C：彻底丢失 ======
@@ -797,26 +882,26 @@ rcl_interfaces::msg::SetParametersResult CoreNode::OnParameterChange(const std::
             RCLCPP_INFO(this->get_logger(), "显示图片开关已打开! ");
         } 
 
-        else if (name == "core.logger.show_logger_prepare") 
-        {
-            show_logger_prepare_ = p.as_bool();
-            prepare_->SetParam(show_logger_prepare_, chosen_color_, camera_name_, armorplate_type_);
-            RCLCPP_INFO(this->get_logger(), "预处理日志开关已更新!");
-        } 
+        // else if (name == "core.logger.show_logger_prepare") 
+        // {
+        //     show_logger_prepare_ = p.as_bool();
+        //     prepare_->SetParam(show_logger_prepare_, chosen_color_, camera_name_, armorplate_type_);
+        //     RCLCPP_INFO(this->get_logger(), "预处理日志开关已更新!");
+        // } 
 
         else if (name == "core.param.chosen_color") 
         {
             chosen_color_ = p.as_string();
-            prepare_->SetParam(show_logger_prepare_, chosen_color_, camera_name_, armorplate_type_);
+            // prepare_->SetParam(show_logger_prepare_, chosen_color_, camera_name_, armorplate_type_);
             RCLCPP_INFO(this->get_logger(), "装甲板颜色已更新!");
         } 
 
-        else if (name == "core.param.armor_type") 
-        {
-            armorplate_type_ = p.as_string();
-            prepare_->SetParam(show_logger_prepare_, chosen_color_, camera_name_, armorplate_type_);
-            RCLCPP_INFO(this->get_logger(), "装甲板类型已更新!");
-        }
+        // else if (name == "core.param.armor_type") 
+        // {
+        //     armorplate_type_ = p.as_string();
+        //     prepare_->SetParam(show_logger_prepare_, chosen_color_, camera_name_, armorplate_type_);
+        //     RCLCPP_INFO(this->get_logger(), "装甲板类型已更新!");
+        // }
 
         else if (name == "ekf.q_x" || name == "ekf.q_y" || name == "ekf.q_z" || 
                 name == "ekf.q_v_x" || name == "ekf.q_v_y" || name == "ekf.q_v_z" ||
@@ -825,14 +910,14 @@ rcl_interfaces::msg::SetParametersResult CoreNode::OnParameterChange(const std::
                 name == "ekf.r_x" || name == "ekf.r_y" || name == "ekf.r_z" ||
                 name == "ekf.r_yaw" || name == "ekf.show_logger_debug") 
         {
-            RCLCPP_INFO(this->get_logger(), "EKF 参数已更新! ");
             ekf_->UpdateParamsFromServer();  // 让EKF自己重新读取参数
+            RCLCPP_INFO(this->get_logger(), "EKF 参数已更新! ");
         }
 
         else if (name == "tf.show_logger_error" || name == "tf.show_result")
         {
-            RCLCPP_INFO(this->get_logger(), "TF 节点参数已更新! ");
             tf_->UpdateParamsFromServer();  // 通知 TF 刷新
+            RCLCPP_INFO(this->get_logger(), "TF 节点参数已更新! ");
         }
 
         else if(name == "core.mode.is_standalone_mode")

@@ -1,0 +1,16 @@
+[INFO] [launch]: All log files can be found below /home/cly/.ros/log/2026-06-01-21-37-53-468144-acuteluo-15281
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [core_node-1]: process started with pid [15283]
+[core_node-1] [INFO] [1780321073.602651467] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780321073.602937528] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780321073.602980174] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780321073.603014438] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780321073.609294639] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780321073.609431735] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780321073.609474970] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780321073.610007683] [core_node_offline]: 已发布静态变换【芯片坐标系 -> 相机坐标系】，平移: x=0.000 m, y=0.000 m, z=0.000 m
+[core_node-1] [INFO] [1780321073.610063781] [core_node_offline]: TF 参数已加载: SHOW_LOGGER_ERROR=0, SHOW_RESULT=0, father_frame=camera_frame
+[core_node-1] [INFO] [1780321073.613071898] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780321073.613181133] [core_node_offline]: 【本地视频模式】将读取本地视频: /home/cly/下载/rm_test_videos/20260501_160636__camera_0_rgb_output.mp4
+[core_node-1] [INFO] [1780321073.615155409] [YoloDetector]: [YOLO] 正在初始化 OpenVINO 模型...
+[ERROR] [core_node-1]: process has died [pid 15283, exit code -11, cmd '/home/cly/project/install/img_processing/lib/img_processing/core_node --ros-args -r __node:=core_node_offline --params-file /tmp/launch_params_ug3b4qek'].

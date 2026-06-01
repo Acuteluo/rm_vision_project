@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.10)
 project(img_processing)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -21,12 +21,28 @@ find_package(message_filters REQUIRED)
 
 find_package(serial_driver_interfaces REQUIRED)
 
+find_package(OpenVINO REQUIRED) # <--- 新增这行，寻找 OpenVINO
+
 # 本包的头文件目录
 include_directories(include)
 
 
 # 节点
-add_executable(core_node src/core_node.cpp src/prepare_algorithm.cpp src/strip.cpp src/armorplate.cpp src/ekf.cpp src/tf.cpp src/plotter.cpp)
+add_executable(
+  core_node
+  src/core_node.cpp
+  src/tf.cpp
+  src/ekf.cpp
+  src/plotter.cpp
+  # ====================================================
+  # 【建议把下面三个传统视觉的 cpp 注释掉，防止干扰】
+  # src/armorplate.cpp
+  # src/strip.cpp
+  # src/prepare_algorithm.cpp
+  # ====================================================
+  src/yolo_detector.cpp  # 【新增】编译 YOLO 检测器
+  src/yolo_armor.cpp     # 【新增】编译 YOLO 专属装甲板
+)
 
 
 target_include_directories(core_node PRIVATE
@@ -36,8 +52,9 @@ target_include_directories(core_node PRIVATE
 ament_target_dependencies(core_node rclcpp sensor_msgs cv_bridge OpenCV Eigen3 message_filters serial_driver_interfaces tf2_ros tf2_geometry_msgs geometry_msgs)
 
 target_link_libraries(
-    core_node
+  core_node
   ${OpenCV_LIBS}
+  openvino::runtime      # <--- 新增这行，链接推理引擎
 )
 
 

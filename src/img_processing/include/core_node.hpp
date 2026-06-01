@@ -10,11 +10,14 @@
 #include <string>
 #include <vector>
 
-#include "prepare_algorithm.h"
+// #include "prepare_algorithm.h"
 #include "tf.hpp"
 #include "ekf.hpp"
 #include "plotter.hpp"
 #include "serial_driver_interfaces/msg/serial_driver.hpp"
+
+#include "yolo_detector.hpp" // yolo 检测器类
+#include "yolo_armor.hpp"   // yolo 检测结果的装甲板类
 
 
 // ==================== [新增] 工具函数命名空间 ====================
@@ -102,16 +105,27 @@ private:
     std::unique_ptr<TF> tf_;
     std::unique_ptr<EKF> ekf_;
     std::unique_ptr<Plotter> plotter_;
-    std::unique_ptr<Prepare> prepare_;       // prepare 类对象，包含预处理函数、寻找灯条函数、配对函数等
 
-    std::vector<Strip> strips_;               // 灯条类集合，从 prepare.findAndJudgeLightStrip() 返回
-    std::vector<ArmorPlate> armorplates_;     // 装甲板集合，从 prepare.pairStrip() 返回
+    // 传统视觉算法相关
+    // std::unique_ptr<Prepare> prepare_;       // prepare 类对象，包含预处理函数、寻找灯条函数、配对函数等
+    // std::vector<Strip> strips_;               // 灯条类集合，从 prepare.findAndJudgeLightStrip() 返回
+    // std::vector<ArmorPlate> armorplates_;     // 装甲板集合，从 prepare.pairStrip() 返回
 
-    // ==================== 图像与时间缓存 ====================
+    // yolo 相关
+    std::vector<YoloArmor> yolo_armors_;     // yolo 检测到的装甲板集合，从 yolo_detector_.Detect() 返回
+
+    // ==================== 图像、相机相关与时间缓存 ====================
 
     cv::Mat img_;                   // 原图
     cv::Mat img_show_;              // 复制一份用来显示信息的图
     rclcpp::Time last_image_time_;  // 上一次收到图像的时间戳
+
+    cv::Mat K_; // 相机内参矩阵
+    cv::Mat D_; // 相机畸变系数
+
+    // ==================== 神经网络 ====================
+
+    std::unique_ptr<YoloDetector> yolo_detector_; // 声明 yolo检测器 指针
 
     // ==================== EKF 运行状态机变量 ====================
 
@@ -128,19 +142,19 @@ private:
 
     int armor_num_ = 4;             // 兵种装甲板数量 (平衡步兵2，前哨站3，其他4)
     
-    bool ekf_ready_ = false;        // ekf 是否已经稳定跟踪
+    bool ekf_ready_ = false;        // ekf 是否已经稳定跟踪（初始化ok后，连续跟踪 min_detect_frames_ 帧）
 
     // 【极其关键】：初始化必须为 0！
     // 这样当相机第一次看到目标时，EKF 就会把该目标认作 0 号板 (车头)。
     // 从而自动建立 "初始视线 = 整车 0 度角" 的相对坐标系！
-    int tracking_id_ = 0;           // 当前正在追踪的最好的装甲板 ID
+    int tracking_id_ = 0;           // 当前正在追踪的装甲板 ID
 
     // ============ 配置参数 (Config) 从参数服务器获取，可修改 ============
 
     bool show_logger_about_time_;   // 是否显示 core 节点中的每帧耗时日志（计算耗时）
     bool show_logger_about_else_;   // 是否显示 core 节点中的其他日志（除计算耗时以外的日志）
     bool show_image_;               // 是否显示 img_show 窗口
-    bool show_logger_prepare_;      // 是否显示 prepare 中的日志（与配对相关）
+    // bool show_logger_prepare_;      // 是否显示 prepare 中的日志（与配对相关）
     bool show_logger_ekf_debug_;    // 是否显示 ekf 打印的调试日志
     bool show_plot_;                // 是否画波形图
 
@@ -150,7 +164,7 @@ private:
     
     std::string chosen_color_;      // 选择检测的颜色 red / blue
     std::string camera_name_;       // 选择相机名称 mind_vision / galaxy ，会对应不同的 qos
-    std::string armorplate_type_;   // 选择装甲板类型 normal / hero ，决定了配对的参数
+    // std::string armorplate_type_;   // 选择装甲板类型 normal / hero ，决定了配对的参数
     std::string video_path_;        // 本地视频路径，只有 IS_VIDEO_MODE = true 才有效
     
     double ekf_predict_time_;       // ekf 预测时间
