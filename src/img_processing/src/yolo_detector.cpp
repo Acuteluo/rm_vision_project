@@ -32,68 +32,49 @@ YoloDetector::YoloDetector(const std::string& model_path)
 {
     RCLCPP_INFO(rclcpp::get_logger("YoloDetector"), "[YOLO] 正在初始化 OpenVINO 模型...");
 
-    try
-    {
-        // 加入这两行测试设备插件！
-        std::vector<std::string> available_devices = core_.get_available_devices();
-        for (auto&& device : available_devices) {
-            RCLCPP_INFO(rclcpp::get_logger("YoloDetector"), "可用硬件加速设备: %s", device.c_str());
-        }
+    // 1. 读取 XML 网络拓扑结构和 BIN 权重参数
+    auto model = core_.read_model(model_path);
 
-        // 1. 读取 XML 网络拓扑结构和 BIN 权重参数
-        auto model = core_.read_model(model_path);
+    // =========================================================================
+    // 2. PrePostProcessor (PPP) 硬件加速预处理
+    // 作用：将原本需要 CPU 用 OpenCV 做的图像格式转换，内嵌到模型指令中，
+    // 利用 CPU 的向量指令集(AVX)或 iGPU/NPU 实现零拷贝极速转换。
+    // =========================================================================
+    ov::preprocess::PrePostProcessor ppp(model);
+    auto & input = ppp.input();
 
-        // =========================================================================
-        // 2. PrePostProcessor (PPP) 硬件加速预处理
-        // 作用：将原本需要 CPU 用 OpenCV 做的图像格式转换，内嵌到模型指令中，
-        // 利用 CPU 的向量指令集(AVX)或 iGPU/NPU 实现零拷贝极速转换。
-        // =========================================================================
-        ov::preprocess::PrePostProcessor ppp(model);
-        auto & input = ppp.input();
+    // 声明你传入 C++ 的图片长什么样：u8(8位无符号即0~255)，尺寸 640x640，通道 BGR，内存排列为 NHWC (通道在最后)
+    input.tensor()
+      .set_element_type(ov::element::u8)
+      .set_shape({1, 640, 640, 3})
+      .set_layout("NHWC")
+      .set_color_format(ov::preprocess::ColorFormat::BGR);
 
-        // 声明你传入 C++ 的图片长什么样：u8(8位无符号即0~255)，尺寸 640x640，通道 BGR，内存排列为 NHWC (通道在最后)
-        input.tensor()
-        .set_element_type(ov::element::u8)
-        .set_shape({1, 640, 640, 3})
-        .set_layout("NHWC")
-        .set_color_format(ov::preprocess::ColorFormat::BGR);
+    // 声明模型训练时要求的排列：NCHW (通道在前面)
+    input.model().set_layout("NCHW");
 
-        // 声明模型训练时要求的排列：NCHW (通道在前面)
-        input.model().set_layout("NCHW");
+    // 声明预处理操作：转为 f32 浮点数，BGR 转 RGB，数值除以 255.0 进行归一化
+    input.preprocess()
+      .convert_element_type(ov::element::f32)
+      .convert_color(ov::preprocess::ColorFormat::RGB)
+      .scale(255.0);
 
-        // 声明预处理操作：转为 f32 浮点数，BGR 转 RGB，数值除以 255.0 进行归一化
-        input.preprocess()
-        .convert_element_type(ov::element::f32)
-        .convert_color(ov::preprocess::ColorFormat::RGB)
-        .scale(255.0);
+    // 固化这些预处理操作到模型中
+    model = ppp.build();
 
-        // 固化这些预处理操作到模型中
-        model = ppp.build();
-
-        // =========================================================================
-        // 3. 编译模型并分配硬件资源
-        // "CPU" : 使用 Core Ultra 5 的 CPU 算力
-        // "GPU" : 如果系统配置正确，可使用 Intel Arc 核显
-        // "NPU" : 针对神经网络特化的加速器
-        // 性能提示设置为 LATENCY(延迟优先)，保证摄像头每一帧能以最快速度出结果
-        // =========================================================================
-        compiled_model_ = core_.compile_model(model, "CPU", ov::hint::performance_mode(ov::hint::PerformanceMode::LATENCY));
-        
-        // 创建推理上下文句柄，后续所有的 detect 都在此内存空间进行，避免重复分配
-        infer_request_ = compiled_model_.create_infer_request();
-        
-        RCLCPP_INFO(rclcpp::get_logger("YoloDetector"), "[YOLO] 模型编译加载成功！硬件准备就绪。");
-    }
-    catch (const ov::Exception& e) 
-    {
-        // 如果 OpenVINO 报错，这里会把具体的错误原因打印出来
-        RCLCPP_ERROR(rclcpp::get_logger("YoloDetector"), "[致命错误] OpenVINO 崩溃: %s", e.what());
-    }
-    catch (const std::exception& e) 
-    {
-        RCLCPP_ERROR(rclcpp::get_logger("YoloDetector"), "[致命错误] C++ 标准异常: %s", e.what());
-    }
+    // =========================================================================
+    // 3. 编译模型并分配硬件资源
+    // "CPU" : 使用 Core Ultra 5 的 CPU 算力
+    // "GPU" : 如果系统配置正确，可使用 Intel Arc 核显
+    // "NPU" : 针对神经网络特化的加速器
+    // 性能提示设置为 LATENCY(延迟优先)，保证摄像头每一帧能以最快速度出结果
+    // =========================================================================
+    compiled_model_ = core_.compile_model(model, "CPU", ov::hint::performance_mode(ov::hint::PerformanceMode::LATENCY));
     
+    // 创建推理上下文句柄，后续所有的 detect 都在此内存空间进行，避免重复分配
+    infer_request_ = compiled_model_.create_infer_request();
+    
+    RCLCPP_INFO(rclcpp::get_logger("YoloDetector"), "[YOLO] 模型编译加载成功！硬件准备就绪。");
 }
 
 std::vector<YoloObject> YoloDetector::Detect(const cv::Mat& raw_img) 

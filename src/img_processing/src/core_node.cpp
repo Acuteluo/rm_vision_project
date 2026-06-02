@@ -218,7 +218,7 @@ void CoreNode::InitROS2()
 
 }
 
-
+ 
 
 // ================= 新增：视频读取专用线程函数 =================
 void CoreNode::VideoReading()
@@ -294,7 +294,6 @@ void CoreNode::CameraImageCallback(const sensor_msgs::msg::Image::SharedPtr msg)
 void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
 {
     rclcpp::Time calculate_start = this->now(); // 以当前真实时间作为计时器开始，所有的 dt 都基于这个来算
-
 
     // 1. 设置图像 并 记录时间和更新 dt，dt 是整个的基准！！
     img_ = frame.clone();

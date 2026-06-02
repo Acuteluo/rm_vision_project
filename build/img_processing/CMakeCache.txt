@@ -263,6 +263,9 @@ FastRTPS_LIBRARY_DEBUG:FILEPATH=FastRTPS_LIBRARY_DEBUG-NOTFOUND
 FastRTPS_LIBRARY_RELEASE:FILEPATH=/opt/ros/humble/lib/libfastrtps.so
 
 //Path to a library.
+ONNXRUNTIME_LIB:FILEPATH=/home/cly/project/src/img_processing/thirdparty/onnxruntime/lib/libonnxruntime.so
+
+//Path to a library.
 OPENSSL_CRYPTO_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libcrypto.so
 
 //Path to a file.
@@ -270,6 +273,12 @@ OPENSSL_INCLUDE_DIR:PATH=/usr/include
 
 //Path to a library.
 OPENSSL_SSL_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libssl.so
+
+//Path to a library.
+OPENVINO_LIB:FILEPATH=OPENVINO_LIB-NOTFOUND
+
+//Path to a library.
+OV_CPU_PLUGIN:FILEPATH=/home/cly/openvino_cpp/runtime/lib/intel64/libopenvino_intel_cpu_plugin.so
 
 //The directory containing a CMake configuration file for OpenCV.
 OpenCV_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/opencv4
@@ -293,7 +302,7 @@ SITE:STRING=acuteluo
 TinyXML2_DIR:PATH=TinyXML2_DIR-NOTFOUND
 
 //Path to a library.
-_lib:FILEPATH=/home/cly/project/install/serial_driver_interfaces/lib/libserial_driver_interfaces__rosidl_typesupport_fastrtps_cpp.so
+_lib:FILEPATH=/opt/ros/humble/lib/libtf2_msgs__rosidl_typesupport_fastrtps_cpp.so
 
 //The directory containing a CMake configuration file for action_msgs.
 action_msgs_DIR:PATH=/opt/ros/humble/share/action_msgs/cmake

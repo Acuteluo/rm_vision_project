@@ -5,7 +5,10 @@
 #include <openvino/openvino.hpp>
 #include <vector>
 #include <string>
+#include <fstream>
+#include <sstream>
 #include <rclcpp/rclcpp.hpp>
+#include <opencv2/dnn.hpp>      // 新增：使用 OpenCV 的 DNN 预处理
 
 /**
  * @brief 解析后的纯净 YOLO 目标结构体

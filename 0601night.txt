@@ -1,16 +1,21 @@
-[INFO] [launch]: All log files can be found below /home/cly/.ros/log/2026-06-01-21-37-53-468144-acuteluo-15281
+[INFO] [launch]: All log files can be found below /home/cly/.ros/log/2026-06-02-02-12-02-088979-acuteluo-19615
 [INFO] [launch]: Default logging verbosity is set to INFO
-[INFO] [core_node-1]: process started with pid [15283]
-[core_node-1] [INFO] [1780321073.602651467] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780321073.602937528] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780321073.602980174] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780321073.603014438] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780321073.609294639] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780321073.609431735] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780321073.609474970] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780321073.610007683] [core_node_offline]: 已发布静态变换【芯片坐标系 -> 相机坐标系】，平移: x=0.000 m, y=0.000 m, z=0.000 m
-[core_node-1] [INFO] [1780321073.610063781] [core_node_offline]: TF 参数已加载: SHOW_LOGGER_ERROR=0, SHOW_RESULT=0, father_frame=camera_frame
-[core_node-1] [INFO] [1780321073.613071898] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780321073.613181133] [core_node_offline]: 【本地视频模式】将读取本地视频: /home/cly/下载/rm_test_videos/20260501_160636__camera_0_rgb_output.mp4
-[core_node-1] [INFO] [1780321073.615155409] [YoloDetector]: [YOLO] 正在初始化 OpenVINO 模型...
-[ERROR] [core_node-1]: process has died [pid 15283, exit code -11, cmd '/home/cly/project/install/img_processing/lib/img_processing/core_node --ros-args -r __node:=core_node_offline --params-file /tmp/launch_params_ug3b4qek'].
+[INFO] [core_node-1]: process started with pid [19617]
+[core_node-1] [INFO] [1780337522.234523910] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780337522.234642821] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780337522.234656914] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780337522.234668831] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780337522.237030833] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780337522.237086427] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780337522.237101317] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780337522.237302860] [core_node_offline]: 已发布静态变换【芯片坐标系 -> 相机坐标系】，平移: x=0.000 m, y=0.000 m, z=0.000 m
+[core_node-1] [INFO] [1780337522.237327007] [core_node_offline]: TF 参数已加载: SHOW_LOGGER_ERROR=0, SHOW_RESULT=0, father_frame=camera_frame
+[core_node-1] [INFO] [1780337522.238778285] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780337522.238819754] [core_node_offline]: 【本地视频模式】将读取本地视频: /home/cly/下载/rm_test_videos/20260501_160636__camera_0_rgb_output.mp4
+[core_node-1] [YOLO] 构造开始，使用 OpenCV DNN 后端
+[core_node-1] [致命错误]: OpenCV(4.5.4) ./modules/dnn/src/dnn.cpp:3958: error: (-2:Unspecified error) Build OpenCV with Inference Engine to enable loading models from Model Optimizer. in function 'readFromModelOptimizer'
+[core_node-1] 
+[core_node-1] terminate called after throwing an instance of 'cv::Exception'
+[core_node-1]   what():  OpenCV(4.5.4) ./modules/dnn/src/dnn.cpp:3958: error: (-2:Unspecified error) Build OpenCV with Inference Engine to enable loading models from Model Optimizer. in function 'readFromModelOptimizer'
+[core_node-1] 
+[ERROR] [core_node-1]: process has died [pid 19617, exit code -6, cmd '/home/cly/project/install/img_processing/lib/img_processing/core_node --ros-args -r __node:=core_node_offline --params-file /tmp/launch_params_iszulj22'].

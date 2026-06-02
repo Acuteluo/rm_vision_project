@@ -1,75 +1,60 @@
 cmake_minimum_required(VERSION 3.10)
 project(img_processing)
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+add_compile_options(-O3 -Wall -Wextra)
 
-# find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
-find_package(OpenCV REQUIRED)
+find_package(serial_driver_interfaces REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(eigen3_cmake_module REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(OpenCV REQUIRED)
 
-find_package(message_filters REQUIRED)
+# 强制使用我们下载的独立版 OpenVINO
+set(OpenVINO_DIR "/home/cly/openvino_cpp/runtime/cmake")
+find_package(OpenVINO REQUIRED)
 
-find_package(serial_driver_interfaces REQUIRED)
-
-find_package(OpenVINO REQUIRED) # <--- 新增这行，寻找 OpenVINO
-
-# 本包的头文件目录
-include_directories(include)
-
-
-# 节点
-add_executable(
-  core_node
-  src/core_node.cpp
-  src/tf.cpp
-  src/ekf.cpp
-  src/plotter.cpp
-  # ====================================================
-  # 【建议把下面三个传统视觉的 cpp 注释掉，防止干扰】
-  # src/armorplate.cpp
-  # src/strip.cpp
-  # src/prepare_algorithm.cpp
-  # ====================================================
-  src/yolo_detector.cpp  # 【新增】编译 YOLO 检测器
-  src/yolo_armor.cpp     # 【新增】编译 YOLO 专属装甲板
+include_directories(
+    include
+    ${EIGEN3_INCLUDE_DIRS}
 )
 
-
-target_include_directories(core_node PRIVATE
-  include
+add_executable(core_node
+    src/core_node.cpp
+    src/tf.cpp
+    src/ekf.cpp
+    src/plotter.cpp
+    src/yolo_detector.cpp  
+    src/yolo_armor.cpp     
 )
 
-ament_target_dependencies(core_node rclcpp sensor_msgs cv_bridge OpenCV Eigen3 message_filters serial_driver_interfaces tf2_ros tf2_geometry_msgs geometry_msgs)
-
-target_link_libraries(
-  core_node
-  ${OpenCV_LIBS}
-  openvino::runtime      # <--- 新增这行，链接推理引擎
+target_include_directories(core_node PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
 )
 
+ament_target_dependencies(core_node
+    rclcpp sensor_msgs cv_bridge serial_driver_interfaces tf2_ros tf2_geometry_msgs geometry_msgs
+)
 
-# 安装可执行文件
+target_link_libraries(core_node
+    ${OpenCV_LIBS}
+    Eigen3::Eigen
+    openvino::runtime  
+)
+
+# 【终极护盾】：把库的路径死死烧录进程序，防止被系统干扰
+set_target_properties(core_node PROPERTIES
+    BUILD_WITH_INSTALL_RPATH TRUE
+    INSTALL_RPATH "/home/cly/openvino_cpp/runtime/lib/intel64;/home/cly/openvino_cpp/runtime/3rdparty/tbb/lib"
+)
+
 install(TARGETS core_node DESTINATION lib/${PROJECT_NAME})
-
-# 安装本包的头文件
-install(DIRECTORY include/ DESTINATION include)
-
-
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  set(ament_cmake_copyright_FOUND TRUE)
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
-endif()
-
+install(DIRECTORY model DESTINATION share/${PROJECT_NAME})
 ament_package()

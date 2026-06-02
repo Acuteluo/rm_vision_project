@@ -94,6 +94,7 @@ private:
     rcl_interfaces::msg::SetParametersResult OnParameterChange(const std::vector<rclcpp::Parameter>& params); // 参数动态修改回调函数，接收修改后的参数列表
 
     rclcpp::Publisher<serial_driver_interfaces::msg::SerialDriver>::SharedPtr serial_pub_; // 串口消息发布器
+    
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_; // 参数动态修改回调函数的句柄，用于在析构函数中取消注册
     
     // ==================== 多线程 ====================
