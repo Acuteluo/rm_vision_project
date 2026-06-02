@@ -1,17 +1,3 @@
-#pragma once
-#include <rclcpp/rclcpp.hpp>
-#include<Eigen/Dense>
-#include<Eigen/QR>
-#include<Eigen/Core>
-#include<Eigen/LU>
-#include <cmath>  
-
-#include <tf2_ros/transform_broadcaster.h>
-#include <tf2_ros/transform_listener.h>
-#include <tf2_ros/buffer.h>
-#include <geometry_msgs/msg/transform_stamped.hpp>
-
-
 /*
     EKF 
 
@@ -38,205 +24,168 @@
         Δyaw 取决于装甲板ID，比如 ID=1 Δyaw = +180°，ID=2 Δyaw = +90°，ID3 Δyaw = 0°，ID4 Δyaw = -90°。
 */
 
+#ifndef EKF_HPP
+#define EKF_HPP
 
+#include <rclcpp/rclcpp.hpp>
+#include <Eigen/Dense>
+#include <Eigen/QR>
+#include <Eigen/Core>
+#include <Eigen/LU>
+#include <cmath>  
+#include <memory>
+#include <vector>
+#include <string>
+
+#include <tf2_ros/transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
+#include <tf2_ros/buffer.h>
+#include <geometry_msgs/msg/transform_stamped.hpp>
+
+/**
+ * @brief Extended Kalman Filter (EKF) for Armor Tracking
+ * @details 
+ * 思路：根据观测数据推算中心位姿，进行 YPD 球坐标系卡尔曼滤波，并发布从中心到四周装甲板的动态 TF 变换。
+ * 状态 X = [x_c, y_c, z_c, vx_c, vy_c, vz_c, yaw, ω, r1, r2, dz]^T (11维)
+ * 观测 Z = [los_yaw, los_pitch, distance, yaw_armor]^T (4维 YPD 球面坐标观测)
+ */
 class EKF
 {
 public:
-    // 构造函数拿到 Node 指针以创建 ROS2 相关的对象
-    explicit EKF(rclcpp::Node* node); 
 
-	/**
-	* @brief	滤波主要过程
-	* @param	x
-	* @param	y
-    * @param    z 
-    * @param    dt
-	* @return   无返回值
-	*/
-	void UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int armor_id, double dt);
-	
-    ////////// 动态传参 ///////////
+    // ==================== 构造与重置初始化 ====================
 
-    // 从参数服务器更新（运行时调用）
-    void UpdateParamsFromServer();
+    explicit EKF(rclcpp::Node* node); // 构造函数拿到 Node 指针以创建 ROS2 相关的对象
 
-    // 设置装甲板的 width 和 height
-    void SetArmorplateSize(std::string ARMOR_TYPE);
+    void Reset(); // 重置初始化（丢失目标超过一定帧数时调用）
 
-    // 设置是否打印日志
-    void SetDebugLogger(bool SHOW_LOGGER_DEBUG);
-	
-    // 重置初始化（丢失目标超过一定帧数时）
-    void Reset();
+    bool is_initialized; // 滤波器是否已完成首次初始化
 
+    // ==================== 参数与配置接口 ====================
 
-	// 获得装甲板的预测位置。通过传入引用，获得 x y z
-    void GetArmorplatePredict(Eigen::Vector3d& armorplate_center_predict, 
-                          int armor_id, double future_time);
+    void UpdateParamsFromServer();                  // 从参数服务器动态更新 Q、R 矩阵参数
+    void SetArmorplateSize(std::string ARMOR_TYPE); // 根据大小板，设置装甲板的物理尺寸 (宽和高)
+    void SetDebugLogger(bool SHOW_LOGGER_DEBUG);    // Debug日志开关：设置是否打印底层 EKF 调试日志
+    void SetArmorNum(int num);                      // 根据识别，设置一个车上装甲板的数量 (兵种区分)
 
+    // ==================== 核心算法接口 ====================
 
-	// 预测未来 future 秒的中心点的位置，通过传入引用，获得 x y z
-	void GetCarCenterPredict(Eigen::Vector3d& car_center_predict, double future_time);
-	
+    /**
+     * @brief EKF 核心更新流
+     * @param armorplate_center 装甲板在世界/父坐标系下的实时绝对坐标
+     * @param yaw_armor         装甲板在世界/父坐标系下的绝对朝向 (欧拉角 Yaw)
+     * @param armor_id          当前观测到的装甲板，对应整车上目前哪块板 ID 的状态(0/1/2/3)
+     * @param dt                与上一帧的时间间隔 (秒)
+     */
+    void UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int armor_id, double dt);
 
-    // 改变滤波器内部状态的预测，会更新状态
+    /**
+     * @brief 仅盲推预测 (丢失目标时调用)。会更新滤波器的内部状态
+     * @param dt 盲推时间步长
+     */
     void PredictOnly(double dt);
 
+    // ==================== 状态提取接口 ====================
 
-    // 得到某个 id 装甲板四个角点在世界下的坐标
-    void GetArmorplateFourCorners(std::vector<Eigen::Vector3d>& corners, int armor_id);
+    // 预测未来 future 秒，整车上指定 ID 装甲板的位置。通过传入引用 armorplate_center_predict 得到坐标 x y z
+    void GetArmorplatePredict(Eigen::Vector3d& armorplate_center_predict, int armor_id, double future_time);
+    
+    // 预测未来 future 秒，整车中心点的位置。通过传入引用 car_center_predict 得到坐标 x y z
+    void GetCarCenterPredict(Eigen::Vector3d& car_center_predict, double future_time);
 
-    // 状态矩阵
-	Eigen::Matrix<double, 11, 1> X;      // k 时刻状态
-	Eigen::Matrix<double, 11, 1> X_est;  // k 时刻预测状态
-	Eigen::Matrix<double, 11, 1> X_prev; // k-1 时刻状态
+    // 获取现在，指定 ID 装甲板的四个角点在世界系的坐标（根据现在整车状态来推，因此坐标系无需担心）
+    void GetArmorplateFourCorners(std::vector<Eigen::Vector3d>& corners, int armor_id); 
 
-    bool is_initialized; // 是否初始化
+    // ==================== 状态矩阵 ====================
 
-    int armor_num_; // 装甲板数量
-
-    void SetArmorNum(int num); // 给 CoreNode 调用的接口
+    Eigen::Matrix<double, 11, 1> X;      // k 时刻状态量
+    Eigen::Matrix<double, 11, 1> X_est;  // k 时刻预测状态量
+    Eigen::Matrix<double, 11, 1> X_prev; // k-1 时刻状态量
 
 private:
 
-    // 初始化  状态转移矩阵F  协方差矩阵P  预测过程噪声Q  观测矩阵H  测量过程噪声R
-	void Initialized(const Eigen::Vector3d& armorplate_center, const double& yaw_armor);
+    // ==================== ROS & TF 基础组件 ====================
 
-    // 更新参数
-	void UpdateParameters(double dt);
-	
+    rclcpp::Node* node_; // ROS2 节点指针
 
+    std::unique_ptr<tf2_ros::TransformBroadcaster> car_broadcaster_;  // 发布 car_center_frame -> armor_x_frame 的动态变换，即目前整车中心到四个装甲板的变换
+    std::shared_ptr<tf2_ros::Buffer> tf_buffer_;                      // TF 缓存
+    std::shared_ptr<tf2_ros::TransformListener> tf_listener_;         // TF 监听器
 
-    // 归一化
-    void NormalizeAngle(double& angle);
+    // ==================== EKF 内部逻辑流程 ====================
 
+    void Initialized(const Eigen::Vector3d& armorplate_center, const double& yaw_armor); // 根据首次观测数据完成 EKF 的状态初始化
+    void UpdateParameters(double dt); // 依据 dt 刷新状态转移矩阵 F 和过程噪声 Q
+    
+    void StatusPredict();       // [1] 状态预测
+    void UncertaintyPredict();  // [2] 协方差预测
+    void CalculateKalmanGain(); // [3] 计算卡尔曼增益 K
+    void UpdateStatus();        // [4] 状态更新 (包含 NIS 卡方检验异常剔除)
+    void UpdateUncertainty();   // [5] 协方差更新 (Joseph 形式)
+    void UpdateHistoricalData();// [6] 更新历史迭代数据
 
-	// 状态预测 X_hat_k_est = F * X_hat_k-1
-	void StatusPredict();
-	
+    // ==================== 观测模型 H 与雅可比 h ====================
 
+    Eigen::Matrix<double, 4, 1> h(const Eigen::Matrix<double, 11, 1>& x);               // XYZ 空间非线性观测方程
+    Eigen::Matrix<double, 4, 11> ComputeH(const Eigen::Matrix<double, 11, 1>& x);       // XYZ 空间雅可比矩阵
 
-	// 不确定性预测 P_k_est = F * P_k-1 * F^T + Q
-	void UncertaintyPredict();
-	
+    Eigen::Matrix<double, 4, 1> h_ypd(const Eigen::Matrix<double, 11, 1>& X_in);         // YPD 极坐标空间非线性观测方程
+    Eigen::Matrix<double, 4, 11> ComputeH_YPD(const Eigen::Matrix<double, 11, 1>& X_in); // YPD 极坐标空间雅可比矩阵 (链式法则)
 
-	// 计算卡尔曼增益 K_k = P_k_est * H^T * [H * P_k_est * H^T + R]^-1
-	void CalculateKalmanGain();
-	
+    // ==================== 辅助与工具函数 ====================
 
+    void NormalizeAngle(double& angle); // 将角度归一化到 [-PI, PI] 之间
 
-	// 用测量值更新状态 X_hat_k = X_hat_k_est + K_k * (Z_k - H * X^k_est)
-	void UpdateStatus();
-	
-
-
-	// 更新协方差，不确定性 P_k = (I - K_k * H) * P_k_est
-	void UpdateUncertainty();
-	
-
-
-	// 更新历史数据
-	void UpdateHistoricalData();
-
-
-    // 05【整车中心坐标系】-> 四个【装甲板坐标系】
-    void UpdateCarCenterToArmorplate(std::string child_frame, double x, double y, double z, double roll, double pitch, double yaw);
-
-    void UpdateCarCenterToArmorplates();
-
-    // 06【父坐标系】->【整车中心坐标系】注意这里忽略了 pitch & roll
-    // 父坐标系在单机模式下是 camera_frame，在联调模式下是 world_frame
-    void UpdateFatherToCarCenter();
-
-
-    // 非线性观测方程 h(x, armor_id)：将状态映射到装甲板观测空间
-    Eigen::Matrix<double, 4, 1> h(const Eigen::Matrix<double, 11, 1>& x);
-
-    // 计算观测雅可比矩阵 H = ∂h/∂x，在预测状态 X_est 处线性化
-    Eigen::Matrix<double, 4, 11> ComputeH(const Eigen::Matrix<double, 11, 1>& x);
-
-
-    // 【新增 1】：用于计算 YPD 预测值的非线性函数
-    Eigen::Matrix<double, 4, 1> h_ypd(const Eigen::Matrix<double, 11, 1>& X_in);
-
-    // 【新增 2】：用于计算 YPD 观测空间雅可比矩阵的函数 (链式法则)
-    Eigen::Matrix<double, 4, 11> ComputeH_YPD(const Eigen::Matrix<double, 11, 1>& X_in);
-
-
-
-    // 根据装甲板 ID 获取车体系下偏移量 (dx, dy) 和偏航角差 θ_offset
-    // 【极其关键】：把参数获取变成纯净函数，传入状态 X_in！
+    // 根据目前整车状态，计算指定 ID 装甲板的相对中心坐标 (P_body)，即得到相对中心偏差量 dx dy
+    // 以及该板当前相对于整车的角度（0 号装甲板角度）的固定偏航角 Δyaw（逆时针为正）
     void GetArmorplateParams(const Eigen::Matrix<double, 11, 1>& X_in, int id, double& dx, double& dy, double& dz_offset, double& theta_offset);
 
+    // ==================== TF 发布逻辑 ====================
 
-    // 【新增 1】：YPD 观测的 R 矩阵和参数
-    Eigen::Matrix3d R_ypd;
-    double r_yaw;      // 角度观测噪声 (极小)
-    double r_pitch;    // 角度观测噪声 (极小)
-    double r_distance; // 距离观测噪声 (极大)
+    // 控制发布从整车中心到指定 ID 装甲板的 TF 变换
+    void UpdateCarCenterToArmorplate(std::string child_frame, double x, double y, double z, double roll, double pitch, double yaw);
+    
+    // 控制发布从整车中心到指定 ID 装甲板的 TF 变换总逻辑，循环发布 中心 到 armor_1_frame ~ armor_4_frame
+    void UpdateCarCenterToArmorplates(); 
 
-    // 【新增 2】：新增一个 YPD 更新函数的声明
-    void UpdateYPDFromXYZ(const Eigen::Vector3d& obs_xyz);
+    // 发布 father_frame -> car_center_frame 的 TF 变换
+    void UpdateFatherToCarCenter();      
 
+    // ==================== 内部属性与参数 ====================
 
-    bool SHOW_LOGGER_DEBUG; // 是否打印调参日志
+    int armor_num_;  // 装甲板总数
+    int armor_id;    // 当前帧传入的观测装甲板 ID
+    double width;    // 装甲板物理宽度 (m)
+    double height;   // 装甲板物理高度 (m)
 
-	// 协方差矩阵
-	Eigen::Matrix<double, 11, 11> P;      // k 时刻协方差矩阵
-	Eigen::Matrix<double, 11, 11> P_est;  // k 时刻预测协方差矩阵
-	Eigen::Matrix<double, 11, 11> P_prev; // k-1 时刻协方差矩阵
+    std::string father_frame; // 坐标系基准：单机模式(camera_frame) / 联调模式(world_frame)
+    bool SHOW_LOGGER_DEBUG;   // EKF 调试日志开关
 
-	// 状态转移矩阵 
-	Eigen::Matrix<double, 11, 11> F;
+    // ==================== 卡尔曼滤波矩阵库 ====================
 
-	// 预测过程噪声矩阵
-	Eigen::Matrix<double, 11, 11> Q;
+    Eigen::Matrix<double, 11, 11> P;      // k 时刻协方差矩阵
+    Eigen::Matrix<double, 11, 11> P_est;  // k 时刻预测协方差矩阵
+    Eigen::Matrix<double, 11, 11> P_prev; // k-1 时刻协方差矩阵
 
-    double q_x_;
-    double q_y_;
-    double q_z_;
-    double q_v_x_;
-    double q_v_y_;
-    double q_v_z_;
-    double q_yaw_;
-    double q_omega_;
-    double q_r_;
-    double q_dz_; 
+    Eigen::Matrix<double, 11, 11> F;      // 状态转移矩阵
+    Eigen::Matrix<double, 11, 11> Q;      // 预测过程噪声协方差矩阵
+    Eigen::Matrix<double, 4, 11>  H;      // 观测雅可比矩阵 (∂h/∂x)
+    Eigen::Matrix<double, 4, 4>   R;      // 测量过程噪声协方差矩阵
+    Eigen::Matrix<double, 4, 1>   Z;      // 实时测量向量 (YPD + 欧拉角yaw)
+    Eigen::Matrix<double, 11, 4>  K;      // 卡尔曼增益矩阵
+    Eigen::Matrix<double, 11, 11> I;      // 单位矩阵
 
-	// 观测矩阵（不写定值，而是雅可比矩阵） 只观测 x_center y_center z_center yaw
-	Eigen::Matrix<double, 4, 11> H;
+    // ==================== 动态调参变量 (Yaml) ====================
 
-	// 测量过程噪声 
-	Eigen::Matrix<double, 4, 4> R;
+    double q_x_, q_y_, q_z_;
+    double q_v_x_, q_v_y_, q_v_z_;
+    double q_yaw_, q_omega_;
+    double q_r_, q_dz_; 
 
-    double r_euler_yaw_;
-
-    // YPD 球面坐标系观测参数
-    double r_los_yaw_;
-    double r_los_pitch_;
-    double r_distance_;
-
-	// 测量矩阵 测量 xyz
-	Eigen::Matrix<double, 4, 1> Z;
-
-	// 卡尔曼增益
-	Eigen::Matrix<double, 11, 4> K;
-
-	// 单位矩阵
-	Eigen::Matrix<double, 11, 11> I;
-
-    // TF 广播器、缓存、监听器，发布从 整车中心到装甲板的动态变换
-    // car_center_frame -> armorplate_frame
-    std::unique_ptr<tf2_ros::TransformBroadcaster> car_broadcaster_;     // 发布 car_center_frame -> armorplate_flame 相关 TF
-    std::shared_ptr<tf2_ros::Buffer> tf_buffer_;                 // TF 缓存
-    std::shared_ptr<tf2_ros::TransformListener> tf_listener_;    // TF 监听器
-
-    rclcpp::Node* node_;  // 拿到 ros2 的节点指针
-
-    int armor_id; // 传入的装甲板 id （0:后，1:右，2:前，3:左）
-
-    double width; // 当前装甲板的长，单位 m
-    double height; // 当前装甲板的宽，单位 m
-
-    std::string father_frame; // 从参数服务器读取，查询父坐标系->装甲板坐标系时候要用。单机模式下是 camera_frame，联调模式下是 world_frame
+    double r_los_yaw_;   // 视线偏航角观测噪声
+    double r_los_pitch_; // 视线俯仰角观测噪声
+    double r_distance_;  // 深度距离观测噪声 (单目 PnP 通常较大)
+    double r_euler_yaw_; // 目标装甲板绝对姿态观测噪声
 };
+
+#endif // EKF_HPP

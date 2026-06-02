@@ -1,0 +1,42 @@
+[INFO] [launch]: All log files can be found below /home/cly/.ros/log/2026-06-01-21-17-45-175707-acuteluo-12140
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [core_node-1]: process started with pid [12142]
+[core_node-1] [INFO] [1780319865.456436085] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780319865.456603524] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780319865.456618201] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780319865.456631526] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780319865.462736913] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780319865.462802859] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780319865.462816517] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780319865.463068140] [core_node_offline]: 已发布静态变换【芯片坐标系 -> 相机坐标系】，平移: x=0.000 m, y=0.000 m, z=0.000 m
+[core_node-1] [INFO] [1780319865.463481702] [core_node_offline]: TF 参数已加载: SHOW_LOGGER_ERROR=0, SHOW_RESULT=0, father_frame=camera_frame
+[core_node-1] [INFO] [1780319865.466472812] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780319865.466569326] [core_node_offline]: 【本地视频模式】将读取本地视频: /home/cly/下载/rm_test_videos/20260501_160636__camera_0_rgb_output.mp4
+[core_node-1] [INFO] [1780319865.466682430] [core_node_offline]: CoreNode 节点创建成功! 
+[core_node-1] [INFO] [1780319865.619542806] [core_node_offline]: coreNode 正在发布...
+[core_node-1] [INFO] [1780319865.946936402] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780319865.947666706] [ekf_debug]: Innovation: los_yaw=-0.0056, los_pitch=-0.0005, los_distance=0.0176, yaw=-0.0698
+[core_node-1] [INFO] [1780319865.947697572] [ekf_debug]: State: x=2.324, y=-0.057, z=-0.127, vx=0.000, vy=-0.000, vz=0.000, yaw=0.578, omega=-0.001, r1=0.251, r2=0.250, dz=0.000
+[core_node-1] [INFO] [1780319865.947709910] [ekf_debug]: P_diag: px=0.0000, py=0.0000, pz=0.0000, pyaw=0.0000
+[core_node-1] [INFO] [1780319865.947716925] [ekf_debug]: K_gain: Kx=0.1637, Ky=1.7115, Kz=-1.7991, Kyaw=0.5608
+[core_node-1] [INFO] [1780319866.334269248] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780319866.334498067] [ekf_debug]: Innovation: los_yaw=-0.0057, los_pitch=-0.0001, los_distance=0.0746, yaw=0.1711
+[core_node-1] [INFO] [1780319866.334506888] [ekf_debug]: State: x=2.331, y=-0.053, z=-0.128, vx=0.000, vy=-0.001, vz=-0.000, yaw=0.640, omega=0.005, r1=0.250, r2=0.250, dz=0.000
+[core_node-1] [INFO] [1780319866.334513308] [ekf_debug]: P_diag: px=0.0829, py=0.0196, pz=0.0156, pyaw=0.0425
+[core_node-1] [INFO] [1780319866.334516646] [ekf_debug]: K_gain: Kx=0.1158, Ky=0.9359, Kz=-0.9760, Kyaw=0.3588
+[core_node-1] [INFO] [1780319866.651976693] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780319866.652201294] [ekf_debug]: Innovation: los_yaw=-0.0071, los_pitch=-0.0005, los_distance=-0.0135, yaw=0.1850
+[core_node-1] [INFO] [1780319866.652209954] [ekf_debug]: State: x=2.327, y=-0.048, z=-0.128, vx=-0.000, vy=-0.002, vz=0.000, yaw=0.689, omega=0.017, r1=0.250, r2=0.250, dz=0.000
+[core_node-1] [INFO] [1780319866.652216085] [ekf_debug]: P_diag: px=0.0734, py=0.0126, pz=0.0086, pyaw=0.0272
+[core_node-1] [INFO] [1780319866.652219338] [ekf_debug]: K_gain: Kx=0.0973, Ky=0.6252, Kz=-0.6710, Kyaw=0.2653
+[core_node-1] [INFO] [1780319866.967909874] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780319866.968137575] [ekf_debug]: Innovation: los_yaw=-0.0081, los_pitch=-0.0008, los_distance=0.0270, yaw=-0.0103
+[core_node-1] [INFO] [1780319866.968146733] [ekf_debug]: State: x=2.329, y=-0.053, z=-0.128, vx=-0.000, vy=-0.006, vz=0.000, yaw=0.687, omega=0.017, r1=0.251, r2=0.250, dz=0.000
+[core_node-1] [INFO] [1780319866.968152873] [ekf_debug]: P_diag: px=0.0665, py=0.0101, pz=0.0060, pyaw=0.0201
+[core_node-1] [INFO] [1780319866.968156342] [ekf_debug]: K_gain: Kx=0.0990, Ky=0.4664, Kz=-0.5185, Kyaw=0.2114
+[core_node-1] [INFO] [1780319867.284520159] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780319867.284759879] [ekf_debug]: Innovation: los_yaw=-0.0087, los_pitch=-0.0009, los_distance=0.0511, yaw=0.0779
+[core_node-1] [INFO] [1780319867.284770282] [ekf_debug]: State: x=2.333, y=-0.054, z=-0.128, vx=0.000, vy=-0.011, vz=0.001, yaw=0.702, omega=0.031, r1=0.251, r2=0.250, dz=0.000
+[core_node-1] [INFO] [1780319867.284827259] [ekf_debug]: P_diag: px=0.0603, py=0.0088, pz=0.0047, pyaw=0.0160
+[core_node-1] [INFO] [1780319867.284831337] [ekf_debug]: K_gain: Kx=0.0837, Ky=0.3871, Kz=-0.4298, Kyaw=0.1775
+[INFO] [core_node-1]: process has finished cleanly [pid 12142]

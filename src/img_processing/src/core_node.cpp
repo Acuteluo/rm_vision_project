@@ -27,7 +27,7 @@ CoreNode::CoreNode(): Node("core_node_cpp")
     InitROS2();
 
     // 4. 初始化 yolo 模型
-    std::string yolo_model_path = "/home/cly/project/src/img_processing/model/yolo11.xml"; 
+    std::string yolo_model_path = "/home/cly/project/src/img_processing/model/0526_fp32.onnx"; 
     yolo_detector_ = std::make_unique<YoloDetector>(yolo_model_path);
 
     RCLCPP_INFO_ONCE(this->get_logger(), "CoreNode 节点创建成功! ");
@@ -61,7 +61,7 @@ void CoreNode::InitParams()
     
     // prepare 类
     // this->declare_parameter("core.logger.show_logger_prepare", false); // 是否打印 prepare 类中的日志
-    this->declare_parameter("core.param.chosen_color", "blue"); // 选择的装甲板颜色
+    this->declare_parameter("core.param.chosen_color", "red"); // 选择的装甲板颜色
     this->declare_parameter("core.param.camera_name", "galaxy"); // 使用的相机名称
     // this->declare_parameter("core.param.armor_type", "normal"); // 识别装甲板的类型
 
@@ -284,8 +284,14 @@ void CoreNode::VideoReading()
 // ================= 相机图传 回调函数 =================
 void CoreNode::CameraImageCallback(const sensor_msgs::msg::Image::SharedPtr msg)
 {
-    cv::Mat frame = cv_bridge::toCvCopy(msg, "bgr8")->image; // 需要 SharedPtr 作为参数
-    CoreLogic(frame, msg->header.stamp);
+    // 直接把底层的内存映射为 OpenCV 的 Mat
+    cv::Mat frame(msg->height, msg->width, CV_8UC3, const_cast<uint8_t*>(msg->data.data()), msg->step);
+    
+    // 【修改点在这里】：必须深拷贝！因为 msg 的生命周期在回调结束就会销毁
+    cv::Mat safe_frame = frame.clone(); 
+    
+    // 【修改点在这里】：你刚才传的是 frame！必须传克隆好的 safe_frame！否则一旦切线程直接指针越界段错误！
+    CoreLogic(safe_frame, msg->header.stamp);
 }
 
 
@@ -325,22 +331,24 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     // ====================================================================
     // 1. 调用 YOLO 提取绝对精准的目标对象
     // ====================================================================
-    auto yolo_results = yolo_detector_->Detect(img_);
+    
+    // 映射目标颜色 (0红 1蓝 2灰 3紫)
+    int target_color = (chosen_color_ == "red") ? 0 : 1;
+
+    // 确保获取的是一个全新的、独立的 Mat 内存空间，防止 ROS2 消息在多线程下释放导致的非法访问
+    auto detected_armors = yolo_detector_->Detect(img_, target_color); // 调用 yolo 检测，得到敌方装甲板颜色的结果
 
     // t2 = 完成 yolo检测 的时间戳
     rclcpp::Time t2 = this->now();
 
     yolo_armors_.clear();
 
-    // 判断目标颜色 (例如 0 是红，1 是蓝)
-    int target_color = (chosen_color_ == "blue") ? 1 : 0;
-
     // ====================================================================
     // 2. 目标筛选与 PnP 解算
     // ====================================================================
-    for (const auto& obj : yolo_results) 
+    for (const auto& obj : detected_armors) 
     {
-        // 筛选颜色
+        // 筛选颜色（以防万一）
         if (obj.color != target_color) continue;
 
         // 构造新装甲板对象
