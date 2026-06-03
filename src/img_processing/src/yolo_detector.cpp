@@ -8,12 +8,8 @@ inline float sigmoid(float x) {
 
 YoloDetector::YoloDetector(const std::string& model_path) 
 {
-    // =========================================================================
-    // 【压榨 CPU 潜能】：强制 OpenCV 使用几乎所有的 CPU 逻辑核心来跑推断！
-    // =========================================================================
-    int threads = std::max(1, cv::getNumberOfCPUs() - 1); // 留一个核心给系统，其他的全上
-    cv::setNumThreads(threads);
-    RCLCPP_INFO(rclcpp::get_logger("YoloDetector"), "[YOLO] 已强行开启 %d 个 CPU 线程进行推理加速！", threads);
+    // 强制开启底层数学优化 (会唤醒我们刚才编译的 OpenBLAS 和 AVX2)
+    cv::setUseOptimized(true);
 
     RCLCPP_INFO(rclcpp::get_logger("YoloDetector"), "[YOLO] 正在初始化 OpenCV DNN 模型...");
 
@@ -37,6 +33,8 @@ YoloDetector::YoloDetector(const std::string& model_path)
 
         is_ready_ = true; 
         RCLCPP_INFO(rclcpp::get_logger("YoloDetector"), "[YOLO] OpenCV DNN 模型加载配置成功 (运行在 CPU)！");
+
+        RCLCPP_INFO(rclcpp::get_logger("YoloDetector"), "OpenCV threads: %d", cv::getNumThreads());
     } 
     catch (const cv::Exception& e) 
     {

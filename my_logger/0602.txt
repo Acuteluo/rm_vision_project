@@ -1,1023 +1,464 @@
-[INFO] [launch]: All log files can be found below /home/cly/.ros/log/2026-06-03-14-13-26-273670-acuteluo-137198
+[INFO] [launch]: All log files can be found below /home/cly/.ros/log/2026-06-03-18-44-47-284128-acuteluo-139349
 [INFO] [launch]: Default logging verbosity is set to INFO
-[INFO] [core_node-1]: process started with pid [137201]
-[core_node-1] [INFO] [1780467206.421916177] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780467206.422110503] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780467206.422126920] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780467206.422139783] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780467206.425936556] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780467206.426007793] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780467206.426024201] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780467206.426272258] [core_node_offline]: 已发布静态变换【芯片坐标系 -> 相机坐标系】，平移: x=0.000 m, y=0.000 m, z=0.000 m
-[core_node-1] [INFO] [1780467206.426293648] [core_node_offline]: TF 参数已加载: SHOW_LOGGER_ERROR=0, SHOW_RESULT=0, father_frame=camera_frame
-[core_node-1] [INFO] [1780467206.428933796] [core_node_offline]: 修改参数的回调函数已被调用! 
-[core_node-1] [INFO] [1780467206.428995924] [core_node_offline]: 【本地视频模式】将读取本地视频: /home/cly/下载/rm_test_videos/20260501_193831__camera_0_rgb_output.mp4
-[core_node-1] [INFO] [1780467206.429759428] [YoloDetector]: [YOLO] 已强行开启 17 个 CPU 线程进行推理加速！
-[core_node-1] [INFO] [1780467206.429771942] [YoloDetector]: [YOLO] 正在初始化 OpenCV DNN 模型...
-[core_node-1] [INFO] [1780467206.468311837] [YoloDetector]: [YOLO] OpenCV DNN 模型加载配置成功 (运行在 CPU)！
-[core_node-1] [INFO] [1780467206.468381788] [core_node_offline]: CoreNode 节点创建成功! 
-[core_node-1] Gtk-Message: 14:13:26.695: Failed to load module "canberra-gtk-module"
-[core_node-1] [INFO] [1780467206.713102661] [core_node_offline]: CoreLogic 正在运行...
-[core_node-1] [WARN] [1780467206.876403514] [core_node_offline]: 遇到畸形板，误差高达 0.64，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467207.008754679] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467207.128418034] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467207.242529410] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467207.378090301] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467207.509780445] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467207.635466411] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467207.635641258] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467207.793321384] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467207.793591394] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467207.793647021] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467207.936685678] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467208.062722876] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467208.181751808] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467208.302100507] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467208.403407841] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467208.502185866] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467208.610301978] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467208.716841632] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467208.813247224] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467208.925968908] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467209.041056499] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467209.041315488] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467209.147672253] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467209.264151834] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467209.391923215] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467209.392066980] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467209.493323231] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467209.493502824] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467209.493513695] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467209.601697251] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467209.718471982] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467209.815573801] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467209.933488126] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467210.044429228] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467210.160847503] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467210.280613715] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467210.280786908] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467210.402822156] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467210.403060106] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467210.403083683] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
-[core_node-1] [INFO] [1780467210.518528252] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467210.640152916] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467210.747964472] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467210.854289422] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467210.963622151] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467211.071966093] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467211.180375292] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467211.295125777] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467211.398413483] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467211.507257951] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467211.617977583] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467211.719985967] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467211.720166871] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467211.828246762] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467211.828439074] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467211.828449060] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467211.941828843] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467211.941995803] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467211.942007184] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 1
-[core_node-1] [INFO] [1780467212.055722461] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467212.055893155] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467212.055902458] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467212.194270683] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467212.315364351] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467212.425697218] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467212.529766524] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467212.644264926] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467212.754110384] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467212.856610561] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467212.974984407] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467212.975144695] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467213.080503274] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467213.080659948] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467213.080669097] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467213.188175787] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467213.306361138] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467213.413336788] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467213.512234775] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467213.621040877] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467213.721104814] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467213.822125310] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467213.935421810] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467214.044281789] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467214.143810376] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467214.259247048] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467214.259431752] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467214.367037634] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467214.367196949] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467214.367214206] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467214.467143183] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467214.580657355] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467214.686081725] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467214.787143082] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467214.904270421] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467215.020719757] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467215.133792104] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467215.243540020] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467215.358275279] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467215.469358140] [core_node_offline]: 遇到畸形板，误差高达 0.63，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467215.578515003] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467215.578659566] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467215.687656012] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467215.687784155] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467215.687791177] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
-[core_node-1] [INFO] [1780467215.790273680] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467215.901204786] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467216.005197289] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467216.103809947] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467216.222114704] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467216.327887145] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467216.442216447] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467216.546021955] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467216.652457483] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467216.762386294] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467216.875905276] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467216.876133625] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467216.979842571] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467217.088572973] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467217.088815896] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467217.198407359] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467217.315475732] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467217.420357223] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467217.420598071] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467217.523664932] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467217.523832075] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467217.523845569] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467217.627106070] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467217.727360932] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467217.840419862] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467217.954267086] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467218.049326054] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467218.159285965] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467218.159462524] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467218.273016822] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467218.273211811] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467218.273226006] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467218.378244214] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467218.484579883] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467218.588671230] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467218.696370997] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467218.802229944] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467218.903377552] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467218.999688281] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467219.107780728] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467219.211003352] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467219.333605147] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467219.333764638] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467219.437549432] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467219.437684406] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467219.437692779] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467219.541702782] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467219.650565836] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467219.650869292] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467219.766039901] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467219.766178010] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467219.766189060] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 3
-[core_node-1] [INFO] [1780467219.868332897] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467219.868481940] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467219.868491777] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467219.974714955] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467220.088766776] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467220.197948597] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467220.310372124] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467220.450936894] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467220.565220736] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467220.565660534] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467220.671434685] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467220.671577431] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467220.671589087] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
-[core_node-1] [INFO] [1780467220.776359410] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467220.885922560] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467220.994077355] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467221.100254460] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467221.219654174] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467221.321793308] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467221.422080374] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467221.527132361] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467221.625619008] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467221.731942006] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467221.833809253] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467221.833950948] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467221.937592478] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467222.042546344] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467222.148699883] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467222.256253886] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467222.256457186] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467222.363992754] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467222.364174405] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467222.364189040] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467222.463827340] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467222.563636419] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467222.677226513] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467222.783185184] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467222.886275274] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467222.991052952] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467223.095977243] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467223.096139515] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467223.197087289] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467223.197240188] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467223.197252664] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467223.315016726] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467223.418209818] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467223.516132013] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467223.617708755] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467223.729084208] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467223.827569332] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467223.937973853] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467224.044653696] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467224.147474090] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467224.147621074] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467224.254252546] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467224.254388511] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467224.254406405] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467224.359778422] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467224.455839271] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467224.560155923] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467224.658081031] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467224.757632900] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467224.863219649] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467224.965416430] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467225.069660567] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467225.171448538] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467225.280123187] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467225.280262523] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467225.381849929] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467225.382018324] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467225.382030211] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
-[core_node-1] [INFO] [1780467225.486230052] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467225.586252562] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467225.684632062] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467225.790396478] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467225.790503903] [ekf_debug]: 本帧数据 NIS=9.73 > 9.488。启动盲推保护。
-[core_node-1] [WARN] [1780467225.790593339] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 1
-[core_node-1] [WARN] [1780467225.897744812] [core_node_offline]: 遇到畸形板，误差高达 0.84，启动门限拒绝，本帧走盲推！
-[core_node-1] [WARN] [1780467226.001383229] [core_node_offline]: 遇到畸形板，误差高达 0.61，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467226.113814045] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467226.215877769] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467226.322098722] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467226.433388192] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467226.533125187] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467226.533271116] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467226.634784947] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467226.634941590] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467226.634951917] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467226.746329309] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467226.852771777] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467226.852947102] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467226.953475081] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467227.062666613] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467227.169454012] [core_node_offline]: 遇到畸形板，误差高达 0.88，启动门限拒绝，本帧走盲推！
-[core_node-1] [WARN] [1780467227.278340782] [core_node_offline]: 遇到畸形板，误差高达 0.74，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467227.383283828] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467227.485090717] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467227.587834240] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467227.704873392] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467227.814384595] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467227.918158330] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467228.027584762] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467228.027720680] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467228.126097186] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467228.126258984] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467228.126270067] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467228.235415842] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467228.337063664] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467228.449594450] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467228.562785881] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467228.666895930] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467228.774620962] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467228.879146703] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467228.984796015] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467229.089454160] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467229.184796665] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467229.292626504] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467229.292774597] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467229.428039900] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467229.428215365] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467229.428227979] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467229.527019034] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467229.527175597] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467229.527185145] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 3
-[core_node-1] [INFO] [1780467229.633017070] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467229.633169401] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467229.633179712] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467229.741402497] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467229.846871120] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467229.956961809] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467230.067167000] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467230.176072073] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467230.286410509] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467230.393323010] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467230.497864256] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467230.498008737] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467230.602408917] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467230.602597362] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467230.602612858] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
-[core_node-1] [INFO] [1780467230.712895409] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467230.820960622] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467230.929528871] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467231.030651978] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467231.141958118] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467231.246432751] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467231.351980028] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467231.466547441] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467231.589319087] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467231.688467748] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467231.795387069] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467231.795525782] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467231.901735857] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467231.901969061] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467231.901986015] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467232.003247001] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467232.107528586] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467232.210789248] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467232.210913446] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467232.316574132] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467232.429534073] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467232.537730570] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467232.645308192] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467232.747342100] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467232.849735161] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467232.960705608] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467233.062290697] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467233.170874990] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467233.171065837] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467233.284128690] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467233.388232620] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467233.388448957] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467233.498866001] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467233.499041134] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467233.499054720] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467233.604727348] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467233.710279787] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467233.828555215] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467233.938003669] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467234.047000498] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467234.157036284] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467234.256343517] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467234.357757106] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467234.357959455] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467234.468656223] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467234.468814233] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467234.468825126] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467234.571649431] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467234.672946673] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467234.777980403] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467234.879457270] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467234.976594891] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467235.077247776] [core_node_offline]: 遇到畸形板，误差高达 0.65，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467235.184623362] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467235.287695565] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467235.393389159] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467235.495475340] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467235.495627327] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467235.591220094] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467235.591437058] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467235.591456078] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
-[core_node-1] [INFO] [1780467235.700966433] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467235.799715914] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467235.901288683] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467236.002901503] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467236.102475841] [core_node_offline]: 遇到畸形板，误差高达 0.61，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467236.211764568] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467236.318771564] [core_node_offline]: 遇到畸形板，误差高达 0.78，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467236.430022201] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467236.529610730] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467236.632907597] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467236.733185555] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467236.830478302] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467236.830647154] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467236.972908911] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467236.973084510] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467236.973097947] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467237.083214382] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467237.187257536] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467237.187425757] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467237.294724530] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467237.294929740] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467237.294944912] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 1
-[core_node-1] [INFO] [1780467237.400916143] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467237.401109170] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467237.401132215] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467237.496663122] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467237.611397836] [core_node_offline]: 遇到畸形板，误差高达 0.67，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467237.711413222] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467237.813382797] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467237.925340651] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467238.033743268] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467238.144853024] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467238.249259327] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467238.361844703] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467238.361996786] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467238.457351694] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467238.569937187] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467238.678496366] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467238.678660912] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467238.777374166] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467238.777561897] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467238.777577878] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467238.884207079] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467238.980822900] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467239.083873887] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467239.188343478] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467239.294854710] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467239.407347596] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467239.514820419] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467239.514984430] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467239.624361375] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467239.624511937] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467239.624522737] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467239.723480209] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467239.833463344] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467239.936959791] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467239.937153335] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467240.042053059] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467240.142901071] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467240.246584472] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467240.352546372] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467240.460081559] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467240.564419272] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467240.675297054] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467240.675425359] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467240.786302738] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467240.786487282] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467240.786498509] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
-[core_node-1] [INFO] [1780467240.892551162] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467240.998475897] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467241.104969840] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467241.210854063] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467241.321138173] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467241.427864935] [core_node_offline]: 遇到畸形板，误差高达 0.70，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467241.529236107] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467241.634471487] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467241.746933077] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467241.861674253] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467241.971146292] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467242.080013331] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467242.184234420] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467242.184442708] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467242.298604489] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467242.298727318] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467242.298739516] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467242.408803207] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467242.516182525] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467242.618237311] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467242.729424770] [core_node_offline]: 遇到畸形板，误差高达 0.63，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467242.828295936] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467242.935138546] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467243.041650213] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467243.151584507] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467243.264385307] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467243.376412493] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467243.486944462] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467243.487120465] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467243.592009904] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467243.592184536] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467243.592197951] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467243.702415053] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467243.805053956] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467243.905870762] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467244.021177137] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467244.130873022] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467244.228971575] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467244.679318414] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467244.792722280] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467244.901532522] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467245.015851259] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467245.124906992] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467245.125064879] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467245.351268188] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467245.351456000] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467245.351472850] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467245.465955681] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467245.466106170] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467245.466115551] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 3
-[core_node-1] [INFO] [1780467245.581438352] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467245.581631418] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467245.581644905] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467245.688193719] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467245.797228297] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467245.906015876] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467246.015427331] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467246.127594536] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467246.236429403] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467246.346883510] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467246.458303824] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467246.458479473] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467246.567249366] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467246.567405597] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467246.567413498] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
-[core_node-1] [INFO] [1780467246.676158151] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467246.802739507] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467246.918950691] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467247.035649749] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467247.146595395] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467247.269332704] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467247.391988416] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467247.505863078] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467247.605120918] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467247.703587706] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467247.810797618] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467247.914872160] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467247.914989910] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467248.013565100] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467248.013738643] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467248.013750356] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467248.121089964] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467248.229861578] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467248.336154510] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467248.336329185] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467248.442600463] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467248.547853280] [core_node_offline]: 遇到畸形板，误差高达 0.61，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467248.654482971] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467248.762122989] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467248.862512950] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467248.961717849] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467249.063064191] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467249.170248502] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467249.270956437] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467249.271121082] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467249.377484252] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467249.377628063] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467249.377637091] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467249.481582633] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467249.584770850] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467249.694866043] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467249.801461338] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467249.907851231] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467250.009450300] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467250.112208854] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467250.213225561] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467250.329057783] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467250.329221194] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467250.445886409] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467250.446029343] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467250.446037840] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467250.545644057] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467250.660789142] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467250.660935499] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467250.773752282] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467250.871815286] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467250.980867984] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467251.092152167] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467251.198961440] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467251.316038948] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467251.420731632] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467251.529853464] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467251.529987711] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467251.645930957] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467251.646098620] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467251.646113304] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
-[core_node-1] [INFO] [1780467251.746645469] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467251.848240133] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467251.950973546] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467252.053558271] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467252.156558010] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467252.267377318] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467252.367250344] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467252.468662184] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467252.574341657] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467252.688517457] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467252.799384032] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467252.913701207] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467252.913853170] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467253.013529697] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467253.013714990] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467253.013729891] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467253.120898589] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467253.121048487] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467253.121067165] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 1
-[core_node-1] [INFO] [1780467253.233002169] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467253.339529032] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467253.446828287] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467253.560935489] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467253.561116215] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [WARN] [1780467253.664253483] [core_node_offline]: 遇到畸形板，误差高达 0.71，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467253.761200067] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467253.761351280] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467253.761360352] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467253.863205382] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467253.965282299] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467254.095687896] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467254.210710771] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467254.311999054] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467254.415650077] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467254.415847509] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467254.526174992] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467254.627290099] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467254.725753862] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467254.725967723] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467254.828756062] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467254.828910622] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467254.828921231] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467254.935647917] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467255.036463296] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467255.136301204] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467255.242920853] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467255.340792408] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467255.454723324] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467255.565471213] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467255.671547105] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467255.671732923] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467255.787603202] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467255.904454110] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467256.001799736] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467256.114088811] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467256.114281047] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467256.217234476] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467256.217385844] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467256.217404863] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467256.323421583] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467256.440367291] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467256.549838985] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467256.658895933] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467256.769373483] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467256.769595029] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467256.879436220] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467256.879640240] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467256.879656302] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
-[core_node-1] [INFO] [1780467256.979164362] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467257.083575852] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467257.192009860] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467257.304085901] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467257.408981463] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467257.515934952] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467257.628249225] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467257.742109904] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467257.847953996] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467257.943411918] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467258.042596256] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467258.150989451] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467258.151131919] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467258.251864870] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467258.252016589] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467258.252026901] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467258.373226797] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467258.477939573] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467258.478153437] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467258.594643768] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467258.708331564] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467258.821769566] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467258.931940076] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467259.053918465] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467259.168002769] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467259.265479954] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467259.378276300] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467259.482893683] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467259.587100243] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467259.587218343] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467259.696362996] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467259.815019058] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467259.815151757] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467259.915501017] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467259.915746276] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467259.915761158] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467260.035599406] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467260.158897328] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467260.267267822] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467260.384524653] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467260.492903228] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467260.604078859] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467260.712915281] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467260.713097803] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467260.816686912] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467260.816876314] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467260.816890898] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467260.927171204] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467261.038124148] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467261.038312946] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467261.158777216] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467261.158954733] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467261.158967492] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 3
-[core_node-1] [INFO] [1780467261.267082665] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467261.267338563] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467261.267354488] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467261.386843720] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467261.486842534] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467261.594378007] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467261.700254795] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467261.800614168] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467261.800749907] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467261.902151665] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467261.902316529] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467261.902328888] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
-[core_node-1] [INFO] [1780467262.005250967] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467262.104263188] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467262.201169920] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467262.304385828] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467262.407705171] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467262.503117026] [core_node_offline]: 遇到畸形板，误差高达 0.76，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467262.604784903] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467262.705073245] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467262.801682266] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467262.910492963] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467263.013236329] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467263.117442334] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467263.117630626] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467263.227972410] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467263.228188955] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467263.228206411] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467263.351225418] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467263.452967071] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467263.453149336] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467263.588147927] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467263.703687801] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467263.807807494] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467263.923903062] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467264.034002613] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467264.141870490] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467264.257129480] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467264.360887487] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467264.469559824] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467264.469720814] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467264.579644200] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467264.579817237] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467264.579828141] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467264.688034144] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467264.788591255] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467264.898995006] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467265.002865015] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467265.097640296] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467265.199801115] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467265.305802147] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467265.404703108] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467265.512576901] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467265.617552312] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467265.718458134] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467265.718672520] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467265.823910487] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467265.824078273] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467265.824091542] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467265.927272850] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467266.034369816] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467266.034580673] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467266.143155068] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467266.143344954] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467266.143361610] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 3
-[core_node-1] [INFO] [1780467266.254921676] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467266.255143792] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467266.255163600] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467266.374566464] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467266.500568784] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467266.607340392] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467266.707612489] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467266.817996382] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467266.930679198] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467267.047775712] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467267.047972156] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467267.162321120] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467267.162587219] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467267.162611102] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
-[core_node-1] [INFO] [1780467267.269999250] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467267.373459943] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467267.482862661] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467267.588726346] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467267.690910779] [core_node_offline]: 遇到畸形板，误差高达 0.84，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467267.802658570] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467267.910431014] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467268.018799562] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467268.122763677] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467268.237140273] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467268.346201385] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467268.346328343] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467268.462530496] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467268.462665818] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467268.462676086] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467268.565678607] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467268.674781551] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467268.674958978] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467268.788586971] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467268.788798326] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467268.788817719] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 1
-[core_node-1] [INFO] [1780467268.913563484] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467268.913714008] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467268.913725089] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [WARN] [1780467269.024330410] [core_node_offline]: 遇到畸形板，误差高达 0.82，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467269.141927963] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467269.243240632] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467269.353647463] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467269.466711764] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467269.576945983] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467269.685026436] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467269.802029788] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467269.915794816] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467269.916019556] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467270.013105112] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467270.013285462] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467270.013299586] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467270.118447966] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467270.233491508] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467270.337137308] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467270.445781157] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467270.567345978] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467270.685136897] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467270.800009155] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467270.913322885] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467271.013177105] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467271.128233505] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467271.245065774] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467271.245231633] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467271.359516106] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467271.466429176] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467271.466566188] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467271.576769088] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467271.576894823] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467271.576905922] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467271.689786446] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467271.804544427] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467271.919464547] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467272.028341114] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467272.153855296] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467272.266442809] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467272.391187656] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467272.391362587] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467272.513111139] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467272.513289510] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467272.513303572] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
-[core_node-1] [INFO] [1780467272.625400636] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467272.722099197] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467272.843337126] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467272.964220389] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467273.074205321] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467273.192545239] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467273.310012644] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467273.419809689] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467273.536193775] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467273.644711973] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467273.745734189] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467273.863483831] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467273.863721851] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467273.975485344] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467273.975703250] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467273.975721756] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467274.096200736] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467274.219145030] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467274.219376021] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467274.344860969] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467274.345073715] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467274.345091247] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 1
-[core_node-1] [INFO] [1780467274.452633179] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467274.452850509] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467274.452871041] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467274.580077499] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467274.703430335] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467274.810504844] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467274.927978296] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467275.040030485] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467275.139552738] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467275.268902228] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467275.269064348] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467275.386510238] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467275.386772732] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467275.386815039] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467275.484192208] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467275.611647953] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467275.726805322] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467275.852359633] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467275.971895791] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467276.081887898] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467276.186029188] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467276.298683174] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467276.417407917] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467276.520588832] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467276.520719098] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467276.629166578] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467276.629512039] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467276.629536491] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467276.740216279] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467276.851028262] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467276.851172173] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467276.970521447] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467276.970790689] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467276.970813394] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 3
-[core_node-1] [INFO] [1780467277.082622258] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467277.191028415] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467277.191193012] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467277.315625725] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467277.315855962] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467277.315875931] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467277.427262064] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467277.528826882] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467277.636384259] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467277.741840438] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467277.855093019] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467277.855278784] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467277.964721478] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467277.964883058] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467277.964893105] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
-[core_node-1] [INFO] [1780467278.066648948] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467278.175900431] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467278.293297235] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467278.400850270] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467278.513707467] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467278.623496031] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467278.734059605] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467278.839954574] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467278.950062713] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467279.060290105] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467279.166310532] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467279.166512752] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467279.275344618] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467279.275607759] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467279.275621344] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467279.390078768] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467279.390261576] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467279.390277442] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 1
-[core_node-1] [INFO] [1780467279.491851414] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467279.608486921] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467279.608656713] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467279.709814669] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467279.710011171] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467279.710026276] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467279.810498839] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467279.913427963] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467280.017107974] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467280.128986215] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467280.237622377] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467280.342363776] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467280.450640304] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467280.450821473] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467280.561780936] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467280.561975283] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467280.561989238] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467280.677014859] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467280.775922046] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467280.889251593] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467281.000543169] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467281.105914411] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467281.215163446] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467281.327386389] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467281.427926506] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467281.532926777] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467281.642324615] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467281.642538371] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467281.755993501] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467281.756192576] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467281.756217230] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467281.862807239] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467281.967941197] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467282.091447728] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467282.203812628] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467282.306226493] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467282.408338884] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467282.524450781] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467282.629817458] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467282.730209342] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467282.835723777] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467282.835869029] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467282.946022631] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467282.946249954] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
-[core_node-1] [ERROR] [1780467282.946263768] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
-[core_node-1] [INFO] [1780467283.046356464] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467283.170510734] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467283.272469968] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467283.374905149] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467283.476605613] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467283.582617355] [core_node_offline]: 遇到畸形板，误差高达 0.78，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467283.683448600] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467283.795408272] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467283.913502115] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [INFO] [1780467284.021561639] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467284.021757711] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [INFO] [1780467284.131686646] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
-[core_node-1] [WARN] [1780467284.131869369] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
-[core_node-1] [ERROR] [1780467284.131882297] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
-[core_node-1] [INFO] [1780467284.234485382] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467284.344888124] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467284.469191762] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467284.574468701] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467284.680042847] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467284.786424322] [core_node_offline]: 遇到畸形板，误差高达 0.84，启动门限拒绝，本帧走盲推！
-[core_node-1] [WARN] [1780467284.901617101] [core_node_offline]: 遇到畸形板，误差高达 0.76，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467285.010447878] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467285.128760217] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467285.232399824] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467285.351456668] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467285.461949838] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [INFO] [1780467285.572311358] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467285.572471027] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [INFO] [1780467285.680042887] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
-[core_node-1] [WARN] [1780467285.680241045] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
-[core_node-1] [ERROR] [1780467285.680256186] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
-[core_node-1] [INFO] [1780467285.790048753] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467285.898772713] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467286.002840201] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467286.108912011] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467286.209635726] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467286.320144779] [core_node_offline]: 遇到畸形板，误差高达 0.71，启动门限拒绝，本帧走盲推！
-[core_node-1] [INFO] [1780467286.424256261] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467286.529964214] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467286.627418312] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467286.741419121] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467286.844102388] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [INFO] [1780467286.948806415] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467286.948931724] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [INFO] [1780467287.062766909] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
-[core_node-1] [WARN] [1780467287.062924951] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
-[core_node-1] [ERROR] [1780467287.062934140] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
-[core_node-1] [INFO] [1780467287.174782385] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467287.280266408] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [WARN] [1780467287.280481021] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 2
-[core_node-1] [INFO] [1780467287.409988655] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
-[core_node-1] [INFO] [1780467287.515045553] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[INFO] [core_node-1]: process started with pid [139351]
+[core_node-1] [INFO] [1780483487.424331479] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780483487.424503217] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780483487.424523814] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780483487.424537459] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780483487.428052809] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780483487.428112843] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780483487.428130723] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780483487.428398396] [core_node_offline]: 已发布静态变换【芯片坐标系 -> 相机坐标系】，平移: x=0.000 m, y=0.000 m, z=0.000 m
+[core_node-1] [INFO] [1780483487.428428297] [core_node_offline]: TF 参数已加载: SHOW_LOGGER_ERROR=0, SHOW_RESULT=0, father_frame=camera_frame
+[core_node-1] [INFO] [1780483487.430356556] [core_node_offline]: 修改参数的回调函数已被调用! 
+[core_node-1] [INFO] [1780483487.430403947] [core_node_offline]: 【本地视频模式】将读取本地视频: /home/cly/下载/rm_test_videos/20260501_160945__camera_0_output.mp4
+[core_node-1] [INFO] [1780483487.431287074] [YoloDetector]: [YOLO] 已强行开启 17 个 CPU 线程进行推理加速！
+[core_node-1] [INFO] [1780483487.431304894] [YoloDetector]: [YOLO] 正在初始化 OpenCV DNN 模型...
+[core_node-1] [INFO] [1780483487.470933964] [YoloDetector]: [YOLO] OpenCV DNN 模型加载配置成功 (运行在 CPU)！
+[core_node-1] [INFO] [1780483487.470981578] [core_node_offline]: CoreNode 节点创建成功! 
+[core_node-1] Gtk-Message: 18:44:47.649: Failed to load module "canberra-gtk-module"
+[core_node-1] [INFO] [1780483487.664671971] [core_node_offline]: CoreLogic 正在运行...
+[core_node-1] [INFO] [1780483487.802224520] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483487.928867655] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483487.929100191] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
+[core_node-1] [INFO] [1780483488.044729721] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483488.044959009] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
+[core_node-1] [ERROR] [1780483488.044981110] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
+[core_node-1] [INFO] [1780483488.150420595] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483488.248152623] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483488.360479419] [core_node_offline]: 遇到畸形板，误差高达 0.77，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483488.458596141] [core_node_offline]: 遇到畸形板，误差高达 0.65，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483488.554393621] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483488.659977478] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483488.766501609] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483488.862930358] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483488.972184076] [core_node_offline]: 遇到畸形板，误差高达 0.63，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483489.077044530] [core_node_offline]: 遇到畸形板，误差高达 0.84，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483489.170922072] [core_node_offline]: 遇到畸形板，误差高达 0.69，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483489.291118029] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483489.390887511] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483489.498086895] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483489.602633151] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483489.698996298] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483489.699145171] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
+[core_node-1] [WARN] [1780483489.804786866] [core_node_offline]: 遇到畸形板，误差高达 0.67，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483489.916346673] [core_node_offline]: 遇到畸形板，误差高达 0.77，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483490.020947194] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483490.131307242] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483490.237171122] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483490.339784401] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483490.446012223] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483490.446136145] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
+[core_node-1] [WARN] [1780483490.551060307] [core_node_offline]: 遇到畸形板，误差高达 0.69，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483490.654371790] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483490.654515271] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
+[core_node-1] [ERROR] [1780483490.654523876] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
+[core_node-1] [WARN] [1780483490.761360765] [core_node_offline]: 遇到畸形板，误差高达 0.62，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483490.872444178] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483490.982020118] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483491.084157200] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483491.223390849] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483491.321724073] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483491.415460249] [core_node_offline]: 遇到畸形板，误差高达 0.60，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483491.519471951] [core_node_offline]: 遇到畸形板，误差高达 0.78，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483491.620113226] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483491.724505882] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483491.828144544] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483491.923774972] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483492.019012370] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483492.122136966] [core_node_offline]: 遇到畸形板，误差高达 0.64，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483492.224813925] [core_node_offline]: 遇到畸形板，误差高达 0.81，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483492.319394306] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483492.424626826] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483492.526376938] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483492.627482770] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483492.735624902] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483492.845674728] [core_node_offline]: 遇到畸形板，误差高达 0.66，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483492.944420292] [core_node_offline]: 遇到畸形板，误差高达 0.78，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483493.045027053] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483493.145018982] [core_node_offline]: 遇到畸形板，误差高达 0.63，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483493.242487840] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483493.353097631] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483493.353299937] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
+[core_node-1] [INFO] [1780483493.455873005] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483493.456062609] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
+[core_node-1] [ERROR] [1780483493.456073489] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
+[core_node-1] [WARN] [1780483493.554975908] [core_node_offline]: 遇到畸形板，误差高达 0.61，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483493.671457653] [core_node_offline]: 遇到畸形板，误差高达 0.81，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483493.780746197] [core_node_offline]: 遇到畸形板，误差高达 0.63，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483493.882440210] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483493.882589395] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 1
+[core_node-1] [ERROR] [1780483493.882598490] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 2
+[core_node-1] [INFO] [1780483493.993129880] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483494.106793614] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483494.106929636] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
+[core_node-1] [INFO] [1780483494.206214599] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483494.206358360] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
+[core_node-1] [ERROR] [1780483494.206366997] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
+[core_node-1] [INFO] [1780483494.310861455] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483494.419312996] [core_node_offline]: 遇到畸形板，误差高达 0.72，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483494.526257893] [core_node_offline]: 遇到畸形板，误差高达 0.73，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483494.649167379] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483494.649378529] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 1
+[core_node-1] [INFO] [1780483494.759399159] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483494.861577801] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483494.971307478] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483495.078595068] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483495.189152668] [core_node_offline]: 遇到畸形板，误差高达 0.63，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483495.305491694] [core_node_offline]: 遇到畸形板，误差高达 0.72，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483495.411247860] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483495.521250222] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483495.631303450] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483495.737821259] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483495.844115796] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483495.957711391] [core_node_offline]: 遇到畸形板，误差高达 0.80，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483496.063111684] [core_node_offline]: 遇到畸形板，误差高达 0.62，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483496.167629306] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483496.276890596] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483496.389613255] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483496.504789723] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483496.621129420] [core_node_offline]: 遇到畸形板，误差高达 0.66，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483496.739598202] [core_node_offline]: 遇到畸形板，误差高达 0.75，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483496.841059567] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483496.962506569] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483497.062031455] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483497.169240470] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483497.274234132] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483497.376754171] [core_node_offline]: 遇到畸形板，误差高达 0.67，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483497.472332590] [core_node_offline]: 遇到畸形板，误差高达 0.74，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483497.585299956] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483497.686924882] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483497.794129626] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483497.907152484] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483498.013706305] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483498.013910414] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
+[core_node-1] [WARN] [1780483498.118270160] [core_node_offline]: 遇到畸形板，误差高达 0.69，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483498.224174674] [core_node_offline]: 遇到畸形板，误差高达 0.69，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483498.326849007] [core_node_offline]: 遇到畸形板，误差高达 0.80，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483498.429402815] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483498.429609684] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
+[core_node-1] [ERROR] [1780483498.429629047] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
+[core_node-1] [INFO] [1780483498.543134043] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483498.652834555] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483498.756560513] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483498.865514186] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483498.972663762] [core_node_offline]: 遇到畸形板，误差高达 0.70，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483499.070537837] [core_node_offline]: 遇到畸形板，误差高达 0.79，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483499.180263607] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483499.291317271] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483499.395780362] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483499.502017307] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483499.624508585] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483499.728803409] [core_node_offline]: 遇到畸形板，误差高达 0.68，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483499.855213512] [core_node_offline]: 遇到畸形板，误差高达 0.82，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483499.967353729] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483500.063597013] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483500.166776873] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483500.263220103] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483500.364685898] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483500.472972381] [core_node_offline]: 遇到畸形板，误差高达 0.62，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483500.580214082] [core_node_offline]: 遇到畸形板，误差高达 0.79，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483500.680925076] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483500.788791559] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483500.894473629] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483500.999523487] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483500.999773463] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
+[core_node-1] [INFO] [1780483501.110237488] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483501.110436822] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
+[core_node-1] [ERROR] [1780483501.110451870] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
+[core_node-1] [INFO] [1780483501.222289470] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483501.334869477] [core_node_offline]: 遇到畸形板，误差高达 0.79，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483501.446990141] [core_node_offline]: 遇到畸形板，误差高达 0.61，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483501.552137617] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483501.552388192] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 3
+[core_node-1] [INFO] [1780483501.664518591] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483501.664731995] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 3
+[core_node-1] [ERROR] [1780483501.664747789] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 0
+[core_node-1] [INFO] [1780483501.772530366] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483501.772696900] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
+[core_node-1] [ERROR] [1780483501.772721312] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
+[core_node-1] [INFO] [1780483501.884686617] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483501.987674542] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483502.097148871] [core_node_offline]: 遇到畸形板，误差高达 0.65，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483502.211171131] [core_node_offline]: 遇到畸形板，误差高达 0.83，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483502.313637928] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483502.313809063] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 3
+[core_node-1] [INFO] [1780483502.416676323] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483502.522370741] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483502.621604477] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483502.730439431] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483502.841838662] [core_node_offline]: 遇到畸形板，误差高达 0.67，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483502.938424320] [core_node_offline]: 遇到畸形板，误差高达 0.83，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483503.046476931] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483503.154170451] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483503.259702754] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483503.378233481] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483503.481452944] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483503.580377823] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483503.688957715] [core_node_offline]: 遇到畸形板，误差高达 0.73，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483503.803617929] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483503.899902422] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483504.010041851] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483504.111998660] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483504.211669329] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483504.211835834] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
+[core_node-1] [WARN] [1780483504.319802995] [core_node_offline]: 遇到畸形板，误差高达 0.68，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483504.428308008] [core_node_offline]: 遇到畸形板，误差高达 0.76，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483504.526271724] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483504.634811664] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483504.736302036] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483504.838554945] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483504.947666242] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483504.947860821] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
+[core_node-1] [WARN] [1780483505.054435737] [core_node_offline]: 遇到畸形板，误差高达 0.67，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483505.156963543] [core_node_offline]: 遇到畸形板，误差高达 0.77，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483505.259807367] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483505.369233835] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483505.478130901] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483505.587246447] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483505.587396365] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
+[core_node-1] [INFO] [1780483505.701342826] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483505.701528444] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
+[core_node-1] [ERROR] [1780483505.701537798] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
+[core_node-1] [WARN] [1780483505.814467316] [core_node_offline]: 遇到畸形板，误差高达 0.72，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483505.934850069] [core_node_offline]: 遇到畸形板，误差高达 0.65，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483506.041359353] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483506.041581028] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 2
+[core_node-1] [ERROR] [1780483506.041602482] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 3
+[core_node-1] [INFO] [1780483506.136002749] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483506.249217754] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483506.249340282] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
+[core_node-1] [INFO] [1780483506.360541053] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483506.360733974] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 3
+[core_node-1] [ERROR] [1780483506.360744968] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 3 变为 ID = 2
+[core_node-1] [INFO] [1780483506.463861285] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483506.567860767] [core_node_offline]: 遇到畸形板，误差高达 0.71，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483506.684423099] [core_node_offline]: 遇到畸形板，误差高达 0.77，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483506.791572343] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483506.791745140] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 2
+[core_node-1] [INFO] [1780483506.893169187] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483507.005135732] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483507.109540486] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483507.217341621] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483507.319994620] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483507.426656349] [core_node_offline]: 遇到畸形板，误差高达 0.80，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483507.538176601] [core_node_offline]: 遇到畸形板，误差高达 0.64，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483507.638342039] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483507.736498787] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483507.843091882] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483507.956311081] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483508.064219476] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483508.165031756] [core_node_offline]: 遇到畸形板，误差高达 0.66，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483508.280832266] [core_node_offline]: 遇到畸形板，误差高达 0.76，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483508.398793496] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483508.505836802] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483508.616196520] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483508.720816244] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483508.833315592] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483508.833551528] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
+[core_node-1] [WARN] [1780483508.929879604] [core_node_offline]: 遇到畸形板，误差高达 0.69，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483509.041023688] [core_node_offline]: 遇到畸形板，误差高达 0.70，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483509.154419005] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483509.258876711] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483509.362889826] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [INFO] [1780483509.476828092] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483509.476951060] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
+[core_node-1] [INFO] [1780483509.578921501] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483509.579149812] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
+[core_node-1] [ERROR] [1780483509.579163673] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
+[core_node-1] [WARN] [1780483509.697556867] [core_node_offline]: 遇到畸形板，误差高达 0.68，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483509.816300442] [core_node_offline]: 遇到畸形板，误差高达 0.81，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483509.926605605] [core_node_offline]: 遇到畸形板，误差高达 0.62，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483510.023202147] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483510.023423247] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 2, 但仍在跟踪 ID = 1
+[core_node-1] [ERROR] [1780483510.023440633] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 2
+[core_node-1] [INFO] [1780483510.132097773] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 2
+[core_node-1] [WARN] [1780483510.132223660] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 2
+[core_node-1] [ERROR] [1780483510.132233864] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 2 变为 ID = 1
+[core_node-1] [INFO] [1780483510.246231087] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483510.358627828] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483510.469255626] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483510.579317503] [core_node_offline]: 遇到畸形板，误差高达 0.72，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483510.685411432] [core_node_offline]: 遇到畸形板，误差高达 0.72，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483510.798954467] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483510.901392717] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483510.996677975] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483511.097830465] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483511.197559924] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483511.302471003] [core_node_offline]: 遇到畸形板，误差高达 0.71，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483511.418821193] [core_node_offline]: 遇到畸形板，误差高达 0.77，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483511.533626440] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483511.638381941] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483511.768652696] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483511.885996742] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483511.984093692] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483512.089569770] [core_node_offline]: 遇到畸形板，误差高达 0.65，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483512.194853011] [core_node_offline]: 遇到畸形板，误差高达 0.78，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483512.302321654] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483512.411192693] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483512.517521731] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483512.629519524] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483512.733510181] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483512.733670943] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
+[core_node-1] [WARN] [1780483512.839042928] [core_node_offline]: 遇到畸形板，误差高达 0.61，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483512.940208001] [core_node_offline]: 遇到畸形板，误差高达 0.77，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483513.053646750] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483513.154709861] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483513.257505485] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [INFO] [1780483513.368983942] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483513.369132105] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
+[core_node-1] [INFO] [1780483513.473597576] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483513.473746525] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
+[core_node-1] [ERROR] [1780483513.473759979] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
+[core_node-1] [WARN] [1780483513.586028119] [core_node_offline]: 遇到畸形板，误差高达 0.68，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483513.689639868] [core_node_offline]: 遇到畸形板，误差高达 0.75，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483513.799959310] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483513.800137043] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
+[core_node-1] [ERROR] [1780483513.800149487] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 1
+[core_node-1] [INFO] [1780483513.906519302] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 1
+[core_node-1] [WARN] [1780483513.906907067] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 1
+[core_node-1] [ERROR] [1780483513.906942053] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 1 变为 ID = 0
+[core_node-1] [INFO] [1780483514.015311692] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483514.120422940] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483514.219856460] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483514.335182221] [core_node_offline]: 遇到畸形板，误差高达 0.68，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483514.452189764] [core_node_offline]: 遇到畸形板，误差高达 0.82，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483514.560037151] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483514.560230275] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 1, 但仍在跟踪 ID = 0
+[core_node-1] [INFO] [1780483514.671425789] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483514.780452942] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483514.879571904] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483514.992536422] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483515.093685760] [core_node_offline]: 遇到畸形板，误差高达 0.68，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483515.195473420] [core_node_offline]: 遇到畸形板，误差高达 0.75，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483515.299997935] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483515.413863519] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483515.522291468] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483515.651308371] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483515.766624139] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483515.876427894] [core_node_offline]: 遇到畸形板，误差高达 0.70，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483515.983104564] [core_node_offline]: 遇到畸形板，误差高达 0.70，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483516.089682677] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483516.193719465] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483516.296370562] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483516.403250969] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483516.509529295] [core_node_offline]: 遇到畸形板，误差高达 0.69，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483516.620079464] [core_node_offline]: 遇到畸形板，误差高达 0.78，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483516.728616384] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483516.825214096] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483516.940924512] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483517.040118529] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483517.142619859] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483517.142765430] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
+[core_node-1] [WARN] [1780483517.254488500] [core_node_offline]: 遇到畸形板，误差高达 0.71，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483517.368100700] [core_node_offline]: 遇到畸形板，误差高达 0.64，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483517.469146743] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483517.600255714] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483517.704327485] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483517.810640339] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483517.916439496] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483517.916667693] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
+[core_node-1] [WARN] [1780483518.021459740] [core_node_offline]: 遇到畸形板，误差高达 0.76，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483518.121007121] [core_node_offline]: 遇到畸形板，误差高达 0.70，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483518.224387078] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483518.323347990] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483518.433042871] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [INFO] [1780483518.543315504] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483518.643707263] [core_node_offline]: 遇到畸形板，误差高达 0.69，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483518.744508076] [core_node_offline]: 遇到畸形板，误差高达 0.74，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483518.849520044] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483518.949906336] [core_node_offline]: 遇到畸形板，误差高达 0.82，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483519.051422023] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483519.051616617] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
+[core_node-1] [INFO] [1780483519.157207109] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 0
+[core_node-1] [WARN] [1780483519.157354931] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 3, 但仍在跟踪 ID = 0
+[core_node-1] [ERROR] [1780483519.157366306] [core_node_offline]: 【跟踪器】已经切换跟踪装甲板 从 ID = 0 变为 ID = 3
+[core_node-1] [INFO] [1780483519.258615070] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483519.364158537] [core_node_offline]: 遇到畸形板，误差高达 0.69，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483519.466864551] [core_node_offline]: 遇到畸形板，误差高达 0.81，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483519.568301080] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483519.568501388] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 3
+[core_node-1] [INFO] [1780483519.674451022] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483519.780342079] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483519.887235793] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483519.996107478] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483520.111229567] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483520.223618081] [core_node_offline]: 遇到畸形板，误差高达 0.80，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483520.344875315] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483520.345135543] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 3
+[core_node-1] [INFO] [1780483520.447926768] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483520.549652219] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483520.649001847] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483520.761032257] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483520.860690708] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483520.955980659] [core_node_offline]: 遇到畸形板，误差高达 0.78，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483521.059626342] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483521.059833177] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 3
+[core_node-1] [INFO] [1780483521.171217155] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483521.279687502] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483521.389807597] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483521.494308812] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483521.603887611] [core_node_offline]: 遇到畸形板，误差高达 0.85，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483521.718731284] [core_node_offline]: 遇到畸形板，误差高达 0.66，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483521.822712771] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483521.930070909] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483522.037161628] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483522.144414561] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483522.260142282] [core_node_offline]: 遇到畸形板，误差高达 0.68，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483522.374776646] [core_node_offline]: 遇到畸形板，误差高达 0.81，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483522.475828096] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483522.589288859] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483522.692466982] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483522.791226230] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483522.891916168] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483523.005480912] [core_node_offline]: 遇到畸形板，误差高达 0.72，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483523.107525213] [core_node_offline]: 遇到畸形板，误差高达 0.69，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483523.208069760] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483523.310745780] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483523.418181660] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483523.515480158] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483523.621540660] [core_node_offline]: 遇到畸形板，误差高达 0.68，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483523.730347186] [core_node_offline]: 遇到畸形板，误差高达 0.66，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483523.832913701] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483523.933661423] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483524.033619947] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483524.132578024] [core_node_offline]: 遇到畸形板，误差高达 0.70，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483524.231078028] [core_node_offline]: 遇到畸形板，误差高达 0.79，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483524.341056359] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483524.462155679] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483524.576754113] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483524.678201248] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483524.778524308] [core_node_offline]: 遇到畸形板，误差高达 0.71，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483524.886753847] [core_node_offline]: 遇到畸形板，误差高达 0.74，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483524.995780809] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483525.098868390] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483525.216880754] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483525.327285654] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483525.426431824] [core_node_offline]: 遇到畸形板，误差高达 0.71，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483525.532315749] [core_node_offline]: 遇到畸形板，误差高达 0.70，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483525.636465689] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483525.737629387] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483525.852964343] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483525.958718715] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483526.067755674] [core_node_offline]: 遇到畸形板，误差高达 0.66，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483526.177477216] [core_node_offline]: 遇到畸形板，误差高达 0.74，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483526.281818828] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483526.395508754] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483526.520975871] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483526.632068018] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483526.751708400] [core_node_offline]: 遇到畸形板，误差高达 0.84，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483526.875034357] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483526.984555017] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483527.098112579] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483527.207326713] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483527.326312587] [core_node_offline]: 遇到畸形板，误差高达 0.67，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483527.436901052] [core_node_offline]: 遇到畸形板，误差高达 0.70，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483527.545265120] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483527.545449519] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 3
+[core_node-1] [INFO] [1780483527.659031866] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483527.770173780] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [INFO] [1780483527.884259740] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483527.992573165] [core_node_offline]: 遇到畸形板，误差高达 0.77，启动门限拒绝，本帧走盲推！
+[core_node-1] [WARN] [1780483528.098828643] [core_node_offline]: 遇到畸形板，误差高达 0.62，启动门限拒绝，本帧走盲推！
+[core_node-1] [INFO] [1780483528.204404931] [core_node_offline]: 【识别器】当前 识别和跟踪 的装甲板为 ID = 3
+[core_node-1] [WARN] [1780483528.204550195] [core_node_offline]: 【跟踪器】当前识别到的装甲板 变为了 ID = 0, 但仍在跟踪 ID = 3

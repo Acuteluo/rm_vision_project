@@ -24,7 +24,7 @@ CoreNode::CoreNode(): Node("core_node_cpp")
     InitROS2();
 
     // 4. 初始化 yolo 模型
-    std::string yolo_model_path = "/home/cly/project/src/img_processing/model/0526_fp32.onnx"; 
+    std::string yolo_model_path = "/home/cly/project/src/img_processing/model/0526.onnx"; 
     yolo_detector_ = std::make_unique<YoloDetector>(yolo_model_path);
 
     RCLCPP_INFO_ONCE(this->get_logger(), "CoreNode 节点创建成功! ");
@@ -52,7 +52,7 @@ void CoreNode::InitParams()
 
 
     // core 节点
-    this->declare_parameter("core.logger.show_logger_time", false); // 是否打印时间相关日志
+    this->declare_parameter("core.logger.show_logger_time", true); // 是否打印时间相关日志
     this->declare_parameter("core.logger.show_logger_else", false); // 是否打印corenode其他的相关日志
     this->declare_parameter("core.image.show_img", true); // 是否显示图片
     
@@ -90,7 +90,7 @@ void CoreNode::InitParams()
     this->declare_parameter("tf.show_logger_error", false);
     this->declare_parameter("tf.show_result", false);
 
-    // 在 CoreNode 构造函数里加一个控制开关和对象实例化：
+    // 开启示波器：
     this->declare_parameter("core.image.show_plot", true); 
 
     // 新增：模式选择与视频路径参数
@@ -258,20 +258,6 @@ void CoreNode::VideoReading()
         // 调用核心算法主逻辑, 使用 virtual_time 作为当前帧的时间戳
         CoreLogic(frame, virtual_time);
 
-        // 手动控制视频播放速度
-        int key = cv::waitKey(1);
-
-        // 按 ESC 或 q 退出节点
-        if (key == 27 || key == 'q') 
-        { 
-            rclcpp::shutdown();
-            break;
-        } 
-        else if (key == ' ') 
-        {       
-            cv::waitKey(0); 
-        }
-
         last_virtual_time = virtual_time; // 更新上一帧的模拟时间
     }
 }
@@ -296,6 +282,8 @@ void CoreNode::CameraImageCallback(const sensor_msgs::msg::Image::SharedPtr msg)
 // =========================== 独立主逻辑 ===========================
 void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
 {
+    rclcpp::Time start_time = this->now(); // 记录核心逻辑开始的时间戳
+
     // 1. 设置图像 并 记录时间和更新 dt，dt 是整个的基准！！
     img_ = frame.clone();
     img_show_ = img_.clone(); // 复制一份用来显示信息
@@ -494,12 +482,12 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
 
     // 8. 计算每个步骤的耗时，并打印
 
-        double duration1 = (t1 - current_image_time).seconds() * 1000.0; // 完成 接收原图 的时间
+        double duration1 = (t1 - start_time).seconds() * 1000.0; // 完成 接收原图 的时间
         double duration2 = (t2 - t1).seconds() * 1000.0; // 完成 yolo检测 的时间
         double duration3 = (t3 - t2).seconds() * 1000.0; // 完成 目标筛选与pnp解算 的时间
         double duration4 = (t4 - t3).seconds() * 1000.0; // 完成 状态机流转执行、计算和发送数据 的时间
         double duration5 = (t5 - t4).seconds() * 1000.0; // 完成 重投影和可视化 的时间
-        double total_duration = (t5 - current_image_time).seconds() * 1000.0; // 完成 整个 CoreLogic 的时间
+        double total_duration = (t5 - start_time).seconds() * 1000.0; // 完成 整个 CoreLogic 的时间
         RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_time_ && yolo_armors_.size(), 
             "本帧处理耗时: "
             "接收原图 = %.4f ms, "
