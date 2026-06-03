@@ -38,6 +38,13 @@ private:
     // --- 深大模型的超参数 ---
     const float score_threshold_ = 0.65; // 置信度阈值
     const float nms_threshold_ = 0.45;   // NMS重叠阈值
+
+    std::vector<int> class_ids;
+    std::vector<int> color_ids;
+    std::vector<float> confidences;
+    std::vector<cv::Rect> boxes;
+    std::vector<std::vector<cv::Point2f>> all_keypoints;
+    std::vector<int> indices;
 };
 
 #endif // YOLO_DETECTOR_HPP

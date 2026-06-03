@@ -36,6 +36,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <deque>
 
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/transform_listener.h>
@@ -71,13 +72,14 @@ public:
     // ==================== 核心算法接口 ====================
 
     /**
-     * @brief EKF 核心更新流
-     * @param armorplate_center 装甲板在世界/父坐标系下的实时绝对坐标
-     * @param yaw_armor         装甲板在世界/父坐标系下的绝对朝向 (欧拉角 Yaw)
-     * @param armor_id          当前观测到的装甲板，对应整车上目前哪块板 ID 的状态(0/1/2/3)
-     * @param dt                与上一帧的时间间隔 (秒)
+     * @brief EKF 核心更新流（外部调用）
+     * @param armorplate_center  装甲板在世界/父坐标系下的实时绝对坐标
+     * @param yaw_armor          装甲板在世界/父坐标系下的绝对朝向 (欧拉角 Yaw)
+     * @param armor_id           当前观测到的装甲板，对应整车上目前哪块板 ID 的状态(0/1/2/3)
+     * @param current_image_time 当前图像时间，用来同步 TF 发布
+     * @param dt                 与上一帧的时间间隔 (秒)
      */
-    void UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int armor_id, double dt);
+    void UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int armor_id, rclcpp::Time current_image_time, double dt);
 
     /**
      * @brief 仅盲推预测 (丢失目标时调用)。会更新滤波器的内部状态
@@ -124,6 +126,12 @@ private:
     void UpdateUncertainty();   // [5] 协方差更新 (Joseph 形式)
     void UpdateHistoricalData();// [6] 更新历史迭代数据
 
+    // ==================== NIS 卡方检验相关，验证观测数据是否异常 ====================
+    
+    std::deque<bool> recent_nis_failures_; // 引入同济的滑动窗口机制
+    int window_size_ = 10; // 窗口大小设为10帧
+    int max_recent_nis_failures_ = 4; // 窗口内最多允许 4 次NIS检验失败，超过则认为当前观测异常
+
     // ==================== 观测模型 H 与雅可比 h ====================
 
     Eigen::Matrix<double, 4, 1> h(const Eigen::Matrix<double, 11, 1>& x);               // XYZ 空间非线性观测方程
@@ -159,6 +167,7 @@ private:
     double height;   // 装甲板物理高度 (m)
 
     std::string father_frame; // 坐标系基准：单机模式(camera_frame) / 联调模式(world_frame)
+    rclcpp::Time current_image_time_; // 当前图像时间戳，用于同步 TF 发布
     bool SHOW_LOGGER_DEBUG;   // EKF 调试日志开关
 
     // ==================== 卡尔曼滤波矩阵库 ====================
@@ -181,6 +190,9 @@ private:
     double q_v_x_, q_v_y_, q_v_z_;
     double q_yaw_, q_omega_;
     double q_r_, q_dz_; 
+
+    double q_v1_; // 平移加速度方差（白噪声模型）
+    double q_v2_; // 旋转角加速度方差（白噪声模型）
 
     double r_los_yaw_;   // 视线偏航角观测噪声
     double r_los_pitch_; // 视线俯仰角观测噪声

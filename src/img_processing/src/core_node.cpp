@@ -13,13 +13,10 @@ CoreNode::CoreNode(): Node("core_node_cpp")
     InitParams();
 
     // 2. 初始化核心算法模块
-    // prepare_ = std::make_unique<Prepare>(); // 构造 Prepare 类对象
-    // prepare_->SetParam(show_logger_prepare_, chosen_color_, camera_name_, armorplate_type_); 
 
     tf_ = std::make_unique<TF>(this); // 传 this 指针给 TF 类来构造，让它能创建 ROS2 相关对象，同时发布静态变换
     ekf_ = std::make_unique<EKF>(this); 
     ekf_->UpdateParamsFromServer(); // 设置一大堆参数
-    // ekf_->SetArmorplateSize(armorplate_type_); // 装甲板类型
     ekf_->SetDebugLogger(show_logger_ekf_debug_); // 是否打印 ekf 调试日志
     ekf_->SetArmorNum(armor_num_); // 设置装甲板数量
 
@@ -59,15 +56,12 @@ void CoreNode::InitParams()
     this->declare_parameter("core.logger.show_logger_else", false); // 是否打印corenode其他的相关日志
     this->declare_parameter("core.image.show_img", true); // 是否显示图片
     
-    // prepare 类
-    // this->declare_parameter("core.logger.show_logger_prepare", false); // 是否打印 prepare 类中的日志
-    this->declare_parameter("core.param.chosen_color", "red"); // 选择的装甲板颜色
+    this->declare_parameter("core.param.chosen_color", "blue"); // 选择的装甲板颜色（blue=0 red=1 gray=2 purple=3）
     this->declare_parameter("core.param.camera_name", "galaxy"); // 使用的相机名称
-    // this->declare_parameter("core.param.armor_type", "normal"); // 识别装甲板的类型
 
     // EKF相关（传递给ekf）
     this->declare_parameter("ekf.predict_time", 0.2); // 预测时间（记得改！）0.2? 0.225? 其实未来还要根据速度来确定
-    this->declare_parameter("ekf.show_logger_debug", true); // ekf 调试
+    this->declare_parameter("ekf.show_logger_debug", false); // ekf 调试
 
     this->declare_parameter("ekf.q_x", 0.02);
     this->declare_parameter("ekf.q_y", 0.02);
@@ -77,6 +71,11 @@ void CoreNode::InitParams()
     this->declare_parameter("ekf.q_v_z", 0.01);
     this->declare_parameter("ekf.q_yaw", 0.05);
     this->declare_parameter("ekf.q_omega", 2.0);
+
+    this->declare_parameter("ekf.q_v1", 50.0); // 平移加速度方差 sqrt(50) = 7.07 m/s^2 的加速度误差
+    this->declare_parameter("ekf.q_v2", 200.0);  // 旋转角加速度方差 sqrt(200) = 14.14 rad/s^2 的角加速度误差，6.28 rad = 1圈
+    
+    // [ATTENTION]: .0才可以让它是 double，否则会被当成 int 解析，导致 ekf.cpp 里读取参数时出问题
 
     // 【新增】：模型几何噪声，给很小的值让它平滑收敛
     this->declare_parameter("ekf.q_r", 1e-8); 
@@ -108,10 +107,8 @@ void CoreNode::InitParams()
     show_logger_about_time_ = this->get_parameter("core.logger.show_logger_time").as_bool();
     show_logger_about_else_ = this->get_parameter("core.logger.show_logger_else").as_bool();
     show_image_ = this->get_parameter("core.image.show_img").as_bool();
-    // show_logger_prepare_ = this->get_parameter("core.logger.show_logger_prepare").as_bool();
     chosen_color_ = this->get_parameter("core.param.chosen_color").as_string();
     camera_name_ = this->get_parameter("core.param.camera_name").as_string();
-    // armorplate_type_ = this->get_parameter("core.param.armor_type").as_string();
     ekf_predict_time_ = this->get_parameter("ekf.predict_time").as_double();
     show_logger_ekf_debug_ = this->get_parameter("ekf.show_logger_debug").as_bool();
     show_plot_ = this->get_parameter("core.image.show_plot").as_bool(); 
@@ -236,7 +233,7 @@ void CoreNode::VideoReading()
     cv::Mat frame;
     rclcpp::Time base_time = this->now(); // 记录开始时间
     rclcpp::Time virtual_time = base_time; // 模拟时间。初始值为当前时间，后续每一帧都加上 视频帧时刻 来模拟时间流逝
-    rclcpp::Time last_virtual_time = this->now(); // 记录上一帧模拟时间，用来看 fps
+    rclcpp::Time last_virtual_time = virtual_time; // 记录上一帧模拟时间，用来看 fps
 
     while(rclcpp::ok()) 
     {
@@ -262,7 +259,7 @@ void CoreNode::VideoReading()
         CoreLogic(frame, virtual_time);
 
         // 手动控制视频播放速度
-        int key = cv::waitKey(300);
+        int key = cv::waitKey(1);
 
         // 按 ESC 或 q 退出节点
         if (key == 27 || key == 'q') 
@@ -299,8 +296,6 @@ void CoreNode::CameraImageCallback(const sensor_msgs::msg::Image::SharedPtr msg)
 // =========================== 独立主逻辑 ===========================
 void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
 {
-    rclcpp::Time calculate_start = this->now(); // 以当前真实时间作为计时器开始，所有的 dt 都基于这个来算
-
     // 1. 设置图像 并 记录时间和更新 dt，dt 是整个的基准！！
     img_ = frame.clone();
     img_show_ = img_.clone(); // 复制一份用来显示信息
@@ -313,30 +308,20 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     rclcpp::Time t1 = this->now();
 
 
-    // // 2. 预处理（掩码、灯条筛选、灯条配对）
-    // prepare_->SetImgShow(img_show_); // 设置 img_show_
-    // rclcpp::Time t1_1 = this->now();
-    // prepare_->PreProcessing(img_); // 图像预处理
-    // rclcpp::Time t1_2 = this->now();
-    // strips_ = prepare_->FindAndJudgeLightStrip(); // 找灯带 返回灯带集合
-    // rclcpp::Time t1_3 = this->now();
-    // armorplates_ = prepare_->PairStrip(); // 灯条配对 【修改】返回按置信度排序后的装甲板集合
-    // rclcpp::Time t1_4 = this->now();
-    // img_show_ = prepare_->GetImgShow(); // 获取预处理后带有信息的 img_show_
-
-    // // ... 步骤2 预处理完成时间戳
-    // rclcpp::Time t2 = this->now();
-
-
     // ====================================================================
     // 1. 调用 YOLO 提取绝对精准的目标对象
     // ====================================================================
     
-    // 映射目标颜色 (0红 1蓝 2灰 3紫)
-    int target_color = (chosen_color_ == "red") ? 0 : 1;
+    // 映射目标颜色 (0蓝 1红 2灰 3紫)
+    int target_color = COLOR_MAP.count(chosen_color_) ? COLOR_MAP.at(chosen_color_) : -1;
+    if (target_color == -1) 
+    {
+        RCLCPP_ERROR(this->get_logger(), "目标颜色 %s 不在映射表内", chosen_color_.c_str());
+        return;
+    }
 
-    // 确保获取的是一个全新的、独立的 Mat 内存空间，防止 ROS2 消息在多线程下释放导致的非法访问
-    auto detected_armors = yolo_detector_->Detect(img_, target_color); // 调用 yolo 检测，得到敌方装甲板颜色的结果
+    // 调用 yolo 检测，得到仅含敌方装甲板颜色的结果
+    auto detected_armors = yolo_detector_->Detect(img_, target_color); 
 
     // t2 = 完成 yolo检测 的时间戳
     rclcpp::Time t2 = this->now();
@@ -348,9 +333,6 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     // ====================================================================
     for (const auto& obj : detected_armors) 
     {
-        // 筛选颜色（以防万一）
-        if (obj.color != target_color) continue;
-
         // 构造新装甲板对象
         // 【核心】：从你的 CoreNode 全局参数里把相机内参传过去！
         // 在 InitParams() 里根据 CAMERA_NAME 设置了 K_ 和 D_
@@ -360,7 +342,7 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
         armor.SetArmorplateSize(); 
         armor.perspectiveNPoint();
 
-        if (armor.pnp_success) 
+        if (armor.pnp_success_) 
         {
             // 画框并输出信息
             armor.DrawAndPrintInfo(img_show_);
@@ -368,30 +350,11 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
         }
     }
 
+    // todo: 装甲板排序！也就是如果有多个装甲板，优先选哪个？目前是按照 yolo 置信度排序的，但也可以考虑离中心更近的优先，或者综合评分（距离中心+置信度）
+
     // t3 = 完成 目标筛选与pnp解算 的时间戳
     rclcpp::Time t3 = this->now();
     
-
-
-    // // 3. 解算 pnp
-    // if (armorplates_.size() > 0) // 存在装甲板
-    // {
-    //     // 画出所有装甲板（按置信度排序的）并打印信息
-    //     for (int i = 0; i < armorplates_.size(); i++) 
-    //     { 
-    //         // 对所有的装甲板进行 pnp
-    //         armorplates_[i].perspectiveNPoint(); // 解算 pnp，算出了初版的 t_vec 和 辣鸡 R
-
-    //         // 【新增】：一键优化！内部直接用极品 R 覆盖掉辣鸡 R！
-    //         armorplates_[i].OptimizeEulerYaw(img_show_, i);
-
-    //         // 画所有的装甲板，并打印综合置信度（考虑与上一帧追踪装甲板的距离）最高的装甲板也就是 0号 的 pnp 信息
-    //         armorplates_[i].drawArmorPlateAndPrintPNPInfo(img_show_, chosen_color_, i); 
-    //     }
-    // }
-
-    // // ... 步骤3 pnp解算完成时间戳
-    // rclcpp::Time t3 = this->now();
 
 
     
@@ -458,7 +421,7 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     {
         // 先获取相机内参和畸变系数（可从当前处理的装甲板对象获取，因为 ArmorPlate 已保存）
         //    注意：如果本帧没有成功检测到装甲板，则无法获取相机参数，此时跳过重投影。
-        if (!yolo_armors_.empty() && yolo_armors_[0].pnp_success)
+        if (!yolo_armors_.empty() && yolo_armors_[0].pnp_success_)
         {
             // 再查询 camera → 父坐标系 的 TF，因为要转到相机下投影！
             tf2::Transform T_world_cam;
@@ -531,16 +494,12 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
 
     // 8. 计算每个步骤的耗时，并打印
 
-        double duration1 = (t1 - calculate_start).seconds() * 1000.0; // 完成 接收原图 的时间
-        // double duration1_1 = (t1_1 - t1).seconds() * 1000.0; // 完成 设置图像 的时间
-        // double duration1_2 = (t1_2 - t1_1).seconds() * 1000.0; // 完成 预处理 的时间
-        // double duration1_3 = (t1_3- t1_2).seconds() * 1000.0; // 完成 灯条筛选 的时间
-        // double duration1_4 = (t1_4 - t1_3).seconds() * 1000.0; // 完成 灯条配对 的时间
+        double duration1 = (t1 - current_image_time).seconds() * 1000.0; // 完成 接收原图 的时间
         double duration2 = (t2 - t1).seconds() * 1000.0; // 完成 yolo检测 的时间
         double duration3 = (t3 - t2).seconds() * 1000.0; // 完成 目标筛选与pnp解算 的时间
         double duration4 = (t4 - t3).seconds() * 1000.0; // 完成 状态机流转执行、计算和发送数据 的时间
         double duration5 = (t5 - t4).seconds() * 1000.0; // 完成 重投影和可视化 的时间
-        double total_duration = (t5 - calculate_start).seconds() * 1000.0; // 完成 整个 CoreLogic 的时间
+        double total_duration = (t5 - current_image_time).seconds() * 1000.0; // 完成 整个 CoreLogic 的时间
         RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_time_ && yolo_armors_.size(), 
             "本帧处理耗时: "
             "接收原图 = %.4f ms, "
@@ -562,6 +521,7 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
 
 
 // ============================== 工具类 ==============================
+
 
 // 由于写了return，必须在每次 return 前 显示图片
 void CoreNode::ShowImg()
@@ -692,10 +652,10 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
     // ====== 场景 A：看到目标了 (处于 DETECTING 预热期 或 TRACKING 稳定期) ======
     if (tracker_state_ == TrackerState::DETECTING || tracker_state_ == TrackerState::TRACKING) 
     {
-        tf_->UpdateCameraToArmorplate(yolo_armors_[0].R, yolo_armors_[0].t_vec, current_image_time);
+        tf_->UpdateCameraToArmorplate(yolo_armors_[0].R_, yolo_armors_[0].t_vec_, current_image_time);
 
         // 用 armorplate_center_now 和 yaw_armorplate_now 接收 TF 查询的结果（如果成功的话）
-        bool tf_lookup_flag = tf_->GetFatherToArmorplateTransform(yolo_armors_[0].R, yolo_armors_[0].t_vec, armorplate_center_now, yaw_armorplate_now, current_image_time);
+        bool tf_lookup_flag = tf_->GetFatherToArmorplateTransform(yolo_armors_[0].R_, yolo_armors_[0].t_vec_, armorplate_center_now, yaw_armorplate_now, current_image_time);
 
         if (tf_lookup_flag) 
         {
@@ -764,7 +724,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
             // 无论是 DETECTING 还是 TRACKING，只要有数据就必须给 EKF。用 current_id 也就是目前识别装甲板最匹配对应的 ID 来更新 EKF。
             // ekf_->SetArmorplateSize(armorplate_type_); 
 
-            if (yolo_armors_[0].is_big) 
+            if (yolo_armors_[0].is_big_) 
             {
                 ekf_->SetArmorplateSize("hero");   // 大板：225mm * 135mm
             } 
@@ -773,7 +733,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
                 ekf_->SetArmorplateSize("normal"); // 小板：135mm * 135mm
             }
             tools::limit_rad(yaw_armorplate_now);
-            ekf_->UpdateExtendedKalman(armorplate_center_now, yaw_armorplate_now, current_id, dt);
+            ekf_->UpdateExtendedKalman(armorplate_center_now, yaw_armorplate_now, current_id, current_image_time, dt);
 
             // 注意！我们用现在的 实时的装甲板目标 更新完 EKF，EKF 就已经可以推出任何一个 ID 对应的状态了，接下来的 tracking_id 只是决定要打和跟踪谁而已！
 
@@ -889,31 +849,17 @@ rcl_interfaces::msg::SetParametersResult CoreNode::OnParameterChange(const std::
             RCLCPP_INFO(this->get_logger(), "显示图片开关已打开! ");
         } 
 
-        // else if (name == "core.logger.show_logger_prepare") 
-        // {
-        //     show_logger_prepare_ = p.as_bool();
-        //     prepare_->SetParam(show_logger_prepare_, chosen_color_, camera_name_, armorplate_type_);
-        //     RCLCPP_INFO(this->get_logger(), "预处理日志开关已更新!");
-        // } 
-
         else if (name == "core.param.chosen_color") 
         {
             chosen_color_ = p.as_string();
-            // prepare_->SetParam(show_logger_prepare_, chosen_color_, camera_name_, armorplate_type_);
             RCLCPP_INFO(this->get_logger(), "装甲板颜色已更新!");
         } 
-
-        // else if (name == "core.param.armor_type") 
-        // {
-        //     armorplate_type_ = p.as_string();
-        //     prepare_->SetParam(show_logger_prepare_, chosen_color_, camera_name_, armorplate_type_);
-        //     RCLCPP_INFO(this->get_logger(), "装甲板类型已更新!");
-        // }
 
         else if (name == "ekf.q_x" || name == "ekf.q_y" || name == "ekf.q_z" || 
                 name == "ekf.q_v_x" || name == "ekf.q_v_y" || name == "ekf.q_v_z" ||
                 name == "ekf.q_yaw" || name == "ekf.q_omega" ||
                 name == "ekf.q_r" || name == "ekf.q_dz" ||
+                name == "ekf.q_v1" || name == "ekf.q_v2" ||
                 name == "ekf.r_x" || name == "ekf.r_y" || name == "ekf.r_z" ||
                 name == "ekf.r_yaw" || name == "ekf.show_logger_debug") 
         {

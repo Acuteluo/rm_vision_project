@@ -9,6 +9,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 // #include "prepare_algorithm.h"
 #include "tf.hpp"
@@ -46,6 +47,14 @@ enum class TrackerState
     TEMP_LOST   // 短暂丢失状态：目标突然消失（被遮挡或小陀螺），EKF 开启盲推外推！
 };
 
+
+// ============================== 目标颜色映射表 ==============================
+inline const std::unordered_map<std::string, int> COLOR_MAP = {
+    {"blue",   0},
+    {"red",    1},
+    {"gray",   2},
+    {"purple", 3}
+};
 
 
 class CoreNode: public rclcpp::Node
@@ -155,7 +164,6 @@ private:
     bool show_logger_about_time_;   // 是否显示 core 节点中的每帧耗时日志（计算耗时）
     bool show_logger_about_else_;   // 是否显示 core 节点中的其他日志（除计算耗时以外的日志）
     bool show_image_;               // 是否显示 img_show 窗口
-    // bool show_logger_prepare_;      // 是否显示 prepare 中的日志（与配对相关）
     bool show_logger_ekf_debug_;    // 是否显示 ekf 打印的调试日志
     bool show_plot_;                // 是否画波形图
 
@@ -165,7 +173,6 @@ private:
     
     std::string chosen_color_;      // 选择检测的颜色 red / blue
     std::string camera_name_;       // 选择相机名称 mind_vision / galaxy ，会对应不同的 qos
-    // std::string armorplate_type_;   // 选择装甲板类型 normal / hero ，决定了配对的参数
     std::string video_path_;        // 本地视频路径，只有 IS_VIDEO_MODE = true 才有效
     
     double ekf_predict_time_;       // ekf 预测时间

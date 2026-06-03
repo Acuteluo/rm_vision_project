@@ -38,28 +38,30 @@ public:
      * @brief 查询【父坐标系】->【装甲板坐标系】是否可以变换
      *        单机模式时父坐标系是 camera_frame，联调模式时父坐标系是 world_frame
               通过引用回传滤波后的最终结果，返回1或者0表示是否有效
-     * @param armorplate_center 装甲板中心点坐标（输出参数，世界坐标系下）
-     * @param yaw_armor 装甲板朝向（输出参数，世界坐标系下，单位：弧度）
-     * @param time_stamp 查询时间戳，保证和图像时间戳对齐
+              传入 pnp 计算的 R t 是用来直接算 装甲板 -> 相机 的变换的，因为 tf 会有延迟不能刚发就查
+     * @param R                  pnp 计算的旋转矩阵（3x3），用来直接算 装甲板 -> 相机 的变换
+     * @param t                  pnp 计算的平移向量（3x1），用来直接算 装甲板 -> 相机 的变换
+     * @param armorplate_center  装甲板中心点坐标（输出参数，世界坐标系下）
+     * @param yaw_armor          装甲板朝向（输出参数，世界坐标系下，单位：弧度）
+     * @param current_image_time 查询时间戳，保证和图像时间戳对齐
      * @return 1 可变换，0 变换失败（TF 树不完整）
      */
-    //bool getFatherToArmorplateTransform(Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp);
-    bool GetFatherToArmorplateTransform(const Eigen::Matrix3d& R, const Eigen::Vector3d& t, Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time time_stamp);
+    bool GetFatherToArmorplateTransform(const Eigen::Matrix3d& R, const Eigen::Vector3d& t, Eigen::Vector3d& armorplate_center, double& yaw_armor, rclcpp::Time current_image_time);
 
 
     // 查询【相机坐标系】->【世界坐标系】是否可以变换
-    // time_stamp 查询时间戳，保证和图像时间戳对齐
-    bool GetCameraToWorldTransform(tf2::Transform& T_world_cam, rclcpp::Time time_stamp);
+    // current_image_time 查询时间戳，保证和图像时间戳对齐
+    bool GetCameraToWorldTransform(tf2::Transform& T_world_cam, rclcpp::Time current_image_time);
 
 
     // 查询【世界坐标系】->【芯片坐标系】，通过引用回传角度值，返回1或者0表示是否有效
-    bool GetWorldToChipTransform(double& pitch_chip, double& yaw_chip, rclcpp::Time time_stamp);
+    bool GetWorldToChipTransform(double& pitch_chip, double& yaw_chip, rclcpp::Time current_image_time);
 
 
     /**
      * @brief 根据 pnp 直接发布 camera_frame -> armorplate_frame 的变换
      */
-    void UpdateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t, rclcpp::Time time_stamp);
+    void UpdateCameraToArmorplate(Eigen::Matrix3d R, Eigen::Vector3d t, rclcpp::Time current_image_time);
 
 
     /**
@@ -91,10 +93,10 @@ private:
 
     // TF 广播器、缓存、监听器
     std::unique_ptr<tf2_ros::TransformBroadcaster> armorplate_broadcaster_;    // 发布 armorplate_frame TF
-    std::shared_ptr<tf2_ros::Buffer> tf_buffer_;                 // TF 缓存
-    std::shared_ptr<tf2_ros::TransformListener> tf_listener_;    // TF 监听器
+    std::shared_ptr<tf2_ros::Buffer> tf_buffer_;                               // TF 缓存
+    std::shared_ptr<tf2_ros::TransformListener> tf_listener_;                  // TF 监听器
 
-    std::unique_ptr<tf2_ros::StaticTransformBroadcaster> static_broadcaster_; // 发布静态变换的广播器
+    std::unique_ptr<tf2_ros::StaticTransformBroadcaster> static_broadcaster_;  // 发布静态变换的广播器
 
     bool SHOW_LOGGER_ERROR; // 从日志文件读取，是否展示tf查询错误
     bool SHOW_RESULT; // 从日志文件读取，是否展示最终查询结果

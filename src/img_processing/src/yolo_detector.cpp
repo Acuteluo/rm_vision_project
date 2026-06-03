@@ -8,6 +8,13 @@ inline float sigmoid(float x) {
 
 YoloDetector::YoloDetector(const std::string& model_path) 
 {
+    // =========================================================================
+    // 【压榨 CPU 潜能】：强制 OpenCV 使用几乎所有的 CPU 逻辑核心来跑推断！
+    // =========================================================================
+    int threads = std::max(1, cv::getNumberOfCPUs() - 1); // 留一个核心给系统，其他的全上
+    cv::setNumThreads(threads);
+    RCLCPP_INFO(rclcpp::get_logger("YoloDetector"), "[YOLO] 已强行开启 %d 个 CPU 线程进行推理加速！", threads);
+
     RCLCPP_INFO(rclcpp::get_logger("YoloDetector"), "[YOLO] 正在初始化 OpenCV DNN 模型...");
 
     std::ifstream f(model_path.c_str());
@@ -19,12 +26,14 @@ YoloDetector::YoloDetector(const std::string& model_path)
     try 
     {
         net_ = cv::dnn::readNetFromONNX(model_path);
-        
-        // =========================================================================
-        // 【核心修改】：强制使用纯 CPU 运算！彻底避开 OpenCL (ocl4dnn) 的底层 Bug
-        // =========================================================================
+
+        // 原代码是锁定 CPU：
         net_.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
-        net_.setPreferableTarget(cv::dnn::DNN_TARGET_CPU); // 锁定 CPU
+        net_.setPreferableTarget(cv::dnn::DNN_TARGET_CPU); 
+
+        // 【修改为】：强行调用你刚刚编译进 OpenCV 4.9.0 的 OpenCL 显卡加速模块！
+        // net_.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
+        // net_.setPreferableTarget(cv::dnn::DNN_TARGET_OPENCL);
 
         is_ready_ = true; 
         RCLCPP_INFO(rclcpp::get_logger("YoloDetector"), "[YOLO] OpenCV DNN 模型加载配置成功 (运行在 CPU)！");
@@ -80,15 +89,18 @@ std::vector<YoloObject> YoloDetector::Detect(const cv::Mat& raw_img, int enemy_c
         output_buffer = cv::Mat(rows, cols, CV_32F, data_ptr);
     }
 
-    std::vector<int> class_ids;
-    std::vector<int> color_ids;
-    std::vector<float> confidences;
-    std::vector<cv::Rect> boxes;
-    std::vector<std::vector<cv::Point2f>> all_keypoints;
+    // 【优化】：每帧只做清空，不做分配
+    class_ids.clear(); color_ids.clear(); confidences.clear(); 
+    boxes.clear(); all_keypoints.clear(); 
+
+    // 【优化】：使用指针直接访问内存，不要用 .at()！
+    float* data = (float*)output_buffer.data;
+    int stride = output_buffer.cols;
 
     for (int r = 0; r < output_buffer.rows; r++) 
     {
-        float conf = sigmoid(output_buffer.at<float>(r, 8));
+        float* row_ptr = data + r * stride; // 获取当前行头指针
+        float conf = sigmoid(row_ptr[8]);
         if (conf < score_threshold_) continue;
 
         cv::Mat color_scores = output_buffer.row(r).colRange(9, 13);
@@ -130,9 +142,9 @@ std::vector<YoloObject> YoloDetector::Detect(const cv::Mat& raw_img, int enemy_c
         all_keypoints.push_back(armor_kpts);
     }
 
-    std::vector<int> indices;
+    indices.clear();
     if (!boxes.empty()) {
-        cv::dnn::NMSBoxes(boxes, confidences, score_threshold_, nms_threshold_, indices);
+        cv::dnn::NMSBoxes(boxes, confidences, score_threshold_, nms_threshold_, indices); // 会按置信度从大到小返回保留下来的框的索引！
     }
 
     std::vector<YoloObject> final_objects;

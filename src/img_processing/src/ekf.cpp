@@ -27,7 +27,7 @@ void EKF::UpdateParamsFromServer()
 {
     if (!node_) return;
 
-    // 预测矩阵 Q 参数
+    // 预测矩阵 Q 参数（半废弃，暂时不采用）
     this->q_x_     = node_->get_parameter("ekf.q_x").as_double();
     this->q_y_     = node_->get_parameter("ekf.q_y").as_double();
     this->q_z_     = node_->get_parameter("ekf.q_z").as_double();
@@ -38,6 +38,10 @@ void EKF::UpdateParamsFromServer()
     this->q_omega_ = node_->get_parameter("ekf.q_omega").as_double();
     this->q_r_     = node_->get_parameter("ekf.q_r").as_double();
     this->q_dz_    = node_->get_parameter("ekf.q_dz").as_double();
+
+    // 预测矩阵 Q 参数 白噪声模型
+    this->q_v1_    = node_->get_parameter("ekf.q_v1").as_double(); // 平移加速度方差
+    this->q_v2_    = node_->get_parameter("ekf.q_v2").as_double(); // 旋转角加速度方差
 
     // 观测矩阵 R 参数
     this->r_los_yaw_   = node_->get_parameter("ekf.r_los_yaw").as_double();
@@ -79,9 +83,10 @@ void EKF::SetArmorNum(int num)
 
 // ============================== 核心 EKF 控制流 ==============================
 
-void EKF::UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double armor_yaw_origin, int armor_id, double dt)
+void EKF::UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double armor_yaw_origin, int armor_id, rclcpp::Time current_image_time, double dt)
 {
     this->armor_id = armor_id; // 传入装甲板 ID (0:后, 1:右, 2:前, 3:左)
+    this->current_image_time_ = current_image_time; // 更新当前图像时间戳，用于后续 TF 发布的时间同步，非常重要
 
     // 1. 系统首次启动初始化
     if (this->is_initialized == false)
@@ -111,6 +116,10 @@ void EKF::UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double armor_y
     // 偏角越大，深度距离测得越不准；距离越远，姿态偏角测得越不准 (对数衰减)
     double dynamic_r_dist = std::log(std::abs(delta_angle) + 1.0) + r_distance_;
     double dynamic_r_yaw  = std::log(std::abs(obs_d) + 1.0) / 200.0 + r_euler_yaw_;
+
+    // 限制最大方差，防止滤波器彻底摆烂
+    dynamic_r_dist = std::min(dynamic_r_dist, 10.0); // sqrt(100) = 10 m 的距离误差已经非常离谱了
+    dynamic_r_yaw  = std::min(dynamic_r_yaw, 0.5); // sqrt(0.5) = 0.707 rad 的角度误差已经非常离谱了
 
     R << r_los_yaw_,            0,              0,              0,
                   0, r_los_pitch_,              0,              0,
@@ -237,11 +246,15 @@ void EKF::GetArmorplateFourCorners(std::vector<Eigen::Vector3d>& corners, int ar
 
 void EKF::Initialized(const Eigen::Vector3d& armorplate_center, const double& yaw_armor)
 {
-    P_prev = 0.1 * I;
-    // 赋予未知的几何尺寸极大的初始不确定性，让其通过观测瞬间收敛
-    P_prev(8, 8)   = 0.01; // r1
-    P_prev(9, 9)   = 0.01; // r2
-    P_prev(10, 10) = 0.01; // dz
+    P_prev.setIdentity();
+    P_prev(0,0) = 1.0; P_prev(1,1) = 1.0; P_prev(2,2) = 1.0;          // XYZ 位置
+    P_prev(3,3) = 50.0; P_prev(4,4) = 50.0; P_prev(5,5) = 50.0;       // XYZ 速度
+    P_prev(6,6) = 0.5;                                                // Yaw 角度
+    P_prev(7,7) = 100.0;                                              // 角速度 Omega
+
+    P_prev(8, 8)   = 0.5; // r1 
+    P_prev(9, 9)   = 0.5; // r2
+    P_prev(10, 10) = 0.1; // dz
 
     R << r_los_yaw_,            0,           0,            0,
                   0, r_los_pitch_,           0,            0,
@@ -249,7 +262,7 @@ void EKF::Initialized(const Eigen::Vector3d& armorplate_center, const double& ya
                   0,            0,           0, r_euler_yaw_;
 
     // 根据第一次观测反算一个粗略的中心初始状态
-    // 假设 r1 r2 初始都是 0.25 m，dz 初始是 0.05 m（1、3号装甲板相对于0、2号装甲板，高度 0m）
+    // r1 r2 初始 0.25 m，dz 初始是 0.05 m（1、3号装甲板相对于0、2号装甲板的高度差，计当前 1、3号装甲板高度为车心高度，初始高度差 0m）
     double init_r1 = 0.25;
     double init_r2 = 0.25;
     double init_dz = 0.00;
@@ -294,20 +307,19 @@ void EKF::UpdateParameters(double dt)
          0, 0, 0,  0,  0,  0, 0,  0, 0, 0, 1;
 
     // 分段连续白噪声 Singer 模型：为底盘赋予物理惯性刚度
-    double v1 = 50.00;  // 平移加速度方差
-    double v2 = 200.00; // 旋转角加速度方差
+    // q_v1_ 是平移加速度方差，q_v2_ 是旋转角加速度方差
     double a  = (dt * dt * dt * dt) / 4.0;
     double b  = (dt * dt * dt) / 2.0;
     double c  = (dt * dt);
     
-    Q << a*v1,    0,    0, b*v1,    0,    0,    0,    0, 0, 0, 0,
-            0, a*v1,    0,    0, b*v1,    0,    0,    0, 0, 0, 0,
-            0,    0, a*v1,    0,    0, b*v1,    0,    0, 0, 0, 0,
-         b*v1,    0,    0, c*v1,    0,    0,    0,    0, 0, 0, 0,
-            0, b*v1,    0,    0, c*v1,    0,    0,    0, 0, 0, 0,
-            0,    0, b*v1,    0,    0, c*v1,    0,    0, 0, 0, 0,
-            0,    0,    0,    0,    0,    0, a*v2, b*v2, 0, 0, 0,
-            0,    0,    0,    0,    0,    0, b*v2, c*v2, 0, 0, 0,
+    Q << a*q_v1_,    0,    0, b*q_v1_,    0,    0,    0,    0, 0, 0, 0,
+            0, a*q_v1_,    0,    0, b*q_v1_,    0,    0,    0, 0, 0, 0,
+            0,    0, a*q_v1_,    0,    0, b*q_v1_,    0,    0, 0, 0, 0,
+         b*q_v1_,    0,    0, c*q_v1_,    0,    0,    0,    0, 0, 0, 0,
+            0, b*q_v1_,    0,    0, c*q_v1_,    0,    0,    0, 0, 0, 0,
+            0,    0, b*q_v1_,    0,    0, c*q_v1_,    0,    0, 0, 0, 0,
+            0,    0,    0,    0,    0,    0, a*q_v2_, b*q_v2_, 0, 0, 0,
+            0,    0,    0,    0,    0,    0, b*q_v2_, c*q_v2_, 0, 0, 0,
             0,    0,    0,    0,    0,    0,    0,    0, 0, 0, 0,
             0,    0,    0,    0,    0,    0,    0,    0, 0, 0, 0,
             0,    0,    0,    0,    0,    0,    0,    0, 0, 0, 0;
@@ -348,14 +360,38 @@ void EKF::UpdateStatus()
     Eigen::Matrix<double, 4, 4> S = H * P_est * H.transpose() + R;
     double nis = innovation.transpose() * S.inverse() * innovation;
 
-    // 自由度为4，95% 置信区间下的卡方阈值约为 9.488
-    if (nis > 9.488 && this->is_initialized) 
+    if (this->is_initialized) 
     {
-        // 这是一个严重的异常点（假装甲板），拒绝更新状态！
-        RCLCPP_ERROR(rclcpp::get_logger("ekf_debug"), "Outlier detected! NIS=%.2f exceeds threshold. Rejecting update.", nis);  
-        X = X_est; 
-        P = P_est;
-        return; 
+        // 将本次 NIS 的健康状态记入滑动黑账本 (大于9.488记为1，否则记为0)
+        bool nis_failure = (nis > 9.488) ? 1 : 0;
+        recent_nis_failures_.push_back(nis_failure);
+        if (recent_nis_failures_.size() > window_size_) 
+        {
+            recent_nis_failures_.pop_front(); // 保持滑动窗口大小，从队头弹出最旧的记录
+        }
+
+        // 如果最近 10 帧里有 >= max_recent_nis_failures_ 帧都是错的，说明模型彻底崩塌，需要马上重置
+        int recent_failures = 0;
+        for (int i = 0; i < recent_nis_failures_.size(); i++) 
+        {
+            recent_failures += recent_nis_failures_[i];
+        }
+        if (recent_nis_failures_.size() == window_size_ && recent_failures >= max_recent_nis_failures_) 
+        {
+            RCLCPP_ERROR(rclcpp::get_logger("ekf_debug"), "[滑动窗口报警] 模型发散！强制重置 EKF! 最近 %d 帧里有 %d 帧 NIS 失败。", window_size_, recent_failures);
+            this->Reset();
+            recent_nis_failures_.clear(); // 清空黑账本
+            return; 
+        }
+
+        // 3. 当模型还没崩塌，但这单帧数据太离谱，也坚决不要
+        if (nis > 9.488) 
+        {
+            RCLCPP_WARN(rclcpp::get_logger("ekf_debug"), "本帧数据 NIS=%.2f > 9.488。启动盲推保护。", nis);  
+            X = X_est; 
+            P = P_est;
+            return; // 拒收脏数据，保护状态纯洁性
+        }
     }
 
     // 更新最优后验状态估计
@@ -509,9 +545,9 @@ Eigen::Matrix<double, 4, 11> EKF::ComputeH_YPD(const Eigen::Matrix<double, 11, 1
 void EKF::UpdateCarCenterToArmorplate(std::string child_frame, double x, double y, double z, double roll, double pitch, double yaw)
 {
     geometry_msgs::msg::TransformStamped tf;
-    tf.header.stamp = this->node_->now();       // 帧头 -> 直接获取当前时刻 todo: 当前时刻？不对吧？应该是观测时刻或者预测时刻
-    tf.header.frame_id = "car_center_frame";    // 父坐标系 -> 整车中心坐标系
-    tf.child_frame_id = child_frame;            // 子坐标系 -> 四个装甲板坐标系
+    tf.header.stamp = this->current_image_time_;    // 帧头 -> 对齐图像观测时刻
+    tf.header.frame_id = "car_center_frame";        // 父坐标系 -> 整车中心坐标系
+    tf.child_frame_id = child_frame;                // 子坐标系 -> 四个装甲板坐标系
 
     // 平移
     tf.transform.translation.x = x;
@@ -551,9 +587,9 @@ void EKF::UpdateCarCenterToArmorplates()
 void EKF::UpdateFatherToCarCenter()
 {
     geometry_msgs::msg::TransformStamped tf;
-    tf.header.stamp = this->node_->now();       // 帧头 -> 直接获取当前时刻 todo: 当前时刻？不对吧？应该是观测时刻或者预测时刻
-    tf.header.frame_id = this->father_frame;    // 父坐标系 -> 相机坐标系 / 世界坐标系
-    tf.child_frame_id = "car_center_frame";     // 子坐标系 -> 整车中心坐标系   
+    tf.header.stamp = this->current_image_time_;    // 帧头 -> 对齐图像观测时刻
+    tf.header.frame_id = this->father_frame;        // 父坐标系 -> 相机坐标系 / 世界坐标系
+    tf.child_frame_id = "car_center_frame";         // 子坐标系 -> 整车中心坐标系   
 
     // 平移
     tf.transform.translation.x = this->X(0);
