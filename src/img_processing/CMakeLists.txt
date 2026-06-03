@@ -17,8 +17,9 @@ find_package(geometry_msgs REQUIRED)
 
 find_package(Eigen3 REQUIRED)
 
-# 3. 强制指定独立编译的 4.9.0 版本！
-set(OpenCV_DIR "/home/cly/opencv_custom/lib/cmake/opencv4")
+# ===== OpenVINO GPU 测试开关 =====
+# 注释掉下面这行，就会退回到 CPU 版 OpenCV
+set(OpenCV_DIR "/home/cly/opencv_openvino/lib/cmake/opencv4")
 find_package(OpenCV REQUIRED)
 
 # 4. 头文件路径

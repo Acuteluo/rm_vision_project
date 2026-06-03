@@ -24,15 +24,17 @@ YoloDetector::YoloDetector(const std::string& model_path)
         net_ = cv::dnn::readNetFromONNX(model_path);
 
         // 原代码是锁定 CPU：
-        net_.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
-        net_.setPreferableTarget(cv::dnn::DNN_TARGET_CPU); 
-
-        // 【修改为】：强行调用你刚刚编译进 OpenCV 4.9.0 的 OpenCL 显卡加速模块！
         // net_.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
-        // net_.setPreferableTarget(cv::dnn::DNN_TARGET_OPENCL);
+        // net_.setPreferableTarget(cv::dnn::DNN_TARGET_CPU); 
+
+        // =======================================================
+        // 召唤 Intel OpenVINO 引擎，驱动 GPU 满血输出！
+        // =======================================================
+        net_.setPreferableBackend(cv::dnn::DNN_BACKEND_INFERENCE_ENGINE); // 或者写 DNN_BACKEND_OPENVINO
+        net_.setPreferableTarget(cv::dnn::DNN_TARGET_OPENCL_FP16);        // 强制使用核显(OpenCL)并开启半精度(FP16)极速模式
 
         is_ready_ = true; 
-        RCLCPP_INFO(rclcpp::get_logger("YoloDetector"), "[YOLO] OpenCV DNN 模型加载配置成功 (运行在 CPU)！");
+        RCLCPP_INFO(rclcpp::get_logger("YoloDetector"), "[YOLO] OpenCV DNN 模型加载配置成功 (运行在 CPU)! ");
 
         RCLCPP_INFO(rclcpp::get_logger("YoloDetector"), "OpenCV threads: %d", cv::getNumThreads());
     } 
