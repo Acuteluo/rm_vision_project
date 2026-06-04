@@ -248,13 +248,13 @@ void EKF::Initialized(const Eigen::Vector3d& armorplate_center, const double& ya
 {
     P_prev.setIdentity();
     P_prev(0,0) = 1.0; P_prev(1,1) = 1.0; P_prev(2,2) = 1.0;          // XYZ 位置
-    P_prev(3,3) = 50.0; P_prev(4,4) = 50.0; P_prev(5,5) = 50.0;       // XYZ 速度
+    P_prev(3,3) = 64.0; P_prev(4,4) = 64.0; P_prev(5,5) = 64.0;       // XYZ 速度
     P_prev(6,6) = 0.5;                                                // Yaw 角度
     P_prev(7,7) = 100.0;                                              // 角速度 Omega
 
-    P_prev(8, 8)   = 0.5; // r1 
-    P_prev(9, 9)   = 0.5; // r2
-    P_prev(10, 10) = 0.1; // dz
+    P_prev(8, 8)   = 1.0; // r1 0.5
+    P_prev(9, 9)   = 1.0; // r2 0.5 
+    P_prev(10, 10) = 1.0; // dz 0.1
 
     R << r_los_yaw_,            0,           0,            0,
                   0, r_los_pitch_,           0,            0,
@@ -363,6 +363,7 @@ void EKF::UpdateStatus()
     if (this->is_initialized) 
     {
         // 将本次 NIS 的健康状态记入滑动黑账本 (大于9.488记为1，否则记为0)
+        // 9.488 是自由度为 4（观测量为 4 维）的卡方分布在 95% 置信水平下的临界值，超过这个值说明观测与预测的差异过大，可能是异常数据
         bool nis_failure = (nis > 9.488) ? 1 : 0;
         recent_nis_failures_.push_back(nis_failure);
         if (recent_nis_failures_.size() > window_size_) 
@@ -384,10 +385,11 @@ void EKF::UpdateStatus()
             return; 
         }
 
-        // 3. 当模型还没崩塌，但这单帧数据太离谱，也坚决不要
-        if (nis > 9.488) 
+        // 3. 当模型还没崩塌，但这单帧数据太离谱（突然转的飞快），也坚决不要
+        double nis_threshold = 50.00;
+        if (nis > nis_threshold) 
         {
-            RCLCPP_WARN(rclcpp::get_logger("ekf_debug"), "本帧数据 NIS=%.2f > 9.488。启动盲推保护。", nis);  
+            RCLCPP_WARN(rclcpp::get_logger("ekf_debug"), "本帧数据 NIS = %.2f > %.2f。丢弃并启动盲推保护。", nis, nis_threshold);  
             X = X_est; 
             P = P_est;
             return; // 拒收脏数据，保护状态纯洁性
@@ -406,7 +408,7 @@ void EKF::UpdateStatus()
             innovation(0), innovation(1), innovation(2), innovation(3));
 
         RCLCPP_INFO(rclcpp::get_logger("ekf_debug"), 
-            "State: x=%.3f, y=%.3f, z=%.3f, vx=%.3f, vy=%.3f, vz=%.3f, yaw=%.3f, omega=%.3f, r1=%.3f, r2=%.3f, dz=%.3f",
+            "State: x=%.3f, y=%.3f, z=%.3f, vx=%.3f, vy=%.3f, vz=%.3f, yaw=%.3f, omega=%.3f, r1=%.6f, r2=%.6f, dz=%.6f",
             X(0), X(1), X(2), X(3), X(4), X(5), X(6), X(7), X(8), X(9), X(10));
 
         RCLCPP_INFO(rclcpp::get_logger("ekf_debug"),

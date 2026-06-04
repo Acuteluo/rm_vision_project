@@ -113,10 +113,10 @@ void YoloArmor::perspectiveNPoint()
 }
 
 
-void YoloArmor::DrawAndPrintInfo(cv::Mat& img_show)
+void YoloArmor::DrawAndPrintInfo(cv::Mat& img_show, bool is_max_confidence)
 {
     // 1. 画框与四个角点
-    cv::Scalar edge_color = cv::Scalar(235, 206, 135);
+    cv::Scalar edge_color = is_max_confidence ? cv::Scalar(255, 0, 255) : cv::Scalar(235, 206, 135); // 最高置信度的装甲板用紫色框
     for (int i = 0; i < 4; i++) 
     {
         cv::line(img_show, corners_[i], corners_[(i + 1) % 4], edge_color, 2);
@@ -129,10 +129,13 @@ void YoloArmor::DrawAndPrintInfo(cv::Mat& img_show)
     cv::circle(img_show, center, 3, cv::Scalar(0, 0, 255), cv::FILLED);
 
     // 3. 打印 PnP 的信息 (距离、Pitch、Yaw) 在角点旁边
+    std::string info_conf = "Conf: " + std::to_string(confidence_).substr(0, 5);
     std::string info_dist = "Dist: " + std::to_string(t_distance_).substr(0, 4) + "m";
     std::string info_pitch = "Pitch: " + std::to_string(t_pitch_).substr(0, 5);
     std::string info_yaw = "Yaw: " + std::to_string(t_yaw_).substr(0, 5);
 
+    if(is_max_confidence) 
+        cv::putText(img_show, info_conf, cv::Point2f(box_.x, box_.y - 75), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
     cv::putText(img_show, info_dist, cv::Point2f(box_.x, box_.y - 55), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
     cv::putText(img_show, info_pitch, cv::Point2f(box_.x, box_.y - 35), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
     cv::putText(img_show, info_yaw, cv::Point2f(box_.x, box_.y - 15), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);

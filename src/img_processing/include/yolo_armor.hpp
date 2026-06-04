@@ -48,7 +48,7 @@ public:
     void perspectiveNPoint();
 
     // 在图像上画框并打印调试信息
-    void DrawAndPrintInfo(cv::Mat& img_show);
+    void DrawAndPrintInfo(cv::Mat& img_show, bool is_max_confidence = false);
 
 private:
 

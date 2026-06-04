@@ -52,7 +52,7 @@ void CoreNode::InitParams()
 
 
     // core 节点
-    this->declare_parameter("core.logger.show_logger_time", true); // 是否打印时间相关日志
+    this->declare_parameter("core.logger.show_logger_time", false); // 是否打印时间相关日志
     this->declare_parameter("core.logger.show_logger_else", false); // 是否打印corenode其他的相关日志
     this->declare_parameter("core.image.show_img", true); // 是否显示图片
     
@@ -61,7 +61,7 @@ void CoreNode::InitParams()
 
     // EKF相关（传递给ekf）
     this->declare_parameter("ekf.predict_time", 0.2); // 预测时间（记得改！）0.2? 0.225? 其实未来还要根据速度来确定
-    this->declare_parameter("ekf.show_logger_debug", false); // ekf 调试
+    this->declare_parameter("ekf.show_logger_debug", true); // ekf 调试
 
     this->declare_parameter("ekf.q_x", 0.02);
     this->declare_parameter("ekf.q_y", 0.02);
@@ -73,7 +73,7 @@ void CoreNode::InitParams()
     this->declare_parameter("ekf.q_omega", 2.0);
 
     this->declare_parameter("ekf.q_v1", 50.0); // 平移加速度方差 sqrt(50) = 7.07 m/s^2 的加速度误差
-    this->declare_parameter("ekf.q_v2", 200.0);  // 旋转角加速度方差 sqrt(200) = 14.14 rad/s^2 的角加速度误差，6.28 rad = 1圈
+    this->declare_parameter("ekf.q_v2", 50000.0);  // 旋转角加速度方差，小陀螺可以突然转的非常快，给个夸张值
     
     // [ATTENTION]: .0才可以让它是 double，否则会被当成 int 解析，导致 ekf.cpp 里读取参数时出问题
 
@@ -84,14 +84,14 @@ void CoreNode::InitParams()
     this->declare_parameter("ekf.r_los_yaw", 4e-3);   // 相机角度极其精准，给极小方差
     this->declare_parameter("ekf.r_los_pitch", 4e-3); // 相机角度极其精准，给极小方差
     this->declare_parameter("ekf.r_distance", 5e-3);    // PnP 测距极其垃圾！给巨大方差 (5.0~10.0都行)
-    this->declare_parameter("ekf.r_euler_yaw", 7e-2); // 目前观测到的装甲板的角度（需要转换到整车下）
+    this->declare_parameter("ekf.r_euler_yaw", 0.8); // 目前观测到的装甲板的角度（需要转换到整车下）
 
     // TF 参数声明
     this->declare_parameter("tf.show_logger_error", false);
     this->declare_parameter("tf.show_result", false);
 
     // 开启示波器：
-    this->declare_parameter("core.image.show_plot", true); 
+    this->declare_parameter("core.image.show_plot", false); 
 
     // 新增：模式选择与视频路径参数
     this->declare_parameter("core.mode.is_standalone_mode", true); // 单机 / 联调模式
@@ -319,6 +319,7 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     // ====================================================================
     // 2. 目标筛选与 PnP 解算
     // ====================================================================
+    int index = 0;
     for (const auto& obj : detected_armors) 
     {
         // 构造新装甲板对象
@@ -332,8 +333,15 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
 
         if (armor.pnp_success_) 
         {
-            // 画框并输出信息
-            armor.DrawAndPrintInfo(img_show_);
+            ++index;
+            if(index == 1) // 最高置信度的装甲板用紫色框
+            {
+                armor.DrawAndPrintInfo(img_show_, true); // 画框并输出信息，传入 true 表示这是最高置信度的装甲板
+            }
+            else 
+            {
+                armor.DrawAndPrintInfo(img_show_);
+            }
             yolo_armors_.push_back(armor);
         }
     }
@@ -683,6 +691,23 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
                     // 同济复合误差：姿态误差 + 视线误差
                     double error = std::abs(tools::limit_rad(yaw_armorplate_now - pred_yaw)) + 
                                    std::abs(tools::limit_rad(obs_los_yaw - pred_los_yaw));
+
+
+                    // // 动态 Omega 粘性特权，根据转速决定允许忽略的额外误差量
+                    // if (id == tracking_id_) 
+                    // {
+                    //     // 获取当前角速度绝对值 (rad/s)
+                    //     double current_omega = std::abs(ekf_->X(7));
+                        
+                    //     // 动态计算粘性特权：转得越快，给予的特权越大！
+                    //     // 假设 20 rad/s，特权值 = 20 * 0.025 = 0.5 rad (约 28 度保护)
+                    //     double dynamic_sticky = current_omega * 0.025; 
+                        
+                    //     // 钳位：最大特权不超过 0.6 rad (约 34 度)，绝对不会焊死！转到背面依然顺滑切换！
+                    //     dynamic_sticky = std::min(dynamic_sticky, 0.6); 
+                        
+                    //     error -= dynamic_sticky; 
+                    // }
                     
                     if (error < min_error) 
                     {
@@ -691,14 +716,12 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
                     }
                 }
 
-                // =========================================================
-                // 【核心新增：卡方检验 / 门限拒绝 (Gating)】
-                // 如果发现匹配的误差依然巨大(比如大于 0.6 弧度，约35度)，
-                // 绝对是遇到了灯条重叠的畸形板！坚决丢弃这帧，保护 EKF！
-                // =========================================================
-                if (min_error > 0.6) 
+                // 限制一帧内目标（当前观测的装甲板）可能发生的最大位移（角度），也就是与 EKF 预测的误差值最大可以多大
+                // 极限小陀螺的角速度下，一帧大概能转多少弧度 -> 20 * 0.016 * 4(考虑误差) = 1.28 rad
+                // 1.25 rad = 71.6 度
+                if (min_error > 1.25) 
                 {
-                    RCLCPP_WARN(this->get_logger(), "遇到畸形板，误差高达 %.2f，启动门限拒绝，本帧走盲推！", min_error);
+                    RCLCPP_WARN(this->get_logger(), "遇到畸形板，误差高达 %.2f, 启动门限拒绝，本帧走盲推！", min_error);
                     ekf_->PredictOnly(dt);
                     ekf_->GetArmorplatePredict(armorplate_center_filter, tracking_id_, 0.00);
                     ekf_->GetArmorplatePredict(armorplate_center_predict, tracking_id_, ekf_predict_time_);
