@@ -63,16 +63,17 @@ void CoreNode::InitParams()
     this->declare_parameter("ekf.predict_time", 0.2); // 预测时间（记得改！）0.2? 0.225? 其实未来还要根据速度来确定
     this->declare_parameter("ekf.show_logger_debug", true); // ekf 调试
 
+    // 注意 q_z 作为 z轴的平移加速度方差，其它参数弃用
     this->declare_parameter("ekf.q_x", 0.02);
-    this->declare_parameter("ekf.q_y", 0.02);
-    this->declare_parameter("ekf.q_z", 0.01);
-    this->declare_parameter("ekf.q_v_x", 0.05);
+    this->declare_parameter("ekf.q_y", 0.02);  
+    this->declare_parameter("ekf.q_z", 5.00);  
+    this->declare_parameter("ekf.q_v_x", 0.05); 
     this->declare_parameter("ekf.q_v_y", 0.05);
     this->declare_parameter("ekf.q_v_z", 0.01);
-    this->declare_parameter("ekf.q_yaw", 0.05);
+    this->declare_parameter("ekf.q_yaw", 0.05); 
     this->declare_parameter("ekf.q_omega", 2.0);
 
-    this->declare_parameter("ekf.q_v1", 50.0); // 平移加速度方差 sqrt(50) = 7.07 m/s^2 的加速度误差
+    this->declare_parameter("ekf.q_v1", 500.0); // 平移加速度方差 sqrt(50) = 7.07 m/s^2 的加速度误差
     this->declare_parameter("ekf.q_v2", 50000.0);  // 旋转角加速度方差，小陀螺可以突然转的非常快，给个夸张值
     
     // [ATTENTION]: .0才可以让它是 double，否则会被当成 int 解析，导致 ekf.cpp 里读取参数时出问题
@@ -83,8 +84,8 @@ void CoreNode::InitParams()
     
     this->declare_parameter("ekf.r_los_yaw", 4e-3);   // 相机角度极其精准，给极小方差 4e-3
     this->declare_parameter("ekf.r_los_pitch", 4e-3); // 相机角度极其精准，给极小方差 4e-3
-    this->declare_parameter("ekf.r_distance", 0.05);   // PnP 测距
-    this->declare_parameter("ekf.r_euler_yaw", 0.1); // 观测到的装甲板欧拉角，经过优化后误差会小很多 0.8
+    this->declare_parameter("ekf.r_distance", 0.05);  // PnP 测距
+    this->declare_parameter("ekf.r_euler_yaw", 0.05); // 观测到的装甲板欧拉角，经过优化后误差会小很多 0.8
 
     // TF 参数声明
     this->declare_parameter("tf.show_logger_error", false);
@@ -742,11 +743,10 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
                     //     double current_omega = std::abs(ekf_->X(7));
                         
                     //     // 动态计算粘性特权：转得越快，给予的特权越大！
-                    //     // 假设 20 rad/s，特权值 = 20 * 0.025 = 0.5 rad (约 28 度保护)
-                    //     double dynamic_sticky = current_omega * 0.025; 
+                    //     double dynamic_sticky = 0.15 + current_omega * 0.025; 
                         
-                    //     // 钳位：最大特权不超过 0.6 rad (约 34 度)，绝对不会焊死！转到背面依然顺滑切换！
-                    //     dynamic_sticky = std::min(dynamic_sticky, 0.6); 
+                    //     // 钳位：最大特权不超过 0.5 rad (约 28 度)，绝对不会焊死！转到背面依然顺滑切换！
+                    //     dynamic_sticky = std::min(dynamic_sticky, 0.5); 
                         
                     //     error -= dynamic_sticky; 
                     // }
@@ -760,7 +760,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
 
                 // 2.3 限制一帧内目标（当前观测的装甲板）可能发生的最大位移（角度），也就是与 EKF 预测的误差值最大可以多大
                 // 极限小陀螺的角速度下，一帧大概能转多少弧度 -> 20 * 0.016 * 4(考虑误差) = 1.28 rad，而 1.25 rad = 71.6 度
-                if (min_error > 1.25) 
+                if (min_error > 0.80) 
                 {
                     //  最靠近中心 的板子，误差都那么大，说明数据无效，直接盲推
                     if (is_first_update) 
