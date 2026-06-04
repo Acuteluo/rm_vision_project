@@ -51,7 +51,7 @@
         "https://images.unsplash.com/photo-1506905925346-21bda4d32df4",
     ],
     "background.style": {
-        "opacity": 0.16,
+        "opacity": 0.18,
         "background-size": "cover",
         "pointer-events": "none"
     }

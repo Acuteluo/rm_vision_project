@@ -83,8 +83,8 @@ void CoreNode::InitParams()
     
     this->declare_parameter("ekf.r_los_yaw", 4e-3);   // 相机角度极其精准，给极小方差
     this->declare_parameter("ekf.r_los_pitch", 4e-3); // 相机角度极其精准，给极小方差
-    this->declare_parameter("ekf.r_distance", 5e-3);    // PnP 测距极其垃圾！给巨大方差 (5.0~10.0都行)
-    this->declare_parameter("ekf.r_euler_yaw", 0.8); // 目前观测到的装甲板的角度（需要转换到整车下）
+    this->declare_parameter("ekf.r_distance", 0.05);   // PnP 测距极其垃圾！给巨大方差 (5.0~10.0都行)
+    this->declare_parameter("ekf.r_euler_yaw", 0.8); // 观测到的装甲板欧拉角，经过优化后误差会小很多
 
     // TF 参数声明
     this->declare_parameter("tf.show_logger_error", false);
@@ -327,26 +327,52 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
         // 在 InitParams() 里根据 CAMERA_NAME 设置了 K_ 和 D_
         YoloArmor armor(obj.number, obj.color, obj.is_big, obj.prob, obj.box, obj.pts, K_, D_);
 
-        // 设置动态 3D 尺寸并执行 PnP
-        armor.SetArmorplateSize(); 
-        armor.perspectiveNPoint();
+        armor.SetArmorplateSize(); // 设置动态 3D 尺寸
+        armor.PNP(); // 执行 PnP，并且内部自动优化 EulerYaw
 
         if (armor.pnp_success_) 
         {
-            ++index;
-            if(index == 1) // 最高置信度的装甲板用紫色框
-            {
-                armor.DrawAndPrintInfo(img_show_, true); // 画框并输出信息，传入 true 表示这是最高置信度的装甲板
-            }
-            else 
-            {
-                armor.DrawAndPrintInfo(img_show_);
-            }
+            armor.DrawAndPrintInfo(img_show_);
             yolo_armors_.push_back(armor);
         }
     }
 
-    // todo: 装甲板排序！也就是如果有多个装甲板，优先选哪个？目前是按照 yolo 置信度排序的，但也可以考虑离中心更近的优先，或者综合评分（距离中心+置信度）
+    // 装甲板排序！也就是如果有多个装甲板，优先选哪个？目前是按照 yolo 置信度排序的，但也可以考虑离中心更近的优先，或者综合评分（距离中心+置信度）
+    /*
+        既然两块板都要送入 EKF，为什么还要按靠近图像中心排序？
+        
+        非线性系统的线性化点（EKF 的数学本质）：
+            EKF 在计算雅可比矩阵 H 时，是在当前的预测状态 X_est 处进行泰勒展开的。
+            靠近图像中心的装甲板，镜头畸变小，YOLO 框最准，PnP 算出的 t 向量也最准。
+            将最准的观测（靠近中心的板）放在第一位更新：它能将状态 $X$ 修正到一个非常接近真值的点。
+            当进行第二次更新（边缘的、较模糊的板）时，EKF 已经在上一步得到了极准的基准状态。
+            此时它的雅可比矩阵 H 计算会非常精确，从而能完美榨取第二块板带来的“角度约束”价值，同时用较低的卡尔曼增益过滤掉它位置不准的劣势。
+            
+        状态机安全冗余（Set Target）：
+            当 Tracker 处于 Lost 状态时，第一帧必须选一块板作为初始化基准。
+            选最靠近中心的板，能保证初始化的车心坐标不带有太大的偏置。
+    
+    */
+    if (yolo_armors_.size() > 1) 
+    {
+        // 1. 获取画面中心点
+        cv::Point2f img_center(img_.cols / 2.0f, img_.rows / 2.0f);
+
+        // 2. 按装甲板 2D 框中心到图像中心的距离从小到大排序，越近越优先
+        std::sort(yolo_armors_.begin(), yolo_armors_.end(), 
+        [&img_center](const YoloArmor& a, const YoloArmor& b) {
+            float dist_a = std::pow((a.box_.x + a.box_.width / 2.0f) - img_center.x, 2) + 
+                           std::pow((a.box_.y + a.box_.height / 2.0f) - img_center.y, 2);
+            float dist_b = std::pow((b.box_.x + b.box_.width / 2.0f) - img_center.x, 2) + 
+                           std::pow((b.box_.y + b.box_.height / 2.0f) - img_center.y, 2);
+            return dist_a < dist_b; 
+        });
+
+        // 3. 稳定排序 (保留中心距离的相对顺序)，优先高价值目标 
+        std::stable_sort(yolo_armors_.begin(), yolo_armors_.end(), [](const YoloArmor& a, const YoloArmor& b) {
+            return a.is_big_ > b.is_big_; // true(1) 排在 false(0) 前面
+        });
+    }
 
     // t3 = 完成 目标筛选与pnp解算 的时间戳
     rclcpp::Time t3 = this->now();
@@ -659,6 +685,9 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
 
             if (ekf_->is_initialized) 
             {
+                // todo: 序贯 EKF 更新、pnp 减小两个自由度
+                // 他们知道装甲板是死死固定在车上的，它的 Roll 永远是 0 度，Pitch 永远是 15 度！ 所以同济自己手写了一个非线性优化器（高斯-牛顿法），强行把 Pitch 和 Roll 锁死，只让系统去求 (X, Y, Z, Yaw) 这 4 个变量！
+
                 // ===============================================================
                 // 【TRACKING 匹配当前识别到的目标对应的 ID 的逻辑】
                 // ===============================================================

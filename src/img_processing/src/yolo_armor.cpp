@@ -25,8 +25,8 @@ YoloArmor::YoloArmor(int armor_id, int color, bool is_big, float confidence,
       corners_(corners),
       pnp_success_(false),  
       t_distance_(0.0),
-      t_yaw_(0.0),
-      t_pitch_(0.0),
+      obs_yaw_angle_(0.0),
+      obs_pitch_angle_(0.0),
       K_(K),        
       D_(D)
 {
@@ -63,7 +63,7 @@ void YoloArmor::SetArmorplateSize()
 }
 
 
-void YoloArmor::perspectiveNPoint() 
+void YoloArmor::PNP() 
 {
     // 如果传入的角点数量不对，直接标记失败并返回
     if (corners_.size() != 4 || vertice_cv_.size() != 4) 
@@ -99,24 +99,163 @@ void YoloArmor::perspectiveNPoint()
     // ==========================================================
     // 3. 供人类调试和下位机使用的极坐标 (Yaw, Pitch, Distance)
     // ==========================================================
+    
+    // 先马上优化欧拉角
+    OptimizeEulerYaw();
+
     double X = t_vec_(0); // 向前
     double Y = t_vec_(1); // 向左
     double Z = t_vec_(2); // 向上
 
     t_distance_ = std::sqrt(X * X + Y * Y + Z * Z);
-
-    // atan2(y, x) 严格遵循你的原始逻辑
-    // Z 为正表示在上方，此时 pitch 需要为负 (下位机协议)，所以加负号
-    // Y 为正表示在左方，此时 yaw 为正 (下位机协议)，不需要加负号
-    t_pitch_ = -std::atan2(Z, std::sqrt(X * X + Y * Y)) * 180.0 / CV_PI;
-    t_yaw_ = std::atan2(Y, X) * 180.0 / CV_PI;
+    obs_pitch_angle_ = -std::atan2(Z, std::sqrt(X * X + Y * Y)) * 180.0 / CV_PI;
+    obs_yaw_angle_ = std::atan2(Y, X) * 180.0 / CV_PI;
+    
 }
 
 
-void YoloArmor::DrawAndPrintInfo(cv::Mat& img_show, bool is_max_confidence)
+
+
+// 运用 重投影误差 + phi优选法 迭代得到最优的欧拉角yaw，来优化 PnP 解算的欧拉角
+void YoloArmor::OptimizeEulerYaw()
+{
+    if (!pnp_success_) return;
+
+    // 1. 获取 PnP 粗略算出的 欧拉角 Yaw，作为搜索的基准中心
+    // R 已经是 FLU 坐标系下的旋转矩阵了，提取欧拉 Yaw (绕 Z 轴)
+    double pnp_euler_yaw = std::atan2(R_(1, 0), R_(0, 0));
+
+    RCLCPP_INFO(rclcpp::get_logger("YoloArmor"), "[PNP] PNP 粗略算出的欧拉角 Yaw: %.2f", pnp_euler_yaw * 180.0 / CV_PI);
+
+    // 2. 确定搜索区间：既然 PnP 大体是对的，我们就在 PnP_Yaw 左右各扩展 60 度进行精搜
+
+    double min_error = 1e9; // 初始为无穷大
+    double best_euler_yaw = pnp_euler_yaw;
+    
+    double search_range = 70.00;
+    for (double i = -search_range; i <= search_range; i+= 0.5)
+    {
+        double test_yaw_rad = pnp_euler_yaw + (i * CV_PI / 180.0);
+
+        double current_error = CalculateReprojectionError(test_yaw_rad);
+
+        if (current_error < min_error)
+        {
+            min_error = current_error;
+            best_euler_yaw = test_yaw_rad;
+        }
+    }
+
+    euler_yaw_angle_ = best_euler_yaw * 180.0 / CV_PI;
+    RCLCPP_INFO(rclcpp::get_logger("YoloArmor"), "[PNP] 搜索算出的最优欧拉角 Yaw: %.2f", euler_yaw_angle_ );
+
+    // const double PHI = 0.618033988749895; // 黄金分割率
+
+    // // 3. 初始化探测点
+    // double left = b - PHI * (b - a); // 左侧探测点（PHI > 0.5）
+    // double right = a + PHI * (b - a); // 右侧探测点（PHI > 0.5）
+
+    // double error_left = CalculateReprojectionError(left); // 左侧探测点处的误差
+    // double error_right = CalculateReprojectionError(right); // 右侧探测点处的误差
+
+    // // 4. 迭代逼近极小值 (25 次迭代)
+    // int iteration_times = 25;
+    // for (int i = 0; i < iteration_times; i++)
+    // {
+    //     if (error_left < error_right) // 左侧探测点更优，搜索区间向左移动
+    //     {
+    //         b = right;
+    //         right = left; // 原本的左侧探测点就是新区间的右侧探测点！
+    //         error_right = error_left; 
+    //         left = b - PHI * (b - a);
+    //         error_left = CalculateReprojectionError(left);
+    //     } 
+    //     else // 右侧探测点更优，搜索区间向右移动
+    //     {
+    //         a = left;
+    //         left = right;
+    //         error_left = error_right; 
+    //         right = a + PHI * (b - a);
+    //         error_right = CalculateReprojectionError(right);
+    //     }
+    // }
+
+    // // 5. 收敛得到极致精准的 欧拉角 Yaw
+    // double best_euler_yaw = (a + b) / 2.0; // 最优欧拉角取区间平均值
+    // euler_yaw_angle_ = best_euler_yaw * 180.0 / CV_PI;
+    
+    // ==========================================================
+    // 6. 终极替换：用最优 Yaw 重新生成旋转矩阵，覆盖 PnP 的垃圾矩阵！
+    // ==========================================================
+    double fixed_pitch = +15.0 * CV_PI / 180.0; 
+    Eigen::AngleAxisd yawAngle(best_euler_yaw, Eigen::Vector3d::UnitZ());
+    Eigen::AngleAxisd pitchAngle(fixed_pitch, Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd rollAngle(0.0, Eigen::Vector3d::UnitX());
+    
+    // 覆盖 Eigen 的旋转矩阵 (FLU 坐标系)
+    R_ = (yawAngle * pitchAngle * rollAngle).toRotationMatrix(); 
+
+    // 同步覆盖 OpenCV 的旋转向量 (为了画重投影框用)
+    Eigen::Matrix3d R_cv_eigen = P_ * R_ * P_.transpose();
+    
+    cv::Mat R_cv_mat(3, 3, CV_64F);
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            R_cv_mat.at<double>(i, j) = R_cv_eigen(i, j);
+            
+    cv::Rodrigues(R_cv_mat, r_cv_); 
+}
+
+
+
+// 计算给定的 欧拉角yaw（弧度） 和 pitch=+15°、roll=0°时，在图上的重投影误差
+double YoloArmor::CalculateReprojectionError(double test_euler_yaw)
+{
+    // 2. 构造临时的测试姿态旋转矩阵 R_cv_test
+
+    double fixed_pitch = +15.0 * CV_PI / 180.0; 
+    
+    Eigen::AngleAxisd yawAngle(test_euler_yaw, Eigen::Vector3d::UnitZ());
+    Eigen::AngleAxisd pitchAngle(fixed_pitch, Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd rollAngle(0.0, Eigen::Vector3d::UnitX());
+    
+    // FLU 系下的测试姿态
+    Eigen::Matrix3d R_flu_test = (yawAngle * pitchAngle * rollAngle).toRotationMatrix();
+    Eigen::Matrix3d R_cv_eigen = P_ * R_flu_test * P_.transpose();
+
+    cv::Mat R_cv_test(3, 3, CV_64F);
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            R_cv_test.at<double>(i, j) = R_cv_eigen(i, j);
+
+    cv::Mat rvec_test;
+    cv::Rodrigues(R_cv_test, rvec_test);
+
+    // 3. 将 3D 模型点重投影到 2D
+    std::vector<cv::Point2f> projected_points;
+    cv::projectPoints(vertice_cv_, rvec_test, t_cv_, K_, D_, projected_points);
+
+    // 【同济核心】：使用 4 个角点的全要素 L2 像素距离 (X 和 Y 共同约束！)
+    double total_error = 0.0;
+    for (int i = 0; i < 4; i++) 
+    {
+        double dx = projected_points[i].x - corners_[i].x;
+        double dy = projected_points[i].y - corners_[i].y;
+        total_error += std::sqrt(dx * dx + dy * dy); 
+    }
+
+    return total_error;
+}
+
+
+
+
+
+
+void YoloArmor::DrawAndPrintInfo(cv::Mat& img_show)
 {
     // 1. 画框与四个角点
-    cv::Scalar edge_color = is_max_confidence ? cv::Scalar(255, 0, 255) : cv::Scalar(235, 206, 135); // 最高置信度的装甲板用紫色框
+    cv::Scalar edge_color = cv::Scalar(235, 206, 135); 
     for (int i = 0; i < 4; i++) 
     {
         cv::line(img_show, corners_[i], corners_[(i + 1) % 4], edge_color, 2);
@@ -131,18 +270,21 @@ void YoloArmor::DrawAndPrintInfo(cv::Mat& img_show, bool is_max_confidence)
     // 3. 打印 PnP 的信息 (距离、Pitch、Yaw) 在角点旁边
     std::string info_conf = "Conf: " + std::to_string(confidence_).substr(0, 5);
     std::string info_dist = "Dist: " + std::to_string(t_distance_).substr(0, 4) + "m";
-    std::string info_pitch = "Pitch: " + std::to_string(t_pitch_).substr(0, 5);
-    std::string info_yaw = "Yaw: " + std::to_string(t_yaw_).substr(0, 5);
+    std::string info_obs_pitch = "o_Pitch: " + std::to_string(obs_pitch_angle_).substr(0, 5);
+    std::string info_obs_yaw = "o_Yaw: " + std::to_string(obs_yaw_angle_).substr(0, 5);
 
-    if(is_max_confidence) 
-        cv::putText(img_show, info_conf, cv::Point2f(box_.x, box_.y - 75), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
+    cv::putText(img_show, info_conf, cv::Point2f(box_.x, box_.y - 75), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
     cv::putText(img_show, info_dist, cv::Point2f(box_.x, box_.y - 55), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
-    cv::putText(img_show, info_pitch, cv::Point2f(box_.x, box_.y - 35), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
-    cv::putText(img_show, info_yaw, cv::Point2f(box_.x, box_.y - 15), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
+    cv::putText(img_show, info_obs_pitch, cv::Point2f(box_.x, box_.y - 35), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 255, 255), 2);
+    cv::putText(img_show, info_obs_yaw, cv::Point2f(box_.x, box_.y - 15), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 255, 255), 2);
     
-    // 4. 打印装甲板 ID 和类型
+    // 4. 打印装甲板 ID 和 类型 和 优化后的欧拉角
     std::string type_str = is_big_ ? "BIG" : "SMALL";
     int color_str = color_;
+    std::string info_euler_yaw = "e_Yaw: " + std::to_string(euler_yaw_angle_).substr(0, 5);
+
     cv::putText(img_show, "ID:" + std::to_string(armor_id_) + " " + type_str, cv::Point2f(box_.x, box_.y + box_.height + 20), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 255, 255), 2);
     cv::putText(img_show, "COLOR:" + std::to_string(color_str), cv::Point2f(box_.x, box_.y + box_.height + 40), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 255, 255), 2);
+    cv::putText(img_show, info_euler_yaw, cv::Point2f(box_.x, box_.y + box_.height + 60), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
+    
 }
