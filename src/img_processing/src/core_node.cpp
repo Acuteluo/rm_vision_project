@@ -81,10 +81,10 @@ void CoreNode::InitParams()
     this->declare_parameter("ekf.q_r", 1e-8); 
     this->declare_parameter("ekf.q_dz", 1e-8);
     
-    this->declare_parameter("ekf.r_los_yaw", 0.02);   // 相机角度极其精准，给极小方差 4e-3
-    this->declare_parameter("ekf.r_los_pitch", 0.02); // 相机角度极其精准，给极小方差 4e-3
+    this->declare_parameter("ekf.r_los_yaw", 4e-3);   // 相机角度极其精准，给极小方差 4e-3
+    this->declare_parameter("ekf.r_los_pitch", 4e-3); // 相机角度极其精准，给极小方差 4e-3
     this->declare_parameter("ekf.r_distance", 0.05);   // PnP 测距
-    this->declare_parameter("ekf.r_euler_yaw", 0.5); // 观测到的装甲板欧拉角，经过优化后误差会小很多 0.8
+    this->declare_parameter("ekf.r_euler_yaw", 0.1); // 观测到的装甲板欧拉角，经过优化后误差会小很多 0.8
 
     // TF 参数声明
     this->declare_parameter("tf.show_logger_error", false);
@@ -143,7 +143,7 @@ void CoreNode::InitParams()
     }
     else // 如果不是本地视频模式，根据 camera_name_ 选择相机内参
     {
-        if(camera_name_  == "mind_vision") // mind_vision
+        if (camera_name_  == "mind_vision") // mind_vision
         {
             K_ = (cv::Mat_<double>(3, 3) << 1359.21385,    0.     ,  635.62767,
                                                 0.     , 1361.75423,  478.48483,
@@ -240,10 +240,8 @@ void CoreNode::VideoReading()
         cap >> frame;
         if (frame.empty()) 
         {
-            RCLCPP_WARN(this->get_logger(), "视频播放结束，循环重播...");
-            cap.set(cv::CAP_PROP_POS_FRAMES, 0); // 跳回第一帧循环播放
-            base_time = virtual_time; // 重置基准时间为当前模拟时间，保证时间戳连续
-            continue;
+            RCLCPP_WARN(this->get_logger(), "视频播放结束...");
+            exit(0);
         }
         
         // 视频本身自带的图像时间戳 (ms)
@@ -284,7 +282,10 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
 {
     rclcpp::Time start_time = this->now(); // 记录核心逻辑开始的时间戳
 
-    // 1. 设置图像 并 记录时间和更新 dt，dt 是整个的基准！！
+    // ====================================================================
+    // 0. 设置图像 并 记录时间和更新 dt，dt 是整个的基准！！
+    // ====================================================================
+
     img_ = frame.clone();
     img_show_ = img_.clone(); // 复制一份用来显示信息
     
@@ -934,7 +935,7 @@ rcl_interfaces::msg::SetParametersResult CoreNode::OnParameterChange(const std::
             RCLCPP_INFO(this->get_logger(), "TF 节点参数已更新! ");
         }
 
-        else if(name == "core.mode.is_standalone_mode")
+        else if (name == "core.mode.is_standalone_mode")
         {
             is_standalone_mode_ = p.as_bool();
             if (is_standalone_mode_) RCLCPP_INFO(this->get_logger(), "已切换到单机模式! 父坐标系是 camera_frame");
