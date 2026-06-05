@@ -147,8 +147,8 @@ private:
     int min_detect_frames_ = 3;     // 最小开始跟踪阈值：连续看到 3 帧才认为是真正发现了目标 (防抖)
     int max_lost_frames_ = 80;      // 最大连续丢失阈值：连续丢失 80 帧 (约0.4s) 才认为是彻底丢失，放弃盲推
 
-    int switch_count_ = 0;          // 切换追踪目标的计数器（当前识别最好对象 与 当前追踪对象 不同，累加切换计数器）
-    int min_switch_frames_ = 2;     // 切换追踪目标的阈值：当存在更好的目标时，连续几帧才切换追踪目标，避免频繁切来切去
+    int reject_count_ = 0;          // ekf连续拒绝yolo计数器
+    int max_reject_frames_ = 4;     // 最大拒绝yolo阈值：看到了目标又全都没有有效更新连续那么多帧，直接 LOST，不能一直盲推
 
     int armor_num_ = 4;             // 兵种装甲板数量 (平衡步兵2，前哨站3，其他4)
     
@@ -164,7 +164,6 @@ private:
     bool show_logger_about_time_;   // 是否显示 core 节点中的每帧耗时日志（计算耗时）
     bool show_logger_about_else_;   // 是否显示 core 节点中的其他日志（除计算耗时以外的日志）
     bool show_image_;               // 是否显示 img_show 窗口
-    bool show_logger_ekf_debug_;    // 是否显示 ekf 打印的调试日志
     bool show_plot_;                // 是否画波形图
 
     bool is_standalone_mode_;       // 单机模式 / 联调模式的切换，决定了父坐标系是谁（主要是为了调试时不依赖电控的 TF 发布）
@@ -175,7 +174,8 @@ private:
     std::string camera_name_;       // 选择相机名称 mind_vision / galaxy ，会对应不同的 qos
     std::string video_path_;        // 本地视频路径，只有 IS_VIDEO_MODE = true 才有效
     
-    double ekf_predict_time_;       // ekf 预测时间
+    double ekf_predict_time_;       // ekf 预测时间 
+                                    // todo: 在 corenode 里动态计算！
 };
 
 #endif // CORE_NODE_HPP

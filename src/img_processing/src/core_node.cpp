@@ -17,7 +17,6 @@ CoreNode::CoreNode(): Node("core_node_cpp")
     tf_ = std::make_unique<TF>(this); // 传 this 指针给 TF 类来构造，让它能创建 ROS2 相关对象，同时发布静态变换
     ekf_ = std::make_unique<EKF>(this); 
     ekf_->UpdateParamsFromServer(); // 设置一大堆参数
-    ekf_->SetDebugLogger(show_logger_ekf_debug_); // 是否打印 ekf 调试日志
     ekf_->SetArmorNum(armor_num_); // 设置装甲板数量
 
     // 3. 初始化 ROS 通信与多线程
@@ -73,7 +72,7 @@ void CoreNode::InitParams()
     this->declare_parameter("ekf.q_yaw", 0.05); 
     this->declare_parameter("ekf.q_omega", 2.0);
 
-    this->declare_parameter("ekf.q_v1", 500.0); // 平移加速度方差 sqrt(50) = 7.07 m/s^2 的加速度误差
+    this->declare_parameter("ekf.q_v1", 500.0); // 平移加速度方差 
     this->declare_parameter("ekf.q_v2", 50000.0);  // 旋转角加速度方差，小陀螺可以突然转的非常快，给个夸张值
     
     // [ATTENTION]: .0才可以让它是 double，否则会被当成 int 解析，导致 ekf.cpp 里读取参数时出问题
@@ -84,8 +83,8 @@ void CoreNode::InitParams()
     
     this->declare_parameter("ekf.r_los_yaw", 4e-3);   // 相机角度极其精准，给极小方差 4e-3
     this->declare_parameter("ekf.r_los_pitch", 4e-3); // 相机角度极其精准，给极小方差 4e-3
-    this->declare_parameter("ekf.r_distance", 0.05);  // PnP 测距
-    this->declare_parameter("ekf.r_euler_yaw", 0.05); // 观测到的装甲板欧拉角，经过优化后误差会小很多 0.8
+    this->declare_parameter("ekf.r_distance", 0.05);   // PnP 测距
+    this->declare_parameter("ekf.r_euler_yaw", 0.1); // 观测到的装甲板欧拉角，经过优化后误差会小很多 0.8
 
     // TF 参数声明
     this->declare_parameter("tf.show_logger_error", false);
@@ -111,7 +110,6 @@ void CoreNode::InitParams()
     chosen_color_ = this->get_parameter("core.param.chosen_color").as_string();
     camera_name_ = this->get_parameter("core.param.camera_name").as_string();
     ekf_predict_time_ = this->get_parameter("ekf.predict_time").as_double();
-    show_logger_ekf_debug_ = this->get_parameter("ekf.show_logger_debug").as_bool();
     show_plot_ = this->get_parameter("core.image.show_plot").as_bool(); 
 
     // 新增：关于 本地视频模式 的参数获取
@@ -667,157 +665,184 @@ void CoreNode::UpdateTrackerState(bool is_found)
 // 【函数 2】追踪执行者：完全听令于 tracker_state_，执行对应的 EKF 动作！
 // ==============================================================================
 void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
-                              double& yaw_armorplate_now,
-                              Eigen::Vector3d& armorplate_center_now, 
-                              Eigen::Vector3d& armorplate_center_filter, 
-                              Eigen::Vector3d& armorplate_center_predict, 
-                              Eigen::Vector3d& car_center_predict)
+                              double& yaw_armorplate_now,                   // 输出：tf 查到的装甲板当前角度
+                              Eigen::Vector3d& armorplate_center_now,       // 输出：tf 查到的装甲板当前位置
+                              Eigen::Vector3d& armorplate_center_filter,    // 输出：滤波器得到的装甲板当前位置
+                              Eigen::Vector3d& armorplate_center_predict,   // 输出：滤波器得到的装甲板预测位置
+                              Eigen::Vector3d& car_center_predict)          // 输出：滤波器得到的车体中心预测位置
 {
     // ====== 场景 A：看到目标了 (处于 DETECTING 预热期 或 TRACKING 稳定期) ======
     if (tracker_state_ == TrackerState::DETECTING || tracker_state_ == TrackerState::TRACKING) 
     {
-        bool is_first_update = true; // 本帧第一个成功通过校验并送到 EKF 的装甲板
+        
+        // 1. EKF 初始化
+
+        if (!ekf_->is_initialized_) 
+        {
+            if (yolo_armors_.size() > 0) 
+            {
+                // 使用距离视野中心最近的目标（已经排序好了，即 yolo_armors_[0]）进行初始化
+                Eigen::Vector3d init_center(-999, -999, -999);
+                double init_yaw = -999.99;
+                
+                tf_->UpdateCameraToArmorplate(yolo_armors_[0].R_, yolo_armors_[0].t_vec_, current_image_time);
+                bool tf_ok = tf_->GetFatherToArmorplateTransform(yolo_armors_[0].R_, yolo_armors_[0].t_vec_, init_center, init_yaw, current_image_time);
+                
+                if (tf_ok) 
+                {
+                    ekf_->Initialized(init_center, init_yaw, tracking_id_, current_image_time);
+                    ekf_ready_ = false; // 刚初始化，处于预热期，绝对不可信任其盲推能力
+
+                    // 修复：立刻赋原始值，确保第一帧就有输出！
+                    armorplate_center_now = init_center;
+                    yaw_armorplate_now = init_yaw;
+
+                    // 此时，滤波值和预测值直接强制等于原始观测值
+                    armorplate_center_filter = armorplate_center_now;
+                    armorplate_center_predict = armorplate_center_now;
+                }
+            }
+            return; // 初始化这一帧只做初始化，直接结束
+        }
 
 
-        // ===============================================================
-        // 核心循环：将本帧有效装甲板依次送入 EKF（主板 dt，副板 dt=0）
-        // ===============================================================
+        
+        // 2. 先验预测，先把 EKF 的状态 从 current_image_time - dt 推到 current_image_time 现在
+        
+        ekf_->PredictState(dt); 
+
+
+        // 一些统计和记录的参数
+
+        bool has_valid_update = false;          // 是否存在有效的更新
+        bool has_checked_to_switch_id = false;  // 是否已经检查过 要不要切换跟踪的板子
+
+        // 临时变量，用于 存储 追踪的装甲板的 TF 变换的结果（原始数据）
+        Eigen::Vector3d tracking_center_now(-999, -999, -999);
+        double tracking_yaw_now = -999.99;
+
+        std::vector<int> id_set; // 存储识别到的装甲板 ID
+
+
+        // 3. EKF 序贯匹配与后验更新，循环将本帧有效装甲板依次送入 EKF
+
         for (int i = 0; i < yolo_armors_.size(); i++)
         {
-            // 临时变量，用于当前接收 该装甲板的 TF 变换 的结果
+            // 临时变量，用于 接收 当前该装甲板的 TF 变换的结果（原始数据）
             Eigen::Vector3d current_center_now(-999, -999, -999);
             double current_yaw_now = -999.99;
 
-            // ========== 1. 将当前遍历的板子进行 TF 变换 ==========
+            // ========== 3.1. 获得当前板子的 TF 变换 ==========
 
             tf_->UpdateCameraToArmorplate(yolo_armors_[i].R_, yolo_armors_[i].t_vec_, current_image_time);
-
-            // 用 current_center_now 和 current_yaw_now 接收 TF 查询的结果（如果成功的话）
-            bool tf_lookup_flag = tf_->GetFatherToArmorplateTransform(yolo_armors_[i].R_, yolo_armors_[i].t_vec_, current_center_now, current_yaw_now, current_image_time);
+            bool tf_ok = tf_->GetFatherToArmorplateTransform(yolo_armors_[i].R_, yolo_armors_[i].t_vec_, current_center_now, current_yaw_now, current_image_time);
         
-            if (!tf_lookup_flag) 
+            if (!tf_ok) 
             {
-                RCLCPP_ERROR(this->get_logger(), "TRACKING 或 DETECTING 状态下 TF, 板子 %d 查不到 父坐标系 到 装甲板坐标系 的变换！跳过...", i);
+                RCLCPP_ERROR(this->get_logger(), "在 TRACKING / DETECTING 状态下, 板子 %d 查不到 父坐标系 到 装甲板坐标系 的 TF！跳过...", i);
                 continue;
             }
 
-            int current_id = tracking_id_; // 先默认当前追踪 ID 是上一帧的追踪 ID，后续如果 EKF 已经初始化好了，就根据 EKF 的预测来识别当前这块板子真正的 ID（同济逻辑）
+            // ========== 3.2. ID 匹配逻辑，判断当前识别的这块板对应哪个 ID ==========
 
-            // ========== 2. ID 匹配逻辑，判断当前识别的这块板对应哪个 ID 的板 ==========
-            if (ekf_->is_initialized) 
-            {    
-                double min_error = 1e5;
+            int current_id = tracking_id_; // 先默认当前追踪 ID 是上一帧的追踪 ID，后续根据 EKF 的预测来识别当前这块板子真正的 ID
+            double min_angle_error = 1e5;
 
-                // 2.1 获取所有预测板的距离（同济逻辑：按距离排序，剔除最远的背板）
-                std::vector<std::pair<double, int>> dist_id_list;
-                for (int k = 0; k < armor_num_; k++) 
-                {
-                    Eigen::Vector3d pred_center;
-                    ekf_->GetArmorplatePredict(pred_center, k, 0.0); // 获得第 k 个板子的预测位置
-                    double dist = pred_center.norm();
-                    dist_id_list.push_back({dist, k});
-                }
-                std::sort(dist_id_list.begin(), dist_id_list.end());
-
-                // 2.2 只遍历离 Father Frame 最近的 3 块（深度剔除背板，绝不会认错背后的板）
-                for (int k = 0; k < 3; k++) 
-                {
-                    int id = dist_id_list[k].second;
-                    
-                    Eigen::Vector3d pred_center;
-                    ekf_->GetArmorplatePredict(pred_center, id, 0.0);
-                    
-                    double pred_yaw = tools::limit_rad(ekf_->X(6) + id * 2.0 * M_PI / armor_num_);
-                    double pred_los_yaw = std::atan2(pred_center[1], pred_center[0]);
-                    double obs_los_yaw = std::atan2(current_center_now[1], current_center_now[0]);
-
-                    // 同济复合误差：姿态误差 + 视线误差
-                    double error = std::abs(tools::limit_rad(current_yaw_now - pred_yaw)) + 
-                                std::abs(tools::limit_rad(obs_los_yaw - pred_los_yaw));
-
-
-                    // // 动态 Omega 粘性特权，根据转速决定允许忽略的额外误差量
-                    // if (id == tracking_id_) 
-                    // {
-                    //     // 获取当前角速度绝对值 (rad/s)
-                    //     double current_omega = std::abs(ekf_->X(7));
-                        
-                    //     // 动态计算粘性特权：转得越快，给予的特权越大！
-                    //     double dynamic_sticky = 0.15 + current_omega * 0.025; 
-                        
-                    //     // 钳位：最大特权不超过 0.5 rad (约 28 度)，绝对不会焊死！转到背面依然顺滑切换！
-                    //     dynamic_sticky = std::min(dynamic_sticky, 0.5); 
-                        
-                    //     error -= dynamic_sticky; 
-                    // }
-                    
-                    if (error < min_error) 
-                    {
-                        min_error = error;
-                        current_id = id;
-                    }
-                }
-
-                // 2.3 限制一帧内目标（当前观测的装甲板）可能发生的最大位移（角度），也就是与 EKF 预测的误差值最大可以多大
-                // 极限小陀螺的角速度下，一帧大概能转多少弧度 -> 20 * 0.016 * 4(考虑误差) = 1.28 rad，而 1.25 rad = 71.6 度
-                if (min_error > 0.80) 
-                {
-                    //  最靠近中心 的板子，误差都那么大，说明数据无效，直接盲推
-                    if (is_first_update) 
-                    {
-                        RCLCPP_WARN(this->get_logger(), "板子 %d 是畸形板，误差高达 %.2f, 启动门限拒绝，本帧走盲推！", i, min_error);
-                        ekf_->PredictOnly(dt);
-                        if (ekf_ready_) // 目前是否可以盲推
-                        {
-                            ekf_->GetArmorplatePredict(armorplate_center_filter, tracking_id_, 0.00);
-                            ekf_->GetArmorplatePredict(armorplate_center_predict, tracking_id_, ekf_predict_time_);
-                            ekf_->GetCarCenterPredict(car_center_predict, ekf_predict_time_);
-                        }
-                        return; // 提前结束，不进行 Update
-                    }
-                    else
-                    {
-                        continue; 
-                    }
-                    
-                }
-
-                RCLCPP_INFO(this->get_logger(), "【识别器】当前 识别 的第 %d / %d 块装甲板, 对应 ID = %d", i + 1, yolo_armors_.size(), current_id);
+            // 3.2.1 获取所有预测板的距离，按距离排序，剔除最远的背板
+            std::vector<std::pair<double, int>> dist_id_list;
+            for (int k = 0; k < armor_num_; k++) 
+            {
+                Eigen::Vector3d pred_center;
+                ekf_->GetArmorplatePredict(pred_center, k, 0.0); // 获得第 k 个板子的 目前时刻 的预测位置
+                double dist = pred_center.norm();
+                dist_id_list.push_back({dist, k}); // todo: 这里有点奇怪
             }
+            std::sort(dist_id_list.begin(), dist_id_list.end());
+
+            // 3.2.2 只遍历离 Father Frame 最近的 3 块板
+            for (int k = 0; k < 3; k++) 
+            {
+                int id = dist_id_list[k].second;
+                
+                Eigen::Vector3d pred_center;
+                ekf_->GetArmorplatePredict(pred_center, id, 0.0);
+                
+                double pred_yaw = tools::limit_rad(ekf_->X(6) + id * 2.0 * M_PI / armor_num_);
+                double pred_los_yaw = std::atan2(pred_center[1], pred_center[0]);
+                double obs_los_yaw = std::atan2(current_center_now[1], current_center_now[0]);
+
+                // 同济复合误差：姿态误差 + 视线误差
+                double error = std::abs(tools::limit_rad(current_yaw_now - pred_yaw)) + 
+                                std::abs(tools::limit_rad(obs_los_yaw - pred_los_yaw));
+                
+                if (error < min_angle_error) 
+                {
+                    min_angle_error = error;
+                    current_id = id;
+                }
+            }
+
+            // 3.2.3 限制一帧内目标（当前观测的装甲板）可能发生的最大位移（角度），也就是与 EKF 预测的误差值最大可以多大
+            // 极限小陀螺的角速度下，一帧大概能转多少弧度 -> 20 * 0.016 * 4(考虑误差) = 1.28 rad，而 1.25 rad = 71.6 度
+            if (min_angle_error > 1.25) 
+            {
+                RCLCPP_WARN(this->get_logger(), "板子 %d 是畸形板，误差高达 %.2f, 启动门限拒绝，丢弃数据！", i, min_angle_error);
+                continue;
+            }
+
+            RCLCPP_INFO(this->get_logger(), "【识别器】当前 识别 的第 %d / %d 块装甲板, 对应 ID = %d", i + 1, yolo_armors_.size(), current_id);
 
             // 无论是 DETECTING 还是 TRACKING，只要有数据就必须给 EKF。
-            if (yolo_armors_[i].is_big_) 
-            {
-                ekf_->SetArmorplateSize("hero");   // 大板：225mm * 135mm
-            } 
-            else 
-            {
-                ekf_->SetArmorplateSize("normal"); // 小板：135mm * 135mm
-            }
+            std::string size = yolo_armors_[i].is_big_ ? "hero" : "normal";
+            ekf_->SetArmorplateSize(size);
+
             tools::limit_rad(current_yaw_now);
+            ekf_->UpdateState(current_center_now, current_yaw_now, current_id, current_image_time); 
+            has_valid_update = true;
+            id_set.push_back(current_id);
 
-            double update_dt = is_first_update ? dt : 0.0;
-            ekf_->UpdateExtendedKalman(current_center_now, current_yaw_now, current_id, current_image_time, update_dt); // 优先使用 识别到的最好的装甲板 进行EKF的更新
-
-            // 第一块成功通过的板 dt，后续板 dt=0！ 
+            // 如果当前板子 就是 追踪目标，那么就保存追踪版对应的 tf 数据（原始数据）
+            if (current_id == tracking_id_)
+            {
+                tracking_center_now = current_center_now;
+                tracking_yaw_now = current_yaw_now;
+            }
 
             // 注意！我们用现在的 实时的装甲板目标 更新完 EKF，EKF 就已经可以推出任何一个 ID 对应的状态了，接下来的 tracking_id 只是决定要打和跟踪谁而已！
             
             // 只用 最靠近中心的板 来决定要不要切换跟踪对象
-            if (is_first_update)
+            if (!has_checked_to_switch_id)
             {
                 // 发现现在 最靠近中心 的装甲板 ID 和之前追踪的 ID 不一样了，直接去跟踪他
+                // todo: 切板（跟踪板）逻辑需要制定！
                 if (current_id != tracking_id_) 
                 {
-                    RCLCPP_WARN(this->get_logger(), "【跟踪器】已经切换跟踪装甲板，不再跟踪 ID = %d。开始跟踪 ID = %d", tracking_id_, current_id);
+                    // 更新当前装甲板目标，因此要保存 tf 查到的原始结果，让 corenode 使用
+                    tracking_center_now = current_center_now;
+                    tracking_yaw_now = current_yaw_now;
                     tracking_id_ = current_id; // 跟踪新板
+
+                    RCLCPP_WARN(this->get_logger(), "【跟踪器】已经切换跟踪装甲板，不再跟踪 ID = %d。开始跟踪 ID = %d", tracking_id_, current_id);
                 }
+                has_checked_to_switch_id = true;
             }
-            is_first_update = false; // 本帧第一个成功通过校验并送到 EKF 的装甲板，下一个就不是主装甲板了
         }
             
-        if (!is_first_update)
+        // 4. 拿走 EKF 得到的滤波值和预测值
+
+        // 在图上打印出 识别到的装甲板 ID 集合，与 正在追踪的装甲板的 ID
+        std::sort(id_set.begin(), id_set.end());
+        if (id_set.size() == 1) cv::putText(img_show_, "Detecting: " + std::to_string(id_set[0]) + "   Tracking: " + std::to_string(tracking_id_), cv::Point2f(0, 200), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+        else cv::putText(img_show_, "Detecting: " + std::to_string(id_set[0]) + " " + std::to_string(id_set[1]) + " Tracking: " + std::to_string(tracking_id_), cv::Point2f(0, 200), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+        
+        // 先拿到 当前装甲板目标 的原始数据
+        armorplate_center_now = tracking_center_now;
+        yaw_armorplate_now = tracking_yaw_now;  
+
+        if (has_valid_update) // 存在有效的更新，就可以获取滤波值和预测值了
         {
+            reject_count_ = 0; // 没有拒绝 yolo 结果，拒绝计数器重置
+
             // 【还在预热期】
             if (tracker_state_ == TrackerState::DETECTING) 
             {
@@ -825,10 +850,11 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
                 // 此时，滤波值和预测值直接强制等于原始观测值
                 armorplate_center_filter = armorplate_center_now;
                 armorplate_center_predict = armorplate_center_now;
+                ekf_ready_ = false; // 预热期不能盲推，不能直接使用对当前帧的预测数据
             }
             else if (tracker_state_ == TrackerState::TRACKING) 
             {
-                // 【稳定期】：EKF 已经完全收敛。使用 EKF 的输出作为画图和云台控制的基准！
+                //【稳定期】：EKF 已经完全收敛。使用 EKF 的输出作为画图和云台控制的基准！
                 
                 // future_time = 0.0，获取的就是纯正的【当前滤波值】！
                 ekf_->GetArmorplatePredict(armorplate_center_filter, tracking_id_, 0.00);
@@ -837,37 +863,56 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
                 ekf_->GetArmorplatePredict(armorplate_center_predict, tracking_id_, ekf_predict_time_);
                 ekf_->GetCarCenterPredict(car_center_predict, ekf_predict_time_);
                 
-                ekf_ready_ = true; // ekf 已经准备好，可以开始盲推了
+                ekf_ready_ = true; // 稳定期可以开始盲推，可以直接使用对当前帧的预测数据
             }
         }
-        else 
+        else // 没有有效的更新，看看能不能盲推（使用对当前帧的预测数据）
         {
-            // 强制盲推保护：看到了板子，但全部没查到 TF
+            ++reject_count_;
+
+            if (reject_count_ >= max_reject_frames_)
+            {
+                RCLCPP_ERROR(this->get_logger(), "连续 %d 帧数据都全被 EKF 拒绝，强制重置！", reject_count_);
+                tracker_state_ = TrackerState::LOST;
+                ekf_ready_ = false; 
+                tracking_id_ = 0; 
+                ekf_->Reset(); 
+                reject_count_ = 0; // 重置
+            }
+
             if (ekf_ready_) 
             {
-                RCLCPP_WARN(this->get_logger(), "本帧所有装甲板 TF 查询失败，强制转入盲推维系状态...");
-                ekf_->PredictOnly(dt);
                 ekf_->GetArmorplatePredict(armorplate_center_filter, tracking_id_, 0.00);
                 ekf_->GetArmorplatePredict(armorplate_center_predict, tracking_id_, ekf_predict_time_);
                 ekf_->GetCarCenterPredict(car_center_predict, ekf_predict_time_);
             }
         }
+
+        // 5. 最终发散保护，如果 EKF 察觉自己内部崩塌了就赶紧重置
+        if (ekf_->IsDiverged() || ekf_->IsNISFailed()) 
+        {
+            RCLCPP_ERROR(this->get_logger(), "滤波器物理发散 或 NIS 崩溃！强制重置！");
+            tracker_state_ = TrackerState::LOST;
+            ekf_ready_ = false; 
+            tracking_id_ = 0; // 默认追踪 0 板
+            ekf_->Reset(); 
+        }
         
     }
-    // ====== 场景 B：短暂丢失阶段 (核心：抗小陀螺盲推) ======
+    // ====== 场景 B：短暂丢失阶段 (没有测量值，只能利用盲推的预测，维持数据) ======
     else if (tracker_state_ == TrackerState::TEMP_LOST)
     {
         if (ekf_ready_) 
         {
-            // 目标短暂消失，完全不给测量值，让 EKF 靠惯性纯算未来位置！
-            ekf_->PredictOnly(dt);
+            // 把 EKF 的状态 从 current_image_time - dt 推到 current_image_time 现在
+            ekf_->PredictState(dt);
             
-            // 此时取 future=0 就是外推出来的“假想当前位置”
+            // 此时取 future=0 就是外推出来的 当前帧的 预估现在位置
             ekf_->GetArmorplatePredict(armorplate_center_filter, tracking_id_, 0.00);
             ekf_->GetArmorplatePredict(armorplate_center_predict, tracking_id_, ekf_predict_time_);
             ekf_->GetCarCenterPredict(car_center_predict, ekf_predict_time_);
             
-            RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 500, "目标遮挡或丢失, EKF 正在盲推...");
+            RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 500, "目标遮挡或丢失, EKF 正在盲推，直接使用对当前帧的预测数据...");
         }
     }
     // ====== 场景 C：彻底丢失 ======
@@ -879,8 +924,6 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
         ekf_->Reset(); 
     }
 }
-
-
 
 
 
@@ -940,6 +983,7 @@ rcl_interfaces::msg::SetParametersResult CoreNode::OnParameterChange(const std::
             is_standalone_mode_ = p.as_bool();
             if (is_standalone_mode_) RCLCPP_INFO(this->get_logger(), "已切换到单机模式! 父坐标系是 camera_frame");
             else RCLCPP_INFO(this->get_logger(), "已切换到联调模式! 父坐标系是 world_frame");
+
             tf_->UpdateParamsFromServer();  // 通知 TF 刷新
             ekf_->UpdateParamsFromServer();  // 通知 EKF 刷新坐标系
             ekf_->Reset(); // 必须重置一下滤波器，因为坐标系都变了，之前的数据都没用了
@@ -951,13 +995,6 @@ rcl_interfaces::msg::SetParametersResult CoreNode::OnParameterChange(const std::
             RCLCPP_INFO(this->get_logger(), "EKF 预测时间已更新! ");
         }
 
-        else if (name == "ekf.show_logger_debug") // 是否打印 ekf 调参参数
-        {
-            show_logger_ekf_debug_ = p.as_bool();
-            ekf_->SetDebugLogger(show_logger_ekf_debug_);
-            RCLCPP_INFO(this->get_logger(), "EKF 调参日志开关已打开! ");
-        }
-        
         // 注意：检测颜色、相机名称等通常不应运行时改变，如需改变可类似处理
     }
     rcl_interfaces::msg::SetParametersResult res;

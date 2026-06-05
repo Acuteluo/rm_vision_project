@@ -60,32 +60,29 @@ public:
 
     void Reset(); // 重置初始化（丢失目标超过一定帧数时调用）
 
-    bool is_initialized; // 滤波器是否已完成首次初始化
+    bool is_initialized_; // 滤波器是否已完成首次初始化
 
     // ==================== 参数与配置接口 ====================
 
     void UpdateParamsFromServer();                  // 从参数服务器动态更新 Q、R 矩阵参数
-    void SetArmorplateSize(std::string ARMOR_TYPE); // 根据大小板，设置装甲板的物理尺寸 (宽和高)
-    void SetDebugLogger(bool SHOW_LOGGER_DEBUG);    // Debug日志开关：设置是否打印底层 EKF 调试日志
+    void SetArmorplateSize(std::string ARMOR_TYPE); // 根据识别，设置装甲板的物理尺寸 大小板 (宽和高)
     void SetArmorNum(int num);                      // 根据识别，设置一个车上装甲板的数量 (兵种区分)
 
-    // ==================== 核心算法接口 ====================
+    // ==================== 核心算法接口【流水线】 ====================
 
-    /**
-     * @brief EKF 核心更新流（外部调用）
-     * @param armorplate_center  装甲板在世界/父坐标系下的实时绝对坐标
-     * @param yaw_armor          装甲板在世界/父坐标系下的绝对朝向 (欧拉角 Yaw)
-     * @param armor_id           当前观测到的装甲板，对应整车上目前哪块板 ID 的状态(0/1/2/3)
-     * @param current_image_time 当前图像时间，用来同步 TF 发布
-     * @param dt                 与上一帧的时间间隔 (秒)
-     */
-    void UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double yaw_armor, int armor_id, rclcpp::Time current_image_time, double dt);
+    // 1. 根据首次观测数据完成 EKF 的状态初始化
+    void Initialized(const Eigen::Vector3d& armorplate_center, double yaw_armor, int id, rclcpp::Time current_image_time); 
 
-    /**
-     * @brief 仅盲推预测 (丢失目标时调用)。会更新滤波器的内部状态
-     * @param dt 盲推时间步长
-     */
-    void PredictOnly(double dt);
+    // 2. 状态预测，将状态通过预测推演到当前时间
+    void PredictState(double dt);
+
+    // 3. 状态更新，将状态通过观测数据更新
+    void UpdateState(const Eigen::Vector3d& armorplate_center, double yaw, int id, rclcpp::Time current_image_time);
+
+    // ==================== 物理发散 与 NIS崩溃检测 接口 ====================
+    
+    bool IsDiverged() const;  // 物理发散检测
+    bool IsNISFailed() const; // NIS 崩溃检测
 
     // ==================== 状态提取接口 ====================
 
@@ -101,8 +98,8 @@ public:
     // ==================== 状态矩阵 ====================
 
     Eigen::Matrix<double, 11, 1> X;      // k 时刻状态量
-    Eigen::Matrix<double, 11, 1> X_est;  // k 时刻预测状态量
-    Eigen::Matrix<double, 11, 1> X_prev; // k-1 时刻状态量
+    // Eigen::Matrix<double, 11, 1> X_est;  // k 时刻预测状态量
+    // Eigen::Matrix<double, 11, 1> X_prev; // k-1 时刻状态量
 
 private:
 
@@ -115,16 +112,8 @@ private:
     std::shared_ptr<tf2_ros::TransformListener> tf_listener_;         // TF 监听器
 
     // ==================== EKF 内部逻辑流程 ====================
-
-    void Initialized(const Eigen::Vector3d& armorplate_center, const double& yaw_armor); // 根据首次观测数据完成 EKF 的状态初始化
-    void UpdateParameters(double dt); // 依据 dt 刷新状态转移矩阵 F 和过程噪声 Q
     
-    void StatusPredict();       // [1] 状态预测
-    void UncertaintyPredict();  // [2] 协方差预测
-    void CalculateKalmanGain(); // [3] 计算卡尔曼增益 K
-    void UpdateStatus();        // [4] 状态更新 (包含 NIS 卡方检验异常剔除)
-    void UpdateUncertainty();   // [5] 协方差更新 (Joseph 形式)
-    void UpdateHistoricalData();// [6] 更新历史迭代数据
+    void UpdateParameters(double dt); // 依据 dt 刷新状态转移矩阵 F 和过程噪声 Q
 
     // ==================== NIS 卡方检验相关，验证观测数据是否异常 ====================
     
@@ -148,6 +137,8 @@ private:
     // 以及该板当前相对于整车的角度（0 号装甲板角度）的固定偏航角 Δyaw（逆时针为正）
     void GetArmorplateParams(const Eigen::Matrix<double, 11, 1>& X_in, int id, double& dx, double& dy, double& dz_offset, double& theta_offset);
 
+    void PrintDebugInfo(Eigen::Matrix<double, 4, 1>& innovation); // 打印底层 EKF 调试日志
+
     // ==================== TF 发布逻辑 ====================
 
     // 控制发布从整车中心到指定 ID 装甲板的 TF 变换
@@ -161,20 +152,21 @@ private:
 
     // ==================== 内部属性与参数 ====================
 
-    int armor_num_;  // 装甲板总数
-    int armor_id;    // 当前帧传入的观测装甲板 ID
-    double width;    // 装甲板物理宽度 (m)
-    double height;   // 装甲板物理高度 (m)
-
-    std::string father_frame; // 坐标系基准：单机模式(camera_frame) / 联调模式(world_frame)
-    rclcpp::Time current_image_time_; // 当前图像时间戳，用于同步 TF 发布
     bool SHOW_LOGGER_DEBUG;   // EKF 调试日志开关
+
+    int armor_num_;  // 装甲板总数
+    int armor_id_;   // 当前帧传入的观测装甲板 ID
+    double width_;    // 装甲板物理宽度 (m)
+    double height_;   // 装甲板物理高度 (m)
+
+    std::string father_frame_; // 坐标系基准：单机模式(camera_frame) / 联调模式(world_frame)
+    rclcpp::Time current_image_time_; // 当前图像时间戳，用于同步 TF 发布
 
     // ==================== 卡尔曼滤波矩阵库 ====================
 
     Eigen::Matrix<double, 11, 11> P;      // k 时刻协方差矩阵
-    Eigen::Matrix<double, 11, 11> P_est;  // k 时刻预测协方差矩阵
-    Eigen::Matrix<double, 11, 11> P_prev; // k-1 时刻协方差矩阵
+    // Eigen::Matrix<double, 11, 11> P_est;  // k 时刻预测协方差矩阵
+    // Eigen::Matrix<double, 11, 11> P_prev; // k-1 时刻协方差矩阵
 
     Eigen::Matrix<double, 11, 11> F;      // 状态转移矩阵
     Eigen::Matrix<double, 11, 11> Q;      // 预测过程噪声协方差矩阵

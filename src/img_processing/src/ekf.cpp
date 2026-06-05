@@ -1,10 +1,11 @@
 #include <ekf.hpp>
 
+
 // ============================== 构造与重置初始化 ==============================
 
 EKF::EKF(rclcpp::Node* node) : node_(node)
 {
-    this->is_initialized = false; 
+    this->is_initialized_ = false; 
 
     // 初始化 ROS2 TF 广播器与缓存、监听器（用来查询【父坐标系】->【整车中心坐标系】是否可以变换）
     car_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(node_);
@@ -17,10 +18,12 @@ EKF::EKF(rclcpp::Node* node) : node_(node)
 
 void EKF::Reset() 
 { 
-    this->is_initialized = false; 
+    this->is_initialized_ = false; 
 }
 
+
 // ============================== 参数与配置接口 ==============================
+
 
 // 从参数服务器，动态获得参数
 void EKF::UpdateParamsFromServer() 
@@ -50,9 +53,10 @@ void EKF::UpdateParamsFromServer()
     this->r_euler_yaw_ = node_->get_parameter("ekf.r_euler_yaw").as_double();
 
     // 父坐标系与调试日志开关
-    this->father_frame = node_->get_parameter("core.mode.is_standalone_mode").as_bool() ? "camera_frame" : "world_frame";
+    this->father_frame_ = node_->get_parameter("core.mode.is_standalone_mode").as_bool() ? "camera_frame" : "world_frame";
     this->SHOW_LOGGER_DEBUG = node_->get_parameter("ekf.show_logger_debug").as_bool();
 }
+
 
 // 设置装甲板的 width 和 height
 // todo: 可以进一步扩展为直接从参数服务器读取装甲板尺寸，支持更多种类的装甲板
@@ -60,20 +64,16 @@ void EKF::SetArmorplateSize(std::string ARMOR_TYPE)
 {
     if(ARMOR_TYPE == "normal") 
     {
-        this->width  = 0.135;
-        this->height = 0.055;
+        this->width_  = 0.135;
+        this->height_ = 0.055;
     }
     else 
     {
-        this->width  = 0.225;
-        this->height = 0.055;
+        this->width_  = 0.225;
+        this->height_ = 0.055;
     }
 }
 
-void EKF::SetDebugLogger(bool SHOW_LOGGER_DEBUG)
-{ 
-    this->SHOW_LOGGER_DEBUG = SHOW_LOGGER_DEBUG; 
-}
 
 void EKF::SetArmorNum(int num) 
 { 
@@ -81,25 +81,92 @@ void EKF::SetArmorNum(int num)
 }
 
 
-// ============================== 核心 EKF 控制流 ==============================
+// ============================== 核心算法接口【流水线】 ==============================
 
-void EKF::UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double armor_yaw_origin, int armor_id, rclcpp::Time current_image_time, double dt)
+
+// 1. 根据首次观测数据完成 EKF 的状态初始化
+void EKF::Initialized(const Eigen::Vector3d& armorplate_center, double yaw_armor, int id, rclcpp::Time current_image_time)
 {
-    this->armor_id = armor_id; // 传入装甲板 ID (0:后, 1:右, 2:前, 3:左)
-    this->current_image_time_ = current_image_time; // 更新当前图像时间戳，用于后续 TF 发布的时间同步，非常重要
+    armor_id_ = id;
+    current_image_time_ = current_image_time;
+    UpdateParamsFromServer(); // 确保参数最新
 
-    // 1. 系统首次启动初始化
-    if (this->is_initialized == false)
-    {
-        UpdateParamsFromServer();  // 确保读取有效值
-        Initialized(armorplate_center, armor_yaw_origin);
-        return; // 第一帧仅初始化，不进入更新流
-    }
+    P.setIdentity();
+    P(0,0) = 1.0; P(1,1) = 1.0; P(2,2) = 1.0;          // XYZ 位置
+    P(3,3) = 64.0; P(4,4) = 64.0; P(5,5) = 64.0;       // XYZ 速度
+    P(6,6) = 0.5;                                                // Yaw 角度
+    P(7,7) = 100.0;                                              // 角速度 Omega
 
-    // 2. 更新 F 和 Q 矩阵 (依赖时间间隔 dt)
-    UpdateParameters(dt); 
+    P(8, 8)   = 1.0;   // r1
+    P(9, 9)   = 1.0;   // r2 
+    P(10, 10) = 1.0;   // dz
 
-    // 3. 将笛卡尔 XYZ 观测转化为 YPD 球坐标系观测
+    /*
+    R << r_los_yaw_,            0,           0,            0,
+                  0, r_los_pitch_,           0,            0,
+                  0,            0, r_distance_,            0,
+                  0,            0,           0, r_euler_yaw_;
+    */
+
+    // 根据第一次观测反算一个粗略的中心初始状态
+    // r1 r2 初始 0.25 m，dz 初始是 0.05 m（1、3号装甲板相对于0、2号装甲板的高度差，计当前 1、3号装甲板高度为车心高度，初始高度差 0m）
+    double init_r1 = 0.25;
+    double init_r2 = 0.25;
+    double init_dz = 0.00;
+    
+    Eigen::Matrix<double, 11, 1> tmp_X = Eigen::Matrix<double, 11, 1>::Zero();
+    tmp_X(8) = init_r1;
+    tmp_X(9) = init_r2;
+    tmp_X(10) = init_dz;
+
+    double dx, dy, dz_offset, theta_offset;
+    GetArmorplateParams(tmp_X, this->armor_id_, dx, dy, dz_offset, theta_offset);
+
+    // 根据装甲板的观测 yaw 和 预设的当前板离整车角度（0板角度）的偏移角，反推整车中心 Yaw
+    double init_yaw = yaw_armor - theta_offset;  
+    NormalizeAngle(init_yaw);
+
+    // 反推车体几何中心 XYZ
+    double cos_yaw = cos(init_yaw), sin_yaw = sin(init_yaw);
+    double init_x = armorplate_center[0] - (cos_yaw * dx - sin_yaw * dy);
+    double init_y = armorplate_center[1] - (sin_yaw * dx + cos_yaw * dy);
+    double init_z = armorplate_center[2] - dz_offset;
+
+    X << init_x, init_y, init_z, 0.0, 0.0, 0.0, init_yaw, 0.0, init_r1, init_r2, init_dz;
+    X = X;
+    P = P;
+
+    this->is_initialized_ = true;
+}
+
+
+// 2. 状态预测，将状态通过预测推演到当前时间
+void EKF::PredictState(double dt)
+{
+    if (!this->is_initialized_) return;
+
+    UpdateParamsFromServer(); // 动态调参实时生效
+    UpdateParameters(dt);     // 刷新 F, Q
+
+    X = F * X;                         // [1] 状态预测
+    P = F * P * F.transpose() + Q;     // [2] 协方差预测
+
+    NormalizeAngle(X(6));
+
+    // 盲推 / 预测阶段，也要发布 TF 保证系统连续性
+    UpdateFatherToCarCenter();
+    UpdateCarCenterToArmorplates(); 
+}
+
+
+// 3. 状态更新，将状态通过观测数据更新
+void EKF::UpdateState(const Eigen::Vector3d& armorplate_center, double euler_yaw, int id, rclcpp::Time current_image_time)
+{
+    armor_id_ = id;                             // 传入装甲板 ID (0:后, 1:右, 2:前, 3:左)
+    current_image_time_ = current_image_time;   // 更新当前图像时间戳，用于后续 TF 发布的时间同步，非常重要
+
+
+    // 将 XYZ 笛卡尔系下的观测，转化为 YPD 球坐标系下的观测
     double obs_x = armorplate_center[0];
     double obs_y = armorplate_center[1];
     double obs_z = armorplate_center[2];
@@ -108,9 +175,8 @@ void EKF::UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double armor_y
     double obs_los_pitch = -std::atan2(obs_z, std::sqrt(obs_x * obs_x + obs_y * obs_y));
     double obs_d         = std::sqrt(obs_x * obs_x + obs_y * obs_y + obs_z * obs_z);
 
-    // 4. 动态自适应 R 矩阵 (针对单目深度与姿态的解耦)
-    double center_yaw  = std::atan2(obs_y, obs_x);
-    double delta_angle = armor_yaw_origin - center_yaw;
+    // 计算动态自适应 R 矩阵
+    double delta_angle = euler_yaw - obs_los_yaw;
     NormalizeAngle(delta_angle); 
 
     // 偏角越大，深度距离测得越不准；距离越远，姿态偏角测得越不准 (对数衰减)
@@ -126,43 +192,62 @@ void EKF::UpdateExtendedKalman(Eigen::Vector3d armorplate_center, double armor_y
                   0,            0, dynamic_r_dist,              0,
                   0,            0,              0,  dynamic_r_yaw;
 
-    // 5. 组合最终 YPD 观测向量 [los_yaw, los_pitch, distance, armor_yaw]
-    Z << obs_los_yaw, obs_los_pitch, obs_d, armor_yaw_origin;
+    // 组合最终 YPD 观测向量 [los_yaw, los_pitch, distance, armor_yaw]
+    Z << obs_los_yaw, obs_los_pitch, obs_d, euler_yaw;
 
-    // 6. 执行标准的卡尔曼滤波五步
-    StatusPredict();       // [1] 先验状态推演
-    UncertaintyPredict();  // [2] 先验协方差推演
+    // 计算当前预测工作点下的雅可比矩阵，即先计算当前原始观测值的 雅可比矩阵（偏导数矩阵）在 X 处求值，再转换到 YPD 球面坐标系下
+    H = ComputeH_YPD(X); 
 
-    H = ComputeH_YPD(X_est); // 重新计算当前预测工作点下的雅可比矩阵，即先计算当前原始观测值的 雅可比矩阵（偏导数矩阵）在 X_est 处求值，再转换到 YPD 球面坐标系下
+    // 计算 YPD系下 的观测新息 Innovation
+    /*
+        h_ypd(X) 是用你当前预测的整车状态 X​ (XYZ) 反推出来的预测值 YPD (视线角和距离)
+        而 Z 是你实际测量到的 YPD 观测值
+        所以两者都是在 YPD 坐标系下的量，直接相减就得到新息
+    */
+    Eigen::Matrix<double, 4, 1> innovation = Z - h_ypd(X);
+    NormalizeAngle(innovation(0)); // los_yaw
+    NormalizeAngle(innovation(1)); // los_pitch
+    NormalizeAngle(innovation(3)); // yaw_armor
 
-    CalculateKalmanGain(); // [3] 计算卡尔曼增益
-    UpdateStatus();        // [4] 后验状态更新 (含 NIS 卡方检验异常过滤)
-    UpdateUncertainty();   // [5] 后验协方差更新
+    // NIS 卡方检验 -> 计算观测马氏距离，若极大，说明此帧观测严重背离系统先验，可能是异常数据
+    Eigen::Matrix<double, 4, 4> S = H * P * H.transpose() + R;
+    double nis = innovation.transpose() * S.inverse() * innovation;
 
-    NormalizeAngle(X(6));  // 保证中心偏航角不越界
-    UpdateHistoricalData();// 保存为下一帧的先验数据
 
-    // 7. 同步发布可视化与下发 TF 坐标变换
-    UpdateCarCenterToArmorplates(); 
+    // 根据 nis 判断该帧数据是否有效，记入队列中（统计最近 10 帧）
+    // 9.488 是自由度为 4（观测量为 4 维）的卡方分布在 95% 置信水平下的临界值，超过这个值说明观测与预测的差异过大，可能是异常数据
+    bool nis_failure = (nis > 9.488) ? 1 : 0;
+    recent_nis_failures_.push_back(nis_failure);
+    if (recent_nis_failures_.size() > window_size_) 
+    {
+        recent_nis_failures_.pop_front(); // 保持滑动窗口大小
+    }
+
+    
+    // 对于过于离谱的单帧数据，也选择不更新，防止污染 EKF
+    double max_nis_threshold = 25.00;
+    double max_yaw_innovation_threshold = 0.75;
+    if (nis > max_nis_threshold || std::abs(innovation(3)) > max_yaw_innovation_threshold) 
+    {
+        RCLCPP_WARN(rclcpp::get_logger("ekf_debug"), "本帧数据 NIS = %.2f, yaw_innovation = %.2f 因为过于离谱被丢弃，启动盲推保护。", nis, innovation(3));  
+        return; 
+    }
+
+    // 进行状态更新，必须严格遵循 EKF 状态更新流程，因为原本是有下标的！
+    K = P * H.transpose() * (H * P * H.transpose() + R).inverse();          // [3] 卡尔曼增益
+    P = (I - K * H) * P * (I - K * H).transpose() + K * R * K.transpose();  // [4] 后验协方差更新
+    X = X + K * innovation;                                                 // [5] 后验状态更新
+    
+    NormalizeAngle(X(6)); 
+
+    // 打印 debug 日志
+    if(this->SHOW_LOGGER_DEBUG) PrintDebugInfo(innovation);
+
+    // 同步发布可视化与下发 TF 坐标变换
     UpdateFatherToCarCenter(); 
+    UpdateCarCenterToArmorplates(); 
 }
 
-void EKF::PredictOnly(double dt)
-{
-    if (!this->is_initialized) return;
-
-    UpdateParameters(dt);
-    StatusPredict();
-    UncertaintyPredict();
-
-    X = X_est; // 将纯预测状态强制视为当前状态
-    P = P_est;
-
-    NormalizeAngle(X(6));
-
-    X_prev = X;
-    P_prev = P;
-}
 
 // ============================== 状态提取接口 ==============================
 
@@ -193,12 +278,13 @@ void EKF::GetArmorplatePredict(Eigen::Vector3d& armorplate_center_predict, int a
     armorplate_center_predict[2] = future_z_c + dz_offset; 
 }
 
+
 // 得到某个 id 装甲板四个角点现在（滤波后）在世界下的坐标
 void EKF::GetArmorplateFourCorners(std::vector<Eigen::Vector3d>& corners, int armor_id)
 {
     corners.resize(4);
     double x_c = this->X(0), y_c = this->X(1), z_c = this->X(2), yaw = this->X(6);
-    this->armor_id = armor_id;
+    this->armor_id_ = armor_id;
     
     double dx, dy, dz_offset, theta_offset;
     GetArmorplateParams(this->X, armor_id, dx, dy, dz_offset, theta_offset); // 根据装甲板 ID 和当前状态 X 获取某个 ID装甲板 在车体坐标系下的偏移参数
@@ -222,8 +308,8 @@ void EKF::GetArmorplateFourCorners(std::vector<Eigen::Vector3d>& corners, int ar
     // 定义装甲板在装甲板坐标系的四角点坐标 
     // 严格按照 armorplate.cpp 的定义顺序：左上、左下、右下、右上
     // 在装甲板本地系中，+X向内(车心)，+Y向左，+Z向上
-    double half_w = this->width / 2.0;
-    double half_h = this->height / 2.0;
+    double half_w = this->width_ / 2.0;
+    double half_h = this->height_ / 2.0;
 
     std::vector<Eigen::Vector3d> local_corners = 
     {
@@ -242,54 +328,32 @@ void EKF::GetArmorplateFourCorners(std::vector<Eigen::Vector3d>& corners, int ar
 }
 
 
-// ============================== EKF 内部逻辑流程 ==============================
+// ============================== 物理发散 与 NIS崩溃检测 接口 ==============================
 
-void EKF::Initialized(const Eigen::Vector3d& armorplate_center, const double& yaw_armor)
+
+// 物理发散检测，避免状态量太离谱
+bool EKF::IsDiverged() const
 {
-    P_prev.setIdentity();
-    P_prev(0,0) = 1.0; P_prev(1,1) = 1.0; P_prev(2,2) = 1.0;          // XYZ 位置
-    P_prev(3,3) = 64.0; P_prev(4,4) = 64.0; P_prev(5,5) = 64.0;       // XYZ 速度
-    P_prev(6,6) = 0.5;                                                // Yaw 角度
-    P_prev(7,7) = 100.0;                                              // 角速度 Omega
-
-    P_prev(8, 8)   = 1.0; // r1 0.5
-    P_prev(9, 9)   = 1.0; // r2 0.5 
-    P_prev(10, 10) = 1.0; // dz 0.1
-
-    R << r_los_yaw_,            0,           0,            0,
-                  0, r_los_pitch_,           0,            0,
-                  0,            0, r_distance_,            0,
-                  0,            0,           0, r_euler_yaw_;
-
-    // 根据第一次观测反算一个粗略的中心初始状态
-    // r1 r2 初始 0.25 m，dz 初始是 0.05 m（1、3号装甲板相对于0、2号装甲板的高度差，计当前 1、3号装甲板高度为车心高度，初始高度差 0m）
-    double init_r1 = 0.25;
-    double init_r2 = 0.25;
-    double init_dz = 0.00;
-    
-    Eigen::Matrix<double, 11, 1> tmp_X = Eigen::Matrix<double, 11, 1>::Zero();
-    tmp_X(8) = init_r1;
-    tmp_X(9) = init_r2;
-    tmp_X(10) = init_dz;
-
-    double dx, dy, dz_offset, theta_offset;
-    GetArmorplateParams(tmp_X, this->armor_id, dx, dy, dz_offset, theta_offset);
-
-    // 根据装甲板的观测 yaw 和 预设的当前板离整车（0板）的偏移角，反推整车中心 Yaw
-    double init_yaw = yaw_armor - theta_offset;  
-    NormalizeAngle(init_yaw);
-
-    // 反推车体几何中心 XYZ
-    double cos_yaw = cos(init_yaw), sin_yaw = sin(init_yaw);
-    double init_x = armorplate_center[0] - (cos_yaw * dx - sin_yaw * dy);
-    double init_y = armorplate_center[1] - (sin_yaw * dx + cos_yaw * dy);
-    double init_z = armorplate_center[2] - dz_offset;
-
-    X_prev << init_x, init_y, init_z, 0.0, 0.0, 0.0, init_yaw, 0.0, init_r1, init_r2, init_dz;
-    X = X_prev;
-
-    this->is_initialized = true;
+    if (!is_initialized_) return false;
+    if (X(8) < 0.10 || X(8) > 0.40 || X(9) < 0.10 || X(9) > 0.40 || std::abs(X(10)) > 0.15) return true;
+    else return false;
 }
+
+
+// NIS 崩溃检测
+bool EKF::IsNISFailed() const 
+{
+    if (recent_nis_failures_.size() < window_size_) return false;
+
+    int total_failures = 0;
+    for (int i = 0; i < recent_nis_failures_.size(); i++) 
+    {
+        total_failures += recent_nis_failures_[i];
+    }
+    
+    return total_failures >= max_recent_nis_failures_;
+}
+
 
 void EKF::UpdateParameters(double dt)
 {
@@ -326,118 +390,9 @@ void EKF::UpdateParameters(double dt)
             0,    0,    0,    0,    0,    0,    0,    0, 0, 0, 0;
 }
 
-// 状态预测 X_hat_k_est = F * X_hat_k-1
-void EKF::StatusPredict()
-{
-    X_est = F * X_prev;
-}
-
-// 不确定性预测 P_k_est = F * P_k-1 * F^T + Q
-void EKF::UncertaintyPredict()
-{
-    P_est = F * P_prev * F.transpose() + Q;
-}
-
-// 计算卡尔曼增益 K_k = P_k_est * H^T * [H * P_k_est * H^T + R]^-1
-void EKF::CalculateKalmanGain()
-{
-    K = P_est * H.transpose() * (H * P_est * H.transpose() + R).inverse();
-}
-
-// 用测量值更新状态 X_hat_k = X_hat_k_est + K_k * (Z_k - H * X_k_est)
-void EKF::UpdateStatus()
-{
-    // 计算 YPD 观测新息 (Innovation)
-    // h_ypd(X_est) 是用你当前预测的整车状态 X_est​ (XYZ) 反推出来的预测值 YPD (视线角和距离)，而 Z 是你实际测量到的 YPD 观测值，所以两者都是在 YPD 坐标系下的量，直接相减就对了！不需要再转换回 XYZ 坐标系了！
-    Eigen::Matrix<double, 4, 1> innovation = Z - h_ypd(X_est);
-    
-    // 安全归一化视线角和中心偏航角，防止 360 度跨界相位跳变
-    NormalizeAngle(innovation(0)); // los_yaw
-    NormalizeAngle(innovation(1)); // los_pitch
-    NormalizeAngle(innovation(3)); // yaw_armor
-
-    // ==================== 门限防抖机制 (NIS 卡方检验) ====================
-    // 计算观测马氏距离，若极大，说明此帧观测(假装甲板/重叠畸形板)严重背离系统先验
-    Eigen::Matrix<double, 4, 4> S = H * P_est * H.transpose() + R;
-    double nis = innovation.transpose() * S.inverse() * innovation;
-
-    if (this->is_initialized) 
-    {
-        // 将本次 NIS 的健康状态记入滑动黑账本 (大于9.488记为1，否则记为0)
-        // 9.488 是自由度为 4（观测量为 4 维）的卡方分布在 95% 置信水平下的临界值，超过这个值说明观测与预测的差异过大，可能是异常数据
-        bool nis_failure = (nis > 9.488) ? 1 : 0;
-        recent_nis_failures_.push_back(nis_failure);
-        if (recent_nis_failures_.size() > window_size_) 
-        {
-            recent_nis_failures_.pop_front(); // 保持滑动窗口大小，从队头弹出最旧的记录
-        }
-
-        // 如果最近 10 帧里有 >= max_recent_nis_failures_ 帧都是错的，说明模型彻底崩塌，需要马上重置
-        int recent_failures = 0;
-        for (int i = 0; i < recent_nis_failures_.size(); i++) 
-        {
-            recent_failures += recent_nis_failures_[i];
-        }
-        if (recent_nis_failures_.size() == window_size_ && recent_failures >= max_recent_nis_failures_) 
-        {
-            RCLCPP_ERROR(rclcpp::get_logger("ekf_debug"), "[滑动窗口报警] 模型发散！强制重置 EKF! 最近 %d 帧里有 %d 帧 NIS 失败。", window_size_, recent_failures);
-            this->Reset();
-            recent_nis_failures_.clear(); // 清空黑账本
-            return; 
-        }
-
-        // 3. 当模型还没崩塌，但这单帧数据太离谱（突然转的飞快），也坚决不要
-        double nis_threshold = 50.00;
-        if (nis > nis_threshold) 
-        {
-            RCLCPP_WARN(rclcpp::get_logger("ekf_debug"), "本帧数据 NIS = %.2f > %.2f。丢弃并启动盲推保护。", nis, nis_threshold);  
-            X = X_est; 
-            P = P_est;
-            return; // 拒收脏数据，保护状态纯洁性
-        }
-    }
-
-    // 更新最优后验状态估计
-    X = X_est + K * innovation;
-    NormalizeAngle(X(6)); 
-
-    // Debug 打印模块
-    if(this->SHOW_LOGGER_DEBUG)
-    {
-        RCLCPP_INFO(rclcpp::get_logger("ekf_debug"),
-            "Innovation: los_yaw=%.4f, los_pitch=%.4f, los_distance=%.4f, yaw=%.4f",
-            innovation(0), innovation(1), innovation(2), innovation(3));
-
-        RCLCPP_INFO(rclcpp::get_logger("ekf_debug"), 
-            "State: x=%.3f, y=%.3f, z=%.3f, vx=%.3f, vy=%.3f, vz=%.3f, yaw=%.3f, omega=%.3f, r1=%.6f, r2=%.6f, dz=%.6f",
-            X(0), X(1), X(2), X(3), X(4), X(5), X(6), X(7), X(8), X(9), X(10));
-
-        RCLCPP_INFO(rclcpp::get_logger("ekf_debug"),
-            "P_diag: px=%.4f, py=%.4f, pz=%.4f, pyaw=%.4f",
-            P(0,0), P(1,1), P(2,2), P(6,6));
-
-        RCLCPP_INFO(rclcpp::get_logger("ekf_debug"),
-            "K_gain: Kx=%.4f, Ky=%.4f, Kz=%.4f, Kyaw=%.4f",
-            K(0,2), K(1,0), K(2,1), K(6,3)); 
-    }
-}
-
-// 更新协方差，不确定性 P_k = (I - K_k * H) * P_k_est
-void EKF::UpdateUncertainty()
-{
-    // Joseph 形式更新协方差，确保浮点数计算中的矩阵正定对称性质
-    P = (I - K * H) * P_est * (I - K * H).transpose() + K * R * K.transpose(); 
-}
-
-
-// 更新历史数据
-void EKF::UpdateHistoricalData()
-{
-    X_prev = X;
-    P_prev = P;
-}
 
 // ============================== 观测模型与数学推导 ==============================
+
 
 Eigen::Matrix<double, 4, 1> EKF::h(const Eigen::Matrix<double, 11, 1>& X_in)
 {
@@ -445,7 +400,7 @@ Eigen::Matrix<double, 4, 1> EKF::h(const Eigen::Matrix<double, 11, 1>& X_in)
     double yaw = X_in(6);
     
     double dx, dy, dz_offset, theta_offset;
-    GetArmorplateParams(X_in, this->armor_id, dx, dy, dz_offset, theta_offset);
+    GetArmorplateParams(X_in, this->armor_id_, dx, dy, dz_offset, theta_offset);
 
     double cos_yaw = cos(yaw);
     double sin_yaw = sin(yaw);
@@ -460,11 +415,12 @@ Eigen::Matrix<double, 4, 1> EKF::h(const Eigen::Matrix<double, 11, 1>& X_in)
     return z_pred;
 }
 
+
 Eigen::Matrix<double, 4, 11> EKF::ComputeH(const Eigen::Matrix<double, 11, 1>& X_in)
 {
     double yaw = X_in(6);
     double dx, dy, dz_offset, theta_offset;
-    GetArmorplateParams(X_in, this->armor_id, dx, dy, dz_offset, theta_offset);
+    GetArmorplateParams(X_in, this->armor_id_, dx, dy, dz_offset, theta_offset);
 
     double cos_yaw = cos(yaw);
     double sin_yaw = sin(yaw);
@@ -477,7 +433,7 @@ Eigen::Matrix<double, 4, 11> EKF::ComputeH(const Eigen::Matrix<double, 11, 1>& X
     H_mat(1, 6) =  cos_yaw * dx - sin_yaw * dy; // ∂y_armor / ∂yaw
     H_mat(3, 6) = 1.0;                          // ∂yaw_armor / ∂yaw
 
-    if (armor_num_ == 4 && (this->armor_id == 1 || this->armor_id == 3)) 
+    if (armor_num_ == 4 && (this->armor_id_ == 1 || this->armor_id_ == 3)) 
     {
         H_mat(0, 9)  = -std::cos(yaw + theta_offset); // ∂r2
         H_mat(1, 9)  = -std::sin(yaw + theta_offset);
@@ -491,6 +447,7 @@ Eigen::Matrix<double, 4, 11> EKF::ComputeH(const Eigen::Matrix<double, 11, 1>& X
 
     return H_mat;
 }
+
 
 Eigen::Matrix<double, 4, 1> EKF::h_ypd(const Eigen::Matrix<double, 11, 1>& X_in)
 {
@@ -509,6 +466,7 @@ Eigen::Matrix<double, 4, 1> EKF::h_ypd(const Eigen::Matrix<double, 11, 1>& X_in)
 
     return z_ypd;
 }
+
 
 Eigen::Matrix<double, 4, 11> EKF::ComputeH_YPD(const Eigen::Matrix<double, 11, 1>& X_in)
 {
@@ -541,8 +499,8 @@ Eigen::Matrix<double, 4, 11> EKF::ComputeH_YPD(const Eigen::Matrix<double, 11, 1
 }
 
 
-
 // ============================== TF 树坐标系广播 ==============================
+
 
 // 发布 整车中心 -> 四个装甲板中的某个装甲板 的 tf 坐标系变换
 void EKF::UpdateCarCenterToArmorplate(std::string child_frame, double x, double y, double z, double roll, double pitch, double yaw)
@@ -591,7 +549,7 @@ void EKF::UpdateFatherToCarCenter()
 {
     geometry_msgs::msg::TransformStamped tf;
     tf.header.stamp = this->current_image_time_;    // 帧头 -> 对齐图像观测时刻
-    tf.header.frame_id = this->father_frame;        // 父坐标系 -> 相机坐标系 / 世界坐标系
+    tf.header.frame_id = this->father_frame_;        // 父坐标系 -> 相机坐标系 / 世界坐标系
     tf.child_frame_id = "car_center_frame";         // 子坐标系 -> 整车中心坐标系   
 
     // 平移
@@ -611,7 +569,9 @@ void EKF::UpdateFatherToCarCenter()
     car_broadcaster_->sendTransform(tf);
 }
 
-// ============================== 工具类 ==============================
+
+// ============================== 辅助与工具函数 ==============================
+
 
 // 角度归一化函数，确保角度在 -pi 到 pi 之间，防止跨界跳变
 void EKF::NormalizeAngle(double& angle)
@@ -619,6 +579,8 @@ void EKF::NormalizeAngle(double& angle)
     angle = std::atan2(std::sin(angle), std::cos(angle));
 }
 
+
+// 根据目前整车状态，计算指定 ID 装甲板的相对中心参数
 void EKF::GetArmorplateParams(const Eigen::Matrix<double, 11, 1>& X_in, int id, double& dx, double& dy, double& dz_offset, double& theta_offset)
 {
     // 根据 ID 建立装甲板相对整车中心的角度偏差
@@ -648,4 +610,25 @@ void EKF::GetArmorplateParams(const Eigen::Matrix<double, 11, 1>& X_in, int id, 
     // 装甲板的 +X 轴指向车心，所以它处于车心的反方向
     dx = -truly_radius * std::cos(theta_offset);
     dy = -truly_radius * std::sin(theta_offset);
+}
+
+
+// Debug 打印模块
+void EKF::PrintDebugInfo(Eigen::Matrix<double, 4, 1>& innovation)
+{
+    RCLCPP_INFO(rclcpp::get_logger("ekf_debug"),
+        "Innovation: los_yaw=%.4f, los_pitch=%.4f, los_distance=%.4f, euler_yaw=%.4f",
+        innovation(0), innovation(1), innovation(2), innovation(3));
+
+    RCLCPP_INFO(rclcpp::get_logger("ekf_debug"), 
+        "State: x=%.3f, y=%.3f, z=%.3f, vx=%.3f, vy=%.3f, vz=%.3f, yaw=%.3f, omega=%.3f, r1=%.6f, r2=%.6f, dz=%.6f",
+        X(0), X(1), X(2), X(3), X(4), X(5), X(6), X(7), X(8), X(9), X(10));
+
+    RCLCPP_INFO(rclcpp::get_logger("ekf_debug"),
+        "P_diag: px=%.4f, py=%.4f, pz=%.4f, pyaw=%.4f",
+        P(0,0), P(1,1), P(2,2), P(6,6));
+
+    RCLCPP_INFO(rclcpp::get_logger("ekf_debug"),
+        "K_gain: Kx=%.4f, Ky=%.4f, Kz=%.4f, Kyaw=%.4f",
+        K(0,2), K(1,0), K(2,1), K(6,3)); 
 }
