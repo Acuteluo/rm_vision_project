@@ -225,8 +225,8 @@ void EKF::UpdateState(const Eigen::Vector3d& armorplate_center, double euler_yaw
 
     
     // 对于过于离谱的单帧数据，也选择不更新，防止污染 EKF
-    double max_nis_threshold = 25.00;
-    double max_yaw_innovation_threshold = 0.75;
+    double max_nis_threshold = 9.488;
+    double max_yaw_innovation_threshold = 0.6;
     if (nis > max_nis_threshold || std::abs(innovation(3)) > max_yaw_innovation_threshold) 
     {
         RCLCPP_WARN(rclcpp::get_logger("ekf_debug"), "本帧数据 NIS = %.2f, yaw_innovation = %.2f 因为过于离谱被丢弃，启动盲推保护。", nis, innovation(3));  

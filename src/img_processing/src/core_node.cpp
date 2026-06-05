@@ -65,15 +65,16 @@ void CoreNode::InitParams()
     // 注意 q_z 作为 z轴的平移加速度方差，其它参数弃用
     this->declare_parameter("ekf.q_x", 0.02);
     this->declare_parameter("ekf.q_y", 0.02);  
-    this->declare_parameter("ekf.q_z", 5.00);  
     this->declare_parameter("ekf.q_v_x", 0.05); 
     this->declare_parameter("ekf.q_v_y", 0.05);
     this->declare_parameter("ekf.q_v_z", 0.01);
     this->declare_parameter("ekf.q_yaw", 0.05); 
     this->declare_parameter("ekf.q_omega", 2.0);
 
+    this->declare_parameter("ekf.q_z", 0.5);  
+
     this->declare_parameter("ekf.q_v1", 500.0); // 平移加速度方差 
-    this->declare_parameter("ekf.q_v2", 50000.0);  // 旋转角加速度方差，小陀螺可以突然转的非常快，给个夸张值
+    this->declare_parameter("ekf.q_v2", 1000.0);  // 旋转角加速度方差，小陀螺可以突然转的非常快，给个夸张值 50000
     
     // [ATTENTION]: .0才可以让它是 double，否则会被当成 int 解析，导致 ekf.cpp 里读取参数时出问题
 
