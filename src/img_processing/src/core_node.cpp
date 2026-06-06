@@ -710,7 +710,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
         
         // 2. 先验预测，先把 EKF 的状态 从 current_image_time - dt 推到 current_image_time 现在
         
-        ekf_->PredictState(dt); 
+        ekf_->PredictState(dt, current_image_time);  
 
 
         // 一些统计和记录的参数
@@ -918,7 +918,8 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
         if (ekf_ready_) 
         {
             // 把 EKF 的状态 从 current_image_time - dt 推到 current_image_time 现在
-            ekf_->PredictState(dt);
+            // 传入当前帧图像时间，确保tf发布时，tf 的时间戳是当前帧图像时间！
+            ekf_->PredictState(dt, current_image_time);
             
             // 此时取 future=0 就是外推出来的 当前帧的 预估现在位置
             ekf_->GetArmorplatePredict(armorplate_center_filter, tracking_id_, 0.00);

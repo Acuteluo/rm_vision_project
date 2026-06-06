@@ -73,8 +73,8 @@ public:
     // 1. 根据首次观测数据完成 EKF 的状态初始化
     void Initialized(const Eigen::Vector3d& armorplate_center, double yaw_armor, int id, rclcpp::Time current_image_time); 
 
-    // 2. 状态预测，将状态通过预测推演到当前时间
-    void PredictState(double dt);
+    // 2. 状态预测，将状态通过预测推演到当前时间，必须传入 当前图像时间 current_image_time 实时更新滤波器时间
+    void PredictState(double dt, rclcpp::Time current_image_time);
 
     // 3. 状态更新，将状态通过观测数据更新
     void UpdateState(const Eigen::Vector3d& armorplate_center, double yaw, int id, rclcpp::Time current_image_time);

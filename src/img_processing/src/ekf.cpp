@@ -139,9 +139,12 @@ void EKF::Initialized(const Eigen::Vector3d& armorplate_center, double yaw_armor
 
 
 // 2. 状态预测，将状态通过预测推演到当前时间
-void EKF::PredictState(double dt)
+// 注意！一定要添传入 current_image_time 参数，否则 current_image_time 只在 Updatestate 函数才会更新，TF 发布时间不同步！
+void EKF::PredictState(double dt, rclcpp::Time current_image_time)
 {
     if (!this->is_initialized_) return;
+
+    current_image_time_ = current_image_time; // 确保滤波器时间最新！不要没看到装甲板，滤波器时间就不更新！
 
     UpdateParamsFromServer(); // 动态调参实时生效
     UpdateParameters(dt);     // 刷新 F, Q

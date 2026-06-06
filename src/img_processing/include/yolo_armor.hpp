@@ -49,12 +49,6 @@ public:
     // 执行 PnP 解算，并完成逆向基变换 (OpenCV -> FLU)，自动调用 OptimizeEulerYaw()
     void PNP();
 
-    // 优化 PnP 解算的欧拉角
-    void OptimizeEulerYaw();
-
-    // 计算给定的 欧拉角yaw（弧度） 和 pitch=+15°、roll=0°时，在图上的重投影误差
-    double CalculateReprojectionError(double test_euler_yaw);
-
     // 在图像上画框并打印信息
     void DrawAndPrintInfo(cv::Mat& img_show);
 
@@ -62,6 +56,15 @@ public:
     void PrintDebugLog(bool is_debug);
 
 private:
+
+    // 优化 PnP 解算的欧拉角
+    void OptimizeEulerYaw();
+
+    // 进行 区间搜索 以找到最优的欧拉角 yaw
+    double SearchOptimalEulerYaw(double initial_euler_yaw, double search_range, double search_step);
+
+    // 计算给定的 欧拉角yaw（弧度） 和 pitch=+15°、roll=0°时，在图上的重投影误差
+    double CalculateReprojectionError(double test_euler_yaw);
 
     std::vector<cv::Point3f> vertice_world_; // 装甲板在 FLU 系下的 3D 物理点（定义点）
     std::vector<cv::Point3f> vertice_cv_;    // 转换到 OpenCV 相机系下的 3D 物理点（定义点）

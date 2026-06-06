@@ -114,6 +114,28 @@ void YoloArmor::PNP()
 }
 
 
+// 进行 区间搜索 以找到最优的欧拉角 yaw
+double YoloArmor::SearchOptimalEulerYaw(double initial_euler_yaw, double search_range, double search_step)
+{
+    double min_error = 1e9; // 初始为无穷大
+    double best_euler_yaw = initial_euler_yaw;
+
+    for (double i = -search_range; i <= search_range; i += search_step)
+    {
+        double test_yaw_rad = initial_euler_yaw + (i * CV_PI / 180.0);
+
+        double current_error = CalculateReprojectionError(test_yaw_rad);
+
+        if (current_error < min_error)
+        {
+            min_error = current_error;
+            best_euler_yaw = test_yaw_rad;
+        }
+    }
+
+    return best_euler_yaw;
+}
+
 
 
 // 运用 重投影误差 + 基于全局网络搜索 得到最优的欧拉角yaw，来优化 PnP 解算的欧拉角
@@ -127,70 +149,18 @@ void YoloArmor::OptimizeEulerYaw()
 
     RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] PNP 粗略算出的原欧拉角 Yaw: %.2f°", pnp_euler_yaw * 180.0 / CV_PI);
 
-    // 2. 确定搜索区间：既然 PnP 大体是对的，我们就在 PnP_Yaw 左右各扩展 60 度进行精搜
+    // 2. 确定搜索区间：既然 PnP 大体是对的，我们就先在 PnP_Yaw 左右各扩展 70 度进行粗搜，再在 最优解 左右各扩展 1 度进行精搜
 
-    double min_error = 1e9; // 初始为无穷大
-    double best_euler_yaw = pnp_euler_yaw;
-    
-    double search_range = 70.00;
-    for (double i = -search_range; i <= search_range; i += 0.5)
-    {
-        double test_yaw_rad = pnp_euler_yaw + (i * CV_PI / 180.0);
+    double coarse_euler_yaw = SearchOptimalEulerYaw(pnp_euler_yaw, 70.0, 1.0);
+    double precise_euler_yaw = SearchOptimalEulerYaw(coarse_euler_yaw, 1.0, 0.1);
 
-        double current_error = CalculateReprojectionError(test_yaw_rad);
-
-        if (current_error < min_error)
-        {
-            min_error = current_error;
-            best_euler_yaw = test_yaw_rad;
-        }
-    }
-
-    euler_yaw_angle_ = best_euler_yaw * 180.0 / CV_PI;
+    euler_yaw_angle_ = precise_euler_yaw * 180.0 / CV_PI;
     RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] 区间搜索算出的最优欧拉角 Yaw: %.2f°", euler_yaw_angle_ );
-    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] 校准差角 Yaw: %.2f°", (best_euler_yaw - pnp_euler_yaw) * 180.0 / CV_PI);
-    if (std::abs((best_euler_yaw - pnp_euler_yaw) * 180.0 / CV_PI) > 10.00) RCLCPP_WARN_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] 校准差角太大，请检查！");
+    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] 校准差角 Yaw: %.2f°", (precise_euler_yaw - pnp_euler_yaw) * 180.0 / CV_PI);
+    if (std::abs((precise_euler_yaw - pnp_euler_yaw) * 180.0 / CV_PI) > 10.00) RCLCPP_WARN_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] 校准差角太大，请检查！");
 
-    // const double PHI = 0.618033988749895; // 黄金分割率
-
-    // // 3. 初始化探测点
-    // double left = b - PHI * (b - a); // 左侧探测点（PHI > 0.5）
-    // double right = a + PHI * (b - a); // 右侧探测点（PHI > 0.5）
-
-    // double error_left = CalculateReprojectionError(left); // 左侧探测点处的误差
-    // double error_right = CalculateReprojectionError(right); // 右侧探测点处的误差
-
-    // // 4. 迭代逼近极小值 (25 次迭代)
-    // int iteration_times = 25;
-    // for (int i = 0; i < iteration_times; i++)
-    // {
-    //     if (error_left < error_right) // 左侧探测点更优，搜索区间向左移动
-    //     {
-    //         b = right;
-    //         right = left; // 原本的左侧探测点就是新区间的右侧探测点！
-    //         error_right = error_left; 
-    //         left = b - PHI * (b - a);
-    //         error_left = CalculateReprojectionError(left);
-    //     } 
-    //     else // 右侧探测点更优，搜索区间向右移动
-    //     {
-    //         a = left;
-    //         left = right;
-    //         error_left = error_right; 
-    //         right = a + PHI * (b - a);
-    //         error_right = CalculateReprojectionError(right);
-    //     }
-    // }
-
-    // // 5. 收敛得到极致精准的 欧拉角 Yaw
-    // double best_euler_yaw = (a + b) / 2.0; // 最优欧拉角取区间平均值
-    // euler_yaw_angle_ = best_euler_yaw * 180.0 / CV_PI;
-    
-    // ==========================================================
-    // 6. 终极替换：用最优 Yaw 重新生成旋转矩阵，覆盖 PnP 的垃圾矩阵！
-    // ==========================================================
     double fixed_pitch = +15.0 * CV_PI / 180.0; 
-    Eigen::AngleAxisd yawAngle(best_euler_yaw, Eigen::Vector3d::UnitZ());
+    Eigen::AngleAxisd yawAngle(precise_euler_yaw, Eigen::Vector3d::UnitZ());
     Eigen::AngleAxisd pitchAngle(fixed_pitch, Eigen::Vector3d::UnitY());
     Eigen::AngleAxisd rollAngle(0.0, Eigen::Vector3d::UnitX());
     
