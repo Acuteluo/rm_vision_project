@@ -27,7 +27,10 @@ public:
   {
     RCLCPP_INFO(this->get_logger(), "Starting MVCameraNode!");
 
-    CameraSdkInit(1);
+    int sdk_status = CameraSdkInit(1);
+    if (sdk_status != CAMERA_STATUS_SUCCESS) {
+      RCLCPP_ERROR(this->get_logger(), "CameraSdkInit failed, status = %d", sdk_status);
+    }
 
     // 枚举设备，并建立设备列表
     int i_camera_counts = 1; 
@@ -54,14 +57,21 @@ public:
     }
 
     // 获得相机的特性描述结构体。该结构体中包含了相机可设置的各种参数的范围信息。决定了相关函数的参数
-    CameraGetCapability(h_camera_, &t_capability_);
+    i_status = CameraGetCapability(h_camera_, &t_capability_);
+    if (i_status != CAMERA_STATUS_SUCCESS) {
+      RCLCPP_ERROR(this->get_logger(), "CameraGetCapability failed, status = %d", i_status);
+      return;
+    }
 
     // 直接使用vector的内存作为相机输出buffer
     image_msg_.data.reserve(
       t_capability_.sResolutionRange.iHeightMax * t_capability_.sResolutionRange.iWidthMax * 3);
 
     // 设置手动曝光
-    CameraSetAeState(h_camera_, false);
+    i_status = CameraSetAeState(h_camera_, false);
+    if (i_status != CAMERA_STATUS_SUCCESS) {
+      RCLCPP_WARN(this->get_logger(), "CameraSetAeState failed, status = %d", i_status);
+    }
 
     // Declare camera parameters
     declareParameters();
@@ -69,9 +79,16 @@ public:
     // 让SDK进入工作模式，开始接收来自相机发送的图像
     // 数据。如果当前相机是触发模式，则需要接收到
     // 触发帧以后才会更新图像。
-    CameraPlay(h_camera_);
+    i_status = CameraPlay(h_camera_);
+    if (i_status != CAMERA_STATUS_SUCCESS) {
+      RCLCPP_ERROR(this->get_logger(), "CameraPlay failed, status = %d", i_status);
+      return;
+    }
 
-    CameraSetIspOutFormat(h_camera_, CAMERA_MEDIA_TYPE_RGB8);
+    i_status = CameraSetIspOutFormat(h_camera_, CAMERA_MEDIA_TYPE_RGB8);
+    if (i_status != CAMERA_STATUS_SUCCESS) {
+      RCLCPP_WARN(this->get_logger(), "CameraSetIspOutFormat failed, status = %d", i_status);
+    }
 
     // Create camera publisher
     // rqt_image_view can't subscribe image msg with sensor_data QoS

@@ -51,10 +51,22 @@ public:
     };
 
     // Get camera infomation
-    GXGetInt(camera_handle_, GX_INT_WIDTH, &img_info_.nWidthValue);
-    GXGetInt(camera_handle_, GX_INT_WIDTH_MAX, &img_info_.nWidthMax);
-    GXGetInt(camera_handle_, GX_INT_HEIGHT, &img_info_.nHeightValue);
-    GXGetInt(camera_handle_, GX_INT_HEIGHT_MAX, &img_info_.nHeightMax);
+    status = GXGetInt(camera_handle_, GX_INT_WIDTH, &img_info_.nWidthValue);
+    if (!GX_SUCCESS(status)) {
+      RCLCPP_ERROR(this->get_logger(), "Failed to get image width, status = %d", status);
+    }
+    status = GXGetInt(camera_handle_, GX_INT_WIDTH_MAX, &img_info_.nWidthMax);
+    if (!GX_SUCCESS(status)) {
+      RCLCPP_ERROR(this->get_logger(), "Failed to get max image width, status = %d", status);
+    }
+    status = GXGetInt(camera_handle_, GX_INT_HEIGHT, &img_info_.nHeightValue);
+    if (!GX_SUCCESS(status)) {
+      RCLCPP_ERROR(this->get_logger(), "Failed to get image height, status = %d", status);
+    }
+    status = GXGetInt(camera_handle_, GX_INT_HEIGHT_MAX, &img_info_.nHeightMax);
+    if (!GX_SUCCESS(status)) {
+      RCLCPP_ERROR(this->get_logger(), "Failed to get max image height, status = %d", status);
+    }
     image_msg_.data.reserve(img_info_.nHeightMax * img_info_.nWidthMax * 3);
 
     // std::cout<<"======="<<img_info_.nWidthValue<<std::endl;
@@ -68,7 +80,10 @@ public:
 
     declareParameters();
 
-    GXSendCommand(camera_handle_, GX_COMMAND_ACQUISITION_START);
+    status = GXSendCommand(camera_handle_, GX_COMMAND_ACQUISITION_START);
+    if (!GX_SUCCESS(status)) {
+      RCLCPP_ERROR(this->get_logger(), "Failed to start acquisition, status = %d", status);
+    }
 
     // Load camera info
     camera_name_ = this->declare_parameter("camera_name", "narrow_stereo");
@@ -93,7 +108,11 @@ public:
 
       // Initialize frame
       int64_t payloadSize;
-      GXGetInt(camera_handle_, GX_INT_PAYLOAD_SIZE, &payloadSize);
+      status = GXGetInt(camera_handle_, GX_INT_PAYLOAD_SIZE, &payloadSize);
+      if (!GX_SUCCESS(status)) {
+        RCLCPP_FATAL(this->get_logger(), "Failed to get payload size, status = %d", status);
+        return;
+      }
       bayer_buffer_holder.reserve(payloadSize);
       bayer_frame.pImgBuf = bayer_buffer_holder.data();
 
@@ -163,8 +182,14 @@ public:
       capture_thread_.join();
     }
     if (camera_handle_) {
-      GXSendCommand(camera_handle_, GX_COMMAND_ACQUISITION_STOP);
-      GXCloseDevice(camera_handle_);
+      GX_STATUS status = GXSendCommand(camera_handle_, GX_COMMAND_ACQUISITION_STOP);
+      if (!GX_SUCCESS(status)) {
+        RCLCPP_WARN(this->get_logger(), "Failed to stop acquisition, status = %d", status);
+      }
+      status = GXCloseDevice(camera_handle_);
+      if (!GX_SUCCESS(status)) {
+        RCLCPP_WARN(this->get_logger(), "Failed to close device, status = %d", status);
+      }
     }
     GXCloseLib();
     RCLCPP_INFO(this->get_logger(), "GalaxyCameraNode destroyed!");
@@ -176,26 +201,45 @@ private:
     rcl_interfaces::msg::ParameterDescriptor param_desc;
     double f_value;
     GX_FLOAT_RANGE f_range;
+    GX_STATUS param_status;
     param_desc.integer_range.resize(1);
     param_desc.integer_range[0].step = 1;
     // Exposure time
     param_desc.description = "Exposure time in microseconds";
-    GXGetFloat(camera_handle_, GX_FLOAT_EXPOSURE_TIME, &f_value);
-    GXGetFloatRange(camera_handle_, GX_FLOAT_EXPOSURE_TIME, &f_range);
+    param_status = GXGetFloat(camera_handle_, GX_FLOAT_EXPOSURE_TIME, &f_value);
+    if (!GX_SUCCESS(param_status)) {
+      RCLCPP_WARN(this->get_logger(), "Failed to get exposure time, status = %d", param_status);
+    }
+    param_status = GXGetFloatRange(camera_handle_, GX_FLOAT_EXPOSURE_TIME, &f_range);
+    if (!GX_SUCCESS(param_status)) {
+      RCLCPP_WARN(this->get_logger(), "Failed to get exposure time range, status = %d", param_status);
+    }
     param_desc.integer_range[0].from_value = f_range.dMin;
     param_desc.integer_range[0].to_value = f_range.dMax;
     double exposure_time = this->declare_parameter("exposure_time", 5000, param_desc);
-    GXSetFloat(camera_handle_, GX_FLOAT_EXPOSURE_TIME, exposure_time);
+    param_status = GXSetFloat(camera_handle_, GX_FLOAT_EXPOSURE_TIME, exposure_time);
+    if (!GX_SUCCESS(param_status)) {
+      RCLCPP_WARN(this->get_logger(), "Failed to set exposure time, status = %d", param_status);
+    }
     RCLCPP_INFO(this->get_logger(), "Exposure time: %f", exposure_time);
 
     // Gain
     param_desc.description = "Gain";
-    GXGetFloat(camera_handle_, GX_FLOAT_GAIN, &f_value);
-    GXGetFloatRange(camera_handle_, GX_FLOAT_GAIN, &f_range);
+    param_status = GXGetFloat(camera_handle_, GX_FLOAT_GAIN, &f_value);
+    if (!GX_SUCCESS(param_status)) {
+      RCLCPP_WARN(this->get_logger(), "Failed to get gain, status = %d", param_status);
+    }
+    param_status = GXGetFloatRange(camera_handle_, GX_FLOAT_GAIN, &f_range);
+    if (!GX_SUCCESS(param_status)) {
+      RCLCPP_WARN(this->get_logger(), "Failed to get gain range, status = %d", param_status);
+    }
     param_desc.integer_range[0].from_value = f_range.dMin;
     param_desc.integer_range[0].to_value = f_range.dMax;
     double gain = this->declare_parameter("gain", f_value, param_desc);
-    GXSetFloat(camera_handle_, GX_FLOAT_GAIN, gain);
+    param_status = GXSetFloat(camera_handle_, GX_FLOAT_GAIN, gain);
+    if (!GX_SUCCESS(param_status)) {
+      RCLCPP_WARN(this->get_logger(), "Failed to set gain, status = %d", param_status);
+    }
     RCLCPP_INFO(this->get_logger(), "Gain: %f", gain);
   }
 
@@ -208,13 +252,13 @@ private:
     for (const auto & param : parameters) {
       if (param.get_name() == "exposure_time") {
         status = GXSetFloat(camera_handle_, GX_FLOAT_EXPOSURE_TIME, param.as_int());
-        if (GX_SUCCESS(status)) {
+        if (!GX_SUCCESS(status)) {
           result.successful = false;
           result.reason = "Failed to set exposure time, status = " + std::to_string(status);
         }
       } else if (param.get_name() == "gain") {
         status = GXSetFloat(camera_handle_, GX_FLOAT_GAIN, param.as_double());
-        if (GX_SUCCESS(status)) {
+        if (!GX_SUCCESS(status)) {
           result.successful = false;
           result.reason = "Failed to set gain, status = " + std::to_string(status);
         }
