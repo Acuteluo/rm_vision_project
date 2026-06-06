@@ -116,7 +116,7 @@ void YoloArmor::PNP()
 
 
 
-// 运用 重投影误差 + phi优选法 迭代得到最优的欧拉角yaw，来优化 PnP 解算的欧拉角
+// 运用 重投影误差 + 基于全局网络搜索 得到最优的欧拉角yaw，来优化 PnP 解算的欧拉角
 void YoloArmor::OptimizeEulerYaw()
 {
     if (!pnp_success_) return;
@@ -125,7 +125,7 @@ void YoloArmor::OptimizeEulerYaw()
     // R 已经是 FLU 坐标系下的旋转矩阵了，提取欧拉 Yaw (绕 Z 轴)
     double pnp_euler_yaw = std::atan2(R_(1, 0), R_(0, 0));
 
-    RCLCPP_INFO(rclcpp::get_logger("YoloArmor"), "[PNP] PNP 粗略算出的欧拉角 Yaw: %.2f", pnp_euler_yaw * 180.0 / CV_PI);
+    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] PNP 粗略算出的原欧拉角 Yaw: %.2f°", pnp_euler_yaw * 180.0 / CV_PI);
 
     // 2. 确定搜索区间：既然 PnP 大体是对的，我们就在 PnP_Yaw 左右各扩展 60 度进行精搜
 
@@ -133,7 +133,7 @@ void YoloArmor::OptimizeEulerYaw()
     double best_euler_yaw = pnp_euler_yaw;
     
     double search_range = 70.00;
-    for (double i = -search_range; i <= search_range; i+= 0.5)
+    for (double i = -search_range; i <= search_range; i += 0.5)
     {
         double test_yaw_rad = pnp_euler_yaw + (i * CV_PI / 180.0);
 
@@ -147,7 +147,9 @@ void YoloArmor::OptimizeEulerYaw()
     }
 
     euler_yaw_angle_ = best_euler_yaw * 180.0 / CV_PI;
-    RCLCPP_INFO(rclcpp::get_logger("YoloArmor"), "[PNP] 搜索算出的最优欧拉角 Yaw: %.2f", euler_yaw_angle_ );
+    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] 区间搜索算出的最优欧拉角 Yaw: %.2f°", euler_yaw_angle_ );
+    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] 校准差角 Yaw: %.2f°", (best_euler_yaw - pnp_euler_yaw) * 180.0 / CV_PI);
+    if (std::abs((best_euler_yaw - pnp_euler_yaw) * 180.0 / CV_PI) > 10.00) RCLCPP_WARN_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] 校准差角太大，请检查！");
 
     // const double PHI = 0.618033988749895; // 黄金分割率
 
@@ -287,4 +289,10 @@ void YoloArmor::DrawAndPrintInfo(cv::Mat& img_show)
     cv::putText(img_show, "COLOR:" + std::to_string(color_str), cv::Point2f(box_.x, box_.y + box_.height + 40), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 255, 255), 2);
     cv::putText(img_show, info_euler_yaw, cv::Point2f(box_.x, box_.y + box_.height + 60), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
     
+}
+
+
+void YoloArmor::PrintDebugLog(bool is_debug)
+{ 
+    this->show_logger_pnp_ = is_debug;
 }

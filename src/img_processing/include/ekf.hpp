@@ -118,8 +118,10 @@ private:
     // ==================== NIS 卡方检验相关，验证观测数据是否异常 ====================
     
     std::deque<bool> recent_nis_failures_; // 引入同济的滑动窗口机制
+
     int window_size_ = 10; // 窗口大小设为10帧
     int max_recent_nis_failures_ = 4; // 窗口内最多允许 4 次NIS检验失败，超过则认为当前观测异常
+    double nis_threshold_ = 1.000; // 卡方检验阈值
 
     // ==================== 观测模型 H 与雅可比 h ====================
 

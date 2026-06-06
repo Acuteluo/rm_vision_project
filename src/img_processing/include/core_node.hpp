@@ -163,6 +163,7 @@ private:
 
     bool show_logger_about_time_;   // 是否显示 core 节点中的每帧耗时日志（计算耗时）
     bool show_logger_about_else_;   // 是否显示 core 节点中的其他日志（除计算耗时以外的日志）
+    bool show_logger_pnp_;          // 是否显示 PNP 运行日志
     bool show_image_;               // 是否显示 img_show 窗口
     bool show_plot_;                // 是否画波形图
 

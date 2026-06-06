@@ -51,15 +51,17 @@ void CoreNode::InitParams()
 
 
     // core 节点
-    this->declare_parameter("core.logger.show_logger_time", false); // 是否打印时间相关日志
+    this->declare_parameter("core.logger.show_logger_time", true); // 是否打印时间相关日志
     this->declare_parameter("core.logger.show_logger_else", false); // 是否打印corenode其他的相关日志
     this->declare_parameter("core.image.show_img", true); // 是否显示图片
     
     this->declare_parameter("core.param.chosen_color", "blue"); // 选择的装甲板颜色（blue=0 red=1 gray=2 purple=3）
     this->declare_parameter("core.param.camera_name", "galaxy"); // 使用的相机名称
 
+    this->declare_parameter("pnp.show_logger_debug", true); // 打印 pnp 调试日志
+
     // EKF相关（传递给ekf）
-    this->declare_parameter("ekf.predict_time", 0.2); // 预测时间（记得改！）0.2? 0.225? 其实未来还要根据速度来确定
+    this->declare_parameter("ekf.predict_time", 0.1); // 预测时间（记得改！）0.2? 0.225? 其实未来还要根据速度来确定
     this->declare_parameter("ekf.show_logger_debug", true); // ekf 调试
 
     // 注意 q_z 作为 z轴的平移加速度方差，其它参数弃用
@@ -84,20 +86,20 @@ void CoreNode::InitParams()
     
     this->declare_parameter("ekf.r_los_yaw", 4e-3);   // 相机角度极其精准，给极小方差 4e-3
     this->declare_parameter("ekf.r_los_pitch", 4e-3); // 相机角度极其精准，给极小方差 4e-3
-    this->declare_parameter("ekf.r_distance", 0.05);   // PnP 测距
-    this->declare_parameter("ekf.r_euler_yaw", 0.1); // 观测到的装甲板欧拉角，经过优化后误差会小很多 0.8
+    this->declare_parameter("ekf.r_distance", 0.05);  // PnP 测距
+    this->declare_parameter("ekf.r_euler_yaw", 0.1);  // 观测到的装甲板欧拉角，经过优化后误差会小很多 0.8
 
     // TF 参数声明
     this->declare_parameter("tf.show_logger_error", false);
     this->declare_parameter("tf.show_result", false);
 
     // 开启示波器：
-    this->declare_parameter("core.image.show_plot", false); 
+    this->declare_parameter("core.image.show_plot", true); 
 
     // 新增：模式选择与视频路径参数
     this->declare_parameter("core.mode.is_standalone_mode", true); // 单机 / 联调模式
     this->declare_parameter("core.mode.is_video_mode", true); // 是否为读取 本地视频模式
-    this->declare_parameter("core.mode.video_path", "/home/cly/下载/rm_test_videos/20260501_160636__camera_0_rgb_output.mp4"); // 视频的绝对路径
+    this->declare_parameter("core.mode.video_path", "/home/cly/下载/rm_test_videos/20260501_160636__camera_0_rgb_output.mp4"); // 默认的本地视频绝对路径
 
 
 
@@ -112,6 +114,8 @@ void CoreNode::InitParams()
     camera_name_ = this->get_parameter("core.param.camera_name").as_string();
     ekf_predict_time_ = this->get_parameter("ekf.predict_time").as_double();
     show_plot_ = this->get_parameter("core.image.show_plot").as_bool(); 
+
+    show_logger_pnp_ = this->get_parameter("pnp.show_logger_debug").as_bool();
 
     // 新增：关于 本地视频模式 的参数获取
     is_standalone_mode_ = this->get_parameter("core.mode.is_standalone_mode").as_bool();
@@ -329,6 +333,7 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
         YoloArmor armor(obj.number, obj.color, obj.is_big, obj.prob, obj.box, obj.pts, K_, D_);
 
         armor.SetArmorplateSize(); // 设置动态 3D 尺寸
+        armor.PrintDebugLog(show_logger_pnp_); // 设置是否打印 PnP 日志
         armor.PNP(); // 执行 PnP，并且内部自动优化 EulerYaw
 
         if (armor.pnp_success_) 
@@ -438,49 +443,44 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     rclcpp::Time t4 = this->now();
 
 
-    // 5. 重投影 可视化 (颜色匹配 红0,黄1,蓝2,绿3)
+    // 7. 重投影 可视化 (颜色匹配 红0,黄1,蓝2,绿3)
     // ekf_->GetArmorplateFourCorners 拿到的是 实时滤波值
     if (ekf_ready_ && pitch_result != -999 && yaw_result != -999)
     {
-        // 先获取相机内参和畸变系数（可从当前处理的装甲板对象获取，因为 ArmorPlate 已保存）
-        //    注意：如果本帧没有成功检测到装甲板，则无法获取相机参数，此时跳过重投影。
-        if (!yolo_armors_.empty() && yolo_armors_[0].pnp_success_)
+        // 再查询 camera → 父坐标系 的 TF，因为要转到相机下投影！
+        tf2::Transform T_world_cam;
+        if (tf_->GetCameraToWorldTransform(T_world_cam, current_image_time)) 
         {
-            // 再查询 camera → 父坐标系 的 TF，因为要转到相机下投影！
-            tf2::Transform T_world_cam;
-            if (tf_->GetCameraToWorldTransform(T_world_cam, current_image_time)) 
+            // 对每个装甲板 ID 进行重投影（0红, 1黄, 2蓝, 3绿）（实时滤波位置）
+            std::vector<cv::Scalar> colors = 
             {
-                // 对每个装甲板 ID 进行重投影（0红, 1黄, 2蓝, 3绿）（实时滤波位置）
-                std::vector<cv::Scalar> colors = 
-                {
-                    cv::Scalar(0, 0, 255),   // ID=0: 红色 -> 前
-                    cv::Scalar(0, 255, 255), // ID=1: 黄色 -> 右
-                    cv::Scalar(255, 0, 0),   // ID=2: 蓝色 -> 后
-                    cv::Scalar(0, 255, 0)    // ID=3: 绿色 -> 左
-                };
+                cv::Scalar(0, 0, 255),   // ID=0: 红色 -> 前
+                cv::Scalar(0, 255, 255), // ID=1: 黄色 -> 右
+                cv::Scalar(255, 0, 0),   // ID=2: 蓝色 -> 后
+                cv::Scalar(0, 255, 0)    // ID=3: 绿色 -> 左
+            };
 
-                for (int id = 0; id < armor_num_; id++)
-                {
-                    std::vector<Eigen::Vector3d> corners_world;
-                    ekf_->GetArmorplateFourCorners(corners_world, id); // id=0 前 红色, id=1 右 黄色, id=2 后 蓝色, id=3 左 绿色
-                    tf_->ProjectAndDraw(img_show_, corners_world, K_, D_, T_world_cam, colors[id], id);
-                }
-
-                // 也绘制整车中心点（实时滤波位置）
-                std::vector<Eigen::Vector3d> center_world(1);
-                ekf_->GetCarCenterPredict(center_world[0], 0.00); // 获取实时位置下的整车中心点 在父坐标系下 的位置坐标
-                tf_->ProjectAndDraw(img_show_, center_world, K_, D_, T_world_cam, cv::Scalar(255, 255, 255));
-            
-                // 也绘制当前装甲板 dt后的 预测值（不是外推值）
-                std::vector<Eigen::Vector3d> armorplate_center_world(1);
-                armorplate_center_world[0] = armorplate_center_predict; // 预测位置的装甲板中心点 在父坐标系下 的位置坐标
-                tf_->ProjectAndDraw(img_show_, armorplate_center_world, K_, D_, T_world_cam, cv::Scalar(255, 0, 255));
+            for (int id = 0; id < armor_num_; id++)
+            {
+                std::vector<Eigen::Vector3d> corners_world;
+                ekf_->GetArmorplateFourCorners(corners_world, id); // id=0 前 红色, id=1 右 黄色, id=2 后 蓝色, id=3 左 绿色
+                tf_->ProjectAndDraw(img_show_, corners_world, K_, D_, T_world_cam, colors[id], id);
             }
+
+            // 也绘制整车中心点（实时滤波位置）
+            std::vector<Eigen::Vector3d> center_world(1);
+            ekf_->GetCarCenterPredict(center_world[0], 0.00); // 获取实时位置下的整车中心点 在父坐标系下 的位置坐标
+            tf_->ProjectAndDraw(img_show_, center_world, K_, D_, T_world_cam, cv::Scalar(255, 255, 255));
+        
+            // 也绘制当前装甲板 dt后的 预测值（不是外推值）
+            std::vector<Eigen::Vector3d> armorplate_center_world(1);
+            armorplate_center_world[0] = armorplate_center_predict; // 预测位置的装甲板中心点 在父坐标系下 的位置坐标
+            tf_->ProjectAndDraw(img_show_, armorplate_center_world, K_, D_, T_world_cam, cv::Scalar(255, 0, 255));
         }
     }
     
 
-    // 7. 联调模式下，在图上打印要发布的目标角度 和 电控发来的目前芯片姿态
+    // 8. 联调模式下，在图上打印要发布的目标角度 和 电控发来的目前芯片姿态
     if (!is_standalone_mode_)
     {
         double pitch_chip;
@@ -515,7 +515,7 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
 
 
 
-    // 8. 计算每个步骤的耗时，并打印
+    // 9. 计算每个步骤的耗时，并打印
 
         double duration1 = (t1 - start_time).seconds() * 1000.0; // 完成 接收原图 的时间
         double duration2 = (t2 - t1).seconds() * 1000.0; // 完成 yolo检测 的时间
@@ -818,12 +818,12 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
                 // todo: 切板（跟踪板）逻辑需要制定！
                 if (current_id != tracking_id_) 
                 {
+                    RCLCPP_WARN(this->get_logger(), "【跟踪器】已经切换跟踪装甲板，不再跟踪 ID = %d。开始跟踪 ID = %d", tracking_id_, current_id);
+
                     // 更新当前装甲板目标，因此要保存 tf 查到的原始结果，让 corenode 使用
                     tracking_center_now = current_center_now;
                     tracking_yaw_now = current_yaw_now;
                     tracking_id_ = current_id; // 跟踪新板
-
-                    RCLCPP_WARN(this->get_logger(), "【跟踪器】已经切换跟踪装甲板，不再跟踪 ID = %d。开始跟踪 ID = %d", tracking_id_, current_id);
                 }
                 has_checked_to_switch_id = true;
             }
@@ -831,10 +831,21 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
             
         // 4. 拿走 EKF 得到的滤波值和预测值
 
-        // 在图上打印出 识别到的装甲板 ID 集合，与 正在追踪的装甲板的 ID
+        // 在图上打印出装甲板类别，和 识别到的装甲板 ID 集合，与 正在追踪的装甲板的 ID
+        cv::putText(img_show_, "Armor Type ID: " + std::to_string(yolo_armors_[0].armor_id_), cv::Point2f(0, 200), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
         std::sort(id_set.begin(), id_set.end());
-        if (id_set.size() == 1) cv::putText(img_show_, "Detecting: " + std::to_string(id_set[0]) + "   Tracking: " + std::to_string(tracking_id_), cv::Point2f(0, 200), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
-        else cv::putText(img_show_, "Detecting: " + std::to_string(id_set[0]) + " " + std::to_string(id_set[1]) + " Tracking: " + std::to_string(tracking_id_), cv::Point2f(0, 200), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+        if (id_set.empty()) 
+        {
+            cv::putText(img_show_, "Detecting: None  Tracking: " + std::to_string(tracking_id_), cv::Point2f(0, 250), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+        } 
+        else if (id_set.size() == 1) 
+        {
+            cv::putText(img_show_, "Detecting: id=" + std::to_string(id_set[0]) + "   Tracking: " + std::to_string(tracking_id_), cv::Point2f(0, 250), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+        } 
+        else 
+        {
+            cv::putText(img_show_, "Detecting: id=" + std::to_string(id_set[0]) + " " + std::to_string(id_set[1]) + " Tracking: " + std::to_string(tracking_id_), cv::Point2f(0, 250), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2.5);
+        }
         
         // 先拿到 当前装甲板目标 的原始数据
         armorplate_center_now = tracking_center_now;
@@ -873,7 +884,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
 
             if (reject_count_ >= max_reject_frames_)
             {
-                RCLCPP_ERROR(this->get_logger(), "连续 %d 帧数据都全被 EKF 拒绝，强制重置！", reject_count_);
+                RCLCPP_ERROR(this->get_logger(), "yolo 检测到装甲板，但连续 %d 帧数据都全被 EKF 拒绝，强制重置！", reject_count_);
                 tracker_state_ = TrackerState::LOST;
                 ekf_ready_ = false; 
                 tracking_id_ = 0; 
@@ -892,7 +903,8 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
         // 5. 最终发散保护，如果 EKF 察觉自己内部崩塌了就赶紧重置
         if (ekf_->IsDiverged() || ekf_->IsNISFailed()) 
         {
-            RCLCPP_ERROR(this->get_logger(), "滤波器物理发散 或 NIS 崩溃！强制重置！");
+            if (ekf_->IsDiverged()) RCLCPP_ERROR(this->get_logger(), "滤波器 物理发散！强制重置！");
+            else RCLCPP_ERROR(this->get_logger(), "滤波器 NIS 崩溃！强制重置！");
             tracker_state_ = TrackerState::LOST;
             ekf_ready_ = false; 
             tracking_id_ = 0; // 默认追踪 0 板
@@ -940,19 +952,25 @@ rcl_interfaces::msg::SetParametersResult CoreNode::OnParameterChange(const std::
         if (name == "core.logger.show_logger_time") 
         {
             show_logger_about_time_ = p.as_bool();
-            RCLCPP_INFO(this->get_logger(), "打印 corenode 节点耗时开关已打开! ");
+            RCLCPP_INFO(this->get_logger(), "打印 corenode 节点耗时开关已切换! ");
         } 
 
         else if (name == "core.logger.show_logger_else") 
         {
             show_logger_about_else_ = p.as_bool();
-            RCLCPP_INFO(this->get_logger(), "打印 corenode 节点其他日志的开关已打开! ");
+            RCLCPP_INFO(this->get_logger(), "打印 corenode 节点其他日志的开关已切换! ");
         } 
+
+        else if (name == "pnp.show_logger_debug") 
+        {
+            show_logger_pnp_ = p.as_bool();
+            RCLCPP_INFO(this->get_logger(), "打印 PNP 调试信息开关已切换! ");
+        }
 
         else if (name == "core.image.show_img") 
         {
             show_image_ = p.as_bool();
-            RCLCPP_INFO(this->get_logger(), "显示图片开关已打开! ");
+            RCLCPP_INFO(this->get_logger(), "显示图片开关已切换! ");
         } 
 
         else if (name == "core.param.chosen_color") 

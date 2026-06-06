@@ -133,8 +133,6 @@ void EKF::Initialized(const Eigen::Vector3d& armorplate_center, double yaw_armor
     double init_z = armorplate_center[2] - dz_offset;
 
     X << init_x, init_y, init_z, 0.0, 0.0, 0.0, init_yaw, 0.0, init_r1, init_r2, init_dz;
-    X = X;
-    P = P;
 
     this->is_initialized_ = true;
 }
@@ -213,24 +211,16 @@ void EKF::UpdateState(const Eigen::Vector3d& armorplate_center, double euler_yaw
     Eigen::Matrix<double, 4, 4> S = H * P * H.transpose() + R;
     double nis = innovation.transpose() * S.inverse() * innovation;
 
-
     // 根据 nis 判断该帧数据是否有效，记入队列中（统计最近 10 帧）
-    // 9.488 是自由度为 4（观测量为 4 维）的卡方分布在 95% 置信水平下的临界值，超过这个值说明观测与预测的差异过大，可能是异常数据
-    bool nis_failure = (nis > 9.488) ? 1 : 0;
+    bool nis_failure = (nis > nis_threshold_) ? 1 : 0;
     recent_nis_failures_.push_back(nis_failure);
     if (recent_nis_failures_.size() > window_size_) 
     {
         recent_nis_failures_.pop_front(); // 保持滑动窗口大小
     }
-
-    
-    // 对于过于离谱的单帧数据，也选择不更新，防止污染 EKF
-    double max_nis_threshold = 9.488;
-    double max_yaw_innovation_threshold = 0.6;
-    if (nis > max_nis_threshold || std::abs(innovation(3)) > max_yaw_innovation_threshold) 
+    if (nis_failure)
     {
-        RCLCPP_WARN(rclcpp::get_logger("ekf_debug"), "本帧数据 NIS = %.2f, yaw_innovation = %.2f 因为过于离谱被丢弃，启动盲推保护。", nis, innovation(3));  
-        return; 
+        RCLCPP_WARN(rclcpp::get_logger("ekf"), "[NIS FAILED] NIS: %f > %f", nis, nis_threshold_);
     }
 
     // 进行状态更新，必须严格遵循 EKF 状态更新流程，因为原本是有下标的！
@@ -239,6 +229,14 @@ void EKF::UpdateState(const Eigen::Vector3d& armorplate_center, double euler_yaw
     X = X + K * innovation;                                                 // [5] 后验状态更新
     
     NormalizeAngle(X(6)); 
+
+    // // === 新增：同济同款 NEES (状态跃变) 保护 ===
+    // Eigen::Matrix<double, 11, 1> state_diff = X - X_prior;
+    // NormalizeAngle(state_diff(6)); // 如果包含偏航角，做一下角度截断
+    
+    // 计算状态跃变马氏距离
+    // double nees = state_diff.transpose() * P.inverse() * state_diff;
+
 
     // 打印 debug 日志
     if(this->SHOW_LOGGER_DEBUG) PrintDebugInfo(innovation);
@@ -351,7 +349,10 @@ bool EKF::IsNISFailed() const
         total_failures += recent_nis_failures_[i];
     }
     
-    return total_failures >= max_recent_nis_failures_;
+    bool is_nis_failed = (total_failures >= max_recent_nis_failures_);
+
+    if (is_nis_failed) RCLCPP_ERROR(rclcpp::get_logger("ekf"), "[EKF::IsNISFailed()] NIS Failed! 在最近的 %d 帧中, NIS 失败了 %d 次, 阈值为 %d", window_size_, total_failures, max_recent_nis_failures_);
+    return is_nis_failed;
 }
 
 

@@ -55,8 +55,11 @@ public:
     // 计算给定的 欧拉角yaw（弧度） 和 pitch=+15°、roll=0°时，在图上的重投影误差
     double CalculateReprojectionError(double test_euler_yaw);
 
-    // 在图像上画框并打印调试信息
+    // 在图像上画框并打印信息
     void DrawAndPrintInfo(cv::Mat& img_show);
+
+    // 打印调试日志
+    void PrintDebugLog(bool is_debug);
 
 private:
 
@@ -64,6 +67,8 @@ private:
     std::vector<cv::Point3f> vertice_cv_;    // 转换到 OpenCV 相机系下的 3D 物理点（定义点）
     cv::Mat r_cv_, t_cv_;                    // OpenCV 算出来的原始旋转平移向量
     Eigen::Matrix3d P_;                      // 坐标系转换矩阵 (FLU -> OpenCV)
+
+    bool show_logger_pnp_ = false;           // 是否打印 调试日志
 };
 
 #endif // YOLO_ARMOR_HPP
