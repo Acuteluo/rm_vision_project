@@ -19,6 +19,7 @@
 
 #include "yolo_detector.hpp" // yolo 检测器类
 #include "yolo_armor.hpp"   // yolo 检测结果的装甲板类
+#include "rm_utils.hpp"
 
 
 // ==================== [新增] 工具函数命名空间 ====================
@@ -32,7 +33,7 @@ namespace tools
      */
     inline double limit_rad(double angle) 
     {
-        return std::atan2(std::sin(angle), std::cos(angle));
+        return rm_utils::normalizeAngle(angle);
     }
 }
 

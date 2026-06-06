@@ -1,5 +1,6 @@
 #include "tf.hpp"
 #include "ekf.hpp"
+#include "rm_constants.hpp"
 
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
@@ -246,10 +247,7 @@ void TF::ProjectAndDraw(cv::Mat& img_show, const std::vector<Eigen::Vector3d>& w
     if (world_points.empty()) return;
 
     // P: FLU -> OpenCV 相机系
-    Eigen::Matrix3d P_flu2cv;
-    P_flu2cv << 0, -1,  0,
-                0,  0, -1,
-                1,  0,  0;
+    const Eigen::Matrix3d& P_flu2cv = rm_constants::P_FLU_TO_CV();
 
     std::vector<cv::Point3f> cam_points;
     cam_points.reserve(world_points.size());

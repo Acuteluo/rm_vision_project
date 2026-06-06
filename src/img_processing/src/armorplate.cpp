@@ -23,19 +23,8 @@ void ArmorPlate::setParam()
     
 
     // 根据不同的装甲板类型设置装甲板的物理参数，目前分为 步兵 和 英雄 两种
-    if(this->ARMOR_TYPE == "normal")
-    {
-        // [步兵] 装甲板的物理参数
-        this->armorplate_width = 0.135; // 装甲板宽，单位m
-        this->armorplate_height = 0.055; // 装甲板高，单位m
-    }
-
-    else
-    {
-        // [英雄] 装甲板的物理参数
-        this->armorplate_width = 0.225; // 装甲板宽，单位m
-        this->armorplate_height = 0.055; // 装甲板高，单位m
-    }
+    this->armorplate_width = rm_constants::getArmorWidth(this->ARMOR_TYPE);
+    this->armorplate_height = rm_constants::ARMOR_HEIGHT;
 
 
 
@@ -50,44 +39,12 @@ void ArmorPlate::setParam()
 
                  右  手  系    
     */
-    this->vertice_world.push_back(cv::Point3f(0.00, +armorplate_width/2, +armorplate_height/2)); // 左上（+, +）
-    this->vertice_world.push_back(cv::Point3f(0.00, +armorplate_width/2, -armorplate_height/2)); // 左下（+, -）
-    this->vertice_world.push_back(cv::Point3f(0.00, -armorplate_width/2, -armorplate_height/2)); // 右下 (-, -)
-    this->vertice_world.push_back(cv::Point3f(0.00, -armorplate_width/2, +armorplate_height/2)); // 右上（-, +）
+    this->vertice_world = rm_utils::buildArmorVerticesFLU(armorplate_width, armorplate_height);
     
 
 
     // ---------- [相机参数设置] ----------
-
-    if(this->CAMERA_NAME == "mind_vision")
-    {
-        // mind_vision 的参数
-
-        // 相机内参K 3 * 3 
-        this->K = (cv::Mat_<double>(3, 3) << 1359.21385,    0.     ,  635.62767,
-                                            0.     , 1361.75423,  478.48483,
-                                            0.     ,    0.     ,    1.     );
-
-        // 相机畸变矩阵D 5 * 1，和 Eigen 不同，opencv的矩阵是先列后行
-        // k1 k2 p1 p2 k3
-        this->D = (cv::Mat_<double>(5, 1) << -0.081521, 0.153947, -0.006919, -0.003306, 0.000000);
-
-    }
-
-    else
-    {
-        // galaxy 的参数
-
-        // 相机内参K 3 * 3 
-        this->K = (cv::Mat_<double>(3, 3) << 1305.07013,    0.     ,  666.71169,
-                                            0.     , 1307.67428,  495.17044,
-                                            0.     ,    0.     ,    1.     );
-
-        // 相机畸变矩阵D 5 * 1，和 Eigen 不同，opencv的矩阵是先列后行
-        // k1 k2 p1 p2 k3
-        this->D = (cv::Mat_<double>(5, 1) << -0.209067, 0.129977, -0.002895, -0.000558, 0.000000);
-       
-    }
+    rm_constants::getCameraIntrinsics(this->CAMERA_NAME, this->K, this->D);
     
     
 
@@ -205,25 +162,8 @@ void ArmorPlate::drawArmorPlateAndPrintPNPInfo(cv::Mat& img_show, std::string CH
 */
 void ArmorPlate::perspectiveNPoint()
 {
-	// P: 你的 FLU 右手系 -> OpenCV 相机系
-    Eigen::Matrix3d P;
-    P << 0, -1,  0,
-         0,  0, -1,
-         1,  0,  0;
-
-    // vertice_cv = P * vertice_world
-    std::vector<cv::Point3f> vertice_cv;
-    for (const auto& pt : this->vertice_world) 
-    {
-        // 1. 取出你定义的 FLU 坐标点
-        Eigen::Vector3d pt_flu(pt.x, pt.y, pt.z);
-        
-        // 2. 【核心】施加线性变换：P_cv = P * P_flu
-        Eigen::Vector3d pt_cv = P * pt_flu;
-        
-        // 3. 存入交给 OpenCV 的点集中
-        vertice_cv.push_back(cv::Point3f(pt_cv(0), pt_cv(1), pt_cv(2)));
-    }
+	// vertice_cv = P * vertice_world
+    std::vector<cv::Point3f> vertice_cv = rm_utils::fluVerticesToCv(this->vertice_world);
 
 
     /*
@@ -250,58 +190,10 @@ void ArmorPlate::perspectiveNPoint()
 
     // --------------------- 如果解算成功 ---------------------
 
-    // 对于平移向量t，提取出 X Y Z。
-    // 一定注意！！这里的 [R|t] 都是 opencv默认的相机坐标系下的坐标（x朝右，y朝下，z朝前）需要全部转换才能用！！
-    /*
-                         ^ z
-                        /
-                       /
-                      /
-     【镜头中心] 一>   O---------> x
-                     |
-                     |
-                     |
-                     |
-                     v y
-
-        opencv 默 认 相 机 坐 标 系    
-    */
-
-    /// >>>>>>>>>>>>>>>>>>>>> t -> t_vec <<<<<<<<<<<<<<<<<<<<
-
-    // 先获取在 opencv 默认相机系下的坐标
-    // 提取平移向量 t_cv
-    Eigen::Vector3d t_cv(this->t.at<double>(0, 0), 
-                         this->t.at<double>(1, 0), 
-                         this->t.at<double>(2, 0));
-
-
-    /// >>>>>>>>>>>>>>>>>>>>> r -> R <<<<<<<<<<<<<<<<<<<<
-    
-    // 罗德里格斯变换，把 旋转向量 r -> 旋转矩阵 R_origin
-    cv::Mat R_origin;
-    cv::Rodrigues(this->r, R_origin);
-
-    // 将 cv::Mat 转换为 Eigen::Matrix3d
-    Eigen::Matrix3d A;
-    for (int i = 0; i < 3; i++)
-    {
-        for (int j = 0; j < 3; j++)
-        {
-            A(i, j) = R_origin.at<double>(i, j);
-        }
-            
-    }
-        
-    // 构造右手系坐标下的 平移向量 t_vec
-    // 用 p逆 也就是 p的转置
-    this->t_vec = P.transpose() * t_cv; 
-
-
-    // 计算新的旋转矩阵并存储到 this->R
-    // 注意：这里是 R_transform * R_origin_eigen，左乘
-    // 【旋转矩阵转换】：使用相似变换 P_inv * A * P 完美还原模型
-    this->R = P.transpose() * A * P;
+    // 将 OpenCV 坐标系结果转换回 FLU 右手系
+    auto flu_result = rm_utils::pnpCvToFLU(this->r, this->t);
+    this->t_vec = flu_result.t_vec;
+    this->R = flu_result.R;
 
     double X = this->t_vec(0);
     double Y = this->t_vec(1);
@@ -310,15 +202,10 @@ void ArmorPlate::perspectiveNPoint()
     // ------ 下面信息是给人验证的，因为 yaw pitch 是 t_vec 向量计算出来的，相对于相机坐标系右手系的偏差角 ------
 
 
-    this->t_distance = std::sqrt(X * X + Y * Y + Z * Z); // 求距离
-
-
-    // atan2(y, x) 的符号只由 y 决定，与 x 无关。
-    // pitch + 表示目标在相机下方。当△z为-时，结果为-。装甲板在下方，需要pitch为+，所以要取负号
-    // yaw + 表示目标在相机左侧。因为当△y为-时，结果为-。装甲板在右方，需要yaw为-，没问题
-    
-    this->t_pitch = -std::atan2(Z, std::sqrt(X * X + Y * Y)) * 180.0 / CV_PI;
-    this->t_yaw = std::atan2(Y, X) * 180.0 / CV_PI;
+    auto spherical = rm_utils::cartesianToSpherical(X, Y, Z);
+    this->t_distance = spherical.distance;
+    this->t_pitch = spherical.pitch;
+    this->t_yaw = spherical.yaw;
     
 
 }
@@ -331,38 +218,12 @@ void ArmorPlate::perspectiveNPoint()
 double ArmorPlate::CalculateReprojectionError(double test_euler_yaw)
 {
     // 1. FLU -> OpenCV 基变换
-    Eigen::Matrix3d P_flu2cv;
-    P_flu2cv << 0, -1,  0,
-                0,  0, -1,
-                1,  0,  0;
-
-    std::vector<cv::Point3f> vertice_cv;
-    for (const auto& pt : this->vertice_world) 
-    {
-        Eigen::Vector3d pt_flu(pt.x, pt.y, pt.z);
-        Eigen::Vector3d pt_cv = P_flu2cv * pt_flu;
-        vertice_cv.push_back(cv::Point3f(pt_cv(0), pt_cv(1), pt_cv(2)));
-    }
+    std::vector<cv::Point3f> vertice_cv = rm_utils::fluVerticesToCv(this->vertice_world);
 
     // 2. 构造测试姿态的旋转矩阵 R_cv
-    // 【修正】：在你的 FLU 右手系下，顶部向车内前倾 15 度，是绕 Y 轴的 正向 旋转！
-    double fixed_pitch = +15.0 * CV_PI / 180.0; 
-    
-    Eigen::AngleAxisd yawAngle(test_euler_yaw, Eigen::Vector3d::UnitZ());
-    Eigen::AngleAxisd pitchAngle(fixed_pitch, Eigen::Vector3d::UnitY());
-    Eigen::AngleAxisd rollAngle(0.0, Eigen::Vector3d::UnitX());
-    
-    // FLU 系下的测试姿态
-    Eigen::Matrix3d R_flu_test = (yawAngle * pitchAngle * rollAngle).toRotationMatrix();
-    Eigen::Matrix3d R_cv_eigen = P_flu2cv * R_flu_test * P_flu2cv.transpose();
-
-    cv::Mat R_cv(3, 3, CV_64F);
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
-            R_cv.at<double>(i, j) = R_cv_eigen(i, j);
-
-    cv::Mat rvec_test;
-    cv::Rodrigues(R_cv, rvec_test);
+    // 构造测试姿态的旋转矩阵并转换为 OpenCV rvec
+    Eigen::Matrix3d R_flu_test = rm_utils::buildRotationFLU(test_euler_yaw, rm_constants::FIXED_ARMOR_PITCH_RAD);
+    cv::Mat rvec_test = rm_utils::fluRotationToCvRvec(R_flu_test);
 
     // 3. 将 3D 模型点重投影到 2D
     std::vector<cv::Point2f> projected_points;
@@ -450,26 +311,7 @@ void ArmorPlate::OptimizeEulerYaw(cv::Mat& img_show, int index)
     // ==========================================================
     // 6. 终极替换：用最优 Yaw 重新生成旋转矩阵，覆盖 PnP 的垃圾矩阵！
     // ==========================================================
-    double fixed_pitch = +15.0 * CV_PI / 180.0; 
-    Eigen::AngleAxisd yawAngle(best_euler_yaw, Eigen::Vector3d::UnitZ());
-    Eigen::AngleAxisd pitchAngle(fixed_pitch, Eigen::Vector3d::UnitY());
-    Eigen::AngleAxisd rollAngle(0.0, Eigen::Vector3d::UnitX());
-    
-    // 覆盖 Eigen 的旋转矩阵 (FLU 坐标系)
-    this->R = (yawAngle * pitchAngle * rollAngle).toRotationMatrix(); 
-
-    // 同步覆盖 OpenCV 的旋转向量 (为了画重投影框用)
-    Eigen::Matrix3d P;
-    P << 0, -1, 0, 
-         0,  0, -1, 
-         1,  0, 0;
-    Eigen::Matrix3d R_cv_eigen = P * this->R * P.transpose();
-    
-    cv::Mat R_cv(3, 3, CV_64F);
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
-            R_cv.at<double>(i, j) = R_cv_eigen(i, j);
-            
-    cv::Rodrigues(R_cv, this->r); 
+    this->R = rm_utils::buildRotationFLU(best_euler_yaw, rm_constants::FIXED_ARMOR_PITCH_RAD);
+    this->r = rm_utils::fluRotationToCvRvec(this->R);
 }
 
