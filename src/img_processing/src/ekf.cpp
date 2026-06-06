@@ -1,4 +1,6 @@
 #include <ekf.hpp>
+#include "rm_constants.hpp"
+#include "rm_utils.hpp"
 
 
 // ============================== 构造与重置初始化 ==============================
@@ -62,16 +64,8 @@ void EKF::UpdateParamsFromServer()
 // todo: 可以进一步扩展为直接从参数服务器读取装甲板尺寸，支持更多种类的装甲板
 void EKF::SetArmorplateSize(std::string ARMOR_TYPE)
 {
-    if(ARMOR_TYPE == "normal") 
-    {
-        this->width_  = 0.135;
-        this->height_ = 0.055;
-    }
-    else 
-    {
-        this->width_  = 0.225;
-        this->height_ = 0.055;
-    }
+    this->width_  = rm_constants::getArmorWidth(ARMOR_TYPE);
+    this->height_ = rm_constants::ARMOR_HEIGHT;
 }
 
 
@@ -298,12 +292,9 @@ void EKF::GetArmorplateFourCorners(std::vector<Eigen::Vector3d>& corners, int ar
 
     // 装甲板绝对姿态与仰角补偿 (装甲板前倾 15 度)
     double armor_yaw = yaw + theta_offset;
-    double armor_pitch = 15.0 * M_PI / 180.0; 
 
     // 构建装甲板在世界坐标系下的绝对旋转矩阵 R (先 Pitch 后 Yaw)
-    Eigen::AngleAxisd yawAngle(armor_yaw, Eigen::Vector3d::UnitZ());
-    Eigen::AngleAxisd pitchAngle(armor_pitch, Eigen::Vector3d::UnitY());
-    Eigen::Matrix3d R_armor = (yawAngle * pitchAngle).toRotationMatrix();
+    Eigen::Matrix3d R_armor = rm_utils::buildRotationFLU(armor_yaw, rm_constants::FIXED_ARMOR_PITCH_RAD);
 
     // 定义装甲板在装甲板坐标系的四角点坐标 
     // 严格按照 armorplate.cpp 的定义顺序：左上、左下、右下、右上
@@ -576,7 +567,7 @@ void EKF::UpdateFatherToCarCenter()
 // 角度归一化函数，确保角度在 -pi 到 pi 之间，防止跨界跳变
 void EKF::NormalizeAngle(double& angle)
 {
-    angle = std::atan2(std::sin(angle), std::cos(angle));
+    rm_utils::normalizeAngleRef(angle);
 }
 
 

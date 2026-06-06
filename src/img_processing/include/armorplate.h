@@ -1,5 +1,7 @@
 #pragma once
 #include "strip.h"
+#include "rm_constants.hpp"
+#include "rm_utils.hpp"
 
 
 //装甲板类

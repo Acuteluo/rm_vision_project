@@ -1,16 +1,11 @@
 #include "yolo_armor.hpp"
+#include "rm_constants.hpp"
+#include "rm_utils.hpp"
 
 
 YoloArmor::YoloArmor() 
 {
-    // 初始化转换矩阵 P (FLU -> OpenCV，也就是在 OpenCV 坐标系下，FLU 三个轴基向量 分别的坐标)
-    /*
-        FLU: x前, y左, z上
-        OpenCV: x右(-y), y下(-z), z前(x)
-    */
-    P_ << 0, -1,  0,
-          0,  0, -1,
-          1,  0,  0;
+    P_ = rm_constants::P_FLU_TO_CV();
 }
 
 
@@ -30,10 +25,7 @@ YoloArmor::YoloArmor(int armor_id, int color, bool is_big, float confidence,
       K_(K),        
       D_(D)
 {
-    // 初始化转换矩阵 P (FLU -> OpenCV，也就是在 OpenCV 坐标系下，FLU 三个轴基向量 分别的坐标)
-    P_ << 0, -1,  0,
-          0,  0, -1,
-          1,  0,  0;
+    P_ = rm_constants::P_FLU_TO_CV();
 }
 
 
@@ -42,24 +34,12 @@ void YoloArmor::SetArmorplateSize()
     vertice_world_.clear();
     vertice_cv_.clear();
     
-    // 1. 根据 YOLO 的判断动态获取真实物理尺寸
-    double armorplate_width = is_big_ ? 0.225 : 0.135;
-    double armorplate_height = 0.055;
+    // 根据 YOLO 的判断动态获取真实物理尺寸并构建装甲板角点
+    double armorplate_width = rm_constants::getArmorWidth(is_big_);
+    double armorplate_height = rm_constants::ARMOR_HEIGHT;
 
-    // 2. 严格按你旧代码的 FLU 坐标系定义装甲板四个角 (左上, 左下, 右下, 右上)
-    // 注意是站在【有数字那一面】向车心看！x=0
-    vertice_world_.push_back(cv::Point3f(0.00, +armorplate_width/2, +armorplate_height/2)); // 左上
-    vertice_world_.push_back(cv::Point3f(0.00, +armorplate_width/2, -armorplate_height/2)); // 左下
-    vertice_world_.push_back(cv::Point3f(0.00, -armorplate_width/2, -armorplate_height/2)); // 右下
-    vertice_world_.push_back(cv::Point3f(0.00, -armorplate_width/2, +armorplate_height/2)); // 右上
-
-    // 3. 将 FLU 系的点，乘上 P 矩阵，转换到 OpenCV 系下供 PnP 使用
-    for (const auto& pt : vertice_world_) 
-    {
-        Eigen::Vector3d pt_flu(pt.x, pt.y, pt.z);
-        Eigen::Vector3d pt_cv = P_ * pt_flu; // P_cv = P * P_flu
-        vertice_cv_.push_back(cv::Point3f(pt_cv(0), pt_cv(1), pt_cv(2)));
-    }
+    vertice_world_ = rm_utils::buildArmorVerticesFLU(armorplate_width, armorplate_height);
+    vertice_cv_ = rm_utils::fluVerticesToCv(vertice_world_);
 }
 
 
@@ -84,17 +64,9 @@ void YoloArmor::PNP()
     // ==========================================================
     // 2. 核心魔法：将 OpenCV 坐标系还原回 FLU 右手系！
     // ==========================================================
-    
-    // (A) 处理平移向量 t
-    Eigen::Vector3d t_cv_eigen(t_cv_.at<double>(0, 0), t_cv_.at<double>(1, 0), t_cv_.at<double>(2, 0));
-    t_vec_ = P_.transpose() * t_cv_eigen; // t_flu = P^(-1) * t_cv
-
-    // (B) 处理旋转矩阵 R
-    cv::Mat R_cv_mat;
-    cv::Rodrigues(r_cv_, R_cv_mat); // 先把 OpenCV系 下的 旋转向量 r_cv 转成 旋转矩阵 R_cv_mat
-    Eigen::Matrix3d R_cv_eigen;
-    cv::cv2eigen(R_cv_mat, R_cv_eigen);
-    R_ = P_.transpose() * R_cv_eigen * P_; // R_flu = P^(-1) * R_cv * P
+    auto flu_result = rm_utils::pnpCvToFLU(r_cv_, t_cv_);
+    t_vec_ = flu_result.t_vec;
+    R_ = flu_result.R;
 
     // ==========================================================
     // 3. 供人类调试和下位机使用的极坐标 (Yaw, Pitch, Distance)
@@ -107,9 +79,10 @@ void YoloArmor::PNP()
     double Y = t_vec_(1); // 向左
     double Z = t_vec_(2); // 向上
 
-    t_distance_ = std::sqrt(X * X + Y * Y + Z * Z);
-    obs_pitch_angle_ = -std::atan2(Z, std::sqrt(X * X + Y * Y)) * 180.0 / CV_PI;
-    obs_yaw_angle_ = std::atan2(Y, X) * 180.0 / CV_PI;
+    auto spherical = rm_utils::cartesianToSpherical(X, Y, Z);
+    t_distance_ = spherical.distance;
+    obs_pitch_angle_ = spherical.pitch;
+    obs_yaw_angle_ = spherical.yaw;
     
 }
 
@@ -187,23 +160,8 @@ void YoloArmor::OptimizeEulerYaw()
     // ==========================================================
     // 6. 终极替换：用最优 Yaw 重新生成旋转矩阵，覆盖 PnP 的垃圾矩阵！
     // ==========================================================
-    double fixed_pitch = +15.0 * CV_PI / 180.0; 
-    Eigen::AngleAxisd yawAngle(best_euler_yaw, Eigen::Vector3d::UnitZ());
-    Eigen::AngleAxisd pitchAngle(fixed_pitch, Eigen::Vector3d::UnitY());
-    Eigen::AngleAxisd rollAngle(0.0, Eigen::Vector3d::UnitX());
-    
-    // 覆盖 Eigen 的旋转矩阵 (FLU 坐标系)
-    R_ = (yawAngle * pitchAngle * rollAngle).toRotationMatrix(); 
-
-    // 同步覆盖 OpenCV 的旋转向量 (为了画重投影框用)
-    Eigen::Matrix3d R_cv_eigen = P_ * R_ * P_.transpose();
-    
-    cv::Mat R_cv_mat(3, 3, CV_64F);
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
-            R_cv_mat.at<double>(i, j) = R_cv_eigen(i, j);
-            
-    cv::Rodrigues(R_cv_mat, r_cv_); 
+    R_ = rm_utils::buildRotationFLU(best_euler_yaw, rm_constants::FIXED_ARMOR_PITCH_RAD);
+    r_cv_ = rm_utils::fluRotationToCvRvec(R_);
 }
 
 
@@ -211,25 +169,9 @@ void YoloArmor::OptimizeEulerYaw()
 // 计算给定的 欧拉角yaw（弧度） 和 pitch=+15°、roll=0°时，在图上的重投影误差
 double YoloArmor::CalculateReprojectionError(double test_euler_yaw)
 {
-    // 2. 构造临时的测试姿态旋转矩阵 R_cv_test
-
-    double fixed_pitch = +15.0 * CV_PI / 180.0; 
-    
-    Eigen::AngleAxisd yawAngle(test_euler_yaw, Eigen::Vector3d::UnitZ());
-    Eigen::AngleAxisd pitchAngle(fixed_pitch, Eigen::Vector3d::UnitY());
-    Eigen::AngleAxisd rollAngle(0.0, Eigen::Vector3d::UnitX());
-    
-    // FLU 系下的测试姿态
-    Eigen::Matrix3d R_flu_test = (yawAngle * pitchAngle * rollAngle).toRotationMatrix();
-    Eigen::Matrix3d R_cv_eigen = P_ * R_flu_test * P_.transpose();
-
-    cv::Mat R_cv_test(3, 3, CV_64F);
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
-            R_cv_test.at<double>(i, j) = R_cv_eigen(i, j);
-
-    cv::Mat rvec_test;
-    cv::Rodrigues(R_cv_test, rvec_test);
+    // 2. 构造测试姿态的旋转矩阵并转换为 OpenCV rvec
+    Eigen::Matrix3d R_flu_test = rm_utils::buildRotationFLU(test_euler_yaw, rm_constants::FIXED_ARMOR_PITCH_RAD);
+    cv::Mat rvec_test = rm_utils::fluRotationToCvRvec(R_flu_test);
 
     // 3. 将 3D 模型点重投影到 2D
     std::vector<cv::Point2f> projected_points;

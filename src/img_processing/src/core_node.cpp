@@ -3,6 +3,8 @@
 // 我的 yaw 是你的 roll
 
 #include "core_node.hpp"
+#include "rm_constants.hpp"
+#include "rm_utils.hpp"
 
 
 // ============================== 构造与析构 ==============================
@@ -133,33 +135,10 @@ void CoreNode::InitParams()
 
     // 设置相机内参：相机内参K，畸变系数D
     // todo: 之后可以改成从相机配置文件 yaml 获取
-    if (is_video_mode_) // 如果是本地视频模式，默认使用大恒相机的内参
-    {
-        K_ = (cv::Mat_<double>(3, 3) << 1359.21385,    0.     ,  635.62767,
-                                                0.     , 1361.75423,  478.48483,
-                                                0.     ,    0.     ,    1.     );
-
-        D_ = (cv::Mat_<double>(5, 1) << -0.081521, 0.153947, -0.006919, -0.003306, 0.000000);
-    }
-    else // 如果不是本地视频模式，根据 camera_name_ 选择相机内参
-    {
-        if (camera_name_  == "mind_vision") // mind_vision
-        {
-            K_ = (cv::Mat_<double>(3, 3) << 1359.21385,    0.     ,  635.62767,
-                                                0.     , 1361.75423,  478.48483,
-                                                0.     ,    0.     ,    1.     );
-
-            D_ = (cv::Mat_<double>(5, 1) << -0.081521, 0.153947, -0.006919, -0.003306, 0.000000);
-        }
-
-        else // galaxy
-        {
-            K_ = (cv::Mat_<double>(3, 3) << 1305.07013,    0.     ,  666.71169,
-                                                0.     , 1307.67428,  495.17044,
-                                                0.     ,    0.     ,    1.     );
-
-            D_ = (cv::Mat_<double>(5, 1) << -0.209067, 0.129977, -0.002895, -0.000558, 0.000000);
-        }
+    if (is_video_mode_) {
+        rm_constants::getCameraIntrinsics("mind_vision", K_, D_);
+    } else {
+        rm_constants::getCameraIntrinsics(camera_name_, K_, D_);
     }
 
     // 注册参数变化回调（用于运行时动态修改）
@@ -422,8 +401,9 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     if (armorplate_center_predict[0] != -999 && armorplate_center_predict[1] != -999 && armorplate_center_predict[2] != -999)
     {
         // 算出云台需要瞄准的目标 Pitch 和 Yaw
-        pitch_result = -std::atan2(armorplate_center_predict[2], std::sqrt(armorplate_center_predict[0] * armorplate_center_predict[0] + armorplate_center_predict[1] * armorplate_center_predict[1])) * 180.0 / M_PI;   
-        yaw_result = std::atan2(armorplate_center_predict[1], armorplate_center_predict[0]) * 180.0 / M_PI;
+        auto sc = rm_utils::cartesianToSpherical(armorplate_center_predict);
+        pitch_result = sc.pitch;
+        yaw_result = sc.yaw;
         RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "armorplate_center_predict: [%.3f, %.3f, %.3f]", armorplate_center_predict[0], armorplate_center_predict[1], armorplate_center_predict[2]);
     }
 
@@ -573,24 +553,27 @@ void CoreNode::UpdatePlotter(Eigen::Vector3d armorplate_center_now, Eigen::Vecto
     // 计算最终角（实时）
     if (armorplate_center_now[0] != -999 && armorplate_center_now[1] != -999 && armorplate_center_now[2] != -999)
     {
-        pitch_now = -std::atan2(armorplate_center_now[2], std::sqrt(armorplate_center_now[0] * armorplate_center_now[0] + armorplate_center_now[1] * armorplate_center_now[1])) * 180.0 / M_PI;   
-        yaw_now = std::atan2(armorplate_center_now[1], armorplate_center_now[0]) * 180.0 / M_PI;
+        auto sc = rm_utils::cartesianToSpherical(armorplate_center_now);
+        pitch_now = sc.pitch;
+        yaw_now = sc.yaw;
     }
     
 
     // 计算最终角（实时滤波）
     if (armorplate_center_filter[0] != -999 && armorplate_center_filter[1] != -999 && armorplate_center_filter[2] != -999)
     {
-        pitch_filter = -std::atan2(armorplate_center_filter[2], std::sqrt(armorplate_center_filter[0] * armorplate_center_filter[0] + armorplate_center_filter[1] * armorplate_center_filter[1])) * 180.0 / M_PI;   
-        yaw_filter = std::atan2(armorplate_center_filter[1], armorplate_center_filter[0]) * 180.0 / M_PI;
+        auto sc = rm_utils::cartesianToSpherical(armorplate_center_filter);
+        pitch_filter = sc.pitch;
+        yaw_filter = sc.yaw;
     }
 
 
     // 计算最终角（预测）（滤波器没初始好就用原始值，连续检测多就用预测值，丢帧但滤波器稳定就用外推值）
     if (armorplate_center_predict[0] != -999 && armorplate_center_predict[1] != -999 && armorplate_center_predict[2] != -999)
     {
-        pitch_result = -std::atan2(armorplate_center_predict[2], std::sqrt(armorplate_center_predict[0] * armorplate_center_predict[0] + armorplate_center_predict[1] * armorplate_center_predict[1])) * 180.0 / M_PI;   
-        yaw_result = std::atan2(armorplate_center_predict[1], armorplate_center_predict[0]) * 180.0 / M_PI;
+        auto sc = rm_utils::cartesianToSpherical(armorplate_center_predict);
+        pitch_result = sc.pitch;
+        yaw_result = sc.yaw;
     }
 
 
