@@ -46,7 +46,11 @@ struct SendPacket
 inline ReceivePacket fromVector(const std::vector<uint8_t> & data)
 {
   ReceivePacket packet;
-  std::copy(data.begin(), data.end(), reinterpret_cast<uint8_t *>(&packet));
+  if (data.size() < sizeof(ReceivePacket)) {
+    return packet;
+  }
+  std::copy(data.begin(), data.begin() + sizeof(ReceivePacket),
+            reinterpret_cast<uint8_t *>(&packet));
   return packet;
 }
 

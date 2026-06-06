@@ -23,7 +23,8 @@ CoreNode::CoreNode(): Node("core_node_cpp")
     InitROS2();
 
     // 4. 初始化 yolo 模型
-    std::string yolo_model_path = "/home/cly/project/src/img_processing/model/0526.onnx"; 
+    this->declare_parameter("core.yolo.model_path", "model/0526.onnx");
+    std::string yolo_model_path = this->get_parameter("core.yolo.model_path").as_string();
     yolo_detector_ = std::make_unique<YoloDetector>(yolo_model_path);
 
     RCLCPP_INFO_ONCE(this->get_logger(), "CoreNode 节点创建成功! ");
@@ -62,7 +63,7 @@ void CoreNode::InitParams()
 
     // EKF相关（传递给ekf）
     this->declare_parameter("ekf.predict_time", 0.1); // 预测时间（记得改！）0.2? 0.225? 其实未来还要根据速度来确定
-    this->declare_parameter("ekf.show_logger_debug", true); // ekf 调试
+    this->declare_parameter("ekf.show_logger_debug", false); // ekf 调试（生产环境下默认关闭）
 
     // 注意 q_z 作为 z轴的平移加速度方差，其它参数弃用
     this->declare_parameter("ekf.q_x", 0.02);
@@ -99,7 +100,7 @@ void CoreNode::InitParams()
     // 新增：模式选择与视频路径参数
     this->declare_parameter("core.mode.is_standalone_mode", true); // 单机 / 联调模式
     this->declare_parameter("core.mode.is_video_mode", true); // 是否为读取 本地视频模式
-    this->declare_parameter("core.mode.video_path", "/home/cly/下载/rm_test_videos/20260501_160636__camera_0_rgb_output.mp4"); // 默认的本地视频绝对路径
+    this->declare_parameter("core.mode.video_path", ""); // 视频的绝对路径，通过 launch 文件传入
 
 
 
@@ -245,7 +246,8 @@ void CoreNode::VideoReading()
         if (frame.empty()) 
         {
             RCLCPP_WARN(this->get_logger(), "视频播放结束...");
-            exit(0);
+            rclcpp::shutdown();
+            return;
         }
         
         // 视频本身自带的图像时间戳 (ms)

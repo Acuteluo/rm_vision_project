@@ -1,3 +1,14 @@
 build/
 install/
 log/
+
+# IDE / editor settings (contain machine-specific paths)
+.vscode/
+
+# Camera SDK logs and calibration data
+Camera/log/
+Camera/Data/
+
+# Runtime logs
+capture.log
+my_logger/

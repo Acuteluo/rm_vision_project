@@ -15,13 +15,16 @@ class YoloInferNode(Node):
         super().__init__('yolo_infer_node')
         self.bridge = CvBridge()
 
-        self.video_path = '/home/cly/下载/rm_test_videos/20260501_160945__camera_0_output.mp4'
-        if not os.path.exists(self.video_path):
+        self.declare_parameter('video_path', '')
+        self.video_path = self.get_parameter('video_path').get_parameter_value().string_value
+        if not self.video_path or not os.path.exists(self.video_path):
             self.get_logger().error(f'Video file not found: {self.video_path}')
             raise FileNotFoundError(self.video_path)
 
+        self.declare_parameter('model_path', 'model/0526.xml')
+        model_path = self.get_parameter('model_path').get_parameter_value().string_value
         core = ov.Core()
-        model = core.read_model('/home/cly/project/src/img_processing/model/0526.xml')
+        model = core.read_model(model_path)
         self.compiled_model = core.compile_model(model, "GPU")
         self.infer_request = self.compiled_model.create_infer_request()
         self.get_logger().info('YOLO model loaded, warming up...')
