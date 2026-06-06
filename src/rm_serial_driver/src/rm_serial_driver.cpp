@@ -37,9 +37,18 @@ void signal_handler(int sig)
 {
     void *array[20];
     size_t size = backtrace(array, 20);
-    fprintf(stderr, "Error: signal %d:\n", sig);
+    const char msg_prefix[] = "Error: signal ";
+    const char msg_suffix[] = "\n";
+    write(STDERR_FILENO, msg_prefix, sizeof(msg_prefix) - 1);
+    // write signal number (single/double digit)
+    char sig_buf[16];
+    int len = 0;
+    if (sig >= 10) sig_buf[len++] = '0' + (sig / 10);
+    sig_buf[len++] = '0' + (sig % 10);
+    write(STDERR_FILENO, sig_buf, len);
+    write(STDERR_FILENO, msg_suffix, sizeof(msg_suffix) - 1);
     backtrace_symbols_fd(array, size, STDERR_FILENO);
-    exit(1);
+    _exit(1);
 }
 
 
