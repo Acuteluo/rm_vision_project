@@ -49,8 +49,8 @@ public:
     // 执行 PnP 解算，并完成逆向基变换 (OpenCV -> FLU)，自动调用 OptimizeEulerYaw()
     void PNP();
 
-    // 在图像上画框并打印信息
-    void DrawAndPrintInfo(cv::Mat& img_show);
+    // 在图像上画框并打印信息，模式 "simple" / "complex" 仅输出框 / 打印所有信息
+    void DrawAndPrintInfo(cv::Mat& img_show, std::string mode_select);
 
     // 打印调试日志
     void PrintDebugLog(bool is_debug);

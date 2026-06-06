@@ -15,6 +15,7 @@
 #include "tf.hpp"
 #include "ekf.hpp"
 #include "plotter.hpp"
+#include "runge_kutta.hpp"
 #include "serial_driver_interfaces/msg/serial_driver.hpp"
 
 #include "yolo_detector.hpp" // yolo 检测器类
@@ -158,6 +159,10 @@ private:
     // 这样当相机第一次看到目标时，EKF 就会把该目标认作 0 号板 (车头)。
     // 从而自动建立 "初始视线 = 整车 0 度角" 的相对坐标系！
     int tracking_id_ = 0;           // 当前正在追踪的装甲板 ID
+
+    // ============ 弹道模型 ============
+
+    std::unique_ptr<RungeKutta> ballistic_solver_;
 
     // ============ 配置参数 (Config) 从参数服务器获取，可修改 ============
 

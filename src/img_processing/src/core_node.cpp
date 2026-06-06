@@ -18,6 +18,7 @@ CoreNode::CoreNode(): Node("core_node_cpp")
     ekf_ = std::make_unique<EKF>(this); 
     ekf_->UpdateParamsFromServer(); // 设置一大堆参数
     ekf_->SetArmorNum(armor_num_); // 设置装甲板数量
+    ballistic_solver_ = std::make_unique<RungeKutta>();
 
     // 3. 初始化 ROS 通信与多线程
     InitROS2();
@@ -51,7 +52,7 @@ void CoreNode::InitParams()
 
 
     // core 节点
-    this->declare_parameter("core.logger.show_logger_time", true); // 是否打印时间相关日志
+    this->declare_parameter("core.logger.show_logger_time", false); // 是否打印时间相关日志
     this->declare_parameter("core.logger.show_logger_else", false); // 是否打印corenode其他的相关日志
     this->declare_parameter("core.image.show_img", true); // 是否显示图片
     
@@ -324,7 +325,6 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     // ====================================================================
     // 2. 目标筛选与 PnP 解算
     // ====================================================================
-    int index = 0;
     for (const auto& obj : detected_armors) 
     {
         // 构造新装甲板对象
@@ -338,7 +338,7 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
 
         if (armor.pnp_success_) 
         {
-            armor.DrawAndPrintInfo(img_show_);
+            armor.DrawAndPrintInfo(img_show_, "simple"); // "simple" / "complex"
             yolo_armors_.push_back(armor);
         }
     }
@@ -421,8 +421,8 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     // ====================================================================
     // 只有在预测出有效坐标时才进行解算
 
-    double pitch_result = -999;
-    double yaw_result = -999;
+    double pitch_result = -999, pitch_result_revised = -999;
+    double yaw_result = -999, yaw_result_revised = -999;;
 
     if (armorplate_center_predict[0] != -999 && armorplate_center_predict[1] != -999 && armorplate_center_predict[2] != -999)
     {
@@ -430,13 +430,27 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
         pitch_result = -std::atan2(armorplate_center_predict[2], std::sqrt(armorplate_center_predict[0] * armorplate_center_predict[0] + armorplate_center_predict[1] * armorplate_center_predict[1])) * 180.0 / M_PI;   
         yaw_result = std::atan2(armorplate_center_predict[1], armorplate_center_predict[0]) * 180.0 / M_PI;
         RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "armorplate_center_predict: [%.3f, %.3f, %.3f]", armorplate_center_predict[0], armorplate_center_predict[1], armorplate_center_predict[2]);
+    
+        // 进行弹道解算得到实际角度
+        std::pair<double, double> result = ballistic_solver_->SolveAim(armorplate_center_predict[0], armorplate_center_predict[1], -armorplate_center_predict[2]);
+        pitch_result_revised = result.first * 180.0 / M_PI;
+        yaw_result_revised   = result.second * 180.0 / M_PI;
+
+        // 有可能失败，暂时使用直线瞄准
+        if (std::isnan(result.first) || std::isnan(result.second)) 
+        {
+            // 回退到直线瞄准
+            pitch_result_revised = pitch_result;
+            yaw_result_revised   = yaw_result;
+        }
     }
 
     auto send_msg = serial_driver_interfaces::msg::SerialDriver();
-    send_msg.pitch = pitch_result;
-    send_msg.yaw = yaw_result;
+    send_msg.pitch = pitch_result_revised;
+    send_msg.yaw = yaw_result_revised;
     serial_pub_->publish(send_msg);
-    RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "已发送目标角度给串口: pitch = %.2f, yaw = %.2f", pitch_result, yaw_result);
+    RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "原计算视场角: pitch = %.2f, yaw = %.2f", pitch_result, yaw_result);
+    RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "发送给串口修正角: pitch = %.2f, yaw = %.2f", pitch_result_revised, yaw_result_revised);
 
 
     // t4 = 完成 状态机流转执行、计算和发送数据 的时间戳
@@ -727,7 +741,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
 
         // 3. EKF 序贯匹配与后验更新，循环将本帧有效装甲板依次送入 EKF
 
-        for (int i = 0; i < yolo_armors_.size(); i++)
+        for (size_t i = 0; i < yolo_armors_.size(); i++)
         {
             // 临时变量，用于 接收 当前该装甲板的 TF 变换的结果（原始数据）
             Eigen::Vector3d current_center_now(-999, -999, -999);
@@ -791,7 +805,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
                 continue;
             }
 
-            RCLCPP_INFO(this->get_logger(), "【识别器】当前 识别 的第 %d / %d 块装甲板, 对应 ID = %d", i + 1, yolo_armors_.size(), current_id);
+            RCLCPP_INFO(this->get_logger(), "【识别器】当前 识别 的第 %d / %zu 块装甲板, 对应 ID = %d", i + 1, yolo_armors_.size(), current_id);
 
             // 无论是 DETECTING 还是 TRACKING，只要有数据就必须给 EKF。
             std::string size = yolo_armors_[i].is_big_ ? "hero" : "normal";

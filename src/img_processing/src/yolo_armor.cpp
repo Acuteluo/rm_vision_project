@@ -223,8 +223,8 @@ double YoloArmor::CalculateReprojectionError(double test_euler_yaw)
 
 
 
-
-void YoloArmor::DrawAndPrintInfo(cv::Mat& img_show)
+// 在图像上画框并打印信息，模式 "simple" / "complex" 仅输出框 / 打印所有信息
+void YoloArmor::DrawAndPrintInfo(cv::Mat& img_show, std::string mode_select)
 {
     // 1. 画框与四个角点
     cv::Scalar edge_color = cv::Scalar(235, 206, 135); 
@@ -239,26 +239,29 @@ void YoloArmor::DrawAndPrintInfo(cv::Mat& img_show)
     cv::Point2f center((corners_[0].x + corners_[2].x)/2, (corners_[0].y + corners_[2].y)/2);
     cv::circle(img_show, center, 3, cv::Scalar(0, 0, 255), cv::FILLED);
 
-    // 3. 打印 PnP 的信息 (距离、Pitch、Yaw) 在角点旁边
-    std::string info_conf = "Conf: " + std::to_string(confidence_).substr(0, 5);
-    std::string info_dist = "Dist: " + std::to_string(t_distance_).substr(0, 4) + "m";
-    std::string info_obs_pitch = "o_Pitch: " + std::to_string(obs_pitch_angle_).substr(0, 5);
-    std::string info_obs_yaw = "o_Yaw: " + std::to_string(obs_yaw_angle_).substr(0, 5);
+    // complex 模式下打印完整信息
+    if (mode_select == "complex")
+    {
+        // 3. 打印 PnP 的信息 (距离、Pitch、Yaw) 在角点旁边
+        std::string info_conf = "Conf: " + std::to_string(confidence_).substr(0, 5);
+        std::string info_dist = "Dist: " + std::to_string(t_distance_).substr(0, 4) + "m";
+        std::string info_obs_pitch = "o_Pitch: " + std::to_string(obs_pitch_angle_).substr(0, 5);
+        std::string info_obs_yaw = "o_Yaw: " + std::to_string(obs_yaw_angle_).substr(0, 5);
 
-    cv::putText(img_show, info_conf, cv::Point2f(box_.x, box_.y - 75), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
-    cv::putText(img_show, info_dist, cv::Point2f(box_.x, box_.y - 55), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
-    cv::putText(img_show, info_obs_pitch, cv::Point2f(box_.x, box_.y - 35), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 255, 255), 2);
-    cv::putText(img_show, info_obs_yaw, cv::Point2f(box_.x, box_.y - 15), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 255, 255), 2);
-    
-    // 4. 打印装甲板 ID 和 类型 和 优化后的欧拉角
-    std::string type_str = is_big_ ? "BIG" : "SMALL";
-    int color_str = color_;
-    std::string info_euler_yaw = "e_Yaw: " + std::to_string(euler_yaw_angle_).substr(0, 5);
+        cv::putText(img_show, info_conf, cv::Point2f(box_.x, box_.y - 75), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
+        cv::putText(img_show, info_dist, cv::Point2f(box_.x, box_.y - 55), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
+        cv::putText(img_show, info_obs_pitch, cv::Point2f(box_.x, box_.y - 35), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 255, 255), 2);
+        cv::putText(img_show, info_obs_yaw, cv::Point2f(box_.x, box_.y - 15), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 255, 255), 2);
 
-    cv::putText(img_show, "ID:" + std::to_string(armor_id_) + " " + type_str, cv::Point2f(box_.x, box_.y + box_.height + 20), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 255, 255), 2);
-    cv::putText(img_show, "COLOR:" + std::to_string(color_str), cv::Point2f(box_.x, box_.y + box_.height + 40), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 255, 255), 2);
-    cv::putText(img_show, info_euler_yaw, cv::Point2f(box_.x, box_.y + box_.height + 60), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
-    
+        // 4. 打印装甲板 ID 和 类型 和 优化后的欧拉角
+        std::string type_str = is_big_ ? "BIG" : "SMALL";
+        int color_str = color_;
+        std::string info_euler_yaw = "e_Yaw: " + std::to_string(euler_yaw_angle_).substr(0, 5);
+
+        cv::putText(img_show, "ID:" + std::to_string(armor_id_) + " " + type_str, cv::Point2f(box_.x, box_.y + box_.height + 20), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 255, 255), 2);
+        cv::putText(img_show, "COLOR:" + std::to_string(color_str), cv::Point2f(box_.x, box_.y + box_.height + 40), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 255, 255), 2);
+        cv::putText(img_show, info_euler_yaw, cv::Point2f(box_.x, box_.y + box_.height + 60), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
+    }
 }
 
 

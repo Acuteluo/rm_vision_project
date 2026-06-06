@@ -282,6 +282,30 @@ src/plotter.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/plotter.cpp.s
 .PHONY : src/plotter.cpp.s
 
+src/runge_kutta.o: src/runge_kutta.cpp.o
+.PHONY : src/runge_kutta.o
+
+# target to build an object file
+src/runge_kutta.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/runge_kutta.cpp.o
+.PHONY : src/runge_kutta.cpp.o
+
+src/runge_kutta.i: src/runge_kutta.cpp.i
+.PHONY : src/runge_kutta.i
+
+# target to preprocess a source file
+src/runge_kutta.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/runge_kutta.cpp.i
+.PHONY : src/runge_kutta.cpp.i
+
+src/runge_kutta.s: src/runge_kutta.cpp.s
+.PHONY : src/runge_kutta.s
+
+# target to generate assembly for a file
+src/runge_kutta.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core_node.dir/build.make CMakeFiles/core_node.dir/src/runge_kutta.cpp.s
+.PHONY : src/runge_kutta.cpp.s
+
 src/tf.o: src/tf.cpp.o
 .PHONY : src/tf.o
 
@@ -379,6 +403,9 @@ help:
 	@echo "... src/plotter.o"
 	@echo "... src/plotter.i"
 	@echo "... src/plotter.s"
+	@echo "... src/runge_kutta.o"
+	@echo "... src/runge_kutta.i"
+	@echo "... src/runge_kutta.s"
 	@echo "... src/tf.o"
 	@echo "... src/tf.i"
 	@echo "... src/tf.s"

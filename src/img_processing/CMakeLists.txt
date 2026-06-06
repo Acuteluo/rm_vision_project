@@ -34,6 +34,7 @@ add_executable(core_node
     src/core_node.cpp
     src/tf.cpp
     src/ekf.cpp
+    src/runge_kutta.cpp
     src/plotter.cpp
     src/yolo_detector.cpp  
     src/yolo_armor.cpp     
