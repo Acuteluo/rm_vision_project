@@ -117,13 +117,8 @@ RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options):
         catch (const std::exception & ex) 
         {
             RCLCPP_ERROR(get_logger(), "创建串口时 发生错误: %s - %s", device_name_.c_str(), ex.what());
-
-            RCLCPP_ERROR(get_logger(), "【串口初始化异常】串口设备不存在（/dev/ttyACM0 未连接）或无法打开。。。。。。。。。。");
-            // RCLCPP_ERROR(get_logger(), "即将抛出 ex, 串口节点将退出。。。。。。。。。。。");
-
-            // throw ex; // 如果要仅仅测试sendData函数，请注释掉 throw ex这一行，允许程序继续运行，并在sendData函数中仅仅打开test那一行
-                        // 否则节点会直接退出
-            
+            RCLCPP_ERROR(get_logger(), "【串口初始化异常】串口设备不存在（%s 未连接）或无法打开", device_name_.c_str());
+            throw ex;
         }
 
         RCLCPP_INFO_ONCE(get_logger(), ">>>>>>>>>>>>>>> 串口构造函数已经初始化完成。");
@@ -563,24 +558,27 @@ void RMSerialDriver::getParams()
 void RMSerialDriver::reopenPort()
 {
     RCLCPP_WARN(get_logger(), "Attempting to reopen port");
-    try 
+    constexpr int max_retries = 10;
+    for (int attempt = 0; attempt < max_retries && rclcpp::ok(); ++attempt)
     {
-        if (serial_driver_->port()->is_open()) 
+        try 
         {
-            serial_driver_->port()->close();
-        }
-        serial_driver_->port()->open();
-        RCLCPP_INFO(get_logger(), "Successfully reopened port");
-    } 
-    catch (const std::exception & ex) 
-    {
-        RCLCPP_ERROR(get_logger(), "Error while reopening port: %s", ex.what());
-        if (rclcpp::ok()) 
+            if (serial_driver_->port()->is_open()) 
+            {
+                serial_driver_->port()->close();
+            }
+            serial_driver_->port()->open();
+            RCLCPP_INFO(get_logger(), "Successfully reopened port");
+            return;
+        } 
+        catch (const std::exception & ex) 
         {
+            RCLCPP_ERROR(get_logger(), "Error while reopening port (attempt %d/%d): %s", 
+                         attempt + 1, max_retries, ex.what());
             rclcpp::sleep_for(std::chrono::seconds(1));
-            reopenPort();
         }
     }
+    RCLCPP_FATAL(get_logger(), "Failed to reopen port after %d attempts", max_retries);
 }
 
 

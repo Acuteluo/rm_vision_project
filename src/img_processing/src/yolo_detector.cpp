@@ -1,6 +1,7 @@
 #include "yolo_detector.hpp"
 #include <fstream>
 #include <cmath>
+#include <stdexcept>
 
 inline float sigmoid(float x) {
     return 1.0f / (1.0f + std::exp(-x));
@@ -15,8 +16,8 @@ YoloDetector::YoloDetector(const std::string& model_path)
 
     std::ifstream f(model_path.c_str());
     if (!f.good()) {
-        RCLCPP_ERROR(rclcpp::get_logger("YoloDetector"), "[YOLO] 找不到模型: %s", model_path.c_str());
-        return; 
+        RCLCPP_FATAL(rclcpp::get_logger("YoloDetector"), "[YOLO] 找不到模型: %s", model_path.c_str());
+        throw std::runtime_error("[YOLO] Model file not found: " + model_path);
     }
 
     try 
@@ -40,7 +41,8 @@ YoloDetector::YoloDetector(const std::string& model_path)
     } 
     catch (const cv::Exception& e) 
     {
-        RCLCPP_ERROR(rclcpp::get_logger("YoloDetector"), "[YOLO] DNN 异常: %s", e.what());
+        RCLCPP_FATAL(rclcpp::get_logger("YoloDetector"), "[YOLO] DNN 加载失败: %s", e.what());
+        throw std::runtime_error(std::string("[YOLO] DNN initialization failed: ") + e.what());
     }
 }
 
