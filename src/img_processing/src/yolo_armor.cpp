@@ -108,8 +108,8 @@ void YoloArmor::PNP()
     double Z = t_vec_(2); // 向上
 
     t_distance_ = std::sqrt(X * X + Y * Y + Z * Z);
-    obs_pitch_angle_ = -std::atan2(Z, std::sqrt(X * X + Y * Y)) * 180.0 / CV_PI;
-    obs_yaw_angle_ = std::atan2(Y, X) * 180.0 / CV_PI;
+    obs_pitch_angle_ = tools::rad2deg(-std::atan2(Z, std::sqrt(X * X + Y * Y)));
+    obs_yaw_angle_ = tools::rad2deg(std::atan2(Y, X));
     
 }
 
@@ -122,7 +122,7 @@ double YoloArmor::SearchOptimalEulerYaw(double initial_euler_yaw, double search_
 
     for (double i = -search_range; i <= search_range; i += search_step)
     {
-        double test_yaw_rad = initial_euler_yaw + (i * CV_PI / 180.0);
+        double test_yaw_rad = initial_euler_yaw + tools::deg2rad(i);
 
         double current_error = CalculateReprojectionError(test_yaw_rad);
 
@@ -147,19 +147,20 @@ void YoloArmor::OptimizeEulerYaw()
     // R 已经是 FLU 坐标系下的旋转矩阵了，提取欧拉 Yaw (绕 Z 轴)
     double pnp_euler_yaw = std::atan2(R_(1, 0), R_(0, 0));
 
-    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] PNP 粗略算出的原欧拉角 Yaw: %.2f°", pnp_euler_yaw * 180.0 / CV_PI);
+    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] PNP 粗略算出的原欧拉角 Yaw: %.2f°", tools::rad2deg(pnp_euler_yaw));
 
     // 2. 确定搜索区间：既然 PnP 大体是对的，我们就先在 PnP_Yaw 左右各扩展 70 度进行粗搜，再在 最优解 左右各扩展 1 度进行精搜
 
     double coarse_euler_yaw = SearchOptimalEulerYaw(pnp_euler_yaw, 70.0, 1.0);
     double precise_euler_yaw = SearchOptimalEulerYaw(coarse_euler_yaw, 1.0, 0.1);
 
-    euler_yaw_angle_ = precise_euler_yaw * 180.0 / CV_PI;
+    euler_yaw_angle_ = tools::rad2deg(precise_euler_yaw);
+    double euler_yaw_diff = std::abs((precise_euler_yaw - pnp_euler_yaw));
     RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] 区间搜索算出的最优欧拉角 Yaw: %.2f°", euler_yaw_angle_ );
-    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] 校准差角 Yaw: %.2f°", (precise_euler_yaw - pnp_euler_yaw) * 180.0 / CV_PI);
-    if (std::abs((precise_euler_yaw - pnp_euler_yaw) * 180.0 / CV_PI) > 10.00) RCLCPP_WARN_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] 校准差角太大，请检查！");
+    RCLCPP_INFO_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] 校准差角 Yaw: %.2f°", tools::rad2deg(euler_yaw_diff));
+    if (tools::rad2deg(euler_yaw_diff) > 10.00) RCLCPP_WARN_EXPRESSION(rclcpp::get_logger("YoloArmor"), this->show_logger_pnp_, "[PNP] 校准差角太大，请检查！");
 
-    double fixed_pitch = +15.0 * CV_PI / 180.0; 
+    double fixed_pitch = tools::deg2rad(15.0); 
     Eigen::AngleAxisd yawAngle(precise_euler_yaw, Eigen::Vector3d::UnitZ());
     Eigen::AngleAxisd pitchAngle(fixed_pitch, Eigen::Vector3d::UnitY());
     Eigen::AngleAxisd rollAngle(0.0, Eigen::Vector3d::UnitX());
@@ -185,7 +186,7 @@ double YoloArmor::CalculateReprojectionError(double test_euler_yaw)
 {
     // 2. 构造临时的测试姿态旋转矩阵 R_cv_test
 
-    double fixed_pitch = +15.0 * CV_PI / 180.0; 
+    double fixed_pitch = tools::deg2rad(15.0); 
     
     Eigen::AngleAxisd yawAngle(test_euler_yaw, Eigen::Vector3d::UnitZ());
     Eigen::AngleAxisd pitchAngle(fixed_pitch, Eigen::Vector3d::UnitY());

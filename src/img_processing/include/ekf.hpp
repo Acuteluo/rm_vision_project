@@ -43,6 +43,8 @@
 #include <tf2_ros/buffer.h>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 
+#include "tools/math_tools.hpp"
+
 /**
  * @brief Extended Kalman Filter (EKF) for Armor Tracking
  * @details 
@@ -132,8 +134,6 @@ private:
     Eigen::Matrix<double, 4, 11> ComputeH_YPD(const Eigen::Matrix<double, 11, 1>& X_in); // YPD 极坐标空间雅可比矩阵 (链式法则)
 
     // ==================== 辅助与工具函数 ====================
-
-    void NormalizeAngle(double& angle); // 将角度归一化到 [-PI, PI] 之间
 
     // 根据目前整车状态，计算指定 ID 装甲板的相对中心坐标 (P_body)，即得到相对中心偏差量 dx dy
     // 以及该板当前相对于整车的角度（0 号装甲板角度）的固定偏航角 Δyaw（逆时针为正）

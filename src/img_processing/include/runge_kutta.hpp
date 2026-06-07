@@ -17,6 +17,8 @@
 #include <cmath>
 #include <utility>   // for std::pair
 
+#include "tools/math_tools.hpp"
+
 class RungeKutta 
 {
 public:

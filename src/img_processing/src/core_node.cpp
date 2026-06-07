@@ -52,18 +52,18 @@ void CoreNode::InitParams()
 
 
     // core 节点
-    this->declare_parameter("core.logger.show_logger_time", false); // 是否打印时间相关日志
+    this->declare_parameter("core.logger.show_logger_time", true); // 是否打印时间相关日志
     this->declare_parameter("core.logger.show_logger_else", false); // 是否打印corenode其他的相关日志
     this->declare_parameter("core.image.show_img", true); // 是否显示图片
     
     this->declare_parameter("core.param.chosen_color", "blue"); // 选择的装甲板颜色（blue=0 red=1 gray=2 purple=3）
     this->declare_parameter("core.param.camera_name", "galaxy"); // 使用的相机名称
 
-    this->declare_parameter("pnp.show_logger_debug", true); // 打印 pnp 调试日志
+    this->declare_parameter("pnp.show_logger_debug", false); // 打印 pnp 调试日志
 
     // EKF相关（传递给ekf）
     this->declare_parameter("ekf.predict_time", 0.1); // 预测时间（记得改！）0.2? 0.225? 其实未来还要根据速度来确定
-    this->declare_parameter("ekf.show_logger_debug", true); // ekf 调试
+    this->declare_parameter("ekf.show_logger_debug", false); // ekf 调试
 
     // 注意 q_z 作为 z轴的平移加速度方差，其它参数弃用
     this->declare_parameter("ekf.q_x", 0.02);
@@ -95,7 +95,7 @@ void CoreNode::InitParams()
     this->declare_parameter("tf.show_result", false);
 
     // 开启示波器：
-    this->declare_parameter("core.image.show_plot", true); 
+    this->declare_parameter("core.image.show_plot", false); 
 
     // 新增：模式选择与视频路径参数
     this->declare_parameter("core.mode.is_standalone_mode", true); // 单机 / 联调模式
@@ -285,14 +285,14 @@ void CoreNode::CameraImageCallback(const sensor_msgs::msg::Image::SharedPtr msg)
 // =========================== 独立主逻辑 ===========================
 void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
 {
-    rclcpp::Time start_time = this->now(); // 记录核心逻辑开始的时间戳
+    rclcpp::Time start_time = this->now(); // 记录核心逻辑开始的时间戳，因为算法会有延迟，不能直接用图像的时间戳算！
 
     // ====================================================================
     // 0. 设置图像 并 记录时间和更新 dt，dt 是整个的基准！！
     // ====================================================================
 
-    img_ = frame.clone();
-    img_show_ = img_.clone(); // 复制一份用来显示信息
+    img_show_ = frame.clone(); // 复制一份用来显示信息
+                               // frame 就是原图，一般不会对原图修改，要用就直接用 frame 就好
     
     double dt = (current_image_time - last_image_time_).seconds(); // 计算与上一次图像的时间间隔，注意sec已经是精确时间！ 
     last_image_time_ = current_image_time; // 更新上一次图像的时间戳
@@ -315,7 +315,7 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     }
 
     // 调用 yolo 检测，得到仅含敌方装甲板颜色的结果
-    auto detected_armors = yolo_detector_->Detect(img_, target_color); 
+    auto detected_armors = yolo_detector_->Detect(frame, target_color); // frame 就是原图
 
     // t2 = 完成 yolo检测 的时间戳
     rclcpp::Time t2 = this->now();
@@ -362,7 +362,7 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     if (yolo_armors_.size() > 1) 
     {
         // 1. 获取画面中心点
-        cv::Point2f img_center(img_.cols / 2.0f, img_.rows / 2.0f);
+        cv::Point2f img_center(frame.cols / 2.0f, frame.rows / 2.0f); // frame 就是原图
 
         // 2. 按装甲板 2D 框中心到图像中心的距离从小到大排序，越近越优先
         std::sort(yolo_armors_.begin(), yolo_armors_.end(), 
@@ -427,14 +427,14 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     if (armorplate_center_predict[0] != -999 && armorplate_center_predict[1] != -999 && armorplate_center_predict[2] != -999)
     {
         // 算出云台需要瞄准的目标 Pitch 和 Yaw
-        pitch_result = -std::atan2(armorplate_center_predict[2], std::sqrt(armorplate_center_predict[0] * armorplate_center_predict[0] + armorplate_center_predict[1] * armorplate_center_predict[1])) * 180.0 / M_PI;   
-        yaw_result = std::atan2(armorplate_center_predict[1], armorplate_center_predict[0]) * 180.0 / M_PI;
+        pitch_result = tools::rad2deg(-std::atan2(armorplate_center_predict[2], std::sqrt(armorplate_center_predict[0] * armorplate_center_predict[0] + armorplate_center_predict[1] * armorplate_center_predict[1])));   
+        yaw_result = tools::rad2deg(std::atan2(armorplate_center_predict[1], armorplate_center_predict[0]));
         RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "armorplate_center_predict: [%.3f, %.3f, %.3f]", armorplate_center_predict[0], armorplate_center_predict[1], armorplate_center_predict[2]);
     
         // 进行弹道解算得到实际角度
         std::pair<double, double> result = ballistic_solver_->SolveAim(armorplate_center_predict[0], armorplate_center_predict[1], -armorplate_center_predict[2]);
-        pitch_result_revised = result.first * 180.0 / M_PI;
-        yaw_result_revised   = result.second * 180.0 / M_PI;
+        pitch_result_revised = tools::rad2deg(result.first);
+        yaw_result_revised   = tools::rad2deg(result.second);
 
         // 有可能失败，暂时使用直线瞄准
         if (std::isnan(result.first) || std::isnan(result.second)) 
@@ -537,14 +537,15 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
         double duration4 = (t4 - t3).seconds() * 1000.0; // 完成 状态机流转执行、计算和发送数据 的时间
         double duration5 = (t5 - t4).seconds() * 1000.0; // 完成 重投影和可视化 的时间
         double total_duration = (t5 - start_time).seconds() * 1000.0; // 完成 整个 CoreLogic 的时间
+        double algorithm_duration = total_duration - duration2;
         RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_time_ && yolo_armors_.size(), 
             "本帧处理耗时: "
             "接收原图 = %.4f ms, "
             "yolo检测 = %.4f ms, "
             "目标筛选与pnp解算 = %.4f ms, "
-            "状态机流转执行、计算和发送数据 = %.4f ms,"
+            "状态机流转执行计算发送 = %.4f ms, "
             "重投影和可视化 = %.4f ms, "
-            "总耗时 = %.4f ms", duration1, duration2, duration3, duration4, duration5, total_duration);
+            "总耗时 = %.4f ms (算法耗时 = %.4f ms)", duration1, duration2, duration3, duration4, duration5, total_duration, algorithm_duration);
     
 
     ShowImg();
@@ -587,24 +588,24 @@ void CoreNode::UpdatePlotter(Eigen::Vector3d armorplate_center_now, Eigen::Vecto
     // 计算最终角（实时）
     if (armorplate_center_now[0] != -999 && armorplate_center_now[1] != -999 && armorplate_center_now[2] != -999)
     {
-        pitch_now = -std::atan2(armorplate_center_now[2], std::sqrt(armorplate_center_now[0] * armorplate_center_now[0] + armorplate_center_now[1] * armorplate_center_now[1])) * 180.0 / M_PI;   
-        yaw_now = std::atan2(armorplate_center_now[1], armorplate_center_now[0]) * 180.0 / M_PI;
+        pitch_now = tools::rad2deg(-std::atan2(armorplate_center_now[2], std::sqrt(armorplate_center_now[0] * armorplate_center_now[0] + armorplate_center_now[1] * armorplate_center_now[1])));   
+        yaw_now = tools::rad2deg(std::atan2(armorplate_center_now[1], armorplate_center_now[0]));
     }
     
 
     // 计算最终角（实时滤波）
     if (armorplate_center_filter[0] != -999 && armorplate_center_filter[1] != -999 && armorplate_center_filter[2] != -999)
     {
-        pitch_filter = -std::atan2(armorplate_center_filter[2], std::sqrt(armorplate_center_filter[0] * armorplate_center_filter[0] + armorplate_center_filter[1] * armorplate_center_filter[1])) * 180.0 / M_PI;   
-        yaw_filter = std::atan2(armorplate_center_filter[1], armorplate_center_filter[0]) * 180.0 / M_PI;
+        pitch_filter = tools::rad2deg(-std::atan2(armorplate_center_filter[2], std::sqrt(armorplate_center_filter[0] * armorplate_center_filter[0] + armorplate_center_filter[1] * armorplate_center_filter[1])));   
+        yaw_filter = tools::rad2deg(std::atan2(armorplate_center_filter[1], armorplate_center_filter[0]));
     }
 
 
     // 计算最终角（预测）（滤波器没初始好就用原始值，连续检测多就用预测值，丢帧但滤波器稳定就用外推值）
     if (armorplate_center_predict[0] != -999 && armorplate_center_predict[1] != -999 && armorplate_center_predict[2] != -999)
     {
-        pitch_result = -std::atan2(armorplate_center_predict[2], std::sqrt(armorplate_center_predict[0] * armorplate_center_predict[0] + armorplate_center_predict[1] * armorplate_center_predict[1])) * 180.0 / M_PI;   
-        yaw_result = std::atan2(armorplate_center_predict[1], armorplate_center_predict[0]) * 180.0 / M_PI;
+        pitch_result = tools::rad2deg(-std::atan2(armorplate_center_predict[2], std::sqrt(armorplate_center_predict[0] * armorplate_center_predict[0] + armorplate_center_predict[1] * armorplate_center_predict[1])));   
+        yaw_result = tools::rad2deg(std::atan2(armorplate_center_predict[1], armorplate_center_predict[0]));
     }
 
 
@@ -797,6 +798,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
                 }
             }
 
+            //（粗筛，仅仅筛掉绝对不可能的候选项）防止漏了高质量的可以用的板子
             // 3.2.3 限制一帧内目标（当前观测的装甲板）可能发生的最大位移（角度），也就是与 EKF 预测的误差值最大可以多大
             // 极限小陀螺的角速度下，一帧大概能转多少弧度 -> 20 * 0.016 * 4(考虑误差) = 1.28 rad，而 1.25 rad = 71.6 度
             if (min_angle_error > 1.25) 
@@ -811,7 +813,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
             std::string size = yolo_armors_[i].is_big_ ? "hero" : "normal";
             ekf_->SetArmorplateSize(size);
 
-            tools::limit_rad(current_yaw_now);
+            tools::limit_rad_inplace(current_yaw_now);
             ekf_->UpdateState(current_center_now, current_yaw_now, current_id, current_image_time); 
             has_valid_update = true;
             id_set.push_back(current_id);

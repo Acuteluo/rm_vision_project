@@ -8,6 +8,8 @@
 #include <string>
 #include <rclcpp/rclcpp.hpp>
 
+#include "tools/math_tools.hpp"
+
 // YOLO 专属装甲板类，负责 3D 姿态解算 (PnP) 与坐标系转换
 class YoloArmor 
 {

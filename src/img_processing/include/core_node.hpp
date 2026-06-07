@@ -11,7 +11,6 @@
 #include <vector>
 #include <unordered_map>
 
-// #include "prepare_algorithm.h"
 #include "tf.hpp"
 #include "ekf.hpp"
 #include "plotter.hpp"
@@ -21,21 +20,7 @@
 #include "yolo_detector.hpp" // yolo 检测器类
 #include "yolo_armor.hpp"   // yolo 检测结果的装甲板类
 
-
-// ==================== [新增] 工具函数命名空间 ====================
-namespace tools 
-{
-    /**
-     * @brief 将任意角度限制在 [-PI, PI] 之间
-     * @details 原理：利用三角函数的周期性。sin 和 cos 会自然消解掉多余的 2*PI 圈数。
-     * atan2 则会严格按照四象限返回绝对标准、无边界跳变的相位角。
-     * 这是解决 "角度跨越 180 度边界导致误差爆炸" 的工业级标准做法！
-     */
-    inline double limit_rad(double angle) 
-    {
-        return std::atan2(std::sin(angle), std::cos(angle));
-    }
-}
+#include "tools/math_tools.hpp"
 
 
 // ==================== [新增] 追踪器状态机枚举 ====================
@@ -127,7 +112,6 @@ private:
 
     // ==================== 图像、相机相关与时间缓存 ====================
 
-    cv::Mat img_;                   // 原图
     cv::Mat img_show_;              // 复制一份用来显示信息的图
     rclcpp::Time last_image_time_;  // 上一次收到图像的时间戳
 

@@ -157,10 +157,10 @@ bool TF::GetWorldToChipTransform(double& pitch_chip, double& yaw_chip, rclcpp::T
     // 转换为欧拉角 (Roll, Pitch, Yaw)
     double roll_chip;
     tf2::Matrix3x3(q_chip).getRPY(roll_chip, pitch_chip, yaw_chip);
-
+    
     // 弧度 (rad) 转为 角度 (degree)
-    pitch_chip = pitch_chip * 180.0 / M_PI;
-    yaw_chip = yaw_chip * 180.0 / M_PI;
+    pitch_chip = tools::rad2deg(pitch_chip);
+    yaw_chip = tools::rad2deg(yaw_chip);
 
     return true;
 }

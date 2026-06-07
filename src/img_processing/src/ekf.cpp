@@ -124,7 +124,7 @@ void EKF::Initialized(const Eigen::Vector3d& armorplate_center, double yaw_armor
 
     // 根据装甲板的观测 yaw 和 预设的当前板离整车角度（0板角度）的偏移角，反推整车中心 Yaw
     double init_yaw = yaw_armor - theta_offset;  
-    NormalizeAngle(init_yaw);
+    tools::limit_rad_inplace(init_yaw);
 
     // 反推车体几何中心 XYZ
     double cos_yaw = cos(init_yaw), sin_yaw = sin(init_yaw);
@@ -152,7 +152,7 @@ void EKF::PredictState(double dt, rclcpp::Time current_image_time)
     X = F * X;                         // [1] 状态预测
     P = F * P * F.transpose() + Q;     // [2] 协方差预测
 
-    NormalizeAngle(X(6));
+    tools::limit_rad_inplace(X(6));
 
     // 盲推 / 预测阶段，也要发布 TF 保证系统连续性
     UpdateFatherToCarCenter();
@@ -178,7 +178,7 @@ void EKF::UpdateState(const Eigen::Vector3d& armorplate_center, double euler_yaw
 
     // 计算动态自适应 R 矩阵
     double delta_angle = euler_yaw - obs_los_yaw;
-    NormalizeAngle(delta_angle); 
+    tools::limit_rad_inplace(delta_angle); 
 
     // 偏角越大，深度距离测得越不准；距离越远，姿态偏角测得越不准 (对数衰减)
     double dynamic_r_dist = std::log(std::abs(delta_angle) + 1.0) + r_distance_;
@@ -206,9 +206,9 @@ void EKF::UpdateState(const Eigen::Vector3d& armorplate_center, double euler_yaw
         所以两者都是在 YPD 坐标系下的量，直接相减就得到新息
     */
     Eigen::Matrix<double, 4, 1> innovation = Z - h_ypd(X);
-    NormalizeAngle(innovation(0)); // los_yaw
-    NormalizeAngle(innovation(1)); // los_pitch
-    NormalizeAngle(innovation(3)); // yaw_armor
+    tools::limit_rad_inplace(innovation(0)); // los_yaw
+    tools::limit_rad_inplace(innovation(1)); // los_pitch
+    tools::limit_rad_inplace(innovation(3)); // yaw_armor
 
     // NIS 卡方检验 -> 计算观测马氏距离，若极大，说明此帧观测严重背离系统先验，可能是异常数据
     Eigen::Matrix<double, 4, 4> S = H * P * H.transpose() + R;
@@ -231,11 +231,11 @@ void EKF::UpdateState(const Eigen::Vector3d& armorplate_center, double euler_yaw
     P = (I - K * H) * P * (I - K * H).transpose() + K * R * K.transpose();  // [4] 后验协方差更新
     X = X + K * innovation;                                                 // [5] 后验状态更新
     
-    NormalizeAngle(X(6)); 
+    tools::limit_rad_inplace(X(6)); 
 
     // // === 新增：同济同款 NEES (状态跃变) 保护 ===
     // Eigen::Matrix<double, 11, 1> state_diff = X - X_prior;
-    // NormalizeAngle(state_diff(6)); // 如果包含偏航角，做一下角度截断
+    // tools::limit_rad_inplace(state_diff(6)); // 如果包含偏航角，做一下角度截断
     
     // 计算状态跃变马氏距离
     // double nees = state_diff.transpose() * P.inverse() * state_diff;
@@ -266,7 +266,7 @@ void EKF::GetArmorplatePredict(Eigen::Vector3d& armorplate_center_predict, int a
     double future_y_c = this->X(1) + this->X(4) * future_time; 
     double future_z_c = this->X(2) + this->X(5) * future_time; 
     double future_yaw = X(6) + X(7) * future_time;
-    NormalizeAngle(future_yaw);
+    tools::limit_rad_inplace(future_yaw);
 
     // 拉取理论几何偏距
     double dx, dy, dz_offset, theta_offset;
@@ -299,7 +299,7 @@ void EKF::GetArmorplateFourCorners(std::vector<Eigen::Vector3d>& corners, int ar
 
     // 装甲板绝对姿态与仰角补偿 (装甲板前倾 15 度)
     double armor_yaw = yaw + theta_offset;
-    double armor_pitch = 15.0 * M_PI / 180.0; 
+    double armor_pitch = tools::deg2rad(15.0); 
 
     // 构建装甲板在世界坐标系下的绝对旋转矩阵 R (先 Pitch 后 Yaw)
     Eigen::AngleAxisd yawAngle(armor_yaw, Eigen::Vector3d::UnitZ());
@@ -414,7 +414,7 @@ Eigen::Matrix<double, 4, 1> EKF::h(const Eigen::Matrix<double, 11, 1>& X_in)
     z_pred(1) = y_c + sin_yaw * dx + cos_yaw * dy;   // y_armor
     z_pred(2) = z_c + dz_offset;                     // z_armor
     z_pred(3) = yaw + theta_offset;                  // yaw_armor
-    NormalizeAngle(z_pred(3)); 
+    tools::limit_rad_inplace(z_pred(3)); 
 
     return z_pred;
 }
@@ -542,7 +542,7 @@ void EKF::UpdateCarCenterToArmorplates()
         GetArmorplateParams(this->X, i, dx, dy, dz_offset, theta_offset);
         
         std::string frame_name = "armor_" + std::to_string(i);
-        UpdateCarCenterToArmorplate(frame_name, dx, dy, dz_offset, 0.0, 15.0 * M_PI / 180.0, theta_offset);
+        UpdateCarCenterToArmorplate(frame_name, dx, dy, dz_offset, 0.0, tools::deg2rad(15.0), theta_offset);
     }
 }
 
@@ -577,20 +577,13 @@ void EKF::UpdateFatherToCarCenter()
 // ============================== 辅助与工具函数 ==============================
 
 
-// 角度归一化函数，确保角度在 -pi 到 pi 之间，防止跨界跳变
-void EKF::NormalizeAngle(double& angle)
-{
-    angle = std::atan2(std::sin(angle), std::cos(angle));
-}
-
-
 // 根据目前整车状态，计算指定 ID 装甲板的相对中心参数
 void EKF::GetArmorplateParams(const Eigen::Matrix<double, 11, 1>& X_in, int id, double& dx, double& dy, double& dz_offset, double& theta_offset)
 {
     // 根据 ID 建立装甲板相对整车中心的角度偏差
     // 严格按照 0123 体系：偏差角 = ID * (360 / 装甲板数量)
     theta_offset = id * 2.0 * M_PI / armor_num_;
-    NormalizeAngle(theta_offset);
+    tools::limit_rad_inplace(theta_offset);
 
     // 提取实时估计半径，0和2号板取 r1 (X8)，1和3号板取 r2 (X9)。提取高度差
     double truly_radius = X_in(8);

@@ -113,8 +113,8 @@ double RungeKutta::SolvePitch(double target_dist, double target_z)
 {
     // ========== 1. 搜索区间初始化 ==========
     // 物理合理的仰角范围：-20° ~ +55°
-    double low  = -20.00 * M_PI / 180.00;   
-    double high = 55.00 * M_PI / 180.00;    
+    double low  = tools::deg2rad(-20.00);   
+    double high = tools::deg2rad(55.00);    
     // 若目标距离为 0（理论上不会发生），直接返回 0
     if (target_dist <= 0.0) return 0.0;
 
