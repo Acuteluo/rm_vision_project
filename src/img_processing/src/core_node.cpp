@@ -53,17 +53,17 @@ void CoreNode::InitParams()
 
     // core 节点
     this->declare_parameter("core.logger.show_logger_time", true); // 是否打印时间相关日志
-    this->declare_parameter("core.logger.show_logger_else", false); // 是否打印corenode其他的相关日志
+    this->declare_parameter("core.logger.show_logger_else", true); // 是否打印corenode其他的相关日志
     this->declare_parameter("core.image.show_img", true); // 是否显示图片
     
     this->declare_parameter("core.param.chosen_color", "blue"); // 选择的装甲板颜色（blue=0 red=1 gray=2 purple=3）
     this->declare_parameter("core.param.camera_name", "galaxy"); // 使用的相机名称
 
-    this->declare_parameter("pnp.show_logger_debug", false); // 打印 pnp 调试日志
+    this->declare_parameter("pnp.show_logger_debug", true); // 打印 pnp 调试日志
 
     // EKF相关（传递给ekf）
     this->declare_parameter("ekf.predict_time", 0.1); // 预测时间（记得改！）0.2? 0.225? 其实未来还要根据速度来确定
-    this->declare_parameter("ekf.show_logger_debug", false); // ekf 调试
+    this->declare_parameter("ekf.show_logger_debug", true); // ekf 调试
 
     // 注意 q_z 作为 z轴的平移加速度方差，其它参数弃用
     this->declare_parameter("ekf.q_x", 0.02);
@@ -201,7 +201,7 @@ void CoreNode::InitROS2()
     // 如果是本地读取视频模式
     if (is_video_mode_) 
     {
-        RCLCPP_INFO(this->get_logger(), "【本地视频模式】将读取本地视频: %s", video_path_.c_str());
+        RCLCPP_INFO(this->get_logger(), "[本地视频模式] 将读取本地视频: %s", video_path_.c_str());
         
         video_thread_ = std::thread(&CoreNode::VideoReading, this); // 启动一个子线程专门用来读视频，防止阻塞 rclcpp::spin()
     }
@@ -442,6 +442,7 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
             // 回退到直线瞄准
             pitch_result_revised = pitch_result;
             yaw_result_revised   = yaw_result;
+            RCLCPP_WARN(this->get_logger(), "[弹道解算] 弹道解算失败，使用直线瞄准！");
         }
     }
 
@@ -449,8 +450,8 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     send_msg.pitch = pitch_result_revised;
     send_msg.yaw = yaw_result_revised;
     serial_pub_->publish(send_msg);
-    RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "原计算视场角: pitch = %.2f, yaw = %.2f", pitch_result, yaw_result);
-    RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "发送给串口修正角: pitch = %.2f, yaw = %.2f", pitch_result_revised, yaw_result_revised);
+    RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "[弹道解算] 原计算视场角: pitch = %.2f, yaw = %.2f", pitch_result, yaw_result);
+    RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "[弹道解算] 发送给串口修正角: pitch = %.2f, yaw = %.2f", pitch_result_revised, yaw_result_revised);
 
 
     // t4 = 完成 状态机流转执行、计算和发送数据 的时间戳
@@ -755,7 +756,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
         
             if (!tf_ok) 
             {
-                RCLCPP_ERROR(this->get_logger(), "在 TRACKING / DETECTING 状态下, 板子 %d 查不到 父坐标系 到 装甲板坐标系 的 TF！跳过...", i);
+                RCLCPP_ERROR(this->get_logger(), "[tf] 在 TRACKING / DETECTING 状态下, 板子 %d 查不到 父坐标系 到 装甲板坐标系 的 TF！跳过...", i);
                 continue;
             }
 
@@ -807,7 +808,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
                 continue;
             }
 
-            RCLCPP_INFO(this->get_logger(), "【识别器】当前 识别 的第 %d / %zu 块装甲板, 对应 ID = %d", i + 1, yolo_armors_.size(), current_id);
+            RCLCPP_INFO(this->get_logger(), "[识别器] 当前 识别 的第 %d / %zu 块装甲板, 对应 ID = %d", i + 1, yolo_armors_.size(), current_id);
 
             // 无论是 DETECTING 还是 TRACKING，只要有数据就必须给 EKF。
             std::string size = yolo_armors_[i].is_big_ ? "hero" : "normal";
@@ -834,7 +835,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
                 // todo: 切板（跟踪板）逻辑需要制定！
                 if (current_id != tracking_id_) 
                 {
-                    RCLCPP_WARN(this->get_logger(), "【跟踪器】已经切换跟踪装甲板，不再跟踪 ID = %d。开始跟踪 ID = %d", tracking_id_, current_id);
+                    RCLCPP_WARN(this->get_logger(), "[跟踪器] 已经切换跟踪装甲板，不再跟踪 ID = %d。开始跟踪 ID = %d", tracking_id_, current_id);
 
                     // 更新当前装甲板目标，因此要保存 tf 查到的原始结果，让 corenode 使用
                     tracking_center_now = current_center_now;
@@ -919,8 +920,8 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
         // 5. 最终发散保护，如果 EKF 察觉自己内部崩塌了就赶紧重置
         if (ekf_->IsDiverged() || ekf_->IsNISFailed()) 
         {
-            if (ekf_->IsDiverged()) RCLCPP_ERROR(this->get_logger(), "滤波器 物理发散！强制重置！");
-            else RCLCPP_ERROR(this->get_logger(), "滤波器 NIS 崩溃！强制重置！");
+            if (ekf_->IsDiverged()) RCLCPP_ERROR(this->get_logger(), "[发散检测] 滤波器 物理发散！强制重置！");
+            else RCLCPP_ERROR(this->get_logger(), "[发散检测] 滤波器 NIS 崩溃！强制重置！");
             tracker_state_ = TrackerState::LOST;
             ekf_ready_ = false; 
             tracking_id_ = 0; // 默认追踪 0 板
@@ -942,7 +943,7 @@ void CoreNode::ExecuteTracker(double dt, rclcpp::Time current_image_time,
             ekf_->GetArmorplatePredict(armorplate_center_predict, tracking_id_, ekf_predict_time_);
             ekf_->GetCarCenterPredict(car_center_predict, ekf_predict_time_);
             
-            RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 500, "目标遮挡或丢失, EKF 正在盲推，直接使用对当前帧的预测数据...");
+            RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 500, "[ekf] 目标遮挡或丢失, EKF 正在盲推，直接使用对当前帧的预测数据...");
         }
     }
     // ====== 场景 C：彻底丢失 ======
@@ -1031,6 +1032,10 @@ rcl_interfaces::msg::SetParametersResult CoreNode::OnParameterChange(const std::
             RCLCPP_INFO(this->get_logger(), "EKF 预测时间已更新! ");
         }
 
+        else
+        {
+            RCLCPP_WARN(this->get_logger(), "未知的参数被修改! ");
+        }
         // 注意：检测颜色、相机名称等通常不应运行时改变，如需改变可类似处理
     }
     rcl_interfaces::msg::SetParametersResult res;

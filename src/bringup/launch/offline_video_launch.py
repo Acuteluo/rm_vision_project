@@ -17,7 +17,7 @@ def generate_launch_description():
         parameters=[{
             'core.mode.is_video_mode': True, # 启用本地视频模式
                 
-            'core.mode.video_path': path3,
+            'core.mode.video_path': path1,
 
             'is_standalone_mode': True, # 单机模式（不依赖串口），视频模式下必须为 True
         }]
