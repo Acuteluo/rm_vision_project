@@ -110,10 +110,11 @@ private:
      */
     double SimulateHeight(double pitch_rad, double target_dist) const;
 
-    double k_ = 0.0109;   // 空气阻力系数 (1/m)，值越大阻力越强
-    double v0_ = 25.0;  // 弹丸初速 (m/s)
-    double g_ = 9.80665;   // 重力加速度 (m/s²)
+    double k_ = 0.0109;       // 空气阻力系数 (1/m)，值越大阻力越强
+    double v0_ = 25.0;        // 弹丸初速 (m/s)
+    double g_ = 9.80665;      // 重力加速度 (m/s²)
 
     double dt_ = 0.005;       // 积分步长 5 ms（可调，建议 0.002~0.01）
     int max_steps_ = 5000;    // 防止无限循环（对应最大飞行时间 25s）
+    int iterator_num_ = 25;   // 二分法迭代次数
 };

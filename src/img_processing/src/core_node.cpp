@@ -399,7 +399,8 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     double yaw_armorplate_now = -999; 
 
     Eigen::Vector3d armorplate_center_filter(-999, -999, -999); 
-    Eigen::Vector3d armorplate_center_predict(-999, -999, -999); 
+    Eigen::Vector3d armorplate_center_predict(-999, -999, -999);
+    Eigen::Vector3d armorplate_center_predict_rungekutta(-999, -999, -999);
     Eigen::Vector3d car_center_predict(-999, -999, -999); 
 
 
@@ -444,6 +445,11 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
             yaw_result_revised   = yaw_result;
             RCLCPP_WARN(this->get_logger(), "[弹道解算] 弹道解算失败，使用直线瞄准！");
         }
+
+        // 构造 rk4 得到的实际瞄准角，在预测装甲板中心处，z轴的投影点坐标
+        double dist = std::sqrt(armorplate_center_predict[0] * armorplate_center_predict[0] + armorplate_center_predict[1] * armorplate_center_predict[1]);
+        armorplate_center_predict_rungekutta = Eigen::Vector3d(armorplate_center_predict[0], armorplate_center_predict[1], -(dist * std::tan(result.first)));
+        RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "armorplate_center_predict_rungekutta: [%.3f, %.3f, %.3f]", armorplate_center_predict_rungekutta[0], armorplate_center_predict_rungekutta[1], armorplate_center_predict_rungekutta[2]);
     }
 
     auto send_msg = serial_driver_interfaces::msg::SerialDriver();
@@ -451,7 +457,7 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     send_msg.yaw = yaw_result_revised;
     serial_pub_->publish(send_msg);
     RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "[弹道解算] 原计算视场角: pitch = %.2f, yaw = %.2f", pitch_result, yaw_result);
-    RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "[弹道解算] 发送给串口修正角: pitch = %.2f, yaw = %.2f", pitch_result_revised, yaw_result_revised);
+    RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "[弹道解算] rk4 的修正角: pitch = %.2f, yaw = %.2f", pitch_result_revised, yaw_result_revised);
 
 
     // t4 = 完成 状态机流转执行、计算和发送数据 的时间戳
@@ -491,6 +497,11 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
             std::vector<Eigen::Vector3d> armorplate_center_world(1);
             armorplate_center_world[0] = armorplate_center_predict; // 预测位置的装甲板中心点 在父坐标系下 的位置坐标
             tf_->ProjectAndDraw(img_show_, armorplate_center_world, K_, D_, T_world_cam, cv::Scalar(255, 0, 255));
+        
+            // 也绘制当前装甲板 dt后的 预测值的 rk4 得到的实际瞄准角，在预测装甲板中心处，z轴的投影点坐标
+            std::vector<Eigen::Vector3d> armorplate_center_world_rungekutta(1);
+            armorplate_center_world_rungekutta[0] = armorplate_center_predict_rungekutta; // 预测位置的装甲板中心点 在父坐标系下 的位置坐标
+            tf_->ProjectAndDraw(img_show_, armorplate_center_world_rungekutta, K_, D_, T_world_cam, cv::Scalar(0, 165, 255));
         }
     }
     

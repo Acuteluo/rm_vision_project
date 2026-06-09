@@ -144,7 +144,7 @@ double RungeKutta::SolvePitch(double target_dist, double target_z)
 
     // ========== 3. 二分法精确求解 ==========
     // 迭代 25 次，精度约为 (high-low)/2^25 ≈ 1e-7 rad，远高于实际需求
-    for (int iter = 0; iter < 25; iter++) 
+    for (int iter = 0; iter < iterator_num_; iter++) 
     {
         double mid = (low + high) * 0.5;
         double z_mid = SimulateHeight(mid, target_dist);
