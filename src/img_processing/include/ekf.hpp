@@ -180,10 +180,7 @@ private:
 
     // ==================== 动态调参变量 (Yaml) ====================
 
-    double q_x_, q_y_, q_z_;
-    double q_v_x_, q_v_y_, q_v_z_;
-    double q_yaw_, q_omega_;
-    double q_r_, q_dz_; 
+    double q_z_;
 
     double q_v1_; // 平移加速度方差（白噪声模型）
     double q_v2_; // 旋转角加速度方差（白噪声模型）

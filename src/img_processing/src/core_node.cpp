@@ -62,33 +62,21 @@ void CoreNode::InitParams()
     this->declare_parameter("pnp.show_logger_debug", true); // 打印 pnp 调试日志
 
     // EKF相关（传递给ekf）
-    this->declare_parameter("ekf.predict_time", 0.1); // 预测时间（记得改！）0.2? 0.225? 其实未来还要根据速度来确定
+    this->declare_parameter("ekf.predict_time", 0.10); // 预测时间（记得改！）0.2? 0.225? 其实未来还要根据速度来确定
     this->declare_parameter("ekf.show_logger_debug", true); // ekf 调试
 
     // 注意 q_z 作为 z轴的平移加速度方差，其它参数弃用
-    this->declare_parameter("ekf.q_x", 0.02);
-    this->declare_parameter("ekf.q_y", 0.02);  
-    this->declare_parameter("ekf.q_v_x", 0.05); 
-    this->declare_parameter("ekf.q_v_y", 0.05);
-    this->declare_parameter("ekf.q_v_z", 0.01);
-    this->declare_parameter("ekf.q_yaw", 0.05); 
-    this->declare_parameter("ekf.q_omega", 2.0);
-
     this->declare_parameter("ekf.q_z", 0.5);  
 
     this->declare_parameter("ekf.q_v1", 500.0); // 平移加速度方差 
     this->declare_parameter("ekf.q_v2", 1000.0);  // 旋转角加速度方差，小陀螺可以突然转的非常快，给个夸张值 50000
     
     // [ATTENTION]: .0才可以让它是 double，否则会被当成 int 解析，导致 ekf.cpp 里读取参数时出问题
-
-    // 【新增】：模型几何噪声，给很小的值让它平滑收敛
-    this->declare_parameter("ekf.q_r", 1e-8); 
-    this->declare_parameter("ekf.q_dz", 1e-8);
     
     this->declare_parameter("ekf.r_los_yaw", 4e-3);   // 相机角度极其精准，给极小方差 4e-3
     this->declare_parameter("ekf.r_los_pitch", 4e-3); // 相机角度极其精准，给极小方差 4e-3
-    this->declare_parameter("ekf.r_distance", 0.05);  // PnP 测距
-    this->declare_parameter("ekf.r_euler_yaw", 0.1);  // 观测到的装甲板欧拉角，经过优化后误差会小很多 0.8
+    this->declare_parameter("ekf.r_distance", 0.05);  // PnP 测距 0.05
+    this->declare_parameter("ekf.r_euler_yaw", 0.10);  // 观测到的装甲板欧拉角，经过优化后误差会小很多 0.1
 
     // TF 参数声明
     this->declare_parameter("tf.show_logger_error", false);
@@ -1008,13 +996,10 @@ rcl_interfaces::msg::SetParametersResult CoreNode::OnParameterChange(const std::
             RCLCPP_INFO(this->get_logger(), "装甲板颜色已更新!");
         } 
 
-        else if (name == "ekf.q_x" || name == "ekf.q_y" || name == "ekf.q_z" || 
-                name == "ekf.q_v_x" || name == "ekf.q_v_y" || name == "ekf.q_v_z" ||
-                name == "ekf.q_yaw" || name == "ekf.q_omega" ||
-                name == "ekf.q_r" || name == "ekf.q_dz" ||
-                name == "ekf.q_v1" || name == "ekf.q_v2" ||
-                name == "ekf.r_x" || name == "ekf.r_y" || name == "ekf.r_z" ||
-                name == "ekf.r_yaw" || name == "ekf.show_logger_debug") 
+        else if (name == "ekf.q_z" || name == "ekf.q_v1" || name == "ekf.q_v2" ||
+                name == "ekf.r_los_yaw" || name == "ekf.r_los_pitch" || 
+                name == "ekf.r_distance" || name == "ekf.r_euler_yaw" ||
+                name == "ekf.show_logger_debug") 
         {
             ekf_->UpdateParamsFromServer();  // 让EKF自己重新读取参数
             RCLCPP_INFO(this->get_logger(), "EKF 参数已更新! ");

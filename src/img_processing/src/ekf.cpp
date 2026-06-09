@@ -30,18 +30,9 @@ void EKF::UpdateParamsFromServer()
 {
     if (!node_) return;
 
-    // 预测矩阵 Q 参数（半废弃，暂时不采用）
-    this->q_x_     = node_->get_parameter("ekf.q_x").as_double();
-    this->q_y_     = node_->get_parameter("ekf.q_y").as_double();
+    // 预测矩阵 Q 参数
     this->q_z_     = node_->get_parameter("ekf.q_z").as_double();
-    this->q_v_x_   = node_->get_parameter("ekf.q_v_x").as_double();
-    this->q_v_y_   = node_->get_parameter("ekf.q_v_y").as_double();
-    this->q_v_z_   = node_->get_parameter("ekf.q_v_z").as_double();
-    this->q_yaw_   = node_->get_parameter("ekf.q_yaw").as_double();
-    this->q_omega_ = node_->get_parameter("ekf.q_omega").as_double();
-    this->q_r_     = node_->get_parameter("ekf.q_r").as_double();
-    this->q_dz_    = node_->get_parameter("ekf.q_dz").as_double();
-
+    
     // 预测矩阵 Q 参数 白噪声模型
     this->q_v1_    = node_->get_parameter("ekf.q_v1").as_double(); // 平移加速度方差
     this->q_v2_    = node_->get_parameter("ekf.q_v2").as_double(); // 旋转角加速度方差

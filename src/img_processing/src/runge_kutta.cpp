@@ -85,14 +85,6 @@ double RungeKutta::SimulateHeight(double pitch_rad, double target_dist) const
     {
         prev = s;               // 保存步进前的状态
         s = rk4_step(s, dt_);    // 前进一步
-
-        // 落地检测：高度低于地面且正在下降（vz < 0）
-        if (s.z < 0.0 && s.vz < 0.0) 
-        {
-            // 弹丸已落地，且尚未达到目标水平距离，说明该仰角无法到达该距离
-            // 返回一个很大的负数，让二分法认为“落点太低，需要增大仰角”
-            return -1e9;
-        }
     }
 
     // 如果是因为步数超限退出（极罕见，说明 target_dist 极大或步长太小）
