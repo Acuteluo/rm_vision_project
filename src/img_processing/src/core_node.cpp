@@ -87,7 +87,7 @@ void CoreNode::InitParams()
 
     // 新增：模式选择与视频路径参数
     this->declare_parameter("core.mode.is_standalone_mode", true); // 单机 / 联调模式
-    this->declare_parameter("core.mode.is_video_mode", true); // 是否为读取 本地视频模式
+    this->declare_parameter("core.mode.is_video_mode", false); // 是否为读取 本地视频模式
     this->declare_parameter("core.mode.video_path", "/home/cly/下载/rm_test_videos/20260501_160636__camera_0_rgb_output.mp4"); // 默认的本地视频绝对路径
 
 
@@ -258,14 +258,20 @@ void CoreNode::VideoReading()
 // ================= 相机图传 回调函数 =================
 void CoreNode::CameraImageCallback(const sensor_msgs::msg::Image::SharedPtr msg)
 {
-    // 直接把底层的内存映射为 OpenCV 的 Mat
-    cv::Mat frame(msg->height, msg->width, CV_8UC3, const_cast<uint8_t*>(msg->data.data()), msg->step);
+    // 上层大恒相机返回的图像是 RGB 格式，需要转换成 BGR
+
+    // 1. 直接把底层的内存映射为 OpenCV 的 Mat (此时内存里的真实顺序是 RGB，但 OpenCV 以为是 BGR)
+    cv::Mat frame_rgb(msg->height, msg->width, CV_8UC3, const_cast<uint8_t*>(msg->data.data()), msg->step);
     
-    // 【修改点在这里】：必须深拷贝！因为 msg 的生命周期在回调结束就会销毁
-    cv::Mat safe_frame = frame.clone(); 
+    // 2. 将 RGB 通道翻转为 OpenCV 原生的 BGR 通道格式
+    cv::Mat safe_frame_bgr;
+    cv::cvtColor(frame_rgb, safe_frame_bgr, cv::COLOR_RGB2BGR);
     
-    // 【修改点在这里】：你刚才传的是 frame！必须传克隆好的 safe_frame！否则一旦切线程直接指针越界段错误！
-    CoreLogic(safe_frame, msg->header.stamp);
+    // 【注意】：cvtColor 会分配全新的内存空间，因此 safe_frame_bgr 已经是深拷贝后的安全图像了，
+    // 不受 msg 生命周期结束的影响，可以直接跨线程使用！
+    
+    // 3. 将安全的、通道正确的 BGR 图像送入核心逻辑
+    CoreLogic(safe_frame_bgr, msg->header.stamp);
 }
 
 
@@ -413,39 +419,52 @@ void CoreNode::CoreLogic(cv::Mat& frame, rclcpp::Time current_image_time)
     double pitch_result = -999, pitch_result_revised = -999;
     double yaw_result = -999, yaw_result_revised = -999;;
 
-    if (armorplate_center_predict[0] != -999 && armorplate_center_predict[1] != -999 && armorplate_center_predict[2] != -999)
+    // yolo 找到了目标
+    if (is_found)
     {
-        // 算出云台需要瞄准的目标 Pitch 和 Yaw
-        pitch_result = tools::rad2deg(-std::atan2(armorplate_center_predict[2], std::sqrt(armorplate_center_predict[0] * armorplate_center_predict[0] + armorplate_center_predict[1] * armorplate_center_predict[1])));   
-        yaw_result = tools::rad2deg(std::atan2(armorplate_center_predict[1], armorplate_center_predict[0]));
-        RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "armorplate_center_predict: [%.3f, %.3f, %.3f]", armorplate_center_predict[0], armorplate_center_predict[1], armorplate_center_predict[2]);
-    
-        // 进行弹道解算得到实际角度
-        std::pair<double, double> result = ballistic_solver_->SolveAim(armorplate_center_predict[0], armorplate_center_predict[1], -armorplate_center_predict[2]);
-        pitch_result_revised = tools::rad2deg(result.first);
-        yaw_result_revised   = tools::rad2deg(result.second);
-
-        // 有可能失败，暂时使用直线瞄准
-        if (std::isnan(result.first) || std::isnan(result.second)) 
+        // 预测点的数据有效
+        if (armorplate_center_predict[0] != -999 && armorplate_center_predict[1] != -999 && armorplate_center_predict[2] != -999)
         {
-            // 回退到直线瞄准
-            pitch_result_revised = pitch_result;
-            yaw_result_revised   = yaw_result;
-            RCLCPP_WARN(this->get_logger(), "[弹道解算] 弹道解算失败，使用直线瞄准！");
+            // 算出云台需要瞄准的目标 Pitch 和 Yaw
+            pitch_result = tools::rad2deg(-std::atan2(armorplate_center_predict[2], std::sqrt(armorplate_center_predict[0] * armorplate_center_predict[0] + armorplate_center_predict[1] * armorplate_center_predict[1])));   
+            yaw_result = tools::rad2deg(std::atan2(armorplate_center_predict[1], armorplate_center_predict[0]));
+            RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "armorplate_center_predict: [%.3f, %.3f, %.3f]", armorplate_center_predict[0], armorplate_center_predict[1], armorplate_center_predict[2]);
+        
+            // 进行弹道解算得到实际角度
+            std::pair<double, double> result = ballistic_solver_->SolveAim(armorplate_center_predict[0], armorplate_center_predict[1], -armorplate_center_predict[2]);
+            pitch_result_revised = tools::rad2deg(result.first);
+            yaw_result_revised   = tools::rad2deg(result.second);
+
+            // 有可能失败，暂时使用直线瞄准
+            if (std::isnan(result.first) || std::isnan(result.second)) 
+            {
+                // 回退到直线瞄准
+                pitch_result_revised = pitch_result;
+                yaw_result_revised   = yaw_result;
+                RCLCPP_WARN(this->get_logger(), "[弹道解算] 弹道解算失败，使用直线瞄准！");
+            }
+
+            // 构造 rk4 得到的实际瞄准角，在预测装甲板中心处，z轴的投影点坐标
+            double dist = std::sqrt(armorplate_center_predict[0] * armorplate_center_predict[0] + armorplate_center_predict[1] * armorplate_center_predict[1]);
+            armorplate_center_predict_rungekutta = Eigen::Vector3d(armorplate_center_predict[0], armorplate_center_predict[1], -(dist * std::tan(result.first)));
+            RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "armorplate_center_predict_rungekutta: [%.3f, %.3f, %.3f]", armorplate_center_predict_rungekutta[0], armorplate_center_predict_rungekutta[1], armorplate_center_predict_rungekutta[2]);
+
+            auto send_msg = serial_driver_interfaces::msg::SerialDriver();
+            send_msg.pitch = pitch_result_revised;
+            send_msg.yaw = yaw_result_revised;
+            serial_pub_->publish(send_msg);
+            RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "[弹道解算] 原计算视场角: pitch = %.2f, yaw = %.2f", pitch_result, yaw_result);
+            RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "[弹道解算] rk4 的修正角: pitch = %.2f, yaw = %.2f", pitch_result_revised, yaw_result_revised);
         }
-
-        // 构造 rk4 得到的实际瞄准角，在预测装甲板中心处，z轴的投影点坐标
-        double dist = std::sqrt(armorplate_center_predict[0] * armorplate_center_predict[0] + armorplate_center_predict[1] * armorplate_center_predict[1]);
-        armorplate_center_predict_rungekutta = Eigen::Vector3d(armorplate_center_predict[0], armorplate_center_predict[1], -(dist * std::tan(result.first)));
-        RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "armorplate_center_predict_rungekutta: [%.3f, %.3f, %.3f]", armorplate_center_predict_rungekutta[0], armorplate_center_predict_rungekutta[1], armorplate_center_predict_rungekutta[2]);
+        else
+        {
+            RCLCPP_WARN(this->get_logger(), "预测点的数据无效!");
+        }
     }
-
-    auto send_msg = serial_driver_interfaces::msg::SerialDriver();
-    send_msg.pitch = pitch_result_revised;
-    send_msg.yaw = yaw_result_revised;
-    serial_pub_->publish(send_msg);
-    RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "[弹道解算] 原计算视场角: pitch = %.2f, yaw = %.2f", pitch_result, yaw_result);
-    RCLCPP_INFO_EXPRESSION(this->get_logger(), show_logger_about_else_, "[弹道解算] rk4 的修正角: pitch = %.2f, yaw = %.2f", pitch_result_revised, yaw_result_revised);
+    else
+    {
+        RCLCPP_WARN(this->get_logger(), "yolo 未检测到目标!");
+    }
 
 
     // t4 = 完成 状态机流转执行、计算和发送数据 的时间戳
